@@ -17,76 +17,91 @@ class FinTeaAction extends CommonAction{
         }
         $this -> display();
     }
-
-    public function pay() {
-        $paymode=D('System')->where("category='fin' and name='paymode'")->getField("content");
-        $modes=explode(',',$paymode);
-        if(count($modes)>1){
-            $this->assign('paymode',$modes);
-        }
-
-        $this -> display();
-    }
-
-    public function projectList() {
-        $project = D("Finproject");
-        $count = $project -> count();
-        if ($count > 0) {
-            import("@.ORG.Page");
-            $listRows=D('System')->where("category='office' and name='listrow'")->getField("content");
-            $p = new Page($count, $listRows);
-            $proj = $project -> limit($p -> firstRow . ',' . $p -> listRows) -> order('id') -> select();
-            foreach($proj as $key=>$value){
-                //$ag[$key]['statusname']=$this->getAgentStatusName($value['status']);
-            }
-            $page = $p -> show();
-            $this -> assign("page", $page);
-            $this -> assign('proj', $proj);
-        }
-
-        $this -> display();
-    }
-
-    public function payList() {
-        $this -> display();
-    }
-
-    public function getStuInfo(){
-        $number=$_GET['Number'];
-
-        if(!isset($number)){
-            $this->error('参数缺失');
-        }
-        $dao=D('User');
-        $map['username']=$number;
-        $my=$dao->where($map)->find();
-        //$this->error($number);
-        if($my){
-            $this->ajaxReturn($my,'',1);
+    public function paylist(){
+        if($_GET['num']!=0){
+        $mapEn['id|idcard']=$_GET['num']; 
+        $enroll=M('enroll');
+        $name=$enroll->where($mapEn)->getField('truename');     
+        if($name){
+            $idcard=$enroll->where($mapEn)->getField('idcard');
+            $stunum=$enroll->where($mapEn)->getField('id');
+            $info="<span>姓名：</span><span id='name'>".$name."</span><span>学号：</span><span id='stunum'>".$stunum."</span><span>身份证号:</span><span id='idcard'>".$idcard."</span></tr>";        
+            $this->assign('info',$info);
         }else{
-            $this->error('未找到记录');
+            $this->assign('info','<span>该同学不存在</span>');
         }
+        $mapPa['stunum|idcard']=$_GET['num'];
+        $mapPa['period']=0;
+        $payment=M('payment');
+        $list=$payment->where($mapPa)->select();
+        for ($i=0; $i <count($list);$i++) {
+            $status=$list[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+            }
+            $list[$i]['statusname']=$statusname;
+         }
+        $way=M('system')->where('name="paymode"')->getField('content');
+        $wayArr=explode(',',$way);
+        $this->assign('way',$wayArr);
+        $this->assign('list',$list);
+        }
+        $this->display();
+    }
+    public function pay(){
+        $payment=M('payment');$deal=M('deal');
+        $dataD['feeid']=$_POST['feeid'];
+        $dataD['feename']=$_POST['feename'];
+        $dataD['name']=$_POST['name'];
+        $dataD['stunum']=$_POST['stunum'];
+        $dataD['idcard']=$_POST['idcard'];
+        $dataD['way']=$_POST['way'];
+        $dataD['invoice']=$_POST['invoice'];
+        $dataD['money']=$_POST['money'];
+        $dataD['operator']="测试";
+        if ($_POST['date']) {
+           $dataD['date']=$_POST['date'];
+        }else{$dataD['date']=date('Y-m-d');}
+        $dataD['check']="审核中";
+        $checkD=$deal->add($dataD);
+        /**以上是对deal表新增一条收费记录，以下是对payment表修改**/
+        $isRefund=0;$feeid=$_POST['feeid'];$idcard=$_POST['idcard'];
+        $checkU=updatePaymentStatus($isRefund,$feeid,$idcard);
+        if ($checkD&&$checkU) {
+            $this->success("收费成功","json");
+        }else{$this->error("收费出错");}
+    }
+    public function refund(){
+       $payment=M('payment');$deal=M('deal');
+        $dataD['feeid']=$_POST['feeid'];
+        $dataD['feename']=$_POST['feename'];
+        $dataD['name']=$_POST['name'];
+        $dataD['stunum']=$_POST['stunum'];
+        $dataD['idcard']=$_POST['idcard'];
+        $dataD['way']=$_POST['way'];
+        $dataD['money']=-$_POST['money'];
+        $dataD['operator']="测试";
+        if ($_POST['date']) {
+           $dataD['date']=$_POST['date'];
+        }else{$dataD['date']=date('Y-m-d');}
+        $dataD['check']="审核中";
+        $checkD=$deal->add($dataD);
+        $isRefund=1;$feeid=$_POST['feeid'];$idcard=$_POST['idcard'];
+        $checkU=updatePaymentStatus($isRefund,$feeid,$idcard);
+        if ($checkD&&$checkU) {
+            $this->success("退费成功","json");
+        }else{$this->error("退费出错");}
     }
 
-    public function addPayinfo() {
-        $dao = D('Payinfo');
-        if ($dao -> create()) {
-            if(empty($_POST['status'])){
-                $this -> error('留学进程不能为空');
-            }else{
-                $status=implode(',',$_POST['status']);
-                $dao->status=$this->fixStatusFull($status);
-            }
-            $dao->ctime=date('Y-m-d H:i:s');
-            $dao->tusername4=session('username');
-            $insertID = $dao -> add();
-            if ($insertID) {
-                $this -> ajaxReturn($insertID, '已成功保存！', 1);
-            } else {
-                $this -> error('没有更新任何数据');
-            }
-        } else {
-            $this -> error($dao->getError());
-        }
-    }
 }

@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+	<style type="text/css">
+	body{margin: 0;padding: 0;border: 0;}
+	.search{float: left;}
+	#info{float: left;margin: 10px 0;}
+	#info span{font-size: 17px;margin-right: 10px;}
+	#listTable{width: 100%;}
+	.box{position: fixed;text-align: center;width:100%;height: 100%;display: none;z-index: 2;top: 0;}
+	#payBox,#refundBox{width: 300px;position:fixed;top: 0;bottom: 0;left: 0;right: 0;margin: auto;background: #f3f4f5;border:1px solid #B2B2B2;}
+	#payBox{height: 215px;}
+	#refundBox{height: 190px;}
+	.BoxTitle{padding: 5px 20px;margin-bottom: 10px;font-size: 15px;font-weight: bold;background: url(../Public/images/table_th.gif);text-align: left;border-bottom:1px solid #B2B2B2;}
+	#payBox table,#refundBox table{width: 100%;}
+	#payBox table td,#refundBox table td{text-align: left;padding-left: 30px;}
+	#payBox button,#refundBox button{margin: 10px 20px;}
+	</style>
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right">
+    	<div id="nav"><a href="__URL__/paylist" class="on">收费退费登记</a> | <a href="__URL__/view">查看交费情况</a></div>
+    </td>
+  </tr>
+</table>
+	<div class="main">
+		<div class="search"><span>学生学号或身份证：</span><input type="text" name="id" placeholder="请输入学号或身份证" id="sch" value="{$_GET['num']}"><button id="btnSearch">搜索</button></div>
+		<div id="info">{$info}</div>		
+		<div id="list">
+			<table id="listTable" class="mytable">
+				<tr><th>收费项</th><th>收费标准</th><th>实交费用</th><th>状态</th><th>操作</th>
+				<volist name="list" id="vo">
+					<tr><td class="feename">{$vo.feename}</td><td>{$vo.standard}</td><td>{$vo.paid}</td><td>{$vo.statusname}</td><td><input type="hidden" value="{$vo.feeid}" class="feeidH"><input type="hidden" value="{$vo.id}" class="paymentIdH"><if condition="$vo.status eq 2"><button class="btnPay" disabled="disabled">交费</button><else /><button class="btnPay">交费</button></if><button class="btnRefund">退费</button></td></tr>
+				</volist>
+			</table>
+		</div>
+	</div>
+	<div id="box1" class="box">
+		<div id="payBox">
+			<div class="BoxTitle">交费</div>
+			<table>
+				<tr><td>收费项目：</td><td class="feename"></td></tr>
+				<tr><td>收费方式：</td><td><select name="way" id="wayInput">
+					<volist name="way" id="wo">
+							<option value="{$wo}">{$wo}</option>
+					</volist>
+				</select></td></tr>
+				<tr><td>收费金额：</td><td><input type="text" name="money" id="moneyInput"></td></tr>
+				<tr><td>收费日期：</td><td><input type="text" name="date" id="dateInput" class="calendar" /></td></tr>
+				<tr><td>发票号码：</td><td><input type="text" name="invoice" id="invoiceInput"></td></tr>
+			</table>
+			<input type="hidden" class="feeidH">
+			<input type="hidden" class="paymentIdH">
+			<button id="submit">确定</button><button class="cancel">取消</button>
+		</div>
+	</div>
+	<div id="box2" class="box">
+		<div id="refundBox">
+			<div class="BoxTitle">退费</div>
+			<table>
+				<tr><td>退款项目：</td><td class="feename"></td></tr>
+				<tr><td>退款方式：</td><td><select name="way" id="wayRefund">
+					<volist name="way" id="wo">
+							<option value="{$wo}">{$wo}</option>
+					</volist>
+				</select></td></tr>
+				<tr><td>退费金额：</td><td><input type="text" name="money" id="moneyRefund"/></td></tr>
+				<tr><td>退费日期：</td><td><input type="text" name="date" id="dateRefund" class="calendar" /></td></tr>
+			</table>
+			<input type="hidden" class="feeidH">
+			<input type="hidden" class="paymentIdH">
+			<button id="refund">确定</button><button class="cancel">取消</button>
+		</div>
+	</div>
+</body>
+<script>
+	$(document).ready(function(){
+		$('.calendar').calendar();
+		$('#btnSearch').click(function(){
+			window.location.href="__URL__/index?num="+$('#sch').val();
+		});
+		$('.btnPay').click(function(){
+			$('#box1').show();
+			var feeid=$(this).siblings('.feeidH').val();
+			var feename=$(this).parent().siblings('.feename').text();
+			var paymentId=$(this).siblings('.paymentIdH').val();
+			$('#payBox').find('.feename').text(feename);
+			$('#payBox').children('.feeidH').val(feeid);
+			$('#payBox').children('.paymentIdH').val(paymentId);
+		});
+		$('.btnRefund').click(function(){
+			$('#box2').show();
+			var feeid=$(this).siblings('.feeidH').val();
+			var feename=$(this).parent().siblings('.feename').text();
+			var paymentId=$(this).siblings('.paymentIdH').val();
+			$('#refundBox').find('.feename').text(feename);
+			$('#refundBox').children('.feeidH').val(feeid);
+			$('#refundBox').children('.paymentIdH').val(paymentId);
+		});
+		$('.cancel').click(function(){
+			$('.box').hide();
+			$(this).parent().find('input').val("");
+		});
+		var lock1=1;		
+		$('#submit').click(function(){
+			var feeid=$(this).siblings('.feeidH').val();
+			var paymentId=$(this).siblings('.paymentIdH').val();
+			var way=$('#wayInput').val();
+			var money=parseFloat($('#moneyInput').val());
+			var date=$('#dateInput').val();
+			var invoice=$('#invoiceInput').val();
+			var name=$('#name').text();
+			var stunum=$('#stunum').text();
+			var idcard=$('#idcard').text();
+			var feename=$('#payBox').find('.feename').text();console.log(money);return 0;
+			if(lock1){
+				if (way&&money) {
+					if (isNaN(money)){alert("金额必须是数字");}else{
+						if (money<0) {alert("交费金额不能为负");}else{
+							lock1=0;
+							$.ajax({
+								type:'post',
+								url:'__URL__/pay',
+								datatype:'JSON',
+								data:{id:paymentId,feeid:feeid,name:name,feename:feename,way:way,money:money,invoice:invoice,stunum:stunum,date:date,idcard:idcard},
+								success:function(a){
+									var data=eval('(' + a + ')');
+									alert(data.info);lock1=1;
+									if(data.status==1){location.reload();}
+								}
+							});
+						}
+					}	
+				}else{
+				alert("金额必须为数字");
+				}
+			}
+		});
+		var lock2=1;
+		$('#refund').click(function(){
+			var feeid=$(this).siblings('.feeidH').val();
+			var paymentId=$(this).siblings('.paymentIdH').val();
+			var money=parseFloat($('#moneyRefund').val());
+			var date=$('#dateRefund').val();
+			var stunum=$('#stunum').text();
+			var name=$('#name').text();
+			var idcard=$('#idcard').text();
+			var feename=$('#refundBox').find('.feename').text();
+			var way=$('#wayRefund').val();
+			if(lock2){
+				if (money) {
+					if (isNaN(money)){alert("金额必须是数字");}else{
+						if (money<0) {alert("退费金额不能为负");}else{
+							lock2=0;
+							$.ajax({
+								type:'post',
+								url:'__URL__/refund',
+								datatype:'JSON',
+								data:{id:paymentId,feeid:feeid,name:name,feename:feename,money:money,way:way,date:date,stunum:stunum,idcard:idcard},
+								success:function(a){
+									var data=eval('(' + a + ')');
+									alert(data.info);lock2=1;
+									if(data.status==1){location.reload();}
+								}
+							});
+						}
+					}	
+				}else{
+				alert("金额必须为数字");
+				}
+			}
+		});
+
+
+
+	});
+</script>
+</html>

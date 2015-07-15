@@ -326,4 +326,125 @@ class FinAdmAction extends CommonAction{
         }
         $this->ajaxReturn(1,"成功",1);
     }
+    public function verify(){
+        $way=M('system')->where('name="paymode"')->getField('content');
+        $wayArr=explode(',',$way);
+        $this->assign('way',$wayArr);
+        $deal=M('deal');
+        $mapDe['period']=0;
+        $mapDe['check']="审核中";
+        import("ORG.Util.Page");
+        $count= $deal->where($mapDe)->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $deal->where($mapDe)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('list',$list);
+        $this->assign('page',$show);
+        $this->display();
+    }
+    public function pass(){
+        $deal=M('deal');
+        $mapDe['id']=$_POST['id'];
+        $data['check']="已审核";
+        $check=$deal->where($mapDe)->save($data);
+        if ($check) {$this->success("已通过审核");}else{$this->error("发生错误");}
+    }
+    public function passEdit(){
+        $deal=M('deal');
+        $mapDe['id']=$_POST['id'];
+        $data['check']="已审核";
+        $data['way']=$_POST['way'];
+        $data['money']=$_POST['money'];
+        $data['invoice']=$_POST['invoice'];
+        $data['operator']=$_POST['operator'];
+        $data['date']=$_POST['date'];
+        $check=$deal->where($mapDe)->save($data);
+        /**以上将修改后的数据更新deal表并更改审核状态**/
+        /**以下重新计算该生在此收费项的总交费**/
+        if ($_POST['money']<0) {$isRefund=1;}else{$isRefund=0;}
+        $feeid=$deal->where($mapDe)->getField('feeid');
+        $idcard=$deal->where($mapDe)->getField('idcard');
+        updatePaymentStatus($isRefund,$feeid,$idcard);
+        if ($check) {$this->success("已通过审核");}else{$this->error("发生错误");}
+    }
+    public function submit(){
+        $deal=M('deal');
+        $mapDe['period']=0;
+        $mapDe['check']="已审核";
+        import("ORG.Util.Page");
+        $count= $deal->where($mapDe)->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $deal->where($mapDe)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('list',$list);
+        $this->assign('page',$show);
+        $this->display();
+    }
+    public function subGo(){
+        $deal=M('deal');
+        $id=$_POST['id'];
+        $map['id']=array('in',$id);
+        $dataD['submitdate']=$_POST['submitdate'];
+        $dataD['Voucher']=$_POST['Voucher'];
+        $dataD['tmpstorage']=$_POST['tmpstorage'];
+        $dataD['tmpindex']=$_POST['tmpindex'];
+        $dataD['singlemoney']=$_POST['singlemoney'];
+        $dataD['check']='已提交';
+        $check=$deal->where($map)->save($dataD);
+        if ($check) {$this->success("提交成功");}else{$this->error("发生错误");}
+    }
+    public function audit(){
+        $statistics=M('statistics');
+        import("ORG.Util.Page");
+        if($_GET['item']){$mapA['item']=$_GET['item'];}
+        if($_GET['way']){$mapA['way']=$_GET['way'];}
+        if($_GET['period']){$mapA['period']=$_GET['period'];}else{$mapA['period']='0';}
+        if($_GET['check']){$mapA['check']=$_GET['check'];}else{$mapA['check']='已提交';}
+        if($_GET['invoice']){$mapA['invoice']=$_GET['invoice'];}
+        if($_GET['operator']){$mapA['operator']=$_GET['operator'];}
+        if($_GET['name']){$mapA['name']=$_GET['name'];}
+        if($_GET['stunum']){$mapA['stunum']=$_GET['stunum'];}
+        if($_GET['idcard']){$mapA['idcard']=$_GET['idcard'];}
+        if($_GET['Voucher']){$mapA['Voucher']=$_GET['Voucher'];}
+        if($_GET['tmpstorage']){$mapA['tmpstorage']=$_GET['tmpstorage'];}
+        if($_GET['tmpindex']){$mapA['tmpindex']=$_GET['tmpindex'];}
+        if($_GET['datefrom']&&$_GET['dateto']){$mapA['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
+        if($_GET['sbfrom']&&$_GET['sbto']){$mapA['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
+        $count= $statistics->where($mapA)->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $statistics->where($mapA)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('list',$list);
+        $this->assign('page',$show);
+        $way=M('system')->where('name="paymode"')->getField('content');
+        $wayArr=explode(',',$way);
+        $periodArr=M('period')->field('id')->select();
+        $this->assign('periodList',$periodArr);
+        $this->assign('way',$wayArr);
+        $this->display();
+    }
+    public function change(){
+        $deal=M('deal');
+        $map['id']=$_POST['id'];
+        $idcard=$_POST['idcard'];
+        $feeid=$_POST['feeid'];
+        $money=$_POST['money'];
+        $dataC['way']=$_POST['way'];
+        $dataC['money']=$_POST['money'];
+        $dataC['invoice']=$_POST['invoice'];
+        $dataC['operator']=$_POST['operator'];
+        $dataC['date']=$_POST['date'];
+        $dataC['submitdate']=$_POST['submitdate'];
+        $dataC['Voucher']=$_POST['Voucher'];
+        $dataC['tmpstorage']=$_POST['tmpstorage'];
+        $dataC['tmpindex']=$_POST['tmpindex'];
+        $dataC['singlemoney']=$_POST['singlemoney'];
+        $checkD=$deal->where($map)->save($dataC);
+        if ($_POST['money']<0) {$isRefund=1;}else{$isRefund=0;}
+        updatePaymentStatus($isRefund,$feeid,$idcard);
+        if ($checkD) {$this->success("修改成功");}else{$this->error("数据没有变化");}
+    }
 }
