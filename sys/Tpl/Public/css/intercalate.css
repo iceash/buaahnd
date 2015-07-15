@@ -1,0 +1,62 @@
+/* a:link{text-decoration:none;color: blue;}
+a:visited{text-decoration:none;color: blue;}
+a:hover{text-decoration:none;color: blue;}
+a:active{text-decoration:none;color: blue;} */
+button{
+    cursor: pointer;
+}
+.item{
+    margin-bottom: 20px;
+}
+input[type="button"]{cursor: pointer;}
+.main{margin-bottom: 50px;}
+.addfee{
+    height: 22px;line-height: 22px;padding-top: 5px;background-color: #F3F4F5;padding-bottom: 10px;
+}
+.addfee label{margin-right: 10px;margin-left: 20px;}
+.addfee .separate{width: 40px;}
+.addfee .add_separate{
+    font-size: 18px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+.div_partner{
+    background-color: #F3F4F5;
+    padding: 5px 10px;
+}
+.onepartner{
+    height: 22px;line-height: 22px;margin-top: 4px;position: relative;
+}
+.onepartner .pat_name{
+    position: absolute;left: 20px;
+}
+.onepartner .pat_type{
+    position: absolute;left: 190px;
+}
+.onepartner .pat_value{
+    position: absolute;left: 500px;
+}
+.onepartner .pat_value input{
+    width: 50px;
+}
+.onepartner .pat_del{
+    position: absolute;left: 650px;cursor: pointer;
+}
+.onepartner .pat_save{
+    position: absolute;left: 700px;cursor: pointer;
+}
+.onepartner .pat_other{
+    position: absolute;left: 350px;
+}
+.div_partner .pat_btn{
+    margin-top: 10px;margin-left: 10px;cursor: pointer;
+    float: right;
+}
+.div_partner .pat_btn:after{clear: both;}
+.div_partner .pat_add{
+    margin-left: 10px;cursor: pointer;
+    position: absolute;bottom: 0px;
+}
+.onefee{
+    padding-bottom: 20px;position: relative;
+}

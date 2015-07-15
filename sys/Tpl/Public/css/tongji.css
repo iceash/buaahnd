@@ -1,0 +1,11 @@
+.mytable2 th{
+	border:1px solid #B2B2B2;background: url(../images/table_th.gif); height:28px; line-height:28px;padding:0px 5px; font-weight:bold;  color:#000;text-align: center;
+}
+.mytable2 td{border:1px solid #B2B2B2; height:28px; line-height:28px;padding:0px 5px;   color:#000;}
+.mytable2{ border-collapse:collapse; border-spacing:0;}
+
+.mytable3 th{
+	border:1px solid #B2B2B2; height:28px; line-height:28px;padding:0px 5px; font-weight:bold;  color:#000;text-align: center;
+}
+.mytable3 td{border:1px solid #B2B2B2; height:28px; line-height:28px;padding:0px 5px;   color:#000;}
+.mytable3{ border-collapse:collapse; border-spacing:0;}

@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/intercalate.css">
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right">
+        <div id="nav">
+            <a href="__URL__/intercalate" class="on">收费项信息设置</a> | 
+            <a href="__URL__/bound">专业收费项设置</a>
+        </div>
+    </td>
+  </tr>
+</table>
+<div class="main">
+    <div class="search">
+        <input type="button" id="btn_del" value="删除收费项"  />&nbsp;收费项名称：<input type="text"/>&nbsp;<input type="button" value="搜索"/>
+    </div>
+    <?php foreach ($fees as $item => $fee) { ?>
+    <div class="item" value="{$item}">
+        <div class="item_title">
+            <span>
+            项目：{$item}
+            </span>
+            <input type="button" value="新增收费项" class="btn_add" />
+         </div>
+        <table class="mytable" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <thead>
+          <tr>
+            <th width="50">收费项名称</th>
+            <th width="40">类别</th>
+            <th width="60">收费标准</th>
+            <th width="200">比例</th>
+            <th width="10">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <volist name="fee" id="vo">
+          <tr name="{$vo.name}" value="{$vo.id}">
+            <td class="td_name">{$vo.name}</td>
+            <td class="td_type">{$vo.type}</td>
+            <td class="td_standard">{$vo.standard}</td>
+            <td class="td_rate">{$vo.rate}</td>
+            <td>
+                <button class="a_update">编辑</button>
+                <button class="a_patdeit">合作方设置</button>
+                <button class="a_delete">删除</button>
+            </td>
+          </tr>
+          </volist>
+            
+         </tbody>
+         </table>
+         
+    </div>
+     <?php } ?>
+</div><!--end of main-->
+
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/intercalate.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    $(document).on("click",".btn_save",function(){
+        //新增
+        var feeinfo = addcheck(this);
+        if (!feeinfo) {return};
+        $.ajax({
+            type:'POST',
+            url:"__URL__/addfee",
+            dataType:"JSON",
+            data:{"fee":feeinfo},
+            success:function(back){
+                if (back.status == 1) {
+                    location.reload();
+                }else{
+                    alert(back.info);
+                };
+            },
+        });
+    });
+    $(document).on("click",".a_delete",function(){
+        //删除
+        if (!confirm("是否确认删除")) {
+            return false;
+        };
+        var that = $(this).parents("tr");
+        var name = that.attr("name");
+        $.ajax({
+            type:"POST",
+            url:"__URL__/delfee",
+            data:{"name":name},
+            dataType:"JSON",
+            success:function(back){
+                if (back.status == 1) {
+                    alert(back.info);
+                    that.remove();
+                }else{
+                    alert(back.info);
+                };
+            }
+        });
+    });
+    $(document).on("click",".btn_update",function(){
+        //更新收费项
+        var b = confirm("更新收费项信息将导致与此项相关的合作方返款比例失效，您确定要更改吗？");
+        if (!b) {return false};
+        var feeinfo = addcheck(this);
+        if (!feeinfo) {return};
+        $.ajax({
+            type:'POST',
+            url:"__URL__/updatefee",
+            dataType:"JSON",
+            data:{"fee":feeinfo},
+            success:function(back){
+                if (back.status == 1) {
+                    location.reload();
+                }else{
+                    alert(back.info);
+                };
+            },
+        });
+    });
+    $(document).on("click",".item .a_patdeit",function(){
+        //点击出现合作方
+        $(this).parents(".item").find(".addfee").remove();
+        $(this).parents("tr").siblings(".div_partner").remove();
+        $(this).parents("tr").after($("#pat_out").html());
+        var id = $(this).parents("tr").attr("value");
+        var name = $(this).parents("tr").attr("name");
+        var that = $(this).parent("td");
+        $.ajax({
+            type:'POST',
+            url:"__URL__/rebacklist",
+            dataType:"JSON",
+            data:{"id":id,"name":name},
+            success:function(back){
+                var thenew = that.parent("tr").next(".div_partner");
+                if (back.status == 0) {
+                    thenew.find(".pat_add").before($("#pat_in").html());
+                }else if (back.data){
+                    var count = back.data.count, list = back.data;
+                    for (p in list){
+                        if (p == "count") {continue;};
+                        thenew.find(".feeoutter").append('<div class="onefee" feename="'+p+'"><div class="div_feename">'+p+'</div><button class="pat_add">新增</button></div>');
+                        var just = thenew.find(".feeoutter").children(".onefee:last");
+                        for (var i = 0; i < list[p].length; i++) {
+                            var reback = list[p][i];
+                            if (reback.length == 0) { continue;};
+                            just.append($("#pat_in").html());
+                            // thenew.find(".pat_add").before($("#pat_in").html());
+                            var justadd = just.children(".onepartner:last");
+                            // var justadd = thenew.find(".pat_add").prev(".onepartner");
+                            justadd.attr("feeid",reback.feeid);
+                            justadd.find(".pat_name select option[value='"+reback.partner+"']").attr("selected",true);
+                            justadd.find(".pat_type select option[value='"+reback.type+"']").attr("selected",true);
+                            justadd.attr("value",reback.id);
+                            justadd.find(".pat_value input[name='value']").val(reback.value);
+                            if (reback.type == 1) {
+                                justadd.find(".pat_value span").text("返款值：");
+                            }else if(reback.type == 2){
+                                justadd.find(".pat_type").after($("#label_allfee").html());
+                                justadd.find(".pat_other select option[value='"+reback.otherid+"']").attr("selected",true);
+                            };
+                        };
+                    }
+                    thenew.find(".onepartner").attr("status","update");
+                };
+            }
+        });
+    });
+    $(document).on("click",".pat_del",function(){
+        //删除与某合作方的合作
+        var status = $(this).parent(".onepartner").attr("status");
+        if (status == "new") {
+            $(this).parent(".onepartner").remove();
+        }else if(status == "update"){
+            var willdel = $(this).parent(".onepartner");
+            var id = willdel.attr("value");
+            $.ajax({
+                type:'POST',
+                url:"__URL__/rebackdel",
+                dataType:"JSON",
+                data:{"id":id},
+                success:function(back){
+                    if (back.status == 1) {
+                        alert(back.info);
+                        willdel.remove();
+                    }else{
+                        alert(back.info);
+                    };
+                }
+            });
+        };
+
+    });
+    $(document).on("click",".pat_save",function(){
+        //在出现的合作方中保存
+        var reinfo = [], i = 0, b = true, numreg = /^\d+(\.\d+)?$/;
+        var feename = $(this).parents(".onefee").children(".div_feename").text();
+        $(this).parent(".onepartner").each(function(){
+            reinfo[i] = {};
+            reinfo[i]["feename"] = feename;
+            reinfo[i]["status"] = $(this).attr("status");
+            reinfo[i]["partner"] = $(this).find(".pat_name select").val();
+            reinfo[i]["type"] = $(this).find(".pat_type select").val();
+            reinfo[i]["value"] = $(this).find(".pat_value input").val();
+            if (reinfo[i]["type"] == 2) {
+                reinfo[i]["otherid"] = $(this).find(".pat_other select").val();
+                if (reinfo[i]["otherid"] == 0) {b = false;return false};
+            };
+            if (reinfo[i]["partner"] == 0) {b = false;return false};
+            if (reinfo[i]["value"].length <= 0 || !numreg.test(reinfo[i]["value"])) {
+                b = false;
+                return false;
+            };
+            if (reinfo[i]["status"] == "update") {
+                reinfo[i]["id"] = $(this).attr("value");
+            };
+            i++;
+        });
+        if (!b) {
+            alert("信息格式不正确！");
+            return false;
+        };
+        console.log(reinfo);
+        var that = this;
+        $.ajax({
+            type:'POST',
+            url:"__URL__/rebacksave",
+            dataType:"JSON",
+            data:{"reinfo":reinfo[0]},
+            success:function(back){
+                if (back.status == 0) {
+                    alert(back.info);
+                }else{
+                    $(that).parent(".onepartner").attr("status","update");
+                    $(that).parent(".onepartner").attr("value",back.data);
+                    alert(back.info);
+                };
+            }
+        });
+    });
+    $(document).on("click",".a_update",function(){
+        var id = $(this).parents("tr").attr("value");
+        var that = this;
+        $.ajax({
+            type:'POST',
+            url:"__URL__/feeinfo",
+            dataType:"JSON",
+            data:{"id":id},
+            success:function(back){
+                console.log(back);
+                $(that).parents(".item").find(".addfee").remove();
+                $(that).parents(".item").find(".div_partner").remove();
+                $(that).parents("tr").after($("#div_addfee").html());
+                $(that).parents(".item").find(".btn_add").show();
+                $(that).parents(".item").find(".btn_save").hide();
+                var addfee = $(that).parents(".item").find(".addfee");
+                var thetr = $(that).parents("tr");
+                var id = thetr.find("input[name='key']").val();
+                $(that).parents(".item").find(".addfee input[name='id']").val(id);
+                var name = back.data.name;
+                var type = back.data.type;
+                if (back.data.separte) {
+                    var separate = back.data.separte;
+                }else{
+                    var separate = [];
+                    separate[0] = back.data.standard;
+                };
+                name = name.split("-")[0];
+                var fees = [];
+                thetr.parent("tbody").children("tr").each(function(){
+                    if ($(that).children(".td_name").text().split("-")[0] == name) {
+                        var tmp = $(that).children(".td_standard").text();
+                        tmp = parseInt(tmp);
+                        for (var i = 0; i < separate.length; i++) {
+                            tmp += separate[i];
+                        };
+                        separate.push(tmp);
+                    };
+                });
+                console.log(name,type,separate);
+                addfee.find("input[name='name']").attr("value",name);
+                addfee.find("input[name='type']").attr("value",type);
+                addfee.find("input[name='standard']").attr("value",separate[separate.length - 1]);
+                separate.pop();
+                if (separate.length > 0) {
+                    addfee.find(".separate").remove();
+                    for (var i = 0; i < separate.length; i++) {
+                        addfee.find(".add_separate").before('<input type="text" value="'+separate[i]+'" class="separate" />');
+                    };
+                };
+            }
+        });
+        return;
+    });
+    /*$(document).on("click","",function(){
+
+    });*/
+});
+</script>
+
+<!-- 以下作为需要被调用的html代码 -->
+<script type="text/html" id="div_addfee">
+                <tr class="addfee">
+                    <td  colspan="6">
+                        <input type="hidden" name="id">
+                        <label>名称：<input type="text" name="name" /></label>
+                        <label>类别：<input type="text" name="type" /></label>
+                        <label>收费标准：<input type="text" name="standard" /></label>
+                        <label>分隔值：<input type="text" value="0" class="separate" /><span class="add_separate">+</span> </label>
+                        <input type="button" value="更新" class="btn_update"/>
+                        <input type="button" value="保存" class="btn_save"/>
+                        <input type="button" value="撤销" class="btn_cancel"/>
+                    </td>
+                </tr>
+</script>
+
+<script type="text/html" id="label_allfee">
+                <label class="pat_other">
+                    <select name="otherfee">
+                        <option value="0">选择其他收费项</option>
+                        <volist name="fees" id="vf">
+                            <volist name="vf" id="ve">
+                                <option value="{$ve.id}">{$ve.name}</option>
+                            </volist>
+                        </volist>
+                    </select>
+                </label>
+</script>
+
+<script type="text/html" id="pat_out">
+        <tr class="div_partner">
+          <td colspan="6">
+            <div class="feeoutter">
+                
+            </div>
+                <button class="pat_cancel pat_btn">取消</button>
+          </td>
+        </tr>
+</script>
+
+<script type="text/html" id="addonefee">
+                <div class="onefee">
+                    <button class="pat_add">新增</button>
+                </div>
+</script>
+
+
+<script type="text/html" id="pat_in">
+            <div class="onepartner" status="new" feeid="">
+                <label class="pat_name">
+                    <select>
+                        <option value="0">请选择合作方：</option>
+                    <volist name="partner" id="pa">
+                        <option value="{$pa}">{$pa}</option>
+                    </volist>
+                    </select>
+                </label>
+                <label class="pat_type">
+                    <span>返款类型：</span>
+                    <select name="type">
+                        <option value="0">自身比例</option>
+                        <option value="1">固定值</option>
+                        <option value="2">其他项目</option>
+                    </select>
+                </label>
+                
+                <label class="pat_value">
+                    <span class="span_value">比例：</span>
+                    <input type="text" name="value" />
+                </label>
+                <button class="pat_del">删除</button>
+                <button class="pat_save">确认</button>
+            </div>
+</script>
+</body>
+</html>
