@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ext.tab2 - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+<style type="text/css">
+.tabTitle{overflow:hidden;margin:0px;padding:0px;}
+.tabTitle .item{float:left;display:inline;width:90px;height:28px;
+    border-bottom:1px solid #fff;
+    background:#fff url('images/tab2.png') no-repeat scroll 50% 0px;color:#000;
+    text-align:center;line-height:28px;font-size:13px;
+    list-style-type:none;cursor:default;}
+.tabTitle .hover{color:#00f;font-weight:bold;}
+.tabTitle .cur{border-bottom:1px solid #fff;background:#fff url('images/tab2.png') no-repeat scroll 50% -28px;color:#c00;font-weight:bold;}
+.tabTitle .separator{float:left;display:inline;width:5px;height:27px;border-bottom:1px solid #dfdfdf;
+    line-height:28px;font-size:13px;
+    list-style-type:none;}
+.tabContent{clear:both;margin:0px;padding:0px;}
+.tabContent .item{display:none;list-style-type:none;padding:10px;width:353px;
+    border-right:1px solid #dfdfdf;border-bottom:1px solid #dfdfdf;border-left:1px solid #dfdfdf;}
+.tabContent .cur{display:block;}
+</style>
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ext.tab2</h1>
+  
+  <div class="block">
+    <h3>CSS 代码</h3>
+    <textarea class="code css">
+.tabTitle{overflow:hidden;margin:0px;padding:0px;}
+.tabTitle .item{float:left;display:inline;width:90px;height:28px;
+    border-bottom:1px solid #fff;
+    background:#fff url('images/tab2.png') no-repeat scroll 50% 0px;color:#000;
+    text-align:center;line-height:28px;font-size:13px;
+    list-style-type:none;cursor:default;}
+.tabTitle .hover{color:#00f;font-weight:bold;}
+.tabTitle .cur{border-bottom:1px solid #fff;background:#fff url('images/tab2.png') no-repeat scroll 50% -28px;color:#c00;font-weight:bold;}
+.tabTitle .separator{float:left;display:inline;width:5px;height:27px;border-bottom:1px solid #dfdfdf;
+    line-height:28px;font-size:13px;
+    list-style-type:none;}
+.tabContent{clear:both;margin:0px;padding:0px;}
+.tabContent .item{display:none;list-style-type:none;padding:10px;width:353px;
+    border-right:1px solid #dfdfdf;border-bottom:1px solid #dfdfdf;border-left:1px solid #dfdfdf;}
+.tabContent .cur{display:block;}</textarea>
+    
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+<ul class="tabTitle">
+    <li class="item cur">商品展示</li>
+    <li class="separator"></li>
+    <li class="item">详细参数</li>
+    <li class="separator"></li>
+    <li class="item">商品评价</li>
+    <li class="separator"></li>
+    <li class="item lastItem">售后服务</li>
+</ul>
+<ul class="tabContent">
+    <li class="item cur">a</li>
+    <li class="item">b</li>
+    <li class="item">c</li>
+    <li class="item">d</li>
+</ul></textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+ezj.ext.tab2(".tabTitle", ".tabContent", "click", function(index){
+    if (index == 3)
+    {
+        alert("不允许切换到该标签。");
+        return false;
+    }
+}, function(index){
+    if (index == 2)
+    {
+        alert("成功切换到第 3 个标签。");
+    }
+});</textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <div>
+        <ul class="tabTitle">
+            <li class="item cur">商品展示</li>
+            <li class="separator"></li>
+            <li class="item">详细参数</li>
+            <li class="separator"></li>
+            <li class="item">商品评价</li>
+            <li class="separator"></li>
+            <li class="item lastItem">售后服务</li>
+        </ul>
+        <ul class="tabContent">
+            <li class="item cur">a</li>
+            <li class="item">b</li>
+            <li class="item">c</li>
+            <li class="item">d</li>
+        </ul>
+    </div>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+$(window).ready(function(){
+    ezj.ext.tab2(".tabTitle", ".tabContent", "click", function(index){
+        if (index == 3)
+        {
+            alert("不允许切换到该标签。");
+            return false;
+        }
+    }, function(index){
+        if (index == 2)
+        {
+            alert("成功切换到第 3 个标签。");
+        }
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+  </tr>
+</table>
+<p style="margin-left: 120px;">每年1月1日之前的数据请在往年数据查看</p>
+<div style="margin-left: 120px; margin-top: 50px;">
+     学生姓名关键字：<input type="text" value="{$truename}" id="truename" onkeydown="searchkeydown(event)"/>&nbsp;
+    <img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch('{$id}')" alt="搜索" style="cursor:pointer"/>
+</div>
+<script type="text/javascript">
+function mysearch(){
+        var truename=jQuery('#truename').val();
+        
+        var url="__URL__/pastSearch";
+        if(truename!==''){
+            url=url+"/truename/"+truename;
+        }
+        window.location=url;
+    }
+    function searchkeydown(e){
+        var e = e || event;
+        if (e.keyCode==13){
+            mysearch();
+        }
+    }
+</script>
+</body>
+</html>

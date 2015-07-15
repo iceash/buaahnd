@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+
+});
+function my_goto(a){
+	window.location  =" __URL__/addRecord/enrollid/"+a;
+}
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/status">招生进程图</a> | 
+	<a href="__URL__/category/statusid/0">新分配</a> | 
+	<a href="__URL__/category/statusid/1">正在咨询</a> | 
+	<a href="__URL__/category/statusid/2">已交报名费</a> | 
+	<a href="__URL__/category/statusid/3">已录取</a> | 
+	<a href="__URL__/category/statusid/4" class="on">不录取</a> | 
+	<a href="__URL__/category/statusid/5">已转</a> | 
+	<a href="__URL__/search">搜索</a> | <a href="__URL__/toExcel">导出数据</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="page">{$page}</div>
+	<volist name="my" id="my">
+		<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" ><a href="__URL__/student/enrollid/{$my.id}" class="blue">{$my.truename}</a>（{$my.ctime} 录入）</div>
+				<div class="people_do"><input type="button" value="咨询记录" onclick="my_goto({$my.id});"/> &nbsp;
+				</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->
+			<div class="people_detail">性别：<U>{$my.sex}</U>&nbsp;
+				民族：<U>{$my.nationality}</U> &nbsp;
+				出生日期：<U>{$my.birthday|toDate='Y年m月d日'}</U> &nbsp;
+				身份证号码：<U>{$my.idcard}</U> &nbsp;
+				家庭住址：<U>{$my.address}</U> &nbsp;
+				籍贯：<U>{$my.nativeprovince} {$my.nativecity}</U>&nbsp;<br />
+				毕业学校：<U>{$my.schoolprovince} {$my.schoolcity} {$my.schoolname}</U>&nbsp;
+				手机：<U>{$my.mobile} </U>&nbsp;
+				父亲：<U>{$my.fname} {$my.fmobile}</U>&nbsp;
+				母亲：<U>{$my.mname} {$my.mmobile}</U>&nbsp;
+				其它联系人：<U>{$my.oname} {$my.omobile}</U>&nbsp;<br />
+				备注：<I>{$my.plus} </I>&nbsp;
+			</div><!--people_detail-->	
+				
+			
+		</div><!--end of people-->
+	</volist>
+	<div class="page">{$page}</div>
+</div><!--end of main-->
+</body>
+</html>

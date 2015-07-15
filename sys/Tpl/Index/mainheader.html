@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>北航HND信息管理系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/ii.css" media="all">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<!--[if IE 6]>
+<script type="text/javascript" src="../Public/js/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script type="text/javascript">
+   DD_belatedPNG.fix('img,.icon,.my_photo,#up_left,#up_right'); 
+</script> 
+<![endif]-->
+</head>
+
+<body>
+<tagLib name="html" />
+<div id="header"><a href="__APP__/Index/settingImage" title="设置头像" class="username">
+<empty name="photo"><img src="../Public/images/smile.png"  width="48" height="48" align="absmiddle" /><else /><img src="__APP__/upload_photo/s_{$photo|default='default_s.jpg'}" width="48" height="48" align="absmiddle" class="img_border" /></empty>
+</a>&nbsp; <a href="__APP__/Index/setting" title="设置帐户" class="username">{$Think.session.username}
+ （{$Think.session.truename}）</a> &nbsp;&nbsp;
+<empty name="my_role"><else /><html:select  options="my_role" name="my_role" selected="select_role" change="location.href='__APP__/'+this.options[this.selectedIndex].value;"/> &nbsp;&nbsp;</empty>
+|  &nbsp;&nbsp;<a href="javascript:logout()" class="logout">注销</a></div>
+<div class="juzhong">

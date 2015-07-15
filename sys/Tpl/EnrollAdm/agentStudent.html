@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <include file="Index:title"/>
+    <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+    <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+    <script language="javascript">
+        function showStudentList(agent) {
+            window.location = "__URL__/agentStuList/agent/" + agent;
+        }
+
+        function searchkeydown(e){
+            var e = e || event;
+            if (e.keyCode==13){
+                search();
+            }
+        }
+        function search(){
+            var searchkey=document.getElementById('searchkey').value;
+
+            window.location='__URL__/agentStudent/searchkey/'+searchkey;
+        }
+    </script>
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+    <tr>
+        <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+        <td width="80%" align="right"><div id="nav"><a href="__URL__/agent">所有代理人</a> |
+            <a href="__URL__/addAgent">新增代理人</a> |
+            <a href="__URL__/agentStudent" class="on">按代理人查询</a> |
+            <a href="__URL__/enrollStuList">报名学员查询</a>
+        </div></td>
+    </tr>
+</table>
+<div class="main">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="6" align="right">
+                <input type="text" name="searchkey" id="searchkey" style="width: 200px;" placeholder="关键字" onKeyDown="searchkeydown(event)"/>&nbsp;
+                <img src="../Public/images/search.gif" align="absmiddle" onclick="search()" alt="搜索" style="cursor:pointer"/>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+        <thead>
+        <tr>
+            <th>帐号</th>
+            <th>姓名</th>
+            <th width="200">身份证号</th>
+            <th width="65">报名人数</th>
+            <th width="150">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <volist name="ag" id="ag">
+            <tr>
+                <td>{$ag.username}</td>
+                <td>{$ag.truename}</td>
+                <td>{$ag.idcard}</a></td>
+                <td>{$ag.enrollcount}</a></td>
+                <td>
+                    <input type="button" value="查看" onclick="showStudentList('{$ag.username}');" />
+                </td>
+            </tr>
+        </volist>
+        <tbody>
+    </table>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td></td>
+            <td><div class="page">{$page}</div></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

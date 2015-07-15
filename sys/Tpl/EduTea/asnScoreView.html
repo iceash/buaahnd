@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript">
+jQuery(window).load(function(){
+
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="com_content"]', {
+					uploadJson : '__APP__/Upload/uploadForHomework',
+					allowFileManager : false
+				});
+			});
+			
+jQuery(function(){
+	
+				jQuery('#zf_changeBtn').toggle(function(){
+					jQuery('#zf_change').show(600);
+					//jQuery('#zf_flag').val('1');
+				},function(){
+					jQuery('#zf_change').hide(600);
+					//jQuery('#zf_flag').val('0');
+				});
+	
+});
+
+    
+</script>
+</head>
+
+<body>
+<form id="form1" >
+<div style="width:800px;">{$my.content}</div><input id="content" type="hidden" value='{$my.content}' name="content" />
+<input type="button" id="zf_changeBtn" value="批改"  />（提交时，若将文本编辑框隐藏，则默认没有批改作业）<input id="zf_flag" type="hidden" name="flag" value="0" />
+
+
+<div id="zf_change" style="width:800px;">
+    <div style="font-size: 12px;">
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> 批改时，请将修改的内容高亮，方便学生查看</p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> 该编辑器具有编辑文本、插入图片等多种功能，主要分为7个部分（以竖线分隔）</p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> 第一行的第4部分（前10个图标）、第二行的前两部分（共11个图标）用于编辑文本，定义样式（类似word），如对齐、字体、高亮、加粗等</p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> 第二行的第3部分（共13个图标）用于插入图片、音视频、附件等</p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> 更多详情见小图标</p>
+    </div>
+    <textarea id="com_content" name="com_content" style="width:800px; height:400px;"><empty name="my['correct']">{$my.content}<else />{$my.correct}</empty>
+    </textarea>
+</div>
+<p>评语：</p>
+<div ><textarea id="comment" name="comment" style="width:800px; height:200px;">{$my.comment}</textarea></div>
+
+<div style="margin: 10px;">批改后请对该作业评分，否则学生仍能修改作业
+
+<empty name="my.score"><input type="hidden" name="score" value="-1" id="score0"/>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top: 10px;">
+        <tr><td>
+        <input type="radio" name="score" value="0"/>得分0&nbsp;
+        <input type="radio" name="score" value="1"/>得分1&nbsp;
+        <input type="radio" name="score" value="2"/>得分2&nbsp;
+        <input type="radio" name="score" value="3"/>得分3&nbsp;
+        <input type="radio" name="score" value="4"/>得分4&nbsp;
+        <input type="radio" name="score" value="5"/>得分5（优）&nbsp;
+        </td></tr>
+     </table>
+<else />
+    <input type="hidden" name="score" value="{$my.score}" id="score0"/>
+    现在评分：{$my.score|getFlag}
+    <hr />
+    <div style="margin: 10px;">如果需要修改评分，请选择：
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top: 10px;">
+            <tr><td>
+            <input type="radio" name="score" value="0"/>得分0&nbsp;
+            <input type="radio" name="score" value="1"/>得分1&nbsp;
+            <input type="radio" name="score" value="2"/>得分2&nbsp;
+            <input type="radio" name="score" value="3"/>得分3&nbsp;
+            <input type="radio" name="score" value="4"/>得分4&nbsp;
+            <input type="radio" name="score" value="5"/>得分5（优）&nbsp;
+            </td></tr>
+         </table>
+    </div>
+</empty>
+
+</div>
+
+</form>
+</body>
+</html>
+

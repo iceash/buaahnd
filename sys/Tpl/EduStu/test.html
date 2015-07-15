@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<style type="text/css">
+<!--
+.tiankong {
+	width:200px; font-weight:bold; 
+}
+.exam_title{ font-weight:bold; font-size:16px; margin:15px 0;}
+.exam_item{  font-size:14px; line-height:26px;margin:0 0 0 15px}
+.exam_btn{text-align:center; margin:30px;}
+.exam_write{ width:970px; height:200px}
+a.my_logout:link,a.my_logout:visited,a.my_logout:hover{color:#000000}
+.line_this{border-top:1px solid #B2B2B2; line-height:0; margin:8px 0;}
+-->
+</style>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('#btn_sub').click(function(){
+		count=0;
+		$(".exam_item input:checked").each(function(){
+		      count+=choose(this.name,this.value);
+		  });
+		 alert('共回答正确'+count+'道题');
+	});
+});
+
+function choose(name,value){
+	i=0;
+	ans=$("#ans_"+name).val();
+    if(ans==value){
+	    $("#tip_right_"+name).show();
+		$("#tip_error_"+name).hide();
+		i=1;
+	}else{
+		$("#tip_right_"+name).hide();
+	    $("#tip_error_"+name).show();
+	}
+	return i;
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__APP__" title="返回系统首页"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/test">在线自测</a></div>
+	 </td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 提示：以下题目是从雅思真题中随机抽取的题目，供同学们进行自我测试。   <img src="../Public/images/refresh.gif" align="absmiddle" /><a href="javascript:window.location.reload();">重新随机抽取题目</a></div>
+<div class="line"></div>
+<form id="form1"><input type="hidden" name="id" value="{$result.id}" />
+
+<notempty name="select">
+<div class="exam_title">选择题</div>
+<div class="exam_item">
+<volist name="select" id="my" key="k">
+ {$k}. {$my.title}<br />
+ {$my.myitem}
+<input id="ans_q1_{$my.id}" value="{$my.answer}" type="hidden"/>
+ <div id="tip_error_q1_{$my.id}" style="display:none"><img src="../Public/images/wrong.gif" width="28" height="28" align="absmiddle" />正确答案是：{$my.answer}</div>
+ <div id="tip_right_q1_{$my.id}" style="display:none"><img src="../Public/images/right.gif" width="28" height="28" align="absmiddle" /></div>
+<div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="fill">
+<div class="exam_title">填空题</div>
+<div class="exam_item">
+<volist name="fill" id="my" key="k">
+ {$k}. {$my.title}&nbsp; <input type="input" class="tiankong" name="q2_{$my.id}" /><div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="read">
+<div class="exam_title">阅读题</div>
+<div class="exam_item">
+<volist name="read" id="my" key="k">
+{$my.article|nl2br}<br />
+{$my.myitem}<div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="write">
+<div class="exam_title">写作题</div>
+<div class="exam_item">
+<volist name="write" id="my" key="k">
+{$my.title|nl2br}<br />
+<textarea name="q4_{$my.id}" class="exam_write"></textarea><br />
+</volist>
+</div>
+</notempty>
+
+</form>
+<div class="exam_btn">
+<h3>提交后在每题后面将立即显示答案，请注意查看。</h3><br />
+<input type="button" value="提 交" id="btn_sub" style="height:30px;width:150px;" />
+</div>
+</div><!--end of main-->
+</body>
+</html>

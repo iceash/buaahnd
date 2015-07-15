@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+function time(){
+	var a=jQuery('#term').val();
+	var b=jQuery('#number').val();
+	if(a==''||b==''||b==null||jQuery.trim(b).length ==0){ 
+		alert('请选择学期并填写课程编号');
+	}else{
+window.location="__URL__/scoreTimeEdit/term/"+a+"/number/"+b;
+	}
+}
+
+
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item">学期</td>
+    <td><html:select first="所有学期" options="category_fortag" name="term" id="term" selected="category_current"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">课程编号</td>
+    <td><input type="text" name="number" id="number" value="{$number}" class="inputshort" /></td>
+  </tr>
+    <tr>
+    <td class="t_item">&nbsp;</td>
+    <td><input type="button" value="确定" onclick="time();"/></td>
+  </tr>
+ </table>
+ </form>
+
+</div><!--end of main-->
+</body>
+</html>

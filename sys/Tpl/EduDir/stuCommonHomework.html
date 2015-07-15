@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+});
+function mysearch(id){
+	var searchkey=jQuery('#searchkey').val();
+	window.location="__URL__/stuCommonHomework/id/"+id+"/searchkey/"+searchkey;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+function k(key,id){
+	window.location="__URL__/stuCommonHomeworkSub/id/"+key+"/userid/"+id;
+}
+
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="search">输入标题/课程/教师/的关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch('{$uid}')" alt="搜索" style="cursor:pointer"/></div>
+	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th>标题</th>
+	 <th>课程</th>
+    <th width="70">任课教师</td>
+	<th width="130">布置时间</td>
+	<th width="50">已提交</td>
+	<th width="130">提交时间</td>
+	<th width="100">成绩</td>
+	<th width="60">操作</td>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+    <td>{$my.title}</td>
+   
+	<td>《{$my.coursename}》</td>
+    <td>{$my.ttruename}</td> 
+	<td>{$my.ctime}</td>
+	<td><notempty name="my.subtime"><img src="../Public/images/ok.gif"/></notempty></td>
+	<td>{$my.subtime}</td>
+	<td>{$my.score|getFlag}</td>
+	<td><input type="button" value="详情" onclick="k('{$my.id}','{$my.susername}');" /></td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>sel、up、down - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>sel、up、down</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <select id="s1" size="10" multiple="multiple">
+      <option value="0">000</option>
+      <option value="1">111</option>
+      <option value="2">222</option>
+      <option value="3" selected="selected">333</option>
+      <option value="4">444</option>
+      <option value="5" selected="selected">555</option>
+      <option value="6" selected="selected">666</option>
+      <option value="7">777</option>
+      <option value="8">888</option>
+      <option value="9">999</option>
+    </select>
+    <input type="button" id="all" value="全选" />
+    <input type="button" id="inverse" value="反选" />
+    <input type="button" id="none" value="全不选" />
+    <input type="button" id="sel1" value="选择第一项且不清除其他选择" />
+    <input type="button" id="sel2" value="选择第一、三项且清除其他选择" />
+    <input type="button" id="sel3" value="选择值为 9 的项" />
+    <input type="button" id="up" value="上移选中项" />
+    <input type="button" id="down" value="下移选中项" />
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        all.click(function(){
+            s1.sel("all");
+        });
+        inverse.click(function(){
+            s1.sel("inverse");
+        });
+        none.click(function(){
+            s1.sel("none");
+        });
+        sel1.click(function(){
+            s1.sel([0]);
+        });
+        sel2.click(function(){
+            s1.sel([0, 2], true); // 指定第二个参数值为 true，清除其他选择。
+        });
+        sel3.click(function(){
+            s1.sel(["9"]); // 数组项的值是字符串表示按值选
+        });
+        up.click(function(){
+            s1.up();
+        });
+        down.click(function(){
+            s1.down();
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <select id="s1" size="10" multiple="multiple">
+      <option value="0">000</option>
+      <option value="1">111</option>
+      <option value="2">222</option>
+      <option value="3" selected="selected">333</option>
+      <option value="4">444</option>
+      <option value="5" selected="selected">555</option>
+      <option value="6" selected="selected">666</option>
+      <option value="7">777</option>
+      <option value="8">888</option>
+      <option value="9">999</option>
+    </select>
+    <input type="button" id="all" value="全选" />
+    <input type="button" id="inverse" value="反选" />
+    <input type="button" id="none" value="全不选" />
+    <input type="button" id="sel1" value="选择第一项且不清除其他选择" />
+    <input type="button" id="sel2" value="选择第一、三项且清除其他选择" />
+    <input type="button" id="sel3" value="选择值为 9 的项" />
+    <input type="button" id="up" value="上移选中项" />
+    <input type="button" id="down" value="下移选中项" />
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    all.click(function(){
+        s1.sel("all");
+    });
+    inverse.click(function(){
+        s1.sel("inverse");
+    });
+    none.click(function(){
+        s1.sel("none");
+    });
+    sel1.click(function(){
+        s1.sel([0]);
+    });
+    sel2.click(function(){
+        s1.sel([0, 2], true); // 指定第二个参数值为 true，清除其他选择。
+    });
+    sel3.click(function(){
+        s1.sel(["9"]); // 数组项的值是字符串表示按值选
+    });
+    up.click(function(){
+        s1.up();
+    });
+    down.click(function(){
+        s1.down();
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

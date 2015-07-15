@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+function mysearch(){
+	var category=jQuery('#category').val();
+	var url="__URL__/changeScore/id/{$username}";
+	if(category!==''){
+		url=url+"/category/"+category;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+function change(key){
+		if (window.confirm('请仔细核对后提交。确实要提交吗？')){			
+			var score=jQuery('#score'+key).val();
+			var plus=jQuery('#plus'+key).val();
+			var bscore=jQuery('#bscore'+key).val();
+			var levelscore=jQuery('#levelscore'+key).val();
+			var blevelscore=jQuery('#blevelscore'+key).val();
+			jQuery.ajax({
+				type:'POST',
+				url:'__URL__/scoreUpdate',
+				dataType:'json',
+				data:{id:key,score:score,plus:plus,bscore:bscore,levelscore:levelscore,blevelscore:blevelscore},
+				success: function(data){
+					if (data.status==1){
+						alert(data.info);
+					//	window.location.reload();
+					}else{
+						alert(data.info);
+					}
+				}
+			});
+		}
+	}
+jQuery(function(){ 
+	$(":text").focus(function () { $(this).css("background", "#FFFFCA"); })
+	.blur(function () { $(this).css("background", "#fff"); })
+	
+	 var baseIndex = 100;
+        $("#tblGrid")
+        .find("tr").each(function(r) {
+            $(this).find("td").each(function(c) {
+                $(this).find("input")
+                .attr("tabindex", r * 100 + c + baseIndex)
+                .addClass("cGridInput");
+            });
+        });
+        $("#tblGrid .cGridInput").live("keydown", function(evt) {
+            var tabIndex = parseInt($(this).attr("tabindex"));
+            switch (evt.which) {
+    	           case 38: //上
+                    tabIndex -= 100;
+                    break;
+                case 40: //下
+                    tabIndex += 100;
+                    break;
+                case 37: //左(會導致輸入時無法使用左右移)
+                    tabIndex--;
+                    break;
+                case 39: //右(會導致輸入時無法使用左右移)
+                    tabIndex++;
+                    break;
+                default:
+                    return;
+            }
+            if (tabIndex > 0) {
+                $(".cGridInput[tabindex=" + tabIndex + "]").focus();
+                return false;
+            }
+            return true;
+        });
+
+	
+});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" />&nbsp;&nbsp;姓名： {$name} | 学号：{$username} <html:select first="所有学期" options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<table width="100%" border="0" class="alert_table" id="tblGrid" cellpadding="0" cellspacing="0">
+<volist name="my" id="temp">
+
+  <tr> 	
+    <th width="140">{$temp['0'].term}</th>
+	<th width="70" >任课教师</th>
+	<th width="10%" >最终成绩百分制</th>
+    <th width="10%" >最终补考成绩百分制</th>
+    <th width="8%" >最终成绩等级制</th>
+    <th width="8%" >最终补考成绩等级制</th>
+    <th width="10%" >备注</th>
+    <th width="5%">操作</th>
+  </tr>
+ 	 <volist name="temp" id="my">
+  <tr>
+    <td>{$my.coursename}</td>
+	<td>{$my.ttruename}</td>
+	<td><input type="text" name="score{$my.id}" id="score{$my.id}" class="inputshort" value="{$my.score}"/></td>
+     <td><input type="text" name="bscore{$my.id}" id="bscore{$my.id}" class="inputshort" value="{$my.bscore}"/></td>
+      <td><input type="text" name="levelscore{$my.id}" id="levelscore{$my.id}" class="inputshort" value="{$my.levelscore}"/></td>
+       <td><input type="text" name="blevelscore{$my.id}" id="blevelscore{$my.id}" class="inputshort" value="{$my.blevelscore}"/></td>
+ <td><input type="text" name="plus{$my.id}" id="plus{$my.id}" class="inputshort" value="{$my.plus}"/></td>
+     <td><input type="button" id="btn_sub" onclick="change({$my.id});" value="确认修改" /></td>
+  </tr>
+  </volist>
+
+
+  </volist> </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td height="40"></td>
+  <td></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

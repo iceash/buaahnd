@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/plugins/iframeTools.source.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+
+function k(key){
+art.dialog.open('__URL__/asnScoreView/id/'+key, {title: jQuery('#who'+key).val(),width: 850,id:'test',
+ init:  function () {
+            var iframe = this.iframe.contentWindow;
+            var top = art.dialog.top;// 引用顶层页面window对象
+            iframe.document.getElementById('zf_change').style.display="none";//隐藏 
+        },
+        lock : true,
+        height: 700,
+        button: [
+        {
+            name: 'Save',
+            callback: function () {
+                var iframe = this.iframe.contentWindow;
+                if (!iframe.document.body) {
+                    alert('iframe还没加载完毕呢')
+                    return false;
+                };
+                //test();
+                //iframe.document.getElementById('com_content').value=iframe.editor.html();
+                //var flag = iframe.document.getElementById('zf_flag').value;
+                var	com_content =iframe.editor.html();
+                var	comment = iframe.document.getElementById('comment').value;
+                var	content = iframe.document.getElementById('content').value;
+                var score0 = iframe.document.getElementById('score0').value;
+                var allradio = iframe.document.getElementsByTagName('input');
+                for(var i = 0; i<allradio.length; i++){
+                    if(allradio[i].checked == true){
+                        var score1 = allradio[i].value;
+                    } 
+                }
+                if(score1){
+                    var score = score1;
+                }else{
+                    
+                    var score = score0;
+                }
+                
+                jQuery.ajax({
+                    type:'POST',
+                    url:'__URL__/commentInsert',
+                    dataType:'json',
+                    data:{id:key,content:content,correct:com_content,comment:comment,score:score},
+                    success: function(data){
+                        if (data.status==1){
+                            alert(data.info);
+                            closeifream();
+                            window.location.reload();
+                        }else{
+                            alert(data.info);
+                        }
+                    }
+                });               		
+                return false;
+            },
+            focus: true
+        }],        
+        cancelVal: 'Cancel',
+        cancel: true
+    });
+}
+function closeifream(){
+	window.top.art.dialog({id:'test'}).close();
+}
+function slide(name){
+    var res=jQuery('tr[name="'+name+'"]');
+    if(res.is(":visible")){
+        res.hide();
+    }else{
+        res.parent().find('.cname').hide();
+        res.show();
+    }
+}
+function order(order){
+    window.location='__URL__/asnCheck/id/{$id}/order/'+order;
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> <B>Current homework：{$my.title}</B> </div>
+
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th>Class</th>
+	<th width="102">Student Number</th>
+    <th width="80">Name</th>
+	<th width="110">Score&nbsp;<img src='../Public/team_padding/up.png' onclick="order('asc')" style="cursor:pointer;">&nbsp;<img src='../Public/team_padding/down.png' onclick="order('desc')" style="cursor:pointer;"></th>
+	<th width="40">Submitted</th>
+	<th width="140">Submitted time</th>
+	<th width="130">Operation</th>
+  </tr>
+</thead>
+<tbody>
+<volist name="class" id="classname">
+    <tr><td onclick="slide('{$key}')" style="border-bottom:0px;" ><a href='#' style="color:#003C74;">{$key}</a></td></tr>
+    <volist name="classname" id="my">
+    <tr name='{$my.ename}' style="display:none;"  class="cname">
+    <td></td>
+	<td>{$my.susername}</td>
+    <td>{$my.sename}</td>
+	<td>{$my.score|getFlag}</td>
+	<td><notempty name="my.ctime"><img src="../Public/images/ok.gif"/></notempty></td>
+	<td>{$my.ctime}</td>
+	<td><input type="button" value="View Homework" onclick="k('{$my.id}');" /> <input type="hidden" value="{$my.susername}{$my.struename}" id="who{$my.id}" />&nbsp;
+	</td>
+  </tr>
+  </volist>
+</volist>
+ <tbody>
+ </table>
+ <div class="page">{$count}</div>
+
+
+</div><!--end of main-->
+</body>
+</html>

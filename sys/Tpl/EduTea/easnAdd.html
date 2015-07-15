@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="StyleSheet" type="text/css" href="../Public/js/dtree/dtree.css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function() {
+    jQuery('#check').click(function(){
+        jQuery('[name=classid[]]:checkbox').attr('checked',this.checked);
+    });
+});
+function getclass(subjectid){ 
+    var url="__URL__/getClass";
+ 	if(subjectid==''){ 
+ 		alert('请选择课程');
+ 	}else{
+        url = url+'/subjectid/'+subjectid;
+ 		jQuery("#class").load(url);
+ 	}
+}
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+        if (jQuery('input[name=classid[]]:checked').length==0){
+			alert('请选择班级！');
+			return false;
+		}
+		jQuery('#content').val(editor.html());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/asnInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="content"]', {
+					uploadJson : '__APP__/Upload/uploadForHomework',
+					allowFileManager : false
+				});
+			});
+
+
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1">
+<div>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> This editor possesses many functions – text editing, image inserting for example, and mainly divided into seven parts. (Vertical bars to separate)</p>
+    <p><img src="../Public/images/info.gif" align="absmiddle" />  The fourth part of first line (the first ten icons) and the first two parts of second line (eleven icons totally) were designed for editing text, defining styles (similar to word), such as Align, typeface, highlight, boldface. </p>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> The third part of second line (thirteen icons totally) were designed for inserting image, AV (audio/video), attachment. </p>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> More details please see small icons.</p>
+</div>
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>Unit selection</td>
+    <td><html:select first="Please select" options="category_fortag" name="subjectid" selected="subjectid_latest" id="subjectid" change="getclass(this.options[this.selectedIndex].value);" />（the unit will not show here which have submitted exam results）<img src="../Public/images/info.gif" align="absmiddle" /> Please reselect corresponding “Class” after reselecting “Category”.</td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>Title</td>
+    <td><input type="text" name="title" class="inputbig" /></td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>Specific Contents and Requirements</td>
+    <td><textarea name="content" id="content" style="width:750px;height:400px;"></textarea>
+	</td>
+   </tr>
+ </table>
+
+   <div id="class">
+   &nbsp;&nbsp;&nbsp;&nbsp;<span class="mustfill">*</span><input type="checkbox" id="check"/> Total Class</td>
+        <table>
+        <volist name="my" id="vo" mod="3" >
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="classid[]" value="{$vo.id}" />{$vo.ename}</td>
+            <eq name="mod" value="2"><tr></tr></eq>  
+        </volist>
+        </table>
+    </div>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="Save"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

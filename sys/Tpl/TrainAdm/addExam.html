@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+	 jQuery('#code').val(getRndStr(6));    
+});
+jQuery(function(){ 
+	jQuery('.calendar').calendar();
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/insertExam',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location="__URL__/exam";
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+
+});
+function getRndStr(le){
+	var str='0123456789';
+	var l = parseInt(le)||Math.ceil(Math.random() * 5);
+	var ret = '';
+	for(var i=0;i<l;i++){
+		ret += str.charAt(Math.ceil(Math.random()*(str.length-1)));
+	}
+	return ret;
+ }
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/exam">所有测试</a> | 
+	<a href="__URL__/addExam" class="on">新建测试</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item"><span class="mustfill">*</span>测试日期</td>
+    <td><input type="text" name="testtime" class="inputshort calendar"/></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>学生姓名</td>
+    <td> <input type="text" name="name" class="inputshort" /></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>手机号码</td>
+    <td><input type="text" name="mobile" class="inputshort"/></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>答题码</td>
+    <td><input type="text" name="code" id="code" class="inputshort"/></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>抽取规则</td>
+    <td><html:select first="请选择" options="rule" name="ruleid"/></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

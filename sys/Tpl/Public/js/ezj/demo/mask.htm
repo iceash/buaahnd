@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>mask、unmask、centerWin、ezj.ext.drag - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+<style type="text/css">
+#dlg{display:none;position:absolute;width:400px;border:1px solid #00f;background-color:#fff;color:#000;text-align:center;}
+#dlgTitle{background-color:#00f;color:#fff;cursor:move;}
+</style>
+</head>
+
+<body>
+
+<div class="section">
+  <h1>mask、unmask、centerWin、ezj.ext.drag</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <div>来玩个遮罩吧，拖动滚动条、改变窗体大小？没关系，罩得住！<input type="button" id="mask" value="遮罩" /></div>
+    <div>对于 IE7、IE8、Firefox、Chrome 自动使用 position:fixed，效果甚佳；IE6 不支持 fixed，但自动使用了替代方法。</div>
+    <div>select 罩不住？没关系，有 ezj.ext.combobox 可以解决，请参见 <a href="combobox.htm" target="_blank">combobox.htm</a>。</div>
+    <div id="dlg">
+      <div id="dlgTitle">拖我还可以移动</div>
+      <div>这是一个模拟对话框，样式暂时还丑了点，但代码轻松、功能强大。</div>
+      <div><input type="button" id="dlgOk" value="关闭对话框（遮罩）" /></div>
+    </div>
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ext.drag("dlg", { controller:"dlgTitle" });
+    $("mask").click(function(){
+        $(document.body).mask();
+        $("dlg").display(true); // 先显示，再 centerWin
+        $("dlg").centerWin();
+    });
+    $("dlgOk").click(function(){
+        $("dlg").display(false);
+        $(document.body).unmask();
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <div>来玩个遮罩吧，拖动滚动条、改变窗体大小？没关系，罩得住！<input type="button" id="mask" value="遮罩" /></div>
+    <div>对于 IE7、IE8、Firefox、Chrome 自动使用 position:fixed，效果甚佳；IE6 不支持 fixed，但自动使用了替代方法。</div>
+    <div>select 罩不住？没关系，有 ezj.ext.combobox 可以解决，请参见 <a href="combobox.htm" target="_blank">combobox.htm</a>。</div>
+    <div id="dlg">
+      <div id="dlgTitle">拖我还可以移动</div>
+      <div>这是一个模拟对话框，样式暂时还丑了点，但代码轻松、功能强大。</div>
+      <div><input type="button" id="dlgOk" value="关闭对话框（遮罩）" /></div>
+    </div>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+$(window).ready(function(){
+    ezj.ext.drag("dlg", { controller:"dlgTitle" });
+    $("mask").click(function(){
+        $(document.body).mask();
+        $("dlg").display(true); // 先显示，再 centerWin
+        $("dlg").centerWin();
+    });
+    $("dlgOk").click(function(){
+        $("dlg").display(false);
+        $(document.body).unmask();
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

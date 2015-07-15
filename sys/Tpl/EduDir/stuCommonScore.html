@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+
+function excel(id){
+	var term=jQuery('#term').val();
+	var url="__URL__/downScore";
+	if(term!==''){
+		url=url+"/id/"+id+"/term/"+term;
+	}
+	window.location=url;
+}
+function allexcel(id){
+	var term=jQuery('#term').val();
+	var url="__URL__/downAllscore";
+	if(term!==''){
+		url=url+"/id/"+id+"/term/"+term;
+	}
+	window.location=url;
+}
+
+
+
+</script> 
+</head>
+
+<body><tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"  target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+ <tr>
+  <td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生第<html:select id="term" name="term" options="sterm" />成绩 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:excel('{$id}');">[导出为xls文件]</a></div></td>
+  <td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有成绩 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:allexcel('{$id}');">[导出为xls文件]</a></div></td>
+  <td>&nbsp;</td>
+  </tr>
+ </table>
+
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+<volist name="my" id="temp">
+
+  <tr> 	
+    <th width="16%">{$temp['0'].term}</th>
+	<th width="5%" >课时</th>
+	<th width="5%" >学分</th>
+    <th width="14%" >最终成绩百分制</th>
+    <th width="14%" >最终成绩等级制</th>
+    <th width="14%" >补考成绩百分制</th>
+    <th width="14%" >补考成绩等级制</th>
+    <th width="9%" >备注</th>
+	<th width="9%">任课教师</th>
+  </tr>
+ 	 <volist name="temp" id="my">
+  <tr>
+    <td>{$my.coursename}</td>
+	<td>{$my.coursetime}</td>
+	<td>{$my.credit}</td>
+	<td><eq name="my.ispublic" value="1">{$my.score}</eq></td>
+	<td><eq name="my.ispublic" value="1">{$my.levelscore}</eq></td>
+    <td><eq name="my.ispublic" value="1">{$my.bscore}</eq></td>
+    <td><eq name="my.ispublic" value="1">{$my.blevelscore}</eq></td>
+    <td><eq name="my.ispublic" value="1">{$my.plus}</td>
+	 <td>{$my.ttruename}</td>
+  </tr>
+  </volist>
+
+
+  </volist> </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td height="40"></td>
+  <td></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

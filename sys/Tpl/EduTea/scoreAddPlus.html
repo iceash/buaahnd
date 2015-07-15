@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+    setTimeout("autosub()", 1000*60*10);
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+        jQuery('#issubmit').val('0');
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/scorePlusInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+	jQuery('#btn_sub').click(function(){
+        var count1 = 0;
+        var count2 = 0;
+        var scoreCount = $('.score').length;
+        var score = getClassNames("score", "input");
+        var levelscore = getClassNames("levelscore", "input");
+
+            for (i = 0; i < scoreCount; i++) {      
+                if (score[i].value == "") {    
+                    count1=count1+1;     
+                }    
+                if (levelscore[i].value == "") {    
+                    count2=count2+1;     
+                }
+            }    
+
+            if(count1 == 0 || count2 == 0){
+                if (window.confirm('提交后将不能修改，请仔细核对后提交。确定要提交吗？')){
+                    jQuery('#issubmit').val('1');
+                    jQuery.ajax({
+                        type:'POST',
+                        url:'__URL__/scorePlusInsert',
+                        dataType:'json',
+                        data:jQuery("#form1").serialize(),
+                        success: function(data){
+                            if (data.status==1){
+                                alert(data.info);
+                                window.location.reload();
+                            }else{
+                                alert(data.info);
+                            }
+                        }
+                    });
+                }                       
+            } else {
+                alert('未填写完全部成绩，请继续填写或点击“暂存”');
+                return false;
+            } 
+	});
+	
+	$(":text").focus(function () { $(this).css("background", "#FFFFCA"); })
+	.blur(function () { $(this).css("background", "#fff"); })
+	
+	 var baseIndex = 100;
+        $("#tblGrid")
+        .find("tr").each(function(r) {
+            $(this).find("td").each(function(c) {
+                $(this).find("input")
+                .attr("tabindex", r * 100 + c + baseIndex)
+                .addClass("cGridInput");
+            });
+        });
+        $("#tblGrid .cGridInput").live("keydown", function(evt) {
+            var tabIndex = parseInt($(this).attr("tabindex"));
+            switch (evt.which) {
+    	           case 38: //上
+                    tabIndex -= 100;
+                    break;
+                case 40: //下
+                    tabIndex += 100;
+                    break;
+                case 37: //左(會導致輸入時無法使用左右移)
+                    tabIndex--;
+                    break;
+                case 39: //右(會導致輸入時無法使用左右移)
+                    tabIndex++;
+                    break;
+                default:
+                    return;
+            }
+            if (tabIndex > 0) {
+                $(".cGridInput[tabindex=" + tabIndex + "]").focus();
+                return false;
+            }
+            return true;
+        });
+});
+
+//IE8及以下不支持document.getElementsByClassName
+function getClassNames(classStr,tagName){
+    if (document.getElementsByClassName) {
+        return document.getElementsByClassName(classStr)
+    }else {
+        var nodes = document.getElementsByTagName(tagName),ret = [];
+        for(i = 0; i < nodes.length; i++) {
+            if(hasClass(nodes[i],classStr)){
+                ret.push(nodes[i])
+            }
+        }
+        return ret;
+    }
+}
+function slide(name){
+    var res=jQuery('tr[name="'+name+'"]');
+    if(res.is(":visible")){
+        res.hide();
+    }else{        
+        res.parent().find('.cname').hide();
+        res.show();
+    }
+}
+    function autosub(){
+        jQuery('#issubmit').val('0');
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/scorePlusInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+                    jQuery('#message').remove();
+					jQuery('#tips').append('<div id="message" class="message_success"></div>');	
+                    jQuery('#message').text(data.info);
+                    jQuery('#message').fadeIn(500).delay(10000).fadeOut(500);
+                   
+				}else{
+					jQuery('#tips').append('<div id="message" class="message_error"></div>');	
+                    jQuery('#message').text(data.info);
+                    jQuery('#message').fadeIn(500).delay(10000).fadeOut(500);
+				}
+			}
+		});
+        setTimeout("autosub()", 1000*60*10);
+    }
+</script> 
+<style type="text/css">
+#message{width: 110px; text-align: center; height: 28px; line-height: 28px; margin-bottom: 5px; font-weight: bold; font-size: 14px;}
+.message_success{background: #16960E;}
+.message_error{background: #990000;}
+</style>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$result1.id}" name="id" /><input type="hidden" value="0" id="issubmit" name="issubmit"/>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr><td colspan="2" style="color: #990000;"><img src="../Public/images/info.gif" align="absmiddle" /> 操作说明：请务必全部填写完“补考分数百分制”、“补考分数等级制”的至少其中之一</td></tr>
+  <tr><td colspan="2"><img src="../Public/images/info.gif" align="absmiddle" /> 可用键盘上的上、下箭头移动，来切换分数填写栏</td></tr>
+  <tr><td><div class="btn_zone">课程：<u>{$result1.coursenumber} [{$result1.name}]</u> 任课教师：<u>{$result1.teacher} [{$result1.truename}]</u> 学期：<u>{$result1.term}</u> 学时：<u>{$result1.coursetime}</u> 学分：<u>{$result1.credit}</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="../Public/images/xls.gif" align="absmiddle"/><a href="__URL__/downScoreB/id/{$result1.id}">[导出为xls文件]</a></div></td>
+  <td><div class="page"></div></td></tr>
+ </table>
+ <div id="tips"></div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0"  id="tblGrid">
+<thead>
+  <tr>
+  <th width="150">班级</th>
+  <th width="120">学生学号</th>
+  <th width="120">学生姓名</th>
+  <th width="120">最终成绩百分制</th>
+  <th width="120">最终成绩等级制</th>
+  <th width="120">补考分数百分制</th>
+  <th width="120">补考分数等级制</th>
+  <th>备注</th>
+  </tr>
+</thead>
+<tbody>
+   <volist name="class" id="classname">
+  <tr><td onclick="slide('{$key}')" style="border-bottom:0px;" ><a href='#' style="color:#003C74;">{$key}</a></td></tr>
+  <volist name="classname" id="my">
+  <tr name='{$my.classname}' style="display:none;" class="cname">
+   <td></td>
+   <td>{$my.susername}</td>
+	<td>{$my.struename}</td>
+	<td><input type="text" name="score{$my.id}" class="inputshort" value="{$my.score}" style="width:80px;" disabled="disabled" />
+    </td>
+    <td>
+        <input type="text" name="levelscore{$my.id}" class="inputshort" value="{$my.levelscore}" style="width:80px;" disabled="disabled" />
+    </td>
+ 	<td>
+      <input type="text" name="bscore{$my.id}" class="inputshort score" value="{$my.bscore}" style="width:80px;"/>
+    </td>
+    <td>
+      <input type="text" name="blevelscore{$my.id}" class="inputshort levelscore" value="{$my.blevelscore}" style="width:80px;"/>
+    </td>
+	<td>{$my.plus}</td>
+  </tr>
+  </volist>
+ </volist>
+ <tbody>
+ </table>
+  </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="暂存（可修改）" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <input type="button" id="btn_sub" value="提交（不可修改）" /></notempty></div>
+  </td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

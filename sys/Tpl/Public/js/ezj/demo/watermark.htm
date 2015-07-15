@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ext.watermark - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ext.watermark</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <input type="text" id="text1" title="请输入姓名" />
+    <input type="button" id="btn" value="测试取值，不会取到水印文字" />
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        ezj.ext.watermark("text1");
+        btn.click(function(){
+            alert("text1.val() 的值：" + text1.val(), "text1.value 的值：" + text1.value);
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <input type="text" id="text1" title="请输入姓名" />
+    <input type="button" id="btn" value="测试取值，不会取到水印文字" />
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    ezj.ext.watermark("text1");
+    btn.click(function(){
+        alert("text1.val() 的值：" + text1.val(), "text1.value 的值：" + text1.value);
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/insertStudent',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location="__URL__/student";
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+
+function getEnroll(){
+	var a=jQuery('#truename').val();
+	if(a==''){ 
+		alert('学生姓名不能为空');
+	}else{
+		jQuery("#enroll_info").load("__URL__/getEnroll/",{truename:a});
+	}
+}
+</script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/student">所有帐号</a> | 
+	<a href="__URL__/addStudent" class="on">新增帐号</a>
+	</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" />（1）填写好“学生姓名”之后，点击旁边的“智能匹配”，系统将自动去匹配招生录取信息。（2）保存成功的同时，会自动创建该学生的家长的帐号。若学生帐号为GJ110211210，则家长帐号为JZ110211210。（3）帐号的初始密码为888888。</div>
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item"><span class="mustfill">*</span>学生帐号</td>
+    <td><input type="text" name="username" class="inputlong" value="GJ"/></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>学生姓名</td>
+    <td><input type="text" name="truename" id="truename" class="inputlong"/>&nbsp;<input type="button" value="智能匹配" onclick="getEnroll();"/></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>关联招生录取信息</td>
+    <td><div id="enroll_info"></div></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

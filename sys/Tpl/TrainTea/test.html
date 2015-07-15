@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('.calendar').calendar();
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/testInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+function k(key){
+	if (window.confirm('确实要删除选择项吗？')){		
+		jQuery.getJSON('__URL__/testDel/',{id:key},function(data){
+			if(data.status==1){
+				alert(data.info);
+				window.location.reload();
+			}else{
+				alert(data.info);
+			}	
+		});		
+	}
+}
+function save(id){ 
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/testUpdate',
+		dataType:'json',
+		data:{id:id,
+		traintime:jQuery('#traintime'+id).val(),
+		score:jQuery('#score'+id).val(),
+		plus:jQuery('#plus'+id).val()
+		},
+		success: function(data){
+			if (data.status==1){
+				alert(data.info);	
+			}else{
+				alert(data.info);
+			}
+		}
+	});
+}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"></div></td>
+  </tr>
+</table>
+<div class="main">
+
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> &nbsp;&nbsp;
+当前学生：<font size="4">{$my.struename}</font> &nbsp;&nbsp;
+<a href="__URL__/detail/id/{$my.id}">返回培训资料页</a>
+</div>
+<form id="form1"><input type="hidden" value="{$my.id}" name="trainid" />
+<!--start of school-->
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+  <tr>
+    <th>测试时间</th>
+	<th >测试成绩</th>
+	<th>备注</th>
+	<th>操作</th>
+</tr>
+<volist name="test" id="y">
+  <tr>
+    <td><span class="mustfill">*</span> <input type="text" id="traintime{$y.id}" class="inputshort calendar" value="{$y.traintime|toDate='Y-m-d'}"/></td>
+	 <td><span class="mustfill">*</span> <input type="text" id="score{$y.id}" class="inputshort" value="{$y.score}"/></td>
+	 <td><input type="text" id="plus{$y.id}" class="inputmid" value="{$y.plus}"/></td>
+	 <td><input type="button" value="保存"  onclick="save('{$y.id}');" /> <input type="button"  value="删除"  onclick="k('{$y.id}');"/></td>
+</tr>	
+</volist>
+  <tr>
+    <td><span class="mustfill">*</span> <input type="text" name="traintime" class="inputshort calendar" /></td>
+	 <td><span class="mustfill">*</span> <input type="text" name="score" class="inputshort" /></td>
+	 <td><input type="text" name="plus" class="inputmid" /></td>
+	 <td><input type="button" id="btn_save" value="新建"  /></td>
+</tr>	
+</table><!--end of school-->
+ </form>
+</div><!--end of main-->
+</body>
+</html>

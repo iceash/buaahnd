@@ -1,0 +1,94 @@
+<include file="Index:mainheader"/>
+ <!-- 选择动画-->
+  <div id="wrapper"><!--幻灯片内容，4行，一行5个图标-->
+    <div id="down">
+      <div id="downContent">
+        <table width="90%" align="center" border="0" cellpadding="0" cellspacing="0" id="icontable">
+          <tr>
+            <td><div class="icon"><a href="__URL__/notice" target="_blank"><img src="../Public/images/icon/03a.png" /></a>
+                <p>通知<gt name="count" value="0">（{$count}）</gt></p>
+              </div></td>
+            <td><div class="icon"><a href="{$video_url}" target="_blank"><img src="../Public/images/icon/03b.png" /></a>
+                <p>教学视频</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/attend" target="_blank"><img src="../Public/images/icon/03c.png" /></a>
+                <p>考勤</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/reward" target="_blank"><img src="../Public/images/icon/03d.png" /></a>
+                <p>奖惩</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/score" target="_blank"><img src="../Public/images/icon/03e.png" /></a>
+                <p>成绩单</p>
+              </div></td>
+          </tr>
+          <tr>
+            <td><div class="icon"><a href="__URL__/homework" target="_blank"><img src="../Public/images/icon/03f.png" /></a>
+                <p>作业</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/test" target="_blank"><img src="../Public/images/icon/03g.png" /></a>
+                <p>在线自测</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/gpa" target="_blank"><img src="../Public/images/icon/03h.png" /></a>
+                <p>GPA计算</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/translator" target="_blank"><img src="../Public/images/icon/03i.png" /></a>
+                <p>在线翻译</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/rate" target="_blank"><img src="../Public/images/icon/03j.png" /></a>
+                <p>汇率查询</p>
+              </div></td>
+          </tr>
+          <tr>
+            <td><div class="icon"><a href="__URL__/ranking" target="_blank"><img src="../Public/images/icon/03k.png" /></a>
+                <p>大学排名</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/process" target="_blank"><img src="../Public/images/icon/03l.png" /></a>
+                <p>留学进程</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/tv" target="_blank"><img src="../Public/images/icon/03m.png" /></a>
+                <p>电影/电视剧/公开课</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/music" target="_blank"><img src="../Public/images/icon/03n.png" /></a>
+                <p>音乐</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/ebook" target="_blank"><img src="../Public/images/icon/03o.png" /></a>
+                <p>电子书</p>
+              </div></td>
+          </tr>
+          <tr>
+            <td><div class="icon"><a href="__URL__/software" target="_blank"><img src="../Public/images/icon/03p.png" /></a>
+                <p>软件</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/courseware" target="_blank"><img src="../Public/images/icon/03q.png" /></a>
+                <p>课件</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/document" target="_blank"><img src="../Public/images/icon/03r.png" /></a>
+                <p>文库</p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/mailAdd" target="_blank"><img src="../Public/images/icon/03s.png" /></a>
+                <p>给辅导员写信<gt name="count_mail" value="0">（{$count_mail}）</gt></p>
+              </div></td>
+            <td><div class="icon"><a href="__URL__/consulting" target="_blank"><img src="../Public/images/icon/03t.png" /></a>
+                <p>心灵家园</p>
+              </div></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="up_left"> </div><!--左右箭头-->
+    <div id="up_right"> </div>
+  </div>
+  <div id="up"> <span class="current"></span> <span></span> <span></span> <span></span>
+    <div class="clear"></div>
+  </div><!--end of up 居中导航条-->
+  <script type="text/javascript" src="../Public/js/choose.js"></script>
+  <script type="text/javascript" src="../Public/team_display/js/jquery.messager.js"></script>
+  <script type="text/javascript">
+    $(function() {
+        var message = "<?php echo $message; ?>";
+        if(message != "") {
+            $.messager.show("更新提醒", message, 0);
+        }
+    });
+    </script>
+<include file="Index:mainfooter"/>

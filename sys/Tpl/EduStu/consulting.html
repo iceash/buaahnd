@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript"> 
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	var category=jQuery('#category').val();
+	var url="__URL__/consulting";
+	if(searchkey!==''){
+		url=url+"/searchkey/"+searchkey;
+	}
+	if(category!==''){
+		url=url+"/category/"+category;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+function k(key){
+	var myDialog = art.dialog({
+		title: "在线阅读",
+		cancelVal: '关闭'
+	});
+	jQuery.ajax({
+		url: "__URL__/consultingMore/id/"+key,
+		success: function (data) {
+			myDialog.content(data);// 填充对话框内容
+		}
+	});
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/consulting">心灵家园</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="search">输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<html:select first="所有类别" options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+	<td style="width:260px"><a href="javascript:k('{$my.id}')">
+        <img width="150px" height="150px" src="{$my.titlepic|default='../Public/team_display/images/default_pic.jpg'}"></img>
+    </a></td>
+    <td style="width:400px;vertical-align:top;"><span style="font-size:15px;cursor:pointer;"><B><a href="javascript:k('{$my.id}')" style="color:black;text-decoration:none;" onmouseover="$(this).css('color','#c40000');" onmouseout="$(this).css('color','black');">{$my.title}</a></B></span>
+    <php>
+        $predate = date("Y-m-d",strtotime("-2 week"));
+        if($my["ctime"]>=$predate) {
+    </php>
+    <img src="../Public/team_display/images/new_tip.jpg"></img>
+    <php>}</php>
+    <p></p>
+     <span style="cursor:pointer;"><a href="javascript:k('{$my.id}')" style="color:black;text-decoration:none;" onmouseover="$(this).css('color','#c40000');" onmouseout="$(this).css('color','black');">{$my.summary}</a></span>
+    </td><td></td>
+	<td style="width:200px;vertical-align:top;">类别：{$my.category}</td>
+	<td><input type="button" value="阅读全文" onclick="k('{$my.id}');"></input></td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

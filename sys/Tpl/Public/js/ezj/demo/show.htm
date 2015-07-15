@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>show、pos、display - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+<style type="text/css">
+.show1Thumbnail{width:90px;}
+#show1{display:none;width:450px;height:300px;background-color:#ccc}
+#show1 img{width:450px;height:300px;}
+</style>
+</head>
+
+<body>
+
+<div class="section">
+  <h1>show、pos、display</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+      <div>
+          想要什么样的效果？
+          选择
+          <select id="showStart" size="1">
+            <option value="tl">左上角</option>
+            <option value="tr">右上角</option>
+            <option value="bl">左下角</option>
+            <option value="br">右下角</option>
+            
+            <option value="t">上边</option>
+            <option value="b">下边</option>
+            <option value="l">左边</option>
+            <option value="r">右边</option>
+            
+            <option value="tc">上边中心</option>
+            <option value="bc" selected="selected">下边中心</option>
+            <option value="lm">左边中心</option>
+            <option value="rm">右边中心</option>
+            
+            <option value="cm">中心</option>
+          </select>
+          然后将鼠标移到图片上：
+      </div>
+      <div>
+        <img src="images/big_1.jpg" alt="演示图片一" class="show1Thumbnail" />
+        <img src="images/big_2.jpg" alt="演示图片二" class="show1Thumbnail" />
+        <img src="images/big_3.jpg" alt="演示图片三" class="show1Thumbnail" />
+        <img src="images/big_4.jpg" alt="演示图片四" class="show1Thumbnail" />
+        <img src="images/big_5.jpg" alt="演示图片五" class="show1Thumbnail" />
+      </div>
+      <div id="show1"><img src="" alt="演示图片" id="show1Img" /></div>
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        $(".show1Thumbnail").mouseover(function(e){
+            show1Img.src = e.src;
+            show1.display(true);
+            show1.pos(e, "cto");
+            show1.show(showStart.sel()[0].value, "max", "fast");
+        });
+        $(".show1Thumbnail").mouseout(function(e){
+            show1.show("cur", "bc", "fast");
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+      <div>
+          想要什么样的效果？
+          选择
+          <select id="showStart" size="1">
+            <option value="tl">左上角</option>
+            <option value="tr">右上角</option>
+            <option value="bl">左下角</option>
+            <option value="br">右下角</option>
+            
+            <option value="t">上边</option>
+            <option value="b">下边</option>
+            <option value="l">左边</option>
+            <option value="r">右边</option>
+            
+            <option value="tc">上边中心</option>
+            <option value="bc" selected="selected">下边中心</option>
+            <option value="lm">左边中心</option>
+            <option value="rm">右边中心</option>
+            
+            <option value="cm">中心</option>
+          </select>
+          然后将鼠标移到图片上：
+      </div>
+      <div>
+        <img src="images/big_1.jpg" alt="演示图片一" class="show1Thumbnail" />
+        <img src="images/big_2.jpg" alt="演示图片二" class="show1Thumbnail" />
+        <img src="images/big_3.jpg" alt="演示图片三" class="show1Thumbnail" />
+        <img src="images/big_4.jpg" alt="演示图片四" class="show1Thumbnail" />
+        <img src="images/big_5.jpg" alt="演示图片五" class="show1Thumbnail" />
+      </div>
+      <div id="show1"><img src="" alt="演示图片" id="show1Img" /></div>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    $(".show1Thumbnail").mouseover(function(e){
+        show1Img.src = e.src;
+        show1.display(true);
+        show1.pos(e, "cto");
+        show1.show(showStart.sel()[0].value, "max", "fast");
+    });
+    $(".show1Thumbnail").mouseout(function(e){
+        show1.show("cur", "bc", "fast");
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

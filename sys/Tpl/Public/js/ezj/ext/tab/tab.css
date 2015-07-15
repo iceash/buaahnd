@@ -1,0 +1,18 @@
+﻿.ezj_ext_tab_titleContainer{margin:0px;padding:0px;zoom:1;}
+.ezj_ext_tab_contentContainer{clear:both;border-left:1px solid #849294;border-bottom:1px solid #849294;border-right:1px solid #849294;}
+.ezj_ext_tab_contentContainer{margin:0px;padding:0px;}
+
+.ezj_ext_tab_normalTitle,
+.ezj_ext_tab_hoverTitle,
+.ezj_ext_tab_activatedTitle{
+float:left;
+margin:0px;padding:0px;width:73px;height:21px;overflow:hidden;
+background-position:50% 0%;background-repeat:no-repeat;
+line-height:24px;font-size:13px;text-align:center;vertical-align:middle;
+list-style-type:none;list-style-image:none;
+font-family:宋体;
+cursor:default;}
+
+.ezj_ext_tab_normalTitle{background-image:url('normalTitle.png');}
+.ezj_ext_tab_hoverTitle{background-image:url('hoverTitle.png');}
+.ezj_ext_tab_activatedTitle{background-image:url('activatedTitle.png');}

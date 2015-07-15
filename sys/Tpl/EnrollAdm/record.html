@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('.calendar').calendar();	
+});
+
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"></div>
+  </tr>
+</table>
+<div class="main">
+		<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" ><a href="__URL__/student/enrollid/{$my.id}" class="blue">{$my.truename}</a>（录入于{$my.ctime}）</div>
+				<div class="people_do">
+				</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->		
+			<div class="record_detail">
+				<B>咨询记录：</B> &nbsp;
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="130">时间</th>
+    <th>内容</th>
+    <th width="100">记录人</td>
+  </tr>
+</thead>
+<tbody>
+  <volist name="enroll_record" id="my_record">
+  <tr>
+    <td>{$my_record.ctime}</td>
+    <td>{$my_record.content}</td>
+    <td>{$my_record.counselorname}</td>	
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+			</div><!--end of record_detail-->	
+		</div><!-- end of people-->	
+</div><!--end of main-->
+</body>
+</html>

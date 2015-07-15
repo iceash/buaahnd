@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.Xml - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.Xml</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <div>
+      XML 文件：
+      <input type="text" id="xmlUrl" value="inc/xml.htm.xml" />
+      <input type="button" id="xml1" value="XML 演示一" />
+    </div>
+    <div>
+      XML 文字：
+      <textarea id="xmlText" cols="50" rows="3">
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <name>ezj</name>
+  <item>Hello, ezj.</item>
+  <item>Hello, XML.</item>
+</root>&lt;/textarea&gt;
+      <input type="button" id="xml2" value="XML 演示二" />
+    </div>
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        xml1.click(function(){
+            var x = $x(xmlUrl.val());
+            alert("符合 XPath 的节点只有一个时，返回字符串。返回值：" + x.val("//name"),
+                  "符合 XPath 的节点有多个时，返回数组。返回值：" + x.val("//item"));
+        });
+        xml2.click(function(){
+            var x = $x(xmlText.val());
+            alert("符合 XPath 的节点只有一个时，返回字符串。返回值：" + x.val("//name"),
+                  "符合 XPath 的节点有多个时，返回数组。返回值：" + x.val("//item"));
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <div>
+      XML 文件：
+      <input type="text" id="xmlUrl" value="inc/xml.htm.xml" />
+      <input type="button" id="xml1" value="XML 演示一" />
+    </div>
+    <div>
+      XML 文字：
+      <textarea id="xmlText" cols="50" rows="3">
+<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <name>ezj</name>
+  <item>Hello, ezj.</item>
+  <item>Hello, XML.</item>
+</root></textarea>
+      <input type="button" id="xml2" value="XML 演示二" />
+    </div>
+  </div>
+  
+  <div class="block">
+    <h3>问答</h3>
+    <ul class="faq">
+      <li>
+        <p>问：本演示有部分怎么在 Chrome 中无效？</p>
+        <p>答：这是由于本演示有部分读取了菜单的 XML 文件，Chrome 中需要在 HTTP 协议下浏览，不能双击浏览。</p>
+      </li>
+	  <li>
+        <p>问：似乎 $x 的参数是不是既可以是 XML 文件地址，也可以是 XML 字符串，是这样吗？</p>
+        <p>答：是的。</p>
+      </li>
+      <li>
+        <p>问：进入 $x 的 XML 字符串是不是必须需要 XML 声明（&lt;?xml）？</p>
+        <p>答：不是的。可以要，也可以只是 XML 的一个片段，但必须只有一个根节点。</p>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    xml1.click(function(){
+        var x = $x(xmlUrl.val());
+        alert("符合 XPath 的节点只有一个时，返回字符串。返回值：" + x.val("//name"),
+              "符合 XPath 的节点有多个时，返回数组。返回值：" + x.val("//item"));
+    });
+    xml2.click(function(){
+        var x = $x(xmlText.val());
+        alert("符合 XPath 的节点只有一个时，返回字符串。返回值：" + x.val("//name"),
+              "符合 XPath 的节点有多个时，返回数组。返回值：" + x.val("//item"));
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

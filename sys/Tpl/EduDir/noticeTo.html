@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="StyleSheet" href="../Public/js/dtree/dtree.css" type="text/css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+	jQuery('#check').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+		if(this.checked==true){
+			jQuery('.mytable tbody tr').addClass('tr_selected');
+		}else{
+			jQuery('.mytable tbody tr').removeClass('tr_selected');
+		}
+	});
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要删除选择项吗？')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_add').click(function(){
+		jQuery('#stu').val(getStu());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/noticeToInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);	
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/noticeToDel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			deleteTr();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function deleteTr() {
+	jQuery('input[name=key]:checked').each(function(){
+		jQuery(this).parent("td").parent("tr").remove();
+	});	
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function getStu(){
+			var ids = "";
+            var form = document.getElementsByName('id');
+			for (var i=0; i<form.length; i++) {
+				var element = form[i];
+				if (element.name == "id" && element.type=='checkbox'){
+					if( element.checked == true ){
+						ids = ids + element.value + ",";
+					}
+				}
+			}
+			ids=ids.substring(0, ids.length-1);
+			return ids;
+		}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 当前通知：{$my.title}</div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+  <th width="5" height="30"><input type="checkbox" id="check"/></th>
+   <th>帐号</th>
+	<th>姓名</th>
+ 	 <th width="80">已阅读</th>
+	<th width="160">阅读时间</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="who" id="whomy">
+  <tr>
+  <td class="td_forselect"><input type="checkbox" name="key" value="{$whomy.id}"  /></td>
+   <td>{$whomy.readusername}</td>
+	<td>{$whomy.readtruename}</td>
+  <td><notempty name="whomy.readtime"><img src="../Public/images/ok.gif"/></notempty></td>
+	<td>{$whomy.readtime}</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除"  />&nbsp;
+  </div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+<div class="dtree" style="border: 1px solid #cccccc; background-color: #f3f3f3; padding: 5px; ">
+    <span style='position:absolute'>抄送给其他相关老师：</span>
+    <div style='margin-left:110px;margin-top:-3px'>
+        <table>
+            <volist name="Dir" id="dir" mod="7">
+                <td style="border-bottom:0px solid #B2B2B2"><input style="vertical-align:middle" type="checkbox" name="id" value='{$key}'/><label style="vertical-align:middle">{$dir}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+                    <eq name="mod" value="6"><tr></tr></eq>
+            </volist>
+        </table>
+    </div>
+<form id="form1">
+<input type="hidden" name="noticeid" value="{$my.id}" />
+<input type="hidden" name="stu" id="stu" value="" />
+	<input type="button" id="btn_add" value="抄送"  />&nbsp;
+</form>
+</div><!--end of dtree-->
+</div><!--end of main-->
+</body>
+</html>

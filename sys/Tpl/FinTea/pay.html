@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <include file="Index:title" />
+    <link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+    <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+    <script type="text/javascript">
+        jQuery(window).load(function(){
+        });
+        jQuery(function(){
+            jQuery('.calendar').calendar();
+            jQuery('#btn_save').click(function(){
+                jQuery.ajax({
+                    type:'POST',
+                    url:'__URL__/addPayinfo',
+                    dataType:'json',
+                    data:jQuery("#form1").serialize(),
+                    success: function(data){
+                        if (data.status==1){
+                            alert(data.info);
+                            window.location.reload();
+                        }else{
+                            alert(data.info);
+                        }
+                    }
+                });
+            });
+        })
+
+        function getStuInfo(){
+            var stuNo=jQuery('#stuNo').val();
+            if(stuNo==''){
+                alert('学生学号不能为空');
+            }else{
+                //jQuery("#enroll_info").load("__URL__/getStuInfo/",{Number:stuNo});
+                jQuery.getJSON('__URL__/getStuInfo/',{Number:stuNo},function(data){
+                    if(data.status==1){
+                        jQuery('#truename').val(data.data.truename);
+                    }else{
+                        alert(data.info);
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+    <tr>
+        <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+        <td width="80%" align="right"><div id="nav">
+        </div></td>
+    </tr>
+</table>
+<div class="main">
+    <div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 填写好“学生姓名”之后，点击旁边的“匹配”，并选上正确的匹配结果。</div>
+    <form id="form1"><input type="hidden" value="" name="susername" id="susername"/>
+        <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="t_item"><span class="mustfill">*</span>学生学号</td>
+                <td><input type="text" name="stuNo" id="stuNo" class="inputmid"/>&nbsp;<input type="button" value="匹配" onclick="getStuInfo();"/></td>
+            </tr>
+            <tr>
+                <td class="t_item">学生姓名</td>
+                <td><input type="text" id="truename" name="truename" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <td class="t_item">交费日期</td>
+                <td><input type="text" name="paytime" id="paytime" class="inputshort calendar" /></td>
+            </tr>
+            <tr>
+                <td class="t_item"><span class="mustfill">*</span>交费方式</td>
+                <td><empty name="paymode"><else /><html:select options="paymode" name="paymode" selected="select_paymode"/></empty></td>
+            </tr>
+            <tr>
+                <td class="t_item">交费金额</td>
+                <td><input type="text" name="paymoney" id="paymoney" class="inputmid"/></td>
+            </tr>
+            <tr>
+                <td class="t_item">发票号</td>
+                <td><input type="text" name="receiptno" id="receiptno" class="inputmid"/></td>
+            </tr>
+        </table>
+    </form>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+            <td></td></tr>
+    </table>
+</div><!--end of main-->
+</body>
+</html>

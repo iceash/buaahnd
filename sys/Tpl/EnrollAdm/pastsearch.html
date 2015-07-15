@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_border/my.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_border/nav.css">
+<script type="text/javascript" src="../Public/team_border/correctPng.js"></script>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+
+});
+jQuery(function(){ 
+	jQuery('.checkAll').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+	});
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要批量删除吗？删除后不可恢复！')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+});
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/pdel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+            window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function mysearch(){
+	var truename=jQuery('#truename').val();
+	var school=jQuery('#school').val();
+	var url="__URL__/pastsearch/year/{$year}";
+	if(truename!==''){
+		url=url+"/truename/"+truename;
+	}
+	if(school!==''){
+		url=url+"/school/"+school;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+function my_start(id){
+      window.location  =" __URL__/start/enrollid/"+id;
+}
+function my_record(id,statusid){
+      window.location  ="__URL__/pastrecord/statusid/"+statusid+"/year/{$year}/enrollid/"+id;
+}
+function my_del(id){
+	if (window.confirm('确定要删除此记录吗？删除后不可恢复！')){
+		jQuery.getJSON('__URL__/pdel/',{id:id},function(data){
+			if(data.status==1){
+				alert(data.info);
+				window.location.reload();
+			}else{
+				alert(data.info);
+			}	
+		});
+	}
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><span class="one"></span><a href="__URL__/paststatus/year/{$year}" class="on">按招生进程查看</a>
+    <span class="two"></span><a href="__URL__/pastteacher/year/{$year}" class="topnav">按老师查看</a>
+    <span class="two"></span><a href="__URL__/pastschool/year/{$year}" class="topnav">按所在地查看</a>
+    <span class="three"></span>
+    </div>
+	</td>
+   
+  </tr>
+</table>
+<div style=" margin-top:-20px;">
+<ul class="list_nopic">
+   <li><span class="line"><a href="__URL__/paststatus/year/{$year}" >招生进程图</a></span>&nbsp;|&nbsp;<div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastcategory/statusid/5/year/{$year}">尚未分配</a></span>&nbsp;|&nbsp;<div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastcategory/statusid/0/year/{$year}">新分配</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastcategory/statusid/1/year/{$year}">正在咨询</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastcategory/statusid/2/year/{$year}">已交报名费</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastcategory/statusid/3/year/{$year}">已录取</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastcategory/statusid/4/year/{$year}">不录取</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pastsearch/year/{$year}" style="font-weight:bold; color: black;">搜索</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>
+   <li><span class="line"><a href="__URL__/pasttoExcel/year/{$year}">导出数据</a>&nbsp;|&nbsp;</span><div class="clear"></div></li>   
+</ul>
+</div>
+<div class="clear"></div>
+
+<div class="main" style="margin:10px auto;width:98%">
+<div style=" text-align:center">输入“学生姓名或学校名称”关键字：<input type="text" value="{$truename}" id="truename" name="truename" onkeydown="searchkeydown(event)"/>&nbsp;<html:select first="不限高中所在地区" options="city_fortag" name="school" id="school" selected="city_select"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<div class="page">{$page}</div>
+	<volist name="my" id="my">
+		<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" >
+                <input type="checkbox" name="key" value="{$my.id}"  />
+                <a href="__URL__/paststudent/enrollid/{$my.id}/year/{$year}" class="blue">{$my.truename}</a>（最近咨询时间：{$my.rtime} 录入：{$my.fill} 咨询：{$my.counselorname} 状态：{$my.statustext}）</div>
+				<div class="people_do">
+		<!--			<eq name="my.status" value="z">
+						<input type="button" value="删除记录" onclick="my_del({$my.id});"/>&nbsp;
+						<input type="button" value="启动分配" onclick="my_start({$my.id});"/>			
+					</eq>
+        -->
+					
+						<input type="button" value="咨询记录" onclick="my_record({$my.id},{$my.status})"/>
+                        <input type="button" value="删除" onclick="my_del({$my.id});"/>
+					
+				</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->
+			<div class="people_detail"><B>性别：</B>{$my.sex}&nbsp;
+				<B>民族：</B>{$my.nationality} &nbsp;
+				<B>出生日期：</B>{$my.birthday|toDate='Y年m月d日'} &nbsp;
+				<B>身份证号码：</B>{$my.idcard} &nbsp;<br />
+				<B>家庭住址：</B>{$my.address} &nbsp;
+				<B>籍贯：</B>{$my.nativeprovince} {$my.nativecity}&nbsp;
+				<B>毕业学校：</B>{$my.schoolprovince} {$my.schoolcity} {$my.schoolname}&nbsp;<br />
+				<B>手机：</B>{$my.mobile} &nbsp;
+				<B>QQ：</B>{$my.qq} &nbsp;
+				<B>Email：</B>{$my.email}&nbsp;
+			</div><!--people_detail-->	
+				
+			
+		</div><!--end of people-->
+	</volist>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><label><input type="checkbox" class="checkAll"/>全选</label> <input type="button" id="btn_del" value="批量删除"  />&nbsp;</div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

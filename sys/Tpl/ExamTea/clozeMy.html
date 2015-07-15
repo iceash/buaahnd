@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+});
+
+function k(key){
+	window.location="__URL__/viewCloze/id/"+key;
+}
+function k2(key){
+	window.location="__URL__/editCloze/id/"+key;
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	window.location="__URL__/clozeMy/searchkey/"+searchkey;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/cloze">所有完型填空题</a> | 
+	<a href="__URL__/clozeMy" class="on">我录入的题目</a> | 
+	<a href="__URL__/addCloze">新建题目</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="search">输入编号或题目关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>&nbsp;<html:select first="所有难度" options="level" name="level" selected="mylevel" change="location.href='__URL__/fillMy/level/'+this.options[this.selectedIndex].value;"/></div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+	<th width="50">编号</th>
+    <th>题目</th>
+    <th width="50">难度</th>
+    <th width="80">录入者</th>
+	<th width="80">录入时间</th>
+	<th width="160">操作</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+	<td>{$my.id}</td>
+    <td>{$my.article}</td>
+    <td>{$my.level}</td>
+    <td>{$my.truename}</td>
+	<td>{$my.ctime|toDate='Y-m-d'}</td>
+	<td><input type="button" value="预览" onclick="k('{$my.id}');" />&nbsp;<input type="button" value="修改" onclick="k2('{$my.id}');" /></td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

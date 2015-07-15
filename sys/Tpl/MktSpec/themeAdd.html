@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+    jQuery('.calendar').calendar();
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/themeInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+    jQuery('#btn_add').click(function(){
+    jQuery.ajax({
+			type:'POST',
+			url:'__URL__/themeInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location="__URL__/itemAdd";
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+</script>
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div style="margin:auto 40%;">
+<form id="form1">
+<table>
+<tr>
+<td><span class="mustfill">*</span>问卷主题</td>
+<td><input type="text" name="theme" value=""></input></td>
+</tr>
+ <tr>
+    <td><span class="mustfill">*</span>开始时间</td>
+    <td><input class="inputshort  calendar" name="beginTime" type="text" readonly="readonly"/></td>
+   </tr>
+    <tr>
+    <td><span class="mustfill">*</span>结束时间</td>
+    <td><input class="inputshort  calendar" name="endTime" type="text" readonly="readonly"/></td>
+   </tr>
+</table>
+<div class="aui_buttons" style=""><button type="button" id="btn_save">保存</button><button type="button" id="btn_add">保存并添加题目</button></div>
+</form>
+</div>
+</body>

@@ -1,0 +1,18 @@
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function() {
+    jQuery('#check').click(function(){
+        jQuery('[name=classid[]]:checkbox').attr('checked',this.checked);
+    });
+});
+</script>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="mustfill">*</span><input type="checkbox" id="check"/>Total Class</td>
+        <table>
+        <volist name="my1" id="vol" mod="3" >
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="classid[]" value="{$vol.id}" />{$vol.ename}</td>
+            <eq name="mod" value="2"><tr></tr></eq>
+            
+        </volist>
+        </table>

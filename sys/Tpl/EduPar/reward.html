@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/blue">奖惩记录</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th>奖惩情况</th>
+    <th width="130">登记时间</td>
+	<th width="130">登记人</td>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+    <td>{$my.content|nl2br}</td>
+    <td>{$my.ctime}</td>
+	<td>{$my.ttruename}</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

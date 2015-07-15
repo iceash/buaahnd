@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.checker、ezj.ext.watermark - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.checker、ezj.ext.watermark</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <div>姓名：<input type="text" id="fullName" class="watermark" title="1-10 位英文或 1-5 位中文" /><span id="nameInfo"></span></div>
+    <div>密码：<input type="text" id="password" class="watermark" title="8-12 位" /><span id="passwordInfo"></span></div>
+    <div>年龄：<input type="text" id="age" class="watermark" title="14-20 之间的数字" /><span id="ageInfo"></span></div>
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        ezj.ext.watermark(".watermark");
+        
+        fullName.leave(function(e){
+            nameInfo.val(ezj.checker.check(e.val(), true, "varchar", 1, 10) ? "符合" : "不符合");
+        });
+        
+        password.leave(function(e){
+            passwordInfo.val(ezj.checker.check(e.val(), true, "nvarchar", 8, 12) ? "符合" : "不符合");
+        });
+        
+        age.leave(function(e){
+            ageInfo.val(ezj.checker.check(e.val(), true, "int", 14, 20) ? "符合" : "不符合");
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <div>姓名：<input type="text" id="fullName" class="watermark" title="1-10 位英文或 1-5 位中文" /><span id="nameInfo"></span></div>
+    <div>密码：<input type="text" id="password" class="watermark" title="8-12 位" /><span id="passwordInfo"></span></div>
+    <div>年龄：<input type="text" id="age" class="watermark" title="14-20 之间的数字" /><span id="ageInfo"></span></div>
+  </div>
+  
+  <div class="block">
+    <h3>问答</h3>
+    <ul class="faq">
+      <li>
+        <p>问：怎么上面“密码”显示的是明文？</p>
+        <p>答：为了更好地演示 ezj.ext.watermark，这里密码使用明文。注意 IE 中 input 一旦插入了文档流，就无法再使用 JavaScript 更改其 type 值。</p>
+      </li>
+      <li>
+        <p>问：上面每个 ezj.ext.checker 的第二个参数都是 true，是什么意思？</p>
+        <p>答：表示该值为必填值。</p>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    ezj.ext.watermark(".watermark");
+    
+    fullName.leave(function(e){
+        nameInfo.val(ezj.checker.check(e.val(), true, "varchar", 1, 10) ? "符合" : "不符合");
+    });
+    
+    password.leave(function(e){
+        passwordInfo.val(ezj.checker.check(e.val(), true, "nvarchar", 8, 12) ? "符合" : "不符合");
+    });
+    
+    age.leave(function(e){
+        ageInfo.val(ezj.checker.check(e.val(), true, "int", 14, 20) ? "符合" : "不符合");
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

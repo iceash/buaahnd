@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<item text="" value="0">
+    <item text="ezj" value="1">
+        <item text="JavaScript 扩展部分" value="2">
+            <item text="Object.is" value="3"></item>
+            <item text="Object.prop" value="4"></item>
+            <item text="更多" value="5"></item>
+        </item>
+        <item text="ezj 命名空间部分" value="6">
+            <item text="ezj.cookie" value="7"></item>
+            <item text="ezj.css" value="8"></item>
+            <item text="更多" value="9"></item>
+        </item>
+        <item text="ezj.ext 命名空间部分" value="10">
+            <item text="ezj.ext.calendar" value="11"></item>
+            <item text="ezj.ext.cancelable" value="12"></item>
+            <item text="更多" value="13"></item>
+        </item>
+    </item>
+</item>

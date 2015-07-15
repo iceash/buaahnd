@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script language="javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('.checkAll').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+	});
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要批量分配吗？')){			
+			window.location='__URL__/start/enrollid/'+getSelectCheckboxValues();
+		}
+	});
+});
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+
+function my_start(id){
+      window.location  =" __URL__/start/enrollid/"+id;
+}
+function my_record(id){
+      window.location  =" __URL__/record/enrollid/"+id;
+}
+function my_change(id){
+      window.location  =" __URL__/change/enrollid/"+id;
+}
+function my_del(id){
+	if (window.confirm('确定要删除此记录吗？')){
+		jQuery.getJSON('__URL__/del/',{enrollid:id},function(data){
+			if(data.status==1){
+				alert(data.info);
+				window.location.reload();
+			}else{
+				alert(data.info);
+			}	
+		});
+	}
+}
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/status">招生进程图</a> | 
+	<a href="__URL__/category/statusid/5" <if condition="$statusid eq 5 ">class="on"</if> >尚未分配</a> | 
+	<a href="__URL__/category/statusid/0" <if condition="$statusid eq 0 ">class="on"</if> >新分配</a> | 
+	<a href="__URL__/category/statusid/1" <if condition="$statusid eq 1 ">class="on"</if> >正在咨询</a> | 
+	<a href="__URL__/category/statusid/2" <if condition="$statusid eq 2 ">class="on"</if> >已交报名费</a> | 
+	<a href="__URL__/category/statusid/3" <if condition="$statusid eq 3 ">class="on"</if> >已录取</a> | 
+	<a href="__URL__/category/statusid/4" <if condition="$statusid eq 4 ">class="on"</if> >不录取</a> | 
+	<a href="__URL__/search">搜索</a> | <a href="__URL__/toExcel">导出数据</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+	<volist name="my" id="my">
+		<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" >
+				<eq name="statusid" value="5"><input type="checkbox" name="key" value="{$my.id}"  />
+                    <a href="__URL__/student/enrollid/{$my.id}" class="blue">{$my.truename}</a>（入库于：{$my.ctime} 录入：{$my.fill}）</eq>
+                <neq name="statusid" value="5">
+                    <a href="__URL__/student/enrollid/{$my.id}" class="blue">{$my.truename}</a>（最近咨询时间：{$my.rtime} 录入：{$my.fill} 咨询：{$my.counselorname}）</neq></div>
+				<div class="people_do" >
+					<eq name="my.status" value="z">
+						<input type="button" value="删除记录" onclick="my_del({$my.id});"/>&nbsp;
+						<input type="button" value="启动分配" onclick="my_start({$my.id});"/>			
+					</eq>
+					<neq name="my.status" value="z">
+						<input type="button" value="转移教师" onclick="my_change({$my.id});"/>&nbsp;
+						<input type="button" value="咨询记录" onclick="my_record({$my.id});"/>
+					</neq>
+				</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->
+			<div class="people_detail">性别：<U>{$my.sex}</U>&nbsp;
+				民族：<U>{$my.nationality}</U> &nbsp;
+				出生日期：<U>{$my.birthday|toDate='Y年m月d日'}</U> &nbsp;
+				身份证号码：<U>{$my.idcard}</U> &nbsp;
+				家庭住址：<U>{$my.address}</U> &nbsp;
+				籍贯：<U>{$my.nativeprovince} {$my.nativecity}</U>&nbsp;<br />
+				毕业学校：<U>{$my.schoolprovince} {$my.schoolcity} {$my.schoolname}</U>&nbsp;
+				手机：<U>{$my.mobile} </U>&nbsp;
+				父亲：<U>{$my.fname} {$my.fmobile}</U>&nbsp;
+				母亲：<U>{$my.mname} {$my.mmobile}</U>&nbsp;
+				其它联系人：<U>{$my.oname} {$my.omobile}</U>&nbsp;<br />
+				备注：<I>{$my.plus} </I>&nbsp;
+			</div><!--people_detail-->	
+		</div><!--end of people-->
+	</volist>
+	<div class="line"></div>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><eq name="statusid" value="5"><label><input type="checkbox" class="checkAll"/>全选</label> <input type="button" id="btn_del" value="批量分配"  />&nbsp;</div></eq></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

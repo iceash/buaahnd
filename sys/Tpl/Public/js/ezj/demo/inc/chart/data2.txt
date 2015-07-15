@@ -1,0 +1,32 @@
+﻿{
+  "elements": [
+    {
+      "type": "bar_filled",
+      "colour": "#E2D66A",
+      "outline-colour": "#577261",
+      "values": [
+        254,
+        90,
+        10,
+        6,
+        5,
+        4,
+        899,
+        2,
+        1
+      ]
+    }
+  ],
+  "title": {
+    "text": "今天"
+  },
+  "bg_colour": "#FFFFFF",
+  "y_axis":{
+    "stroke":      4,
+    "tick_length": 3,
+    "colour":      "#d000d0",
+    "grid_colour": "#00ff00",
+    "offset":      0,
+    "max":         900
+  }
+}

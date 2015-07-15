@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery('#content').val(editor.html());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/homeworkInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location='__URL__/homework';
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="content"]', {
+					uploadJson : '__APP__/Upload/uploadForKindeditor',
+					allowFileManager : false
+				});
+				K('input[name=setSummary]').click(function(e) {
+					jQuery('#summary').val(editor.selectedHtml());
+				});
+				
+			});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/homework">作业</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item">作业标题</td>
+    <td>{$my.title}</td>
+   </tr>
+   <tr>
+    <td class="t_item">作业要求</td>
+    <td>{$my.content}</td>
+   </tr>
+  <empty name="my.score">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>我的提交内容</td>
+    <td><textarea name="content" id="content" style="width:750px;height:400px;">{$my.subcontent}</textarea>
+	</td>
+   </tr>
+  </empty>
+   <notempty name="my.score">
+    <tr>
+    <td class="t_item">我的提交内容</td>
+    <td>{$my.subcontent}
+	</td></tr>
+   </notempty>
+         <tr>
+    <td class="t_item">教师评语</td>
+    <td><empty name="my['comment']">老师尚未给予评语<else />{$my.comment}</empty>
+	</td>
+   </tr>
+     <tr>
+    <td class="t_item">教师修改内容</td>
+    <td><empty name="my['correct']">老师没有修改本次作业<else />{$my.correct}</empty>
+	</td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"> <empty name="my.score"><input type="button" id="btn_save" value="提交"  /> 教师批改后将不能修改，请仔细检查后提交 </empty></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

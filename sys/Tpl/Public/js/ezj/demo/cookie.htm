@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.cookie - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.cookie</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    Cookie 名称：<input type="text" id="cookieName" value="cn" />
+    Cookie 值：<input type="text" id="cookieValue" value="ezj" />
+    <input type="button" id="write" value="写入 Cookie" />
+    <input type="button" id="read" value="读取 Cookie" />
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        write.click(function(){
+            ezj.cookie.write(cookieName.val(), cookieValue.val());
+            alert("写入完成，可单击“读取 Cookie”按钮进行读取测试。");
+        });
+        read.click(function(){
+            alert(ezj.cookie.read(cookieName.val()));
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    Cookie 名称：<input type="text" id="cookieName" value="cn" />
+    Cookie 值：<input type="text" id="cookieValue" value="ezj" />
+    <input type="button" id="write" value="写入 Cookie" />
+    <input type="button" id="read" value="读取 Cookie" />
+  </div>
+  
+  <div class="block">
+    <h3>问答</h3>
+    <ul class="faq">
+      <li>
+        <p>问：如何指定 Cookie 的过期时间？</p>
+        <p>答：默认情况下，Cookie 在关闭浏览器后即失效，若要指定特定的过期时间，请为 ezj.cookie.write 指定第三个参数，比如：ezj.cookie.write("name", "value", 1000); 表示从现在开始算，一千秒后过期。</p>
+      </li>
+      <li>
+        <p>问：这个 expires 参数，我总记不清其单位是秒还是毫秒，还是分，还是其他什么的？</p>
+        <p>答：如果记不得这个 expires 单位是什么，可用指定单位的字符串表示，比如：365d 表示 365 天。可用的单位有：s、n、h、d 分别表示秒、分、时、天。注意，即使带了单位，也不要用小数，比如不要用 1.5d，可改为 36 小时的表示方法 36h。</p>
+      </li>
+      <li>
+        <p>问：如何指定 Cookie 的 path？</p>
+        <p>答：默认情况下，Cookie 的有效区域是当前目录及子目录，要改变目录，请为 ezj.cookie.write 指定第四个参数，比如：ezj.cookie.write("name", "value", null, "/"); 表示这个 Cookie 在整个网站均有效，这里第三个参数指定为 null 相当于关闭浏览器后即失效。</p>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    write.click(function(){
+        ezj.cookie.write(cookieName.val(), cookieValue.val());
+        alert("写入完成，可单击“读取 Cookie”按钮进行读取测试。");
+    });
+    read.click(function(){
+        alert(ezj.cookie.read(cookieName.val()));
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

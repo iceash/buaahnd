@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script language="javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/changeTeacher',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);	
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+
+</script> 
+
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/teacher">咨询老师</a> | 
+	<a href="__URL__/fill">填表人</a> | 
+	<a href="__URL__/school" class="on">高中所在地区</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th>高中所在地区</th>
+	<th width="65">尚未分配</th>
+    <th width="65">新分配</th>
+	<th width="65">正在咨询</th>
+	<th width="65">已交报名费</th>
+	<th width="65">已录取</th>
+	<th width="65">不录取</th>
+	<th width="65">总共</th>
+	<th width="65">录取率</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="a" id="a">
+  <notempty name="a['status6']">
+  <tr>
+    <td>{$a.region_name}</td>
+	 <td align="right"><a href="__URL__/categoryForSchool/statusid/z/region_name/{$a.region_name}">{$a.status5}</a></td>
+	  <td align="right"><a href="__URL__/categoryForSchool/statusid/0/region_name/{$a.region_name}">{$a.status0}</a></td>
+	   <td align="right"><a href="__URL__/categoryForSchool/statusid/1/region_name/{$a.region_name}">{$a.status1}</a></td>
+	    <td align="right"><a href="__URL__/categoryForSchool/statusid/2/region_name/{$a.region_name}">{$a.status2}</a></td>
+		 <td align="right"><a href="__URL__/categoryForSchool/statusid/3/region_name/{$a.region_name}">{$a.status3}</a></td>
+		  <td align="right"><a href="__URL__/categoryForSchool/statusid/4/region_name/{$a.region_name}">{$a.status4}</a></td>
+		  <td align="right">{$a.status6}</td>
+		  <td align="right">{$a.status7}</td>
+  </tr>
+  </notempty>
+  </volist>
+ <tbody>
+ </table>
+   <p></p>
+</div><!--end of main-->
+</body>
+</html>

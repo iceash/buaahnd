@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ext.keylighter - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ext.keylighter</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <div id="keylighter">
+      <p>我们可能需要高亮文中的关键词，比如给予从搜索引擎过来的人明确关键词。</p>
+      <p>要实现关键词高亮，并不是用 replace 一句这么简单。</p>
+        <ul>
+          <li>首先，我们要剔除 HTML 标签名称或属性；</li>
+          <li>其次，我们要剔除 input、textarea 等标签中的内容，因为它们无法被高亮；</li>
+          <li>再次，我们要保证替换后大小写不变。</li>
+        </ul>
+      <p>所以，用 ezj.ext.keylighter 来解决您的烦恼吧。</p>
+    </div>
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ext.keylighter("keylighter", ["关键词", "高亮", "keylighter"], ["#f00", "#0f0", "#00f"], ["#0ff", "#f0f", "#ff0"]);
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <div id="keylighter">
+      <p>我们可能需要高亮文中的关键词，比如给予从搜索引擎过来的人明确关键词。</p>
+      <p>要实现关键词高亮，并不是用 replace 一句这么简单。</p>
+        <ul>
+          <li>首先，我们要剔除 HTML 标签名称或属性；</li>
+          <li>其次，我们要剔除 input、textarea 等标签中的内容，因为它们无法被高亮；</li>
+          <li>再次，我们要保证替换后大小写不变。</li>
+        </ul>
+      <p>所以，用 ezj.ext.keylighter 来解决您的烦恼吧。</p>
+    </div>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+$(window).ready(function(){
+    ezj.ext.keylighter("keylighter", ["关键词", "高亮", "keylighter"], ["#f00", "#0f0", "#00f"], ["#0ff", "#f0f", "#ff0"]);
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<style type="text/css">
+#currency_result{ font-size:16px;}
+</style>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+jQuery('#btn_save').click(function(){
+	jQuery('#currency_result').html('正在查询中...');
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/rateGet',
+		dataType:'json',
+		data:jQuery("#form1").serialize(),
+		success: function(data){
+			if (data.status==1){
+				jQuery('#currency_result').html(data.info);
+			}else{
+				jQuery('#currency_result').html(data.info);
+			}
+		}
+	});
+});
+});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__APP__/Index" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/rate">汇率查询</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> （1）填写需要兑换的数量，并选择货币类型。（2）数据实时更新，与全球最新汇率保持同步。</div>
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td><input type="text" name="num" id="num" class="inputshort" value="100"/>&nbsp;
+	<html:select options="currency" name="from" id="from" first="请选择" selected="selected_1"/>&nbsp;兑换为&nbsp;
+	<html:select options="currency" name="to" id="to" first="请选择" selected="selected_2"/>&nbsp;</td>
+  </tr>
+
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="查询"  /></div></td>
+  <td></td></tr>
+ </table>
+ <div id="currency_result"></div>
+</div><!--end of main-->
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"> 学号：<u>{$id}</u> 姓名：<u>{$stuname}</u></div>
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+<volist name="my" id="temp">
+
+  <tr> 	
+    <th width="35%">{$temp['0'].term}</th>
+	<th width="15%" >课时</th>
+	<th width="15%" >学分</th>
+    <th width="15%" >成绩</th>
+	<th width="20%">任课教师</th>
+  </tr>
+ 	 <volist name="temp" id="my">
+  <tr>
+    <td>{$my.coursename}</td>
+	<td>{$my.coursetime}</td>
+	<td>{$my.credit}</td>
+	<td><eq name="my.ispublic" value="1">{$my.score}</eq></td>
+	 <td>{$my.ttruename}</td>
+  </tr>
+  </volist>
+
+
+  </volist> </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td height="40"><empty name="my"><p align="center"><img src="../Public/images/info.gif" align="absmiddle" /> 暂无成绩记录。</p></empty></td>
+  <td></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

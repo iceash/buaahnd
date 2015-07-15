@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<style type="text/css">
+.mytable th{background:#EBEBEB}
+</style>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+});
+function slide(name){
+    var res=jQuery('tr[name="'+name+'"]');
+    if(res.is(":visible")){
+        res.hide();
+    }else{
+        res.parent().find('.cname').hide();
+        res.show();
+    }
+  }
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$result1.id}" name="id" /><input type="hidden" value="0" id="issubmit" name="issubmit"/>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td colspan="2" style="color: #990000;"><img src="../Public/images/info.gif" align="absmiddle" /> Operating Instructions: Final results according centesimal system or Final results according hierarchical system is the result which display to students and generate transcript, as a result, please fill either out completely.</td></tr>
+  <tr><td colspan="2"><img src="../Public/images/info.gif" align="absmiddle" />To switch the results filling page, use the up and down arrows of the keyboard.</td></tr>
+  <tr><td colspan="2"><img src="../Public/images/info.gif" align="absmiddle" /> Click&nbsp;<img src='../Public/team_padding/bianji.png' />&nbsp;icon can modify scores of the final examination and the name of the examination and click&nbsp;<img src='../Public/team_padding/tianjia.gif' />&nbsp;icon can add usual exam while &nbsp;<img src='../Public/team_padding/shanchu.jpg' />&nbsp;icon means delete usual exam. </td></tr>
+  <tr><td><div class="btn_zone">Unit：<u>{$result1.coursenumber} [{$result1.ename}]</u> Teacher：<u>{$result1.teacher} [{$result1.tename}]</u> Semester：<u>{$result1.term}</u> Class hour：<u>{$result1.coursetime}</u> Credits：<u>{$result1.credit}</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="../Public/images/xls.gif" align="absmiddle"/><a href="__URL__/downScore2/id/{$result1.id}">[Export xls file]</a></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="150">Class</th>
+   <th>Student Number</th>
+	<th>Student Name</th>
+ 	 <th>Final Results (according centesimal system)</th>
+      <th>Final Results (according hierarchical system)</th>
+	  <th width="42">Notes</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="class" id="classname">
+  <tr><td onclick="slide('{$key}')" style="border-bottom:0px;" ><a href='#' style="color:#003C74;">{$key}</a></td></tr>
+  <volist name="classname" id="my">
+  <tr name='{$my.classename}' style="display:none;"  class="cname">
+  <td></td>
+   <td>{$my.susername}</td>
+	<td>{$my.sename}</td>
+ 	<td><input type="text" name="score{$my.id}" class="inputshort" value="{$my.score}" disabled="disabled" style="width:80px;"/>
+    </td>
+    <td><input type="text" name="levelscore{$my.id}" class="inputshort" value="{$my.levelscore}" disabled="disabled" style="width:80px;"/>
+    </td>
+	<td>{$my.plus}</td>
+  </tr>
+  </volist>
+  </volist>
+ <tbody>
+ </table>
+  </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="Hold (Modification would be permitted)" disabled="disabled"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <input type="button" id="btn_sub" value="Submit (Modification would not be permitted)" disabled="disabled"/><span class="mustfill">（You grades have been sumbitted (to our system), please contact the teaching department，Foreign Language Faculty of Nanjing University if any change is needed.）</span></div>
+  </td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

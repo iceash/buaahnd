@@ -1,0 +1,86 @@
+@charset "utf-8";
+/* CSS Document */
+html{ height:100%}
+body { font-size:14px; color:#666; font-family:'Microsoft Yahei', Tahoma, Arial;background:#0A0A0A  url(../images/bgred.png) no-repeat center; margin:0; padding:0}
+input{ font-family:'Microsoft Yahei', Tahoma, Arial;}
+img{ border:0}
+ul,li,form{ padding:0; margin:0}
+li{ list-style:none}
+a:link,a:visited{color:#560A0A}
+a:hover{color:#A21513}
+.clear{display: block; clear: both; font-size:0}
+#focus{ background:#D4D4D4; text-align:center;}
+#message{padding:0px 10px;background:#990000; color:#FFFFFF; text-align:center; display:block}
+#inputzone{ position:relative; height:44px; width:300px;  margin-top:10px;}
+#login{ padding:15px; width:300px; top:50%; margin-top:-200px; left:50%; margin-left:-150px; position:absolute; background:#FFFFFF}
+#login_user{ margin-top:15px; }
+#login_password{}
+#login_user input{ width:280px; line-height:44px; height:44px;padding:0 10px; margin:0; font-size:16px; border:0; background:url(../images/logininput.gif) no-repeat center;}
+#login_password input{ width:280px; line-height:44px; height:44px;padding:0 10px; margin:0; font-size:16px; border:0; background:url(../images/logininput.gif) no-repeat center;}
+.login_label{ position:absolute; width:280px; height:44px;padding:0 10px;  line-height:44px;}
+#loginbtn{ width:25px; height:25px;position:absolute; right:10px; top:10px;}
+a.loginbtn_a:link,a.loginbtn_a:visited{background: url(../images/loginbtn.gif) center top no-repeat; display:block; width:25px; height:25px}
+a.loginbtn_a:hover{background: url(../images/loginbtn.gif) center top no-repeat; display:block; width:25px; height:25px}
+a.loginbtn_a:active {background:url(../images/loginbtn.gif) center bottom no-repeat; display:block; width:25px; height:25px}
+#logintips{ height:30px; margin-top:10px;line-height:30px; text-align:center;}
+
+#icontable p{color:#FFFFFF; font-size:18px;}
+.icon{ height:221px; color:#0066FF; background: url(../images/shadow250.png) no-repeat center bottom ; text-align:center; padding-top:79px;}
+.juzhong{ top:50%;  height:300px; position:absolute; margin-top:-170px; width:100%}
+#header{position:absolute; top:0px; height:60px; line-height:60px;text-align:right; padding-top:20px;font-size:16px;width:95%}
+.img_border{ padding:2px; border:1px solid #D1D1D1;border-radius: 10px;}
+#footer{position:absolute; bottom:0px; height:60px; line-height:60px;text-align:center; font-size:16px;width:100%;color:#72767E; font-size:12px; font-weight:normal}
+#footer a:link,#footer a:visited{color:#72767E; text-decoration:none; font-weight:bold}
+#footer a:hover{color:#ACB5C5; text-decoration:none;font-weight:bold}
+a.logout:link,a.logout:visited{color:#72767E; text-decoration:none;}
+a.logout:hover{color:#ACB5C5; text-decoration:none;}
+a.username:link,a.username:visited{ color:#D1D1D1; text-decoration:none;font-weight:bold}
+a.username:hover{ color:#FFFFFF; text-decoration:none;font-weight:bold}
+.inputlogin{ margin-top:10px; line-height:30px;}
+.inputlogin input{ width:280px; line-height:44px; height:44px;padding:0 10px; margin:0; font-size:16px; border:0; background:url(../images/logininput.png) no-repeat center;}
+#wrapper { overflow:hidden; height:315px;}
+#up .current {background-color:#ACB5C5;}
+#up { margin:0 auto; width:250px; padding-top:10px;}
+#up_left { position:relative;
+	margin-top:-160px;
+	margin-left:10px;
+	width:40px;
+	float:left;
+	height:60px;
+	background:url(../images/prev.png) no-repeat;
+}
+#up_right { position:relative;
+	margin-top:-160px;
+	margin-right:10px;
+	width:40px;
+	float:right;
+	height:60px;
+	background:url(../images/next.png) no-repeat;
+}
+div#up_right:hover {background:url(../images/next_a.png) no-repeat;}
+div#up_left:hover {background:url(../images/prev_a.png) no-repeat;}
+#up span{
+	cursor: pointer;
+    display: block;
+	float:left;
+	width:40px;
+	margin:0 10px;
+	height:10px;
+	background-color:#72767E;
+}
+#up span:hover{background-color:#ACB5C5;}
+#down {
+	position:relative;
+	width:100%;
+	height:300px;
+	float:left;
+	overflow:hidden;
+}
+#downContent {
+	position:absolute;
+	width:100%;
+	height:300px;
+	top:0px;
+	left:0px;
+
+}

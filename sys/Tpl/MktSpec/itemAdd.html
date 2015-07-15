@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" href="../Public/team_display/css/dtree.css" type="text/css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script language="JavaScript" src="../Public/team_display/js/dtree.js" type="text/javascript"></script>
+<script type="text/javascript" src="../Public/js/jquery.caretInsert.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+ jQuery('#item').setCaret();    
+     jQuery('#btn_i1').click(function(){    
+         jQuery('#item').insertAtCaret(' __________ ');    
+     });  
+});
+jQuery(function(){ 
+    jQuery('.calendar').calendar();
+	jQuery('#btn_save').click(function(){
+        if(getSelectCheckboxValues()==""){
+            alert("请选择调查对象");
+            return;
+        }
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/itemInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+                   jQuery.getJSON('__URL__/insertTarget/',{targetId:getSelectCheckboxValues(),themeId:jQuery('#themeId').val()},function(data){
+                        if(data.status==1){
+                            alert(data.info);
+                            window.location.reload();
+                        }else{
+                            alert(data.info);
+                        }
+                    });
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+    jQuery('#check1').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+	});
+    jQuery('#check2').click(function(){
+		jQuery('[name=key2]:checkbox').attr('checked',this.checked);
+	});
+    
+function getSelectCheckboxValues(){
+	var str1='';
+    var str2='';
+    var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str1+=$(this).val()+',';
+	});
+    jQuery('input[name=key2]:checked').each(function(){
+		str2+=$(this).val()+',';
+	});
+    str = str1+str2;
+	return str.substring(0, str.length-1);
+}
+jQuery('#theme').change(function(){
+    $("#themeId").attr("value",($(this).val()));
+});
+jQuery('#type').change(function(){
+    if($(this).val()=="问答"){
+        $("#item_fill").html("<span class='mustfill'>*</span>回答");
+    }else{
+        $("#item_fill").html("<span class='mustfill'>*</span>选项");
+    }
+});
+});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 选项只需要写具体内容即可，前面不需要写ABCD，每个选项一行</div>
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>问卷主题</td>
+    <td><html:select first="选择主题" options="theme_all" name="theme" id="theme"/>（先新建问卷主题再做选择）</td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>主题编号</td>
+    <td><input type="text" name="themeId" id="themeId"/>（选择问卷主题后，自动调用该主题编号）</td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>题目类型</td>
+    <td><html:select first="所有类型" options="category_fortag" name="type" id="type"/></td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>题目</td>
+    <td><input type="button" id="btn_i1" value="插入填空符"  /><br />
+	<textarea name="item" id="item" style="width:650px;height:100px;"></textarea></td>
+   </tr>
+    <tr>
+    <td class="t_item" id="item_fill"><span class="mustfill">*</span>选项</td>
+    <td><textarea name="options" id="options" style="width:650px;height:100px;"></textarea>
+	</td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>开始时间</td>
+    <td><input class="inputshort  calendar" name="beginTime" type="text" readonly="readonly"/></td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>结束时间</td>
+    <td><input class="inputshort  calendar" name="endTime" type="text" readonly="readonly"/></td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>调查对象</td>
+    <td valign="top">
+    <div>所有学生</div>
+    <div class="dtree">
+	<script type="text/javascript">
+		<!--
+		d = new dTree('d','../Public/js/dtree_original/');
+		d.add('0','-1','<label><input type="checkbox" id="check1" value="stu_all">学生</label>');
+	<volist name="dtree_year" id="dtree_year">
+		d.add('year{$dtree_year.year}','0','<label><input type="checkbox" name="key" value="{$dtree_year.year}">{$dtree_year.year}级</label>','');
+	</volist>
+	<volist name="dtree_class" id="dtree_class">
+		d.add('class{$dtree_class.id}','year{$dtree_class.year}','<label><input type="checkbox" name="key" value="{$dtree_class.id}">{$dtree_class.name}</label>','');
+	</volist>
+	<volist name="dtree_stu" id="dtree_stu">
+		d.add('{$dtree_stu.student}-{$dtree_stu.studentname}','class{$dtree_stu.classid}','<label><input type="checkbox" name="key" value="{$dtree_stu.student}">{$dtree_stu.student} {$dtree_stu.studentname}</label>','');
+	</volist>
+		d.closeAll();
+		d.config.target = "mainFrame";
+		document.write(d);
+		//-->
+	</script>
+</div>
+<hr style="height:1px;border:none;border-top:1px solid #ccc;">
+<div><label><input type="checkbox" id="check2" value="tea_all">所有老师</label></div>
+    <volist name="teacher" id="teacher">
+     <label><input type="checkbox" name="key2" value="{$teacher.teacher}">{$teacher.truename}</label>
+    </volist>
+        </td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

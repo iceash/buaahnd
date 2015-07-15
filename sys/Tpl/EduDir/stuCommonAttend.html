@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript">
+function k(key){
+	window.location="__URL__/StuCommonAttendEdit/id/"+key;
+}
+</script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+ <tr><td colspan="2"><div class="btn_zone" style="color:#900;"><img src="../Public/images/info.gif" align="absmiddle" /> 该学生共计[旷课]： {$truantSum}次  [事假]: {$tvacateSum}次  [病假]: {$svacateSum}次  [迟到]: {$lateSum}次 </div></td>
+  <td>&nbsp;</td></tr>
+ </table>
+	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="220">时间段</th>
+    <th>考勤情况</th>
+     <th width="55">旷课次数</th>
+    <th width="55">事假次数</th>
+    <th width="55">病假次数</th>
+    <th width="55">迟到次数</th>
+    <th width="130">登记时间</th>
+	<th width="70">登记人</th>
+    <th width="70">操作</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+    <td>{$my.timezone}</td>
+    <td>{$my.content}</td>
+    <td>{$my.truant}</td>
+    <td>{$my.tvacate}</td>
+    <td>{$my.svacate}</td>
+    <td>{$my.late}</td>
+    <td>{$my.ctime}</td>
+	<td>{$my.ttruename}</td>
+    <td><input type="button" value="详情" onclick="k('{$my.id}');" /></td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript">
+jQuery(function(){ 
+	jQuery('.calendar').live('click',function(){jQuery('.calendar').calendar({
+		zIndex:99999
+		})});
+});
+function k(key){
+	window.location="__URL__/StuCommonTalkEdit/id/"+key;
+}
+function fancy(){
+	art.dialog({
+	title:'谈话记录录入',
+    id: 'testID',
+    content:document.getElementById("talk"),
+  ok: function () {
+    	jQuery.ajax({
+			type:'POST',
+			url:'__URL__/stuCommonTalkInsert',
+			dataType:'json',
+			data:jQuery("#formtalk").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+        return false;
+    },
+    cancelVal: '关闭',
+    cancel: true //为true等价于function(){}
+});	
+}
+</script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<h3>谈话记录</h3><hr />
+<p><input type="button" onclick="fancy();" value="新增" /></p>
+	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="400">谈话内容</th>
+    <th width="130">谈话时间</td>
+	<th width="130">记录人</td>
+    <th width="100">操作</td>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+    <td>{$my.content}</td>
+    <td>{$my.time|substr=0,10}</td>
+	<td>{$my.ttruename}</td>
+    <td><input type="button" value="详情" onclick="k('{$my.id}');" /></td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+<div style="display:none;" id="talk"><form id="formtalk">
+<table>
+<tr><td width="70">*谈话时间</td><td><input type="text" name="time" class="inputshort calendar" /></td></tr>
+<tr><td>*谈话内容</td><td><textarea name="talkContent" style="width:320px; height:150px;"></textarea></td></tr>
+<input type="hidden" value="{$sid}" name="sid" />
+<!--<tr><td>记录人</td><td><input type="text" class="inputshort" name="teacher" /></td></tr>-->
+</table>
+</form></div><!--end of talk-->
+</body>
+</html>

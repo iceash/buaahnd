@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/enroll.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" href="../Public/js/kindeditor-4.1.1/themes/default/default.css" />
+<script type="text/javascript" src="../Public/team_border/correctPng.js"></script>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript">
+jQuery(window).load(function(){
+});
+jQuery(function(){
+    jQuery('#btn_save').click(function(){
+        jQuery.ajax({
+            type:'POST',
+            url:'__URL__/attendInsert',
+            dataType:'json',
+            data:jQuery("#form1").serialize(),
+            success: function(data){
+                if (data.status==1){
+                    alert(data.info);
+                }else{
+                    alert(data.info);
+                }
+            }
+        });
+    });
+});
+var editor;
+            KindEditor.ready(function(K) {            
+                var uploadbutton = K.uploadbutton({
+                    button : K('#uploadButton')[0],
+                    fieldName : 'imgFile',
+                    url : '__APP__/Upload/uploadForKindeditor?dir=file',
+                    afterUpload : function(data) {
+                        if (data.error === 0) {
+                            var url = K.formatUrl(data.url, 'absolute');
+                            K('#titlepic').val(url);
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    afterError : function(str) {
+                        alert('自定义错误信息: ' + str);
+                    }
+                });
+                uploadbutton.fileBox.change(function(e) {
+                    uploadbutton.submit();
+                });
+            });
+</script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right">
+    <!--
+    <div id="nav"><a href="__URL__/pEnroll" class="on">导入往年信息</a> | 
+	<a href="__URL__/pastPlus">补全招生信息</a></div>
+    -->
+    </td>
+  </tr>
+</table>
+<div class="main">
+    <hr>
+    <div style="margin:0 20px">
+    <p>请下载excel表格，填写后上传并点击最下方的“提交”按钮:</p>
+    <p><a href="../Public/team_border/info.xls">下载招生信息表模板</a></p>
+    </div>
+    <hr>
+    <div style="margin:0 20px">
+     <form id="form1">
+         <input type="text" name="titlepic" id="titlepic" class="inputlong" /> <input type="button" id="uploadButton" value="上传" />
+           <div class="btn_zone"><input type="button" id="btn_save" value="提交"  /></div>
+     </form>
+    </div>
+    </div>
+</div>
+</body>
+</html>

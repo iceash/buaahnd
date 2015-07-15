@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_display/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_display/js/jquery.masonry.min.js"></script>
+<script type="text/javascript" src="../Public/team_display/js/jquery.infinitescroll.js"></script>
+<script type="text/javascript"> 
+$(function(){  
+      $('#main').show();
+      $('#main').masonry({  
+        itemSelector : '.item'  
+      });  
+    $('#main').infinitescroll({
+//         navSelector : '.page', //分页导航的选择器
+//         nextSelector : '.page a', //下页连接的选择器
+        extraScrollPx: 300,
+        itemSelector : '.item', //你要检索的所有项目的选择器
+        loading: {
+                finishedMsg: '已经显示完所有照片',//结束显示信息
+                img: '../Public/team_display/images/ajax-loader.gif'//loading图片
+        }
+    }, function(newElements) {
+        // hide new items while they are loading
+        var $newElems = $( newElements ).css({ opacity: 0 });
+        // ensure that images load before adding to masonry layout
+        $newElems.imagesLoaded(function(){
+          // show elems now they're ready
+        $newElems.animate({ opacity: 1 });
+        $('#main').masonry( 'appended', $newElems, true ); 
+        });
+    });
+
+  }); 
+  
+function k(key){
+	window.location="__URL__/musicMore/id/"+key;
+}
+
+function changeTab(id,cate) {
+    window.location="__URL__/singer/id/"+id+"/category/"+cate;
+}
+function changeColor(id) {
+    if(id == "music") {
+       $("#music").css('color','#900'); 
+    }else if(id=="album"){
+        $("#album").css('color','#900');
+    }else if(id == "pic"){
+        $("#pic").css('color','#900');
+    }
+    
+}
+
+function returnColor(id){
+   if(id == "music") {
+       $("#music").css('color','black'); 
+    }else if(id=="album"){
+        $("#album").css('color','black');
+    }else if(id == "pic"){
+        $("#pic").css('color','black');
+    } 
+    $(".hover").css('color','#c40000');
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/music">音乐</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<table width="100%" border="0" class="utable_vtop" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" valign="top" width="240" style="border-bottom:0px;"><img src="{$singer.pic|default='../Public/team_display/images/default_pic.jpg'}"  width="100" height="100" align="absmiddle" /><br />
+{$singer.name}<br />
+<span style="color:red">歌手介绍：</span>{$singer.intro}
+</td>
+<td class="tab" style="border:0;line-height:28px;">
+   <ul>
+    <li id="music" style="width:25px;" onclick="changeTab({$singer.id},'music')" onmouseover="changeColor('music');" onmouseout="returnColor('music');">歌曲</li>
+    <li id="album" style="width:25px;" onclick="changeTab({$singer.id},'album')" onmouseover="changeColor('album');" onmouseout="returnColor('album');">专辑</li>
+    <li id="pic" style="width:25px;" class="hover" onclick="changeTab({$singer.id},'pic')" onmouseover="changeColor('pic');" onmouseout="returnColor('pic');">照片</li>
+   </ul>
+   
+</td>
+    <td style="width:590px;border-bottom:0px;">
+	<!--照片列表 start-->
+         <div id="main" class="clearfix" style="position:relative;display:none;">
+		    <volist name="my" id="my" mod="3">
+   				<div class="item" style="width:150px;position:absolute;">
+                    <img src="{$my.fileurl|default='../Public/team_display/images/default_pic.jpg'}" width="150px" align="absmiddle"/>
+               <eq name="mod" value="2"></eq>
+             </div>
+		    </volist>
+        </div>
+        </tr>
+		</table>
+	<!--照片列表 end-->
+	</td>
+   </tr>
+ </table>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

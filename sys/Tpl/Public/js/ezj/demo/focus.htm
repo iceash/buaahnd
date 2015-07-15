@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ext.focus、ezj.ext.focus2 - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ext.focus、ezj.ext.focus2</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <ul id="focus">
+      <li><a href="http://www.getezj.com/" title="标题一"><img src="images/big_1.jpg" alt="演示图片一" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题二"><img src="images/big_2.jpg" alt="演示图片二" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题三"><img src="images/big_3.jpg" alt="演示图片三" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题四"><img src="images/big_4.jpg" alt="演示图片四" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题五"><img src="images/big_5.jpg" alt="演示图片五" /></a></li>
+    </ul>
+    <ul id="focus2">
+      <li><a href="http://www.getezj.com/" title="标题一"><img src="images/big_1.jpg" alt="演示图片一" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题二"><img src="images/big_2.jpg" alt="演示图片二" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题三"><img src="images/big_3.jpg" alt="演示图片三" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题四"><img src="images/big_4.jpg" alt="演示图片四" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题五"><img src="images/big_5.jpg" alt="演示图片五" /></a></li>
+    </ul>
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ext.focus("focus", 450, 300);
+    ezj.ext.focus2("focus2", 450, 300);
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <ul id="focus">
+      <li><a href="http://www.getezj.com/" title="标题一"><img src="images/big_1.jpg" alt="演示图片一" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题二"><img src="images/big_2.jpg" alt="演示图片二" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题三"><img src="images/big_3.jpg" alt="演示图片三" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题四"><img src="images/big_4.jpg" alt="演示图片四" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题五"><img src="images/big_5.jpg" alt="演示图片五" /></a></li>
+    </ul>
+    <ul id="focus2">
+      <li><a href="http://www.getezj.com/" title="标题一"><img src="images/big_1.jpg" alt="演示图片一" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题二"><img src="images/big_2.jpg" alt="演示图片二" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题三"><img src="images/big_3.jpg" alt="演示图片三" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题四"><img src="images/big_4.jpg" alt="演示图片四" /></a></li>
+      <li><a href="http://www.getezj.com/" title="标题五"><img src="images/big_5.jpg" alt="演示图片五" /></a></li>
+    </ul>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+$(window).ready(function(){
+    ezj.ext.focus("focus", 450, 300);
+    ezj.ext.focus2("focus2", 450, 300);
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

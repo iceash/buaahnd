@@ -1,0 +1,12 @@
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+$('input:radio:first').attr('checked', 'checked');
+</script>
+<empty name="my">在南大HND库中查无此记录</empty>
+<volist id="my" name="my">
+<label>
+	<input type="radio" name="HND" value="{$my.susername}"/>姓名：{$my.struename} 学号：{$my.susername} <BR>
+</label>
+</volist>
+<br/><input type="button" value="确定" onclick="getStuInfo();"/>
+

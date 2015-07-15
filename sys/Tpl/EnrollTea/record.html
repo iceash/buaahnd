@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/paststatus/year/{$year}" >招生进程图</a> |
+   <a href="__URL__/pastcategory/statusid/5/year/{$year}" <if condition="$statusid eq 5 ">class="on"</if> >尚未分配</a> |
+   <a href="__URL__/pastcategory/statusid/0/year/{$year}" <if condition="$statusid eq 0 ">class="on"</if> >新分配</a> |
+  <a href="__URL__/pastcategory/statusid/1/year/{$year}" <if condition="$statusid eq 1 ">class="on"</if> >正在咨询</a> |
+   <a href="__URL__/pastcategory/statusid/2/year/{$year}" <if condition="$statusid eq 2 ">class="on"</if> >已交报名费</a> |
+   <a href="__URL__/pastcategory/statusid/3/year/{$year}" <if condition="$statusid eq 3 ">class="on"</if> >已录取</a> |
+   <a href="__URL__/pastcategory/statusid/4/year/{$year}" <if condition="$statusid eq 4 ">class="on"</if> >不录取</a> |
+   <a href="__URL__/pastsearch/year/{$year}">搜索</a> |
+  <a href="__URL__/pasttoExcel/year/{$year}">导出数据</a></div></td>
+  </tr>
+</table>
+<div class="main">
+		<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" ><a href="__URL__/paststudent/year/{$year}/statusid/{$my.status}/enrollid/{$my.id}" class="blue">{$my.truename}</a>（录入于{$my.ctime}）</div>
+				<div class="people_do">
+				</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->		
+			<div class="record_detail">
+				<B>咨询记录：</B> &nbsp;
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="130">时间</th>
+    <th>内容</th>
+    <th width="100">记录人</td>
+  </tr>
+</thead>
+<tbody>
+  <volist name="enroll_record" id="my_record">
+  <tr>
+    <td>{$my_record.ctime}</td>
+    <td>{$my_record.content}</td>
+    <td>{$my_record.counselorname}</td>	
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+            </div><!--end of record_detail-->
+        </div><!--end of people-->
+	<div class="page">{$page}</div>
+</div><!--end of main-->
+</body>
+</html>

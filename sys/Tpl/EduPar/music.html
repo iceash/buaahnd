@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+function k(key){
+	window.location="__URL__/musicMore/id/"+key;
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	var category=jQuery('#category').val();
+	var url="__URL__/music";
+	if(searchkey!==''){
+		url=url+"/searchkey/"+searchkey;
+	}
+	if(category!==''){
+		url=url+"/category/"+category;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/music">音乐</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div style="width:950px"><span>最新上传>> {$menu}</span><span style="float:right"><a href="__URL__/moreMusic/category/{$category_current}">更多</a></span></div><br></br>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+  <volist name="my" id="my">
+	<td style="height:70%;border:0px">
+        <img src="{$my.pic|default='../Public/team_display/images/default_pic.jpg'}"  width="150" height="150" align="absmiddle" onclick="window.location='__URL__/musicMore/id/{$my.id}';"/><br/>
+    <div style="text-align:center;width:150px;height:100px"><span><B><a href="__URL__/musicMore/id/{$my.id}">{$my.name}</a></B></span><br/>
+    <span><B><a href="__URL__/singer/id/{$my.singerid}">{$my.singer}</a></B></span></div></td>
+  </volist>
+</tr>
+ <tbody>
+ </table>
+ <div>
+    <span>热门歌手:</span><span style="margin-left:90%;display:block;"><a href="__URL__/AllSinger/">所有歌手</a></span><br></br>
+    <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+       <volist name="singer" id="singer">
+        <td><a href="__URL__/singer/id/{$singer.id}"><img src="{$singer.pic|default='../Public/team_display/images/default_pic.jpg'}"  width="150" height="150" align="absmiddle" /></a><br></br>
+        <div style="text-align:center;width:150px;height:100px"><span><B><a href="__URL__/singer/id/{$singer.id}">{$singer.name}</a></B></span></div></td>
+      </volist>
+      </tr>
+    <tbody>
+    </table>
+ </div>
+
+</div><!--end of main-->
+</body>
+</html>

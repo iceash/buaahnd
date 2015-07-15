@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+	
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/updateExam',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+
+});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/exam">所有测试</a> | 
+	<a href="__URL__/addExam">新建测试</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0"  style="word-break:break-all;">
+  <tr>
+    <td class="t_item">测试日期</td>
+    <td>{$my.testtime|toDate='Y-m-d'}</td>
+  </tr>
+   <tr>
+    <td class="t_item">学生姓名</td>
+    <td>{$my.name}</td>
+  </tr>
+   <tr>
+    <td class="t_item">手机号码</td>
+    <td>{$my.mobile}</td>
+  </tr>
+   <tr>
+    <td class="t_item">答题码</td>
+    <td>{$my.code}</td>
+  </tr>
+   <tr>
+    <td class="t_item">抽取规则</td>
+    <td><html:select first="请选择" options="rule" name="ruleid" selected="my['ruleid']"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">答题时间</td>
+    <td>{$my.ctime}</td>
+  </tr>
+   <tr>
+    <td class="t_item">提交时间</td>
+    <td>{$my.subtime}</td>
+  </tr>
+   <tr>
+    <td class="t_item">考卷</td>
+    <td>{$my.paper}</td>
+  </tr>
+   <tr>
+    <td class="t_item">客观题答卷</td>
+    <td>{$my.answer1|nl2br}</td>
+  </tr>
+  <tr>
+    <td class="t_item">试卷分析之选择题</td>
+    <td>{$my.result1|explainResult}</td>
+  </tr>
+   <tr>
+    <td class="t_item">试卷分析之填空题</td>
+    <td>{$my.result2|explainResult}</td>
+  </tr>
+  <tr>
+    <td class="t_item">试卷分析之完型填空题</td>
+    <td>{$my.result5|explainResult}</td>
+  </tr>
+   <tr>
+    <td class="t_item">试卷分析之阅读题</td>
+    <td>{$my.result3|explainResult}</td>
+  </tr>
+  <tr>
+    <td class="t_item">客观题得分</td>
+    <td>{$my.mscore}</td>
+  </tr>
+   <tr>
+    <td class="t_item">作文题</td>
+    <td>{$my.answer2|nl2br}</td>
+  </tr>
+    <tr>
+    <td class="t_item">作文得分</td>
+    <td><present name="my.pscore">{$my.pscore}<else /><input type="text" name="pscore" class="inputshort"/>（提交后将不能修改，请仔细填写）<input type="button" id="btn_save" value="提交"  /></present></td>
+  </tr>
+   <tr>
+    <td class="t_item">总分</td>
+    <td>{$my.score}</td>
+  </tr>
+ </table>
+ </form>
+
+</div><!--end of main-->
+</body>
+</html>

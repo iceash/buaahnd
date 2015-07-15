@@ -1,0 +1,38 @@
+.ezj_ext_combobox_text
+{
+    margin:0px;
+    padding:0px;
+    vertical-align:middle;
+    border:1px solid #ccf;
+    background-color:#fff;
+    color:#000;
+}
+
+.ezj_ext_combobox_arrow
+{
+    vertical-align:middle;
+}
+
+.ezj_ext_combobox_drop
+{
+    border:1px solid #ccf;
+    background-color:#fff;
+    color:#000;
+    cursor:default;
+}
+
+.ezj_ext_combobox_drop_item
+{
+    width:100%;
+    background-color:#fff;
+    color:#000;
+    cursor:default;
+}
+
+.ezj_ext_combobox_drop_item_hover
+{
+    width:100%;
+    background-color:#00f;
+    color:#fff;
+    cursor:default;
+}

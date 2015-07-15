@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>南京大学HND信息系统</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" href="../Public/js/kindeditor-4.1.1/themes/default/default.css" />
+<style>
+.textFocus{background:#FFFF00}
+.mytable th{background:#EBEBEB}
+.nav{margin-left: 5%; margin-right: 5%;}
+.nav ul{float:left;list-style:none;background:url('../Public/team_padding/nav_bg.gif') repeat-x bottom;width:1000px;height:30px;}
+.nav ul li{float:left;margin-left:10px;}
+a.open:link,a.open:visited,a.open:hover{display:block; width:110px; height:28px;line-height:28px;color:#333333;font-weight:bold; text-decoration:none; font-size:12px;border:1px solid #727377;border-bottom:1px solid #F1E4D0;text-align:center;}
+a.no {display:block; width:110px; height:28px;border:1px solid #727377 ; text-align:center; line-height:28px;color:#990000; text-decoration:none;}
+</style>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+
+});
+
+function inxls()
+{
+var uploadid=jQuery('#uploadid').val();
+   jQuery.ajax({
+				type:'POST',
+				url:'__URL__/loadexcel',
+				dataType:'json',
+				data:jQuery("#form2").serialize(),
+                beforeSend:function(XMLHttpRequest){
+                    $('#loading').html("<img src='../Public/team_padding/loading.gif' />");
+                },
+				success: function(data){
+					if (data.status==1){
+						alert(data.info);
+                        window.location.href='__URL__/scoreAdd/id/'+uploadid;
+					}else{
+						alert(data.info);
+					}
+				}
+			});
+} 
+var editor;
+KindEditor.ready(function(K) {                
+    var uploadbutton = K.uploadbutton({
+        button : K('#uploadButton')[0],
+        fieldName : 'imgFile',
+        url : '__APP__/Upload/uploadForKindeditor?dir=file',
+        afterUpload : function(data) {
+            if (data.error === 0) {
+                var url = K.formatUrl(data.url, 'absolute');
+                K('#titlepic').val(url);
+            } else {
+                alert(data.message);
+            }
+        },
+        afterError : function(str) {
+            alert('自定义错误信息: ' + str);
+        }
+    });
+    uploadbutton.fileBox.change(function(e) {
+        uploadbutton.submit();
+    });
+});
+function loadnull()
+{
+  var subid=jQuery("#subid").val();
+  var num=jQuery("#num").val();
+	window.location.href='__URL__/downScorenull/num/'+num+'/id/'+subid;        
+}
+
+</script> 
+<style type="text/css">
+#loading{position:absolute; top:33%; left:45%; z-index: 2;}
+
+</style>
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10" >
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class='nav'>
+    <ul>
+     <li><a href="__URL__/scoreAdd/id/{$uploadid}" class='no'>Filling Manually</a></li>
+     <li><a href="__URL__/scoreAddupload/id/{$uploadid}" class="open">Bulk Upload</a></li>
+    </ul>
+    <div style="clear:both;"></div>
+</div>
+<br />
+<div class="main">
+      <div>Unit：<u>{$result1.coursenumber} [{$result1.ename}]</u> Teacher：<u>{$result1.teacher} [{$result1.tename}]</u> Semester：<u>{$result1.term}</u> Class hour：<u>{$result1.coursetime}</u> Credits：<u>{$result1.credit}</u>
+      </div>
+      <br />
+      <form id='form3'>
+     First step:&nbsp;please select usual exam times&nbsp;<html:select id='num' options='etime' />
+     <input type="hidden" id='subid' value='{$result1.id}'>
+     <input type="button" value="download template to fill out results" onclick="loadnull()" style="cursor:pointer;"/>&nbsp;&nbsp;<img src="../Public/images/info.gif" align="absmiddle" />&nbsp; Please select the usual exam most times class if exam times various to different classes.
+      </form>
+      <br />
+      <form id="form2">
+            Second step:&nbsp;<input type="text" name="titlepic" id="titlepic" class="inputlong" /> 
+             <input type="button" id="uploadButton" value="Upload" />
+             <br />
+             <input type="button" value="Submit" onclick='inxls()' style="cursor:pointer;"/>&nbsp;&nbsp;<img src="../Public/images/info.gif" align="absmiddle" />&nbsp;Modification would be allowed in “Filling Manually” page after submitted.<br /><br />
+             <img src="../Public/images/info.gif" align="absmiddle" />&nbsp;submitting process may take some time please wait patiently.
+             <input type="hidden" name='resultid' value='{$result1.id}'/>
+     </form>
+     <form>
+              <input type="hidden" id='uploadid' value='{$uploadid}'/> 
+     </from>
+      <div id="loading"></div>
+</div>
+</body>
+</html>

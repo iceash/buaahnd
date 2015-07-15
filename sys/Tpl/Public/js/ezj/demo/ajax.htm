@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ajax - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ajax</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <input type="button" id="ajax1" value="Ajax 演示一" />
+    <input type="button" id="ajax2" value="Ajax 演示二" />
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        ajax1.click(function(){
+            ezj.ajax.get("inc/ajax.htm.txt", null, function(data){
+                alert("这里演示返回字符串。", "返回值：" + data);
+            }, function(data, status){
+                alert("发生了错误噢，HTTP 状态码：" + status);
+            })
+        });
+        ajax2.click(function(){
+            ezj.ajax.get("inc/ajax.htm.xml", null, function(data){
+                alert("这里演示返回 XML。", "用 $x 取 XML 的 item 值：" + $x(data).val("//item"));
+            }, function(data, status){
+                alert("发生了错误噢，HTTP 状态码：" + status);
+            });
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <input type="button" id="ajax1" value="Ajax 演示一" />
+    <input type="button" id="ajax2" value="Ajax 演示二" />
+  </div>
+  
+  <div class="block">
+    <h3>问答</h3>
+    <ul class="faq">
+      <li>
+        <p>问：ezj.ajax.bind 是做什么的？</p>
+        <p>答：ezj.ajax.bind 有两个必选参数：url 为 URL 地址；element 为 HTML 元素查询字符串，或元素对象。ezj.ajax.bind 的功能是将 url 的网页内容显示在 element 中，也可指定第三个参数，当 ajax 出错时显示第三个参数的值。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax.get 与 ezj.ajax.post 有什么区别？</p>
+        <p>答：ezj.ajax.get 表示使用 get 方式提交，ezj.ajax.post 表示使用 post 方式提交。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax.get 与 ezj.ajax.post 的必选参数是什么？</p>
+        <p>答：必选参数为 url。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax.get 与 ezj.ajax.post 如何向服务器发送数据？</p>
+        <p>答：请指定第二个参数，比如：ezj.ajax.get(url, { act : "login", name : "n1", pass : "p1" }); 表示向服务器通过 get 的方式发送三个参数：act、name、pass，值分别为：login、n1、p1。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax 有什么亮点吗？</p>
+        <p>答：ezj.ajax 可以指定参数忽略到过期的反馈。比如发送请求后，服务器还未反馈，用户又发送了第二个请求，并立即获得了反馈，然后第一个反馈才姗姗来迟，我们可以指定参数以决定此时第一个反馈是否还有效，并且非常方便。具体可参见 ezj 文档。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax.submit 是做什么？</p>
+        <p>答：ezj.ajax.submit 是将一个 form 表单按 ajax 提交，这使得原有传统网页实现 ajax 变得非常方便。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax.service 是做什么？</p>
+        <p>答：ezj.ajax.service 是利用 SOAP 访问 Web Service，具体在 <a href="service.htm" target="_blank">service.htm</a> 中单独介绍。其实访问 Web Service 还可通过 post 的方式，所以 ezj.ajax.post 也可访问 Web Service，只是要手动处理返回值。</p>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    ajax1.click(function(){
+        ezj.ajax.get("inc/ajax.htm.txt", null, function(data){
+            alert("这里演示返回字符串。", "返回值：" + data);
+        }, function(data, status){
+            alert("发生了错误噢，HTTP 状态码：" + status);
+        })
+    });
+    ajax2.click(function(){
+        ezj.ajax.get("inc/ajax.htm.xml", null, function(data){
+            alert("这里演示返回 XML。", "用 $x 取 XML 的 item 值：" + $x(data).val("//item"));
+        }, function(data, status){
+            alert("发生了错误噢，HTTP 状态码：" + status);
+        });
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

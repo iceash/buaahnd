@@ -1,0 +1,33 @@
+#myTab0 li
+{
+	float: left;
+    width: 80px;
+    cursor: pointer;
+    padding-top: 4px;
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 2px;
+    list-style-type: none;
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+}
+
+#myTab0  .normal
+{
+   background:#E6E6E6;border:1px #CCCCCC solid;
+}
+#myTab0 a{text-decoration:none;}
+
+#myTab0  .active
+{
+	background:#FFFFFF;border-left:1px #CCCCCC solid;border-top:1px #CCCCCC solid;border-right:1px #CCCCCC solid;border-bottom:1px #fff solid;
+}
+
+#tabs div{
+    width:auto;background:#FFF;
+margin: 0px auto;
+padding:9px 0 0 0;
+}
+.none {display:none;}
+

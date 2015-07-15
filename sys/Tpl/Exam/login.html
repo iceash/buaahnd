@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<style type="text/css">
+<!--
+.tiankong {
+	width:200px; 
+}
+.exam_btn{text-align:center; margin:30px;}
+
+-->
+</style>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('#btn_login').click(function(){
+		login();
+	});
+});
+function keydown(e){
+	var e = e || event;
+	if (e.keyCode==13){login();}
+}
+function login(){
+	jQuery.ajax({
+			type:'POST',
+			url:'__URL__/checkLogin',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					window.location = '__URL__/';	
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+}
+</script> 
+
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__APP__" title="返回系统首页"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><h3>欢迎登录入学测试系统</h3></td>
+  </tr>
+</table>
+<div class="main">
+<div class="line"></div>
+<form id="form1">
+<table width="330" border="0" align="center" cellspacing="10">
+  <tr>
+    <td align="right">姓名：</td>
+    <td align="left"><input type="input" class="tiankong" name="name"/></td>
+  </tr>
+  <tr>
+    <td align="right">手机号码：</td>
+    <td w align="left"><input type="input" class="tiankong" name="mobile"/></td>
+  </tr>
+   <tr>
+    <td  align="right">答题码：</td>
+    <td  align="left"><input type="input" class="tiankong" name="code"  onKeyDown="keydown(event)" /></td>
+  </tr>
+</table>
+</form>
+<div class="line"></div>
+<div class="exam_btn"><input type="button" value="登录" id="btn_login" style="height:30px;width:100px;" /></div>
+</div><!--end of main-->
+</body>
+</html>

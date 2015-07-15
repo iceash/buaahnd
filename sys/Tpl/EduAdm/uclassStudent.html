@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" href="../Public/js/kindeditor-4.1.1/themes/default/default.css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+	jQuery('#check').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+		if(this.checked==true){
+			jQuery('.mytable tbody tr').addClass('tr_selected');
+		}else{
+			jQuery('.mytable tbody tr').removeClass('tr_selected');
+		}
+	});
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要删除选择项吗？')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_change').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要转移选择项吗？')){			
+			window.location="__URL__/uclassStuChange/id/"+getSelectCheckboxValues();
+		}
+	});
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/uclassStuInsert',
+			dataType:'json',
+			data:jQuery("#form2").serialize(),
+			success: function(data){
+				if (data.status==1){
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+	jQuery('#btn_submit').click(function(){
+        
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/uclassStuInsertALot',
+			dataType:'json',
+			data:jQuery("#form3").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/uclassStuDel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			deleteTr();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function deleteTr() {
+	jQuery('input[name=key]:checked').each(function(){
+		jQuery(this).parent("td").parent("tr").remove();
+	});	
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+
+function k(key){
+	window.location="__URL__/uclassStuEdit/id/"+key;
+}
+
+var editor;
+			KindEditor.ready(function(K) {			
+				var uploadbutton = K.uploadbutton({
+					button : K('#uploadButton')[0],
+					fieldName : 'imgFile',
+					url : '__APP__/Upload/uploadForKindeditor?dir=file',
+					afterUpload : function(data) {
+						if (data.error === 0) {
+							var url = K.formatUrl(data.url, 'absolute');
+							K('#titlepic').val(url);
+						} else {
+							alert(data.message);
+						}
+					},
+					afterError : function(str) {
+						alert('自定义错误信息: ' + str);
+					}
+				});
+				uploadbutton.fileBox.change(function(e) {
+					uploadbutton.submit();
+				});
+			});
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> （1）姓名中可能含有多音字，系统默认用最常用的发音，若不对请手工修正。（2）为统一风格，系统会自动去除名字间的空格。</div>
+<table width="100%" border="0" class="utable_vtop" cellpadding="0" cellspacing="0">
+
+  <tr>
+    <td align="center"><h2>{$classname.name}<BR>本班人数:{$count}</h2></td>
+    <td>
+	<!--歌曲列表 start-->
+		<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+		<tr>
+			<th width="5" height="30"><input type="checkbox" id="check"/></th>
+			<th width="150">学号</th>
+			<th>姓名</th>
+			<th width="150">拼音</th>
+			<th width="100">首字母</th>
+			<th width="80">操作</th>
+		</tr>
+		 <volist name="my" id="my">
+			 <tr>
+			 	<td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
+   				 <td>{$my.student}</td>
+   				 <td>{$my.studentname}</td>
+				  <td>{$my.ename}</td>
+				   <td>{$my.enamesimple}</td>
+				 <td><input type="button" value="修改/转移班级" onclick="k('{$my.id}');" /></td>
+			</tr>
+		</volist>
+		</table>
+		 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+		  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除"  />&nbsp;
+		 </div></td>
+		  <td><div class="page">{$page}&nbsp;</div></td></tr>
+		 </table>
+	<!--歌曲列表 end-->
+	</td>
+   </tr>
+   <tr>
+    <td class="t_item">新增学生</td><form id="form2">
+    <td>
+	
+	  <span class="mustfill">*</span> 
+	  学号 
+	  <input type="text" name="student" class="inputshort" /> 
+	  <span class="mustfill">*</span> 
+	  姓名 
+	  <input type="text" name="studentname" class="inputshort" /> 
+	 <input type="hidden" name="classid" value="{$classname.id}"/>
+
+
+	<input type="button" id="btn_save" value="保存"  />
+	
+	</td> </form>
+   </tr>
+   <tr>
+    <td class="t_item">批量新增学生</td>
+    <td><p><br />
+请下载学生名单模板文件<a href="../Public/download/student.xls">student.xls</a>，填写后点“上传”->“提交”</p>
+	<form id="form3"><input type="hidden" value="{$classname.id}" name="classidALot" />
+	<input type="text" name="titlepic" id="titlepic" class="inputlong" /> <input type="button" id="uploadButton" value="上传" />
+	</form>
+	<div class="btn_zone"><input type="button" id="btn_submit" value="提交"  /></div>
+</td>
+   </tr>
+ </table>
+
+
+
+</div><!--end of main-->
+</body>
+</html>

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ext.editor - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ext.editor</h1>
+  
+  <div class="block">
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    &lt;textarea id="content1" name="content1" style="width:100%;height:200px;"&gt;
+    <p>
+    <img border="0" alt="" align="left" src="http://kindsoft.net/images/logo_180_30.gif" />
+    KindEditor是一套开源的HTML可视化编辑器，主要用于让用户在网站上获得所见即所得编辑效果，兼容IE、Firefox、Chrome、Safari、Opera等主流浏览器。<br />
+    KindEditor使用JavaScript编写，可以无缝的与Java、.NET、PHP、ASP等程序接合。
+    KindEditor非常适合在CMS、商城、论坛、博客、Wiki、电子邮件等互联网应用上使用，2006年7月首次发布2.0以来，KindEditor依靠出色的用户体验和领先的技术不断扩大编辑器市场占有率，目前在国内已经成为最受欢迎的编辑器之一。 
+    </p>
+    <p style="color:red;">ezj 集成了 KindEditor，并且增加了插入代码功能，可实现语法高亮，非常适合 IT 网站。而且这一切都只需要一句代码。</p>
+    <p style="color:red;">要使用插入代码功能，请单击工具栏第二排倒数第二个按钮。Chrome 中不能通过 file:/// 协议使用本功能。</p>
+    &lt;/textarea&gt;
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ext.editor("content1");
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <textarea id="content1" name="content1" style="width:100%;height:200px;">
+    <p>
+    <img border="0" alt="" align="left" src="http://kindsoft.net/images/logo_180_30.gif" />
+    KindEditor是一套开源的HTML可视化编辑器，主要用于让用户在网站上获得所见即所得编辑效果，兼容IE、Firefox、Chrome、Safari、Opera等主流浏览器。<br />
+    KindEditor使用JavaScript编写，可以无缝的与Java、.NET、PHP、ASP等程序接合。
+    KindEditor非常适合在CMS、商城、论坛、博客、Wiki、电子邮件等互联网应用上使用，2006年7月首次发布2.0以来，KindEditor依靠出色的用户体验和领先的技术不断扩大编辑器市场占有率，目前在国内已经成为最受欢迎的编辑器之一。 
+    </p>
+    <p style="color:red;">ezj 集成了 KindEditor，并且增加了插入代码功能，可实现语法高亮，非常适合 IT 网站。而且这一切都只需要一句代码。</p>
+    <p style="color:red;">要使用插入代码功能，请单击工具栏第二排倒数第二个按钮。Chrome 中不能通过 file:/// 协议使用本功能。</p>
+    </textarea>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+$(window).ready(function(){
+    ezj.ext.editor("content1");
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

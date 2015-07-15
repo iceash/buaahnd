@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+});
+
+
+function k(key){
+	if (window.confirm('确实要删除选择项吗？')){	
+		jQuery.getJSON('__URL__/delExam/',{id:key},function(data){
+			if(data.status==1){
+				alert(data.info);
+				window.location.reload();
+			}else{
+				alert(data.info);
+			}	
+		});
+	}
+}
+function k2(key){
+	window.location="__URL__/viewExam/id/"+key;
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	window.location="__URL__/exam/searchkey/"+searchkey;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/exam" class="on">所有测试</a> | 
+	<a href="__URL__/addExam">新建测试</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="search">输入姓名关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>&nbsp;<html:select first="按测试日期选择" options="testtime_fortag" name="testtime" selected="testtime_current" change="location.href='__URL__/exam/date/'+this.options[this.selectedIndex].value;"/></div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+	<th width="80">测试时间</th>
+    <th>姓名</th>
+    <th width="100">手机号</th>
+    <th width="80">答题码</th>
+	<th width="80">已开始答题</th>
+	<th width="80">已提交</th>
+	<th width="80">机改分</th>
+	<th width="80">作文分</th>
+	<th width="80">总分</th>
+	<th width="160">操作</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+	<td>{$my.testtime|toDate='Y-m-d'}</td>
+    <td>{$my.name}</td>
+    <td>{$my.mobile}</td>
+    <td>{$my.code}</td>
+	<td><empty name="my.ctime"><else /><img src="../Public/images/ok.gif" /></empty></td>
+	<td><empty name="my.subtime"><else /><img src="../Public/images/ok.gif" /></empty></td>
+	<td>{$my.mscore}</td>
+	<td>{$my.pscore}</td>
+	<td>{$my.score}</td>
+	<td><input type="button" value="详情" onclick="k2('{$my.id}');" />
+	
+	<empty name="my.subtime"><input type="button" value="删除" onclick="k('{$my.id}');" /><else /></empty>
+	
+	</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

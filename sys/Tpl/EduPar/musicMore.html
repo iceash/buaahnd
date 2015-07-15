@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript"> 
+function k(key){
+	window.location="__URL__/download/type/music/id/"+key;
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/music">音乐</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<table width="100%" border="0" class="utable_vtop" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" valign="top" width="240"><img src="{$my.pic|default='../Public/team_display/images/default_pic.jpg'}"  width="100" height="100" align="absmiddle" /><br />
+{$my.name}<br />
+<a href='__URL__/singer/id/{$my.singerid}'>{$my.singer}</a><br/>
+<span style="color:red">专辑介绍：</span>{$my.intro}
+</td>
+    <td>
+	<!--歌曲列表 start-->
+		<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+		<tr>
+			<th>歌曲名</th>
+			<th>大小</th>
+			<th>下载次数</th>
+			<th width="40" >操作</th>
+		</tr>
+		 <volist name="music" id="music">
+			 <tr>
+   				 <td><a href="__URL__/download/type/music/id/{$music.id}">{$music.filename}</a></td>
+   				 <td>{$music.filesize|formatFileSize}</td>
+				<td>{$music.hit}</td>
+				 <td><input type="button" value="下载" onclick="k('{$music.id}');" /></td>
+			</tr>
+		</volist>
+		</table>
+	<!--歌曲列表 end-->
+	</td>
+   </tr>
+  
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">
+    TA的其他专辑：
+  </div></td>
+  </tr>
+  <tr>
+    <volist name="album" id="album" mod="5">
+        <td><a href="__URL__/musicMore/id/{$album.id}"><img src="{$album.pic|default='../Public/team_display/images/default_pic.jpg'}"  width="150" height="150" align="absmiddle" /></a><br></br>
+         <div><a href="__URL__/musicMore/id/{$album.id}"><span style='text-align:center;width:150px;margin:0 auto'><B>{$album.name}</B></span></a><br/></td>
+         <eq name="mod" value="4"></tr><tr></eq>
+    </volist>
+  </tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

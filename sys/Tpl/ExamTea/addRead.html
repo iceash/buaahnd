@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/jquery.caretInsert.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+    jQuery('#article').val(editor.html());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/insertRead',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					jQuery('#insertID').val(data.data);
+					window.location="__URL__/addReadNext/id/"+jQuery('#insertID').val();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="article"]', {
+					uploadJson : '__APP__/Upload/uploadForQuestion',
+					allowFileManager : false
+				});
+			});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__/read">所有阅读理解题</a> | 
+	<a href="__URL__/readMy">我录入的题目</a> | 
+	<a href="__URL__/addRead" class="on">新建题目</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 本页将保存文章及难度，“下一步”将保存问题及答案</div>
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item"><span class="mustfill">*</span>文章</td>
+    <td>
+	<textarea name="article" id="article" class="textareahuge"></textarea></td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>难度</td>
+    <td><html:select first="请选择" options="level" name="level" /></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="hidden" id="insertID" value="" /><input type="button" id="btn_save" value="保存并进行下一步"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

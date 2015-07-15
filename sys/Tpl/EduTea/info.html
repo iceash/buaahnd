@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('.calendar').calendar();
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/infoUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+
+});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 最后更新于{$my.ctime}</div>
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item">教师号</td>
+    <td><input type="text" name="username" class="inputshort" value="{$my.username}" disabled="disabled"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">姓名</td>
+    <td> <input type="text" name="truename" class="inputmid" value="{$my.truename}" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">英文姓名</td>
+    <td><input type="text" name="ename" class="inputmid" value="{$my.ename}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">性别</td>
+    <td><html:select first="请选择" options="gender" name="gender" selected="my['gender']"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">出生日期</td>
+    <td><input type="text" name="birth" class="inputshort  calendar" value="{$my.birth|toDate='Y-m-d'}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">最高学历</td>
+    <td><input type="text" name="degree" class="inputmid" value="{$my.degree}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">HND院校</td>
+    <td><input type="text" name="hndschool" class="inputmid" value="{$my.hndschool}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">加入HND时间</td>
+    <td><input type="text" name="hndtime" class="inputshort  calendar" value="{$my.hndtime|toDate='Y-m-d'}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">职称</td>
+    <td><input type="text" name="title" class="inputmid" value="{$my.title}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">毕业院校</td>
+    <td><input type="text" name="graduate" class="inputmid" value="{$my.graduate}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">毕业专业</td>
+    <td><input type="text" name="major" class="inputmid" value="{$my.major}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">工作院校</td>
+    <td><input type="text" name="school" class="inputmid" value="{$my.school}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">联系电话</td>
+    <td><input type="text" name="link" class="inputmid" value="{$my.link}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">电子邮箱</td>
+    <td><input type="text" name="email" class="inputmid" value="{$my.email}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">备注</td>
+    <td><textarea name="plus" class="textareanormal">{$my.plus}</textarea></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

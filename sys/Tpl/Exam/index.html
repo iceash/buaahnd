@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<style type="text/css">
+<!--
+.tiankong {
+	width:200px; font-weight:bold; 
+}
+.exam_title{ font-weight:bold; font-size:16px; margin:15px 0;}
+.exam_item{  font-size:14px; line-height:26px;margin:0 0 0 15px}
+.exam_btn{text-align:center; margin:30px;}
+.exam_write{ width:970px; height:200px}
+.exam_cloze{ width:870px; height:80px}
+a.my_logout:link,a.my_logout:visited,a.my_logout:hover{color:#000000}
+.line_this{border-top:1px solid #B2B2B2; line-height:0; margin:8px 0;}
+-->
+</style>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('#btn_sub').click(function(){
+	if (window.confirm('提交后不能修改，请仔细检查并确认是否提交。确定要提交吗？')){			
+			jQuery.ajax({
+			type:'POST',
+			url:'__URL__/submitPaper',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();	
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	}
+		
+	});
+});
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__APP__" title="返回系统首页"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><h3>姓名：<U>{$Think.session.name}</U> &nbsp;
+	手机号码：<U>{$Think.session.mobile}</U> &nbsp;
+	 答题码：<U>{$Think.session.code}</U> &nbsp; <empty name="result.issub"><else /><a href="__URL__/logout" class="my_logout">退出</a></empty></h3>
+	
+	 </td>
+  </tr>
+</table>
+<div class="main">
+<div class="line"></div>
+<empty name="result.issub">
+<form id="form1"><input type="hidden" name="id" value="{$result.id}" />
+
+<notempty name="select">
+<div class="exam_title">选择题（每题1分）</div>
+<div class="exam_item">
+<volist name="select" id="my" key="k">
+ {$k}. {$my.title}<br />
+{$my.myitem}<div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="fill">
+<div class="exam_title">填空题（每题1分）</div>
+<div class="exam_item">
+<volist name="fill" id="my" key="k">
+ {$k}. {$my.title}&nbsp; <input type="input" class="tiankong" name="q2_{$my.id}" /><div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="cloze">
+<div class="exam_title">完型填空（每题20分）</div>
+<div class="exam_item">
+<volist name="cloze" id="my" key="k">
+{$my.article|nl2br}<br />
+{$my.myitem}<div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="read">
+<div class="exam_title">阅读题（每题2分）</div>
+<div class="exam_item">
+<volist name="read" id="my" key="k">
+{$my.article|nl2br}<br />
+{$my.myitem}<div class="line_this"></div>
+</volist>
+</div>
+</notempty>
+
+<notempty name="write">
+<div class="exam_title">写作题（每题30分）</div>
+<div class="exam_item">
+<volist name="write" id="my" key="k">
+{$my.title|nl2br}<br />
+<textarea name="q4_{$my.id}" class="exam_write"></textarea><br />
+</volist>
+</div>
+</notempty>
+
+
+<div class="exam_btn">
+<h3>提交后不能修改，请仔细检查后提交。提交后将立即显示客观题得分情况，请注意查看。</h3><br />
+<input type="button" value="提 交" id="btn_sub" style="height:30px;width:150px;" />
+</div>
+</form>
+<else />
+<div class="exam_btn">
+<h1>入学测试情况：</h1>
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0" >
+  <tr>
+    <td class="t_item" width="16%">客观题：</td>
+    <td  width="17%">{$result.mscore}</td>
+	 <td class="t_item"  width="16%">作文题：</td>
+    <td  width="17%">{$result.pscore}</td>
+	 <td class="t_item"  width="17%">总分：</td>
+    <td  width="17%">{$result.score}</td>
+  </tr>
+</table>
+
+<p align="right">试卷自动生成于{$result.ctime}&nbsp;&nbsp;提交答卷于{$result.subtime}</p>
+</div>
+<div class="line"></div>
+</empty>
+</div><!--end of main-->
+</body>
+</html>

@@ -1,0 +1,35 @@
+@charset "utf-8";
+/* CSS Document */
+html{ height:100%}
+body { font-size:14px; color:#484848; font-family:'Microsoft Yahei', Tahoma, Arial;background:#e8ecf5  url(../images/bg-sand.png) repeat-x top; margin:0; padding:0}
+input,select,textarea{font-family:'Microsoft Yahei', Tahoma, Arial; font-size:12px}
+input[type="button"],input[type="submit"]{ padding:0 10px;}
+img{ border:0}
+ul,li,form{ padding:0; margin:0}
+li{ list-style:none}
+a:link,a:visited{color:#560A0A}
+a:hover{color:#A21513}
+.clear{display: block; clear: both; font-size:0}
+.calendar{ background:#FFFFFF url(../images/iconDate.gif) center right no-repeat; cursor:pointer;}
+.message_error{padding:5px 10px;background:#990000; color:#FFFFFF; text-align:center;}
+.message_success{padding:5px 10px;background:#16960E; color:#FFFFFF; text-align:center;}
+.textareanormal{ width:500px; height:150px; overflow:auto}
+.textareasmall{ width:500px; height:50px; overflow:auto}
+#main{ width:1000px; margin:0 auto}
+#myleft{ width:260px; float:left;}
+#myright{ width:700px; float:right;}
+.mytitle{ border-bottom:1px dotted #484848; padding-right:20px; background:url(../images/dot.gif) no-repeat right center;cursor:pointer}
+.mytitle a:link,.mytitle a:visited{ font-size:18px; text-decoration:none; display:block; background:url(../images/dot.gif) center right no-repeat}
+.mytitle a:hover{ font-size:18px; text-decoration:none; display:block}
+.mycontent{ margin-bottom:20px;}
+h2{ margin-top:0px}
+h3{ font-size:16px; color:#990000; margin:0; padding:5px 0;}
+h4{ font-size:14px; margin:0px; padding:0px;}
+.m20{ margin:20px 0;}
+.inputlong{ width:500px;}
+.inputmid{ width:300px;}
+.inputshort{ width:120px;}
+.inputmini{ width:60px;}
+.ziduan{ width:120px; text-align:right; padding-right:10px; height:28px;}
+.linkpeople{cursor:pointer}
+.mustfill{ color:#FF0000}

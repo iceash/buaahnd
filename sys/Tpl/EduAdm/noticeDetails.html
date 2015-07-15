@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="content"]', {
+					uploadJson : '__APP__/Upload/uploadForKindeditor',
+					allowFileManager : false
+				});
+			});
+        })
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+    <tr>
+    <td class="t_item">发布者</td>
+    <td><input type="text" name="title" class="inputlong" value="{$my.ttruename}"/></td>
+   </tr>
+   <tr>
+    <td class="t_item">标题</td>
+    <td><input type="text" name="title" class="inputlong" value="{$my.title}"/></td>
+   </tr>
+    <tr>
+    <td class="t_item">内容</td>
+    <td><textarea name="content" id="content" class="textareanormal" style="width:750px;height:400px;">{$my.content}</textarea>
+	</td>
+   </tr>
+     <tr>
+    <td class="t_item"><input type="checkbox" value='1' <eq name='my.istop' value='1'>checked="checked"</eq>  name="istop" /></td>
+    <td>置顶</td>
+   </tr>
+ </table>
+ </form> 
+</div><!--end of main-->
+</body>
+</html>

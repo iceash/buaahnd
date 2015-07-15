@@ -1,0 +1,6 @@
+<empty name="my">在录取的学生名单中查无此记录</empty>
+<volist id="my" name="my">
+<label>
+	<input type="radio" name="enrollid" value="{$my.id}" <eq name="count" value="1">checked="checked" </eq> />{$my.truename}&nbsp;性别：{$my.sex} &nbsp;籍贯：{$my.nativeprovince}{$my.nativecity} &nbsp;手机：{$my.mobile}<BR>
+</label>
+</volist>

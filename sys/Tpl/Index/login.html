@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>登录</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/ii.css" media="all">
+<link rel="stylesheet" href="../Public/css/boxy.css" type="text/css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/jquery.boxy.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+	jQuery("#user").val("");
+	jQuery("#password").val("");
+});
+jQuery(function(){ 
+	jQuery("#login_user").click(function(){
+		jQuery("#user").focus();
+	});
+	jQuery("#user").keydown(function(){
+		jQuery("#user_label").hide();
+	});
+	jQuery("#user").blur(function(){
+		var txt_value=jQuery("#user").val();
+		if(txt_value==""){jQuery("#user_label").show();}
+	});
+	jQuery("#login_password").click(function(){
+		jQuery("#password").focus();
+	});
+	jQuery("#password").keydown(function(){
+		jQuery("#password_label").hide();
+	});
+	jQuery("#password").blur(function(){
+		var txt_value=jQuery("#password").val();
+		if(txt_value==""){jQuery("#password_label").show();}
+	});
+	
+	
+	
+});
+
+function login(){
+	jQuery('#message').remove();
+
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/checkLogin',
+		dataType:'json',
+		data:jQuery("#form1").serialize(),
+		success: function(data){
+			if (data.status==1){
+				window.location = '__URL__/login';
+			}else{
+				jQuery('#logintips').append('<div id="message"></div>');
+				jQuery('#message').text(data.info);
+				jQuery('#message').fadeIn(500).delay(2500).fadeOut(500);		
+			}
+		}
+	});	
+}
+
+function keydown(e){
+	var e = e || event;
+	if (e.keyCode==13){login();}
+}
+function getRndStr(le){
+	var str='abcdefghijklmnopqrstuvwxyz0123456789';
+	var l = parseInt(le)||Math.ceil(Math.random() * 5);
+	var ret = '';
+	for(var i=0;i<l;i++){
+		ret += str.charAt(Math.ceil(Math.random()*(str.length-1)));
+	}
+	return ret;
+ }
+</script> 
+</head>
+
+<body>
+
+
+<div id="footer" style="display:none;"><a href="__APP__/Enroll">招生信息录入</a>   |  <a href="__APP__/Exam/login" target="_blank">入学测试</a>  |  <a href="__APP__/driver/nju-ukey-setup.exe">U-Key驱动下载</a>  |  <a href="__APP__/driver/idcard/index.html">身份证阅读器驱动安装</a>  | <a href="http://optimize.njuhnd.com/help" target="_blank">帮助中心(?)</a>  |  <a href="http://optimize.njuhnd.com/html/Index/s/id/1196">优化进程</a>   |  Copyright &copy; <a href="/">南京大学HND中心</a> 保留一切权利</div><!--end of footer-->
+<div  id="login">
+	<div id="focus"><img src="../Public/images/focus.jpg" /></div>
+	<form id="form1">
+		<div id="login_user"><label id="user_label" class="login_label" style="cursor: text;">帐号</label> <input id="user" name="user" type="text" maxlength="17" tabindex="1" style="cursor: text;"/></div>
+		<div id="inputzone"> 
+			<div id="login_password"><label id="password_label" class="login_label" style="cursor: text;">密码</label><input id="password" name="password" type="password" maxlength="23" tabindex="2" onKeyDown="keydown(event)"  /><input type="hidden" name="sn" id="sn" /><input type="hidden" name="md" id="md" /> <input type="hidden" name="rnd" id="rnd" /></div>
+			<div id="loginbtn"><a class="loginbtn_a" id="loginbtn_a" href="javascript:login()" title="登录" onfocus="this.blur()"></a></div>
+		</div><!--end of inputzone-->
+	</form>
+	<div id="logintips"><div id="message" style="display:none;"></div></div>
+</div><!--end of login-->
+</body>
+</html>

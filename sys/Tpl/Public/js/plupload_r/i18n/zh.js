@@ -1,0 +1,25 @@
+// Spanish
+plupload.addI18n({
+	'Select files' : '选择文件',
+	'Add files to the upload queue and click the start button.' : '添加文件并点击上传按钮',
+	'Filename' : '文件名',
+	'Status' : '状态',
+	'Size' : '大小',
+	'Add files' : '选择文件',
+	'Stop current upload' : '停止当前上传',
+	'Start uploading queue' : '开始上传序列',
+	'Uploaded %d/%d files': '已上传 %d/%d 文件',
+	'N/A' : 'No disponible',
+	'Drag files here.' : '拖拽文件到这里',
+	'File extension error.': '文件扩展名错误',
+	'File size error.': '文件大小超过系统设定',
+	'Init error.': '初始化错误',
+	'HTTP Error.': 'HTTP错误',
+	'Security error.': '安全错误',
+	'Generic error.': '一般错误',
+	'IO error.': '输入/输出错误',
+	'Stop Upload': '停止上传',
+	'Add Files': '选择文件',
+	'Start upload': '上传文件',
+	'%d files queued': '%d 个文件'
+});

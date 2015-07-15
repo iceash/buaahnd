@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/process">留学进程</a></div></td>
+  </tr>
+</table>
+<div class="main">
+
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<empty name="my">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+ <tr>
+    <td class="t_item">留学进程</td>
+    <td><img src="../Public/images/abroad0.gif"/></td>
+  </tr>
+
+</table>
+<else/>
+
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+ <tr>
+    <td class="t_item">留学进程</td>
+    <td><img src="../Public/images/abroad{$my.status}.gif" /></td>
+  </tr>
+ <tr>
+    <td class="t_item">负责人</td>
+    <td>咨询负责人 {$my.tusername1}&nbsp;&nbsp;
+文案负责人 {$my.tusername2}&nbsp;&nbsp;
+签证负责人 {$my.tusername3}</td>
+  </tr>
+  <tr>
+    <td class="t_item">学生姓名</td>
+    <td><input type="text" name="username" class="inputshort" value="{$my.struename}" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">关联HND系统学生学号</td>
+    <td> <input type="text" name="truename" class="inputshort" value="{$my.susername}" /></td>
+  </tr>
+   <if condition="$my['quit'] eq 1 ">  
+   <tr>
+    <td class="t_item">该学生已退出留学进程</td>
+    <td> 原因：{$my.quitreason}</td>
+  </tr><else />
+   <tr>
+    <td class="t_item">学生来源</td>
+    <td>{$my.from}</td>
+  </tr>
+   <tr>
+    <td class="t_item">出生日期</td>
+    <td><input type="text" name="birth" class="inputshort  calendar" value="{$my.birth|toDate='Y-m-d'}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">家长联系方式</td>
+    <td><textarea name="link" class="textareasmall">{$my.link}</textarea></td>
+  </tr>
+    <tr>
+    <td class="t_item">申请国家</td>
+    <td>{$my.country}</td>
+  </tr>
+    <tr>
+    <td class="t_item">学位</td>
+    <td>{$my.degree}</td>
+  </tr>
+    <tr>
+    <td class="t_item">签约日期</td>
+    <td><input type="text" name="qtime" class="inputshort  calendar" value="{$my.qtime|toDate='Y-m-d'}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">语言成绩</td>
+    <td>IELTS分数 <input type="text" name="score1" class="inputmini" value="{$my.score1}"/>&nbsp;&nbsp;
+	IBT分数 <input type="text" name="score2" class="inputmini" value="{$my.score2}"/>&nbsp;&nbsp;
+	PTE分数 <input type="text" name="score3" class="inputmini" value="{$my.score3}"/>&nbsp;&nbsp;
+	GRE分数 <input type="text" name="score4" class="inputmini" value="{$my.score4}"/>&nbsp;&nbsp;
+	GMAT分数 <input type="text" name="score5" class="inputmini" value="{$my.score5}"/>
+	</td>
+  </tr>
+    <tr>
+    <td class="t_item"> 申请学校
+
+</td>
+    <td>
+<!--start of school-->
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+  <tr>
+    <th>学校</th>
+	<th>申请截止时间</th>
+	<th>专业</th>
+	<th>申请方式</th>
+	<th>录取情况</th>
+	<th>开学时间</th>
+</tr>
+<volist name="school" id="y">
+  <tr>
+    <td>{$y.school}</td>
+	 <td>{$y.jtime|toDate='Y-m-d'}</td>
+	 <td>{$y.major}</td>
+	 <td>{$y.method}</td>
+	 <td>{$y.enroll}</td>
+	 <td>{$y.ktime|toDate='Y-m-d'}</td>
+</tr>	
+</volist>
+</table>
+<!--end of school-->
+	</td>
+  </tr>
+    <tr>
+    <td class="t_item">合作方</td>
+    <td><input type="text" name="together" class="inputmid" value="{$my.together}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">费用支付情况</td>
+    <td><textarea name="fee" class="textareasmall">{$my.fee}</textarea></td>
+  </tr>
+   <tr>
+    <td class="t_item">签证时间</td>
+    <td><input type="text" name="visatime" class="inputshort  calendar" value="{$my.visatime|toDate='Y-m-d'}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">签证地点</td>
+    <td><input type="text" name="visaplace" class="inputlong" value="{$my.visaplace}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">签证通过情况</td>
+    <td><input type="text" name="visaresult" class="inputmid" value="{$my.visaresult}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">后续－体检情况</td>
+    <td><textarea name="follow1" class="textareasmall">{$my.follow1}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">后续－住宿安排</td>
+    <td><textarea name="follow2" class="textareasmall">{$my.follow2}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">后续－机票信息</td>
+    <td><textarea name="follow3" class="textareasmall">{$my.follow3}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">后续－接机安排</td>
+    <td><textarea name="follow4" class="textareasmall">{$my.follow4}</textarea></td>
+  </tr>
+    </if>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td></td></tr>
+ </table>
+ </empty>
+</div><!--end of main-->
+</body>
+</html>

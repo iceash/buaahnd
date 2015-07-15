@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('.calendar').calendar();
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/detailUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+
+});
+function getHND(){
+	var a=jQuery('#struename').val();
+	if(a==''){ 
+		alert('学生姓名不能为空');
+	}else{
+		jQuery("#HND_info").load("__URL__/getHND/",{struename:a});
+	}
+}
+function auto1(){
+	var a=jQuery('input[name="HND"]:checked').val();
+	if (typeof (a) == "undefined") { 
+		alert('南大HND库中无匹配结果');
+	}else{
+		jQuery.getJSON('__URL__/auto1/',{id:a},function(data){
+			if(data.status==1){
+				jQuery('#susername').val(data.data['username']);
+			}else{
+				alert(data.info);
+			}	
+		});
+
+	}// end of if
+}
+function auto2(){
+	var a=jQuery('input[name="HND"]:checked').val();
+	if (typeof (a) == "undefined") { 
+		alert('南大HND库中无匹配结果');
+	}else{
+		jQuery.getJSON('__URL__/auto2/',{id:a},function(data){
+			if(data.status==1){
+				jQuery('#edudir').val(data.data['truename']);
+			}else{
+				alert(data.info);
+			}	
+		});
+
+	}// end of if
+}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> &nbsp;&nbsp;
+当前学生：<font size="4">{$my.struename}</font> 
+</div>
+
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>学生姓名</td>
+    <td><input type="text" name="struename" id="struename" class="inputmid" value="{$my.struename}"/>&nbsp;</td>
+  </tr>
+   <tr>
+    <td class="t_item">学生学号</td>
+    <td><input type="text" name="susername" id="susername" class="inputmid"  value="{$my.susername}"/> &nbsp;</td>
+  </tr>
+   <tr>
+    <td class="t_item">辅导员</td>
+    <td><input type="text" name="edudir" id="edudir" class="inputmid" value="{$my.edudir}"/> &nbsp;</td>
+  </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>培训部班主任</td>
+    <td>姓名 <input type="text" name="ttruename" class="inputshort"  value="{$my.ttruename}"/>&nbsp;&nbsp;&nbsp; 帐号 <input type="text" name="tusername" id="struename" class="inputshort"  value="{$my.tusername}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">听课证号</td>
+    <td><input type="text" name="listennumber"  class="inputmid" value="{$my.listennumber}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">培训项目</td>
+    <td><html:checkbox checkboxes="project" name="project" checked="project_selected" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">诊断测试</td>
+    <td><input type="text" name="diagnostic" class="inputmid" value="{$my.diagnostic}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">总课时</td>
+    <td><input type="text" name="coursetime" class="inputshort" value="{$my.coursetime}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">培训日期</td>
+    <td>开始时间 <input type="text" name="starttime"  class="inputshort calendar"  value="{$my.starttime|toDate='Y-m-d'}"/>&nbsp;&nbsp;&nbsp;结束时间 <input type="text" name="endtime" class="inputshort calendar" value="{$my.endtime|toDate='Y-m-d'}" /></td>
+  </tr>
+  <tr>
+    <td class="t_item">原始成绩</td>
+    <td>雅思 <input type="text" name="score1" class="inputmini"value="{$my.score1}" />&nbsp;&nbsp;&nbsp;托福 <input type="text" name="score2" class="inputmini"value="{$my.score2}" />&nbsp;&nbsp;&nbsp;PTE <input type="text" name="score3" class="inputmini" value="{$my.score3}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">平时测试
+
+</td>
+    <td>
+<!--start of school-->
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+  <tr>
+    <th width="150">测试时间</th>
+	<th width="150">测试成绩</th>
+	<th>备注</th>
+</tr>
+<volist name="test" id="y">
+  <tr>
+	 <td>{$y.traintime|toDate='Y-m-d'}</td>
+	 <td>{$y.score}</td>
+	 <td>{$y.plus}</td>
+</tr>	
+</volist>
+</table>
+<!--end of school-->
+	</td>
+  </tr>
+   <tr>
+    <td class="t_item">培训后成绩</td>
+    <td>雅思 <input type="text" name="score4" class="inputmini" value="{$my.score4}"/>&nbsp;&nbsp;&nbsp;托福 <input type="text" name="score5" class="inputmini" value="{$my.score5}"/>&nbsp;&nbsp;&nbsp;PTE <input type="text" name="score6" class="inputmini" value="{$my.score6}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">培训费收据号</td>
+    <td><input type="text" name="receipt" class="inputmid" value="{$my.receipt}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">培训费用</td>
+    <td><input type="text" name="fee" class="inputshort" value="{$my.fee}"/> 元</td>
+  </tr>
+   <tr>
+    <td class="t_item">推荐人</td>
+    <td><input type="text" name="recommend" class="inputshort"value="{$my.recommend}"/></td>
+  </tr>
+ </table>
+
+
+
+ </form>
+</div><!--end of main-->
+</body>
+</html>

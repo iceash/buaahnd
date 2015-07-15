@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>南京大学HND信息系统</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" href="../Public/js/kindeditor-4.1.1/themes/default/default.css" />
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css">
+<style type="text/css">
+.textFocus{background:#FFFF00}
+.mytable th{background:#EBEBEB}
+.nav{margin-left: 5%; margin-right: 5%;}
+.nav ul{float:left;list-style:none;background:url('../Public/team_padding/nav_bg.gif') repeat-x bottom;width:1000px;height:30px;}
+.nav ul li{float:left;margin-left:10px;}
+a.open:link,a.open:visited,a.open:hover{display:block; width:110px; height:28px;line-height:28px;color:#333333;font-weight:bold; text-decoration:none; font-size:12px;border:1px solid #727377;border-bottom:1px solid #F1E4D0;text-align:center;}
+a.no {display:block; width:110px; height:28px;border:1px solid #727377 ; text-align:center; line-height:28px;color:#990000; text-decoration:none;}
+#message{width: 110px; text-align: center; height: 28px; line-height: 28px; margin-bottom: 5px; font-weight: bold; font-size: 14px;}
+.message_success{background: #16960E;}
+.message_error{background: #990000;}
+</style>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+    setTimeout("autosub()", 1000*60*10);
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+        jQuery('#issubmit').val('0');
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/scoreInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+
+	jQuery('#btn_sub').click(function(){
+        var count1 = 0;
+        var count2 = 0;
+        var scoreCount = $('.score').length;
+        var score = getClassNames("score", "input");
+        var levelscore = getClassNames("levelscore", "input");
+
+            for (i = 0; i < scoreCount; i++) {      
+                if (score[i].value == "") {    
+                    count1=count1+1;     
+                }    
+                if (levelscore[i].value == "") {    
+                    count2=count2+1;     
+                }
+            }    
+
+            if(count1 == 0 || count2 == 0){
+                if (window.confirm('提交后将不能修改，请仔细核对后提交。确定要提交吗？')){
+                    jQuery('#issubmit').val('1');
+                    jQuery.ajax({
+                        type:'POST',
+                        url:'__URL__/scoreInsert',
+                        dataType:'json',
+                        data:jQuery("#form1").serialize(),
+                        success: function(data){
+                            if (data.status==1){
+                                alert(data.info);
+                                window.location.reload();
+                            }else{
+                                alert(data.info);
+                            }
+                        }
+                    });
+                }                       
+            } else {
+                alert('未填写完全部成绩，请继续填写或点击“暂存”');
+                return false;
+            } 
+	});
+    jQuery('#add').click(function(){
+         var t=jQuery('#add').parent('th').prev('th').children('input[type=hidden]').first().val();
+        var j=t.substr(0,3);
+        var l=j.replace(/[^0-9]/ig,"");
+        var n=parseInt(l); 
+            n=n+1;
+        var h='第'+n+'次考试';
+        var g='Exam';
+        var html='<th width="70">'+g+'<img src="../Public/team_padding/bianji.png" style="cursor:pointer;" onclick='+''+'bianji("'+h+'")'+''+' />&nbsp;<img src="../Public/team_padding/shanchu.jpg" style="cursor:pointer;" onclick='+''+'del("'+h+'")'+''+' /><input type="hidden" name="ordtime[]" value="'+h+'"/></th>';
+        jQuery(this).parent('th').before(html);
+        var a=jQuery('input[name=id]').val();
+        jQuery.getJSON('__URL__/getordscore',{id:a},function(data){
+			if(data.status==1){
+                jQuery.each(data.data,function(key,value){
+                    var v=value['id'];
+                    var html2="<td class='"+h+"'><input type='text' name='ordscore"+v+"[]' class='inputshorte' value='' size='2'/>makeup:<input type='text' name='ordbuscore"+v+"[]' class='inputshortb' value='' size='2'/></td>";   
+                     jQuery('td[name=ord'+v+']').before(html2); 
+                });
+            }
+        });
+     });
+	
+	$(":text").focus(function () { $(this).css("background", "#FFFFCA"); })
+	.blur(function () { $(this).css("background", "#fff"); })
+	
+	 var baseIndex = 100;
+        $("#tblGrid")
+        .find("tr").each(function(r) {
+            $(this).find("td").each(function(c) {
+                $(this).find("input")
+                .attr("tabindex", r * 100 + c + baseIndex)
+                .addClass("cGridInput");
+            });
+        });
+        $("#tblGrid .cGridInput").live("keydown", function(evt) {
+            var tabIndex = parseInt($(this).attr("tabindex"));
+            switch (evt.which) {
+    	           case 38: //上
+                    tabIndex -= 100;
+                    break;
+                case 40: //下
+                    tabIndex += 100;
+                    break;
+                case 37: //左(會導致輸入時無法使用左右移)
+                    tabIndex--;
+                    break;
+                case 39: //右(會導致輸入時無法使用左右移)
+                    tabIndex++;
+                    break;
+                default:
+                    return;
+            }
+            if (tabIndex > 0) {
+                $(".cGridInput[tabindex=" + tabIndex + "]").focus();
+                return false;
+            }
+            return true;
+        });
+});
+//IE8及以下不支持document.getElementsByClassName
+function getClassNames(classStr,tagName){
+    if (document.getElementsByClassName) {
+        return document.getElementsByClassName(classStr)
+    }else {
+        var nodes = document.getElementsByTagName(tagName),ret = [];
+        for(i = 0; i < nodes.length; i++) {
+            if(hasClass(nodes[i],classStr)){
+                ret.push(nodes[i])
+            }
+        }
+        return ret;
+    }
+}
+function hasClass(tagStr,classStr){
+    var arr=tagStr.className.split(/\s+/ ); //这个正则表达式是因为class可以有多个,判断是否包含
+    for (var i=0;i<arr.length;i++){
+        if (arr[i]==classStr){
+            return true ;
+        }
+    }
+    return false ;
+} 
+function bianji(a,c){
+    if(!a && !c){
+        a='第1次考试';
+    } 
+    var j=a.substr(0,3);
+    var l=j.replace(/[^0-9]/ig,"");
+    var n=parseInt(l); 
+    var num=String(n).length;
+    var e=a.substr(0,3);
+    var f=a.substr(3);
+    if(num==2){
+        e=a.substr(0,4);
+        f=a.substr(4);
+    }
+    if((a=='') && (c == "期末成绩")){    
+        e=c.substr(0,2);
+        f=c.substr(2);
+    }else{ 
+        if(a.substr(0,2)=='期末'){
+            e=a.substr(0,2);
+            f=a.substr(2);
+        }        
+    }
+    art.dialog({
+        id: 'ok',
+        width:'400',
+        title:'列名',
+        content:'列名：<input type="text" id="examname" value="'+f+'" /><br/>',
+      ok: function () { 
+            var name=document.getElementById("examname");
+            //var time=document.getElementById("examtime");
+            var namer=name.value;
+            var timer=e;
+            timer=encodeURI(timer);
+            namer=encodeURI(namer);
+            var examname=timer+namer;
+            var url='__URL__/scoreInsert?examname='+examname; 
+            $.post(url,jQuery("#form1").serialize(),function(data){
+            if(data.status==1)
+            {
+          window.location.reload();        
+            }
+            else
+            {
+                alert(data.info);
+                window.location.reload();
+            }
+            },'json');
+        },
+        cancelVal: '关闭',
+        cancel: true
+    });
+}
+function del(c){
+    if(c == '第1次考试'){
+        alert("第1次考试不能删除");
+        return false;
+    }
+    d=encodeURI(c);
+    if(!confirm("确认要删除?删除后不可恢复"))
+        return false;
+    var geturl='__URL__/delscoreInsert?examname='+d;
+    $.post(geturl,jQuery("#form1").serialize(),function(data){
+        if(data.status==1){
+            $('input[value="'+c+'"]').parent('th').remove();
+            $('td.'+c).remove();
+        }else{
+            alert(data.info);
+        }
+    },'json');
+}
+function slide(name){
+    var res=jQuery('tr[name="'+name+'"]');
+    if(res.is(":visible")){
+        res.hide();
+    }else{
+        res.parent().find('.cname').hide();
+        res.show();
+    }
+}
+    function autosub(){
+        jQuery('#issubmit').val('0');
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/scoreInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+                jQuery('#message').remove();
+					jQuery('#tips').append('<div id="message" class="message_success"></div>');	
+                    jQuery('#message').text(data.info);
+                    jQuery('#message').fadeIn(500).delay(10000).fadeOut(500);
+                   // jQuery('#message').remove();
+				}else{
+					jQuery('#tips').append('<div id="message" class="message_error"></div>');	
+                    jQuery('#message').text(data.info);
+                    jQuery('#message').fadeIn(500).delay(10000).fadeOut(500);
+				}
+			}
+		});
+        setTimeout("autosub()", 1000*60*10);
+    }
+
+</script> 
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10" >
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class='nav'>
+    <ul>
+     <li><a href="__URL__/scoreAdd/id/{$uploadid}" class='open'>Filling Manually</a></li>
+     <li><a href="__URL__/scoreAddupload/id/{$uploadid}" class="no">Bulk Upload</a></li>
+    </ul>
+    <div style="clear:both;"></div>
+</div>
+<div style=""></div>
+<br />
+<div class="main">
+    <form id="form1"><input type="hidden" value="{$result1.id}" name="id" /><input type="hidden" value="0" id="issubmit" name="issubmit"/>
+         <table width="95%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+         <tr><td colspan="2" style="color: #990000;"><img src="../Public/images/info.gif" align="absmiddle" />Operating Instructions: Final results according centesimal system or Final results according hierarchical system is the result which display to students and generate transcript, as a result, please fill either out completely.</td></tr>
+             <tr><td colspan="2"><img src="../Public/images/info.gif" align="absmiddle" /> To switch the results filling page, use the up and down arrows of the keyboard.</td></tr>
+             <tr><td colspan="2"><img src="../Public/images/info.gif" align="absmiddle" /> Click&nbsp;<img src='../Public/team_padding/bianji.png' />&nbsp;icon can modify scores of the final examination and the name of the examination and click&nbsp;<img src='../Public/team_padding/tianjia.gif' />&nbsp;icon can add usual exam while&nbsp;<img src='../Public/team_padding/shanchu.jpg' />&nbsp;means delete usual exam</td></tr>
+              <tr><td><div class="btn_zone">Unit：<u>{$result1.coursenumber} [{$result1.ename}]</u> Teacher：<u>{$result1.teacher} [{$result1.tename}]</u> Semester：<u>{$result1.term}</u> Class hour：<u>{$result1.coursetime}</u> Credits：<u>{$result1.credit}</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="../Public/images/xls.gif" align="absmiddle"/><a href="__URL__/downScore/id/{$result1.id}">[Export xls file]</a></div></td>
+              <td><div class="page">{$page}</div></td></tr>
+         </table>
+         <div id="tips"></div>
+        <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0" id="tblGrid">
+            <thead>
+              <tr>
+              <th width="150">Class</th>
+               <th width="103">Student Number</th>
+                <th width="88">Student Name</th>
+                 <th width="150">Final Results (according centesimal system)</th>
+                  <th width="150">Final Results (according hierarchical system)</th>
+                  <volist name='my2' id='my2'>
+                  <php>$a=explode(':',$my2); </php>
+                 <th><if condition="$a['0'] eq ''" >Final Results<else />{$a['0']}</if>
+                   <input type='hidden' name="qimoname" <if condition="$a['0'] eq ''" >value="期末成绩"<else />value="{$a['0']}"</if> />
+                 <img src='../Public/team_padding/bianji.png' onclick="bianji('{$a['0']}','期末成绩')" style="cursor:pointer;"></th>
+                  </volist>
+                  <th width="94">Notes</th>
+                 
+                  <volist name='my1' id='my1'>
+                    <php>$a=explode(',',$my1);</php>
+                    <assign name="ar1" value="$a" />
+                     <volist name='ar1' id='ar'>
+                         <php>$ar=explode(':',$ar);
+                         preg_match_all("/[0-9]{2}/",substr($ar['0'],0,7),$arrNum);
+                         if($arrNum[0]){
+                            $name=substr($ar['0'],8,20);
+                         }else{
+                            $name=substr($ar['0'],7,20);
+                         }
+                         </php> 
+                      <th width="70" ><if condition="$ar['0'] eq ''" >Exam<else />{$name}</if>
+                          <input type='hidden' name="ordtime[]" <if condition="$ar['0'] eq ''" >value='第1次考试'<else />value="{$ar['0']}"</if> />
+                         <img src='../Public/team_padding/bianji.png' onclick="bianji('{$ar['0']}')" style="cursor:pointer;">&nbsp;
+                         <img src='../Public/team_padding/shanchu.jpg' onclick="del('{$ar['0']}')" style="cursor:pointer;">
+                        </th>
+                      </volist>
+                  </volist>
+                    <th width="8"><img src='../Public/team_padding/tianjia.gif' id='add' style="cursor:pointer;"></th> 
+              </tr>
+            </thead>
+            <tbody>
+              <volist name="class" id="classname">
+              <tr><td onclick="slide('{$key}')" style="border-bottom:0px;" ><a href='#' style="color:#003C74;">{$key}</a></td></tr>
+              <volist name="classname" id="my">
+              <tr name='{$my.classename}' style="display:none;"  class="cname">
+              <td></td>
+               <td>{$my.susername}</td>
+                <td>{$my.sename}</td>
+                <td><input type="text"  name="score{$my.id}" class="inputshort score" value="{$my.score}" style="width:80px;" />
+                </td>
+                <td>
+                    <input type="text"  name="levelscore{$my.id}" class="inputshort levelscore" value="{$my.levelscore}" style="width:80px;"/>
+                </td>
+                 <php>$ar=explode(':',$my['qimoscore']);</php>
+                <td><input type="text" name="qimoscore{$my.id}" class="inputshortqi" value="{$ar['1']}" size='10'/></td>
+                <td><html:select options="plus" first="None" name="plus{$my.id}" selected="my['plus']"/></td> 
+                 <php>$arr=explode(',',$my['ordinaryscore']); </php>
+                 <assign name="ar1" value="$arr" />
+                  <volist name="ar1" id="ar">
+                  <php>$a=explode(':',$ar);</php>
+                 <td>
+                    <input type="text" name="ordscore{$my.id}[]" class="inputshorte" value="{$a['1']}" size='2'/>
+                    makeup:<input type='text' name="ordbuscore{$my.id}[]" class='inputshortb' value="{$a['2']}" size='2'/>
+                 </td>
+                 </volist>
+                 <td name='ord{$my.id}'></td>
+              </tr>
+               </volist>
+              </volist>
+             </tbody>
+         </table>
+     </form>
+     <table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr><td style="color: #990000;"><img src="../Public/images/info.gif" align="absmiddle" /> Operating Instructions: Final results according centesimal system or Final results according hierarchical system is the result which display to students and generate transcript, as a result, please fill either out completely.</td></tr>
+      <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="Hold" />&nbsp;（Please hold in time, you can modify after holding.）&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="button" id="btn_sub" value="Submit" />&nbsp;（Please confirm all the classes information are correct. Once submitted, information would not be permitted to modify）</div>
+      </td>
+      
+      <td><div class="page">{$page}</div></td></tr>
+     </table>
+</div><!--end of main-->
+</body>
+</html>

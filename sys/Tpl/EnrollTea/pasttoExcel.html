@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" href="../Public/team_border/my.css" type="text/css">
+<script type="text/javascript" src="../Public/team_border/correctPng.js"></script>
+<script type="text/javascript"> 
+function k(){
+	window.location="__URL__/pastexcel/year/{$year}";
+}
+function k2(){
+	window.location="__URL__/pastexcel2/year/{$year}";
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+   <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div style=" text-align:center">点击按钮可导出excel到本地电脑：<input type="button" value="导出全部学生" onclick="k()"/> &nbsp;<input type="button" value="导出已录取学生" onclick="k2()"/></div>
+</div><!--end of main-->
+</body>
+</html>

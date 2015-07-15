@@ -1,0 +1,16 @@
+﻿*{margin:0px;padding:0px;line-height:20px;font-size:13px;font-family:宋体;}
+body{text-align:center;background-color:#099;color:#000;}
+ul{margin:0px;padding:0px 0px 0px 20px;}
+input{padding:2px;line-height:13px;font-size:13px;}
+h1{text-align:center;line-height:40px;font-size:26px;font-weight:bold;}
+h3{line-height:30px;font-size:13px;font-weight:bold;}
+a{background-color:transparent;color:#00f;text-decoration:none;}
+a:hover{background-color:#099;color:#fff;text-decoration:none;}
+img{vertical-align:middle;}
+.section{margin:0px auto;padding:20px;width:950px;background-color:#fff;color:#000;text-align:left;}
+.block{margin-top:20px;padding:10px;border:1px solid #ccc;zoom:1;}
+.footer{text-align:center;}
+.show{text-align:center;}
+.code{padding-left:3px;border-left:3px solid #009999;background-color:#eee;color:#000;}
+.faq li{padding-top:10px;}
+.brief{line-height:20px;font-size:12px;}

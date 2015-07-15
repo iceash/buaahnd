@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_display/css/jj.css">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript"> 
+function k(key){
+	window.location="__URL__/musicMore/id/"+key;
+}
+
+function changeTab(id,cate) {
+    window.location="__URL__/singer/id/"+id+"/category/"+cate;
+}
+function changeColor(id) {
+    if(id == "music") {
+       $("#music").css('color','#900'); 
+    }else if(id=="album"){
+        $("#album").css('color','#900');
+    }else if(id == "pic"){
+        $("#pic").css('color','#900');
+    }
+    
+}
+
+function returnColor(id){
+   if(id == "music") {
+       $("#music").css('color','black'); 
+    }else if(id=="album"){
+        $("#album").css('color','black');
+    }else if(id == "pic"){
+        $("#pic").css('color','black');
+    } 
+    $(".hover").css('color','#c40000');
+}
+
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/music">音乐</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<table width="100%" border="0" class="utable_vtop" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" valign="top" width="240" style="border:0;"><img src="{$singer.pic|default='../Public/team_display/images/default_pic.jpg'}"  width="100" height="100" align="absmiddle" /><br />
+{$singer.name}<br />
+<span style="color:red">歌手介绍：</span>{$singer.intro}
+</td>
+<td class="tab" style="border:0;line-height:28px;">
+   <ul>
+    <li id="music" style="width:25px;" onclick="changeTab({$singer.id},'music')" onmouseover="changeColor('music');" onmouseout="returnColor('music');">歌曲</li>
+    <li id="album" style="width:25px;" class="hover" onclick="changeTab({$singer.id},'album')" onmouseover="changeColor('album');" onmouseout="returnColor('album');">专辑</li>
+    <li id="pic" style="width:25px;" onclick="changeTab({$singer.id},'pic')" onmouseover="changeColor('pic');" onmouseout="returnColor('pic');">照片</li>
+   </ul>
+   
+</td>
+    <td style="border:0;">
+	<!--专辑列表 start-->
+		<table width="100%" class="utable" style="border-top:0px;" cellpadding="0" cellspacing="0">
+		 <volist name="album" id="my">
+			 <tr>
+                <td>
+                    <img src="{$my.pic|default='../Public/team_display/images/default_pic.jpg'}" width="150px" height="150px" align="absmiddle" onclick="k('{$my.id}');"/>
+                 </td>
+   				 <td style="width:400px;vertical-align:top;">专辑名：<a href="" onclick="k('{$my.id}');return false;">{$my.name}</a><br/>
+                专辑简介：{$my.intro}
+                 </td>
+				<td style="width:200px;vertical-align:top;">类别：{$my.category}</td>
+				 <td><input type="button" value="详情" onclick="k('{$my.id}');" /></td>
+			</tr>
+		</volist>
+		</table>
+	<!--专辑列表 end-->
+	</td>
+   </tr>
+ </table>
+  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

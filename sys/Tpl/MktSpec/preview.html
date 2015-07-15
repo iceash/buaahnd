@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/team_display/css/default.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+</head>
+<body>
+<tagLib name="html" />
+<div style="width:700px;margin: 0 auto;">
+<div style="width:70%;margin:15px 40%;font-size:15px;font-weight:bold;">{$my.theme}</div>
+<php>$i=1;</php> 
+ <volist name="my2" id="my2">
+<tr>
+<td>{$i}.</td>
+<td>{$my2.item}</td>
+</tr><br />
+<tr><td></td><td>{$my2.options}</td></tr>
+<php>if($my2['type']==3){</php>
+<tr><td><textarea style="width:650px;height:100px;"></textarea></td></tr>
+<php>}</php>
+<br></br>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td><div style="bottom:20px;left:22%;">在使用中有任何问题，请拨打咨询电话：4006-717175</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

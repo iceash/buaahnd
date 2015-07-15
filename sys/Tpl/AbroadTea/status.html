@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript" src="../Public/js/ezj/ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    ezj.ext.chart(chart1, "__URL__/processData/now/{$mytime}/status/all", 680, 300);
+});
+//-->
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="20%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div style=" text-align:right; margin-bottom: 10px;">学生姓名：<input type="text" value="{$truename}" id="truename" name="truename" onkeydown="searchkeydown(event)"/>&nbsp;
+
+<html:select first="所有状态" options="all_status" name="status" id="status" selected="status_select"/>&nbsp;
+<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0" bgcolor="#F1F1F1">
+  <tr>
+    <td width="680" height="300"><div id="chart1"></div></td>
+    <td>
+	<volist name="my" id="my">
+		<a href="__URL__/statusCategory/status/{$my.status}/year/all">{$my.statustext} [{$my.count}人]</a><br />
+	</volist>
+	</td>
+  </tr>
+</table>
+</div><!--end of main-->
+<script type="text/javascript"> 
+    function mysearch(){
+        var truename=jQuery('#truename').val();
+        var status=jQuery('#status').val();
+        
+        var url="__URL__/search/year/all";
+        if(truename!==''){
+            url=url+"/truename/"+truename;
+        }
+        if(status!==''){
+            url=url+"/status/"+status;
+        }
+
+        window.location=url;
+    }
+    function searchkeydown(e){
+        var e = e || event;
+        if (e.keyCode==13){
+            mysearch();
+        }
+    }
+</script>
+</body>
+</html>

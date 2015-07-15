@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="StyleSheet" href="../Public/js/dtree/dtree.css" type="text/css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	
+});
+</script> 
+<style type="text/css">
+#ahover a:hover{text-decoration : underline;}
+</style>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">Unit：<u>{$result1.coursenumber} [{$result1.ename}]</u> Teacher：<u>{$result1.teacher} [{$result1.tename}]</u> Semester：<u>{$result1.term}</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="../Public/images/xls.gif" align="absmiddle"/><a href="__URL__/downCourseStu/id/{$result1.id}">[Export xls file]</a></div></td>
+  <td><div class="page">{$page}</div></td>
+  </tr>
+ </table>
+ <div class="dtree" >
+ 
+	<p id="ahover"><a href="javascript: d.openAll();">Expand all</a> | <a href="javascript: d.closeAll();">Close all</a></p>
+	<script language="javascript">
+		d = new dTree('d','../Public/js/dtree/','testForm');
+		d.config.useCheckBox=false;
+		//d.config.useIcons=true;
+		d.add(0,-1,'Total Students');
+	<volist name="class" id="dtree_class">
+		d.add('class{$dtree_class}',0,'{$dtree_class}');
+	</volist>
+	<volist name="my" id="dtree_stu">
+		d.add('{$dtree_stu.susername}-{$dtree_stu.sename}','class{$dtree_stu.classename}','{$dtree_stu.susername}&nbsp;&nbsp;{$dtree_stu.sename}');
+	</volist>
+		d.closeAll();
+		document.write(d);
+	</script>
+    </div>
+
+
+</div><!--end of main-->
+</body>
+</html>

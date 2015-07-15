@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript"> 
+function k(key){
+	var myDialog = art.dialog({
+		title: jQuery('#who'+key).val(),
+		cancelVal: '关闭'
+	});
+	jQuery.ajax({
+		url: "__URL__/rankingMore/id/"+key,
+		success: function (data) {
+			myDialog.content(data);// 填充对话框内容
+		}
+	});
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/ranking">大学排名</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div style="width:70%;float:left;"><table width="70%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+  <volist name="my" id="my" mod="4">
+	<td style="width:15%;height:220px;border:1px #777 solid;">
+    <div><a href="javascript:k('{$my.id}')">
+        <img src="{$my.titlepic|default='../Public/team_display/images/default_pic.jpg'}"  width="150" height="150" align="absmiddle"/>
+    </a></div>
+    <div style="text-align:center;width:150px;height:120px"><span  style="cursor:pointer;"><a href="javascript:k('{$my.id}')">{$my.title}</a>
+    <php>
+        $predate = date("Y-m-d",strtotime("-2 week"));
+        if($my["ctime"]>=$predate) {
+    </php>
+    <img src="../Public/team_display/images/new_tip.jpg"></img>
+    <php>}</php>
+    <input type="hidden" value="{$my.title}" id="who{$my.id}" /></span><br />
+    <span style="cursor:pointer;"><a onclick="k('{$my.id}')">{$my.summary|msubstr=0,40}</a></span>
+    </div>
+   </td><td style="border:0px;"></td>
+    <eq name="mod" value="3"></tr><tr></eq>
+  </volist>
+</tr>
+ <tbody>
+ </table>
+ <table width="90%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+ </div>
+
+ <div style="width:30%;float:right;">
+<!--    <table><tr><td height="500px" bgcolor="#FF0000"></td></tr></table>-->
+<span>热门文章</span><span style="float:right"></span>
+<HR align="left" width="300" color="#990099" SIZE="3" noShade>
+
+<ul>
+<volist name="paper" id="paper">
+    <li style="height:25px"><a href="javascript:k('{$paper.id}')">{$paper.title}</a></li>
+    </volist>
+</ul>
+</div>
+ 
+
+</div><!--end of main-->
+</body>
+</html>

@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ajax.service - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ajax.service</h1>
+  
+  <div class="block">
+    <h3>Web Service 代码</h3>
+    <textarea class="code csharp">
+    <%@ WebService Language="C#" Class="WebService" %>
+
+    using System;
+    using System.Web;
+    using System.Web.Services;
+    using System.Web.Services.Protocols;
+
+    [WebService(Namespace = "http://www.getezj.com/demo/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    public class WebService  : System.Web.Services.WebService
+    {
+
+        [WebMethod]
+        public string SayString(string name)
+        {
+            return "您好，" + name + "。";
+        }
+
+        [WebMethod]
+        public string SayStringXml()
+        {
+            return @"<root>
+                      <item>1</item>
+                      <item>2</item>
+                     </root>";
+        }
+
+        [WebMethod]
+        public int SayInt()
+        {
+            return 135;
+        }
+
+        [WebMethod]
+        public int[] SayIntArray()
+        {
+            return new int[]{1, 3, 5};
+        }
+    }
+    </textarea>
+    
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+    <input type="button" id="ajax1" value="Web Service 演示一" />
+    <input type="button" id="ajax2" value="Web Service 演示二" />
+    <input type="button" id="ajax3" value="Web Service 演示三" />
+    <input type="button" id="ajax4" value="Web Service 演示四" />
+    </textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+    ezj.ready(function(){
+        ajax1.click(function(){
+            ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayString", { name : "ezj" }, function(data){
+                alert("这里演示向 Web Service 传送一个参数，并获取返回的字符串。", "返回值：" + data);
+            }, function(data, status){
+                alert("发生了错误噢，HTTP 状态码：" + status);
+            })
+        });
+        ajax2.click(function(){
+            ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayStringXml", null, function(data){
+                alert("这里演示返回字符串，但这个字符串符合 XML。", "返回值：" + data, "用 $x 取 XML 的 item 值：" + $x(data).val("//item"));
+            }, function(data, status){
+                alert("发生了错误噢，HTTP 状态码：" + status);
+            })
+        });
+        ajax3.click(function(){
+            ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayInt", null, function(data){
+                alert("这里演示返回 int，这个 int 实际上是字符串格式的，我们需要用 Number.from 来转换。", "返回值：" + Number.from(data));
+            }, function(data, status){
+                alert("发生了错误噢，HTTP 状态码：" + status);
+            })
+        });
+        ajax4.click(function(){
+            ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayIntArray", null, function(data){
+                alert("这里演示返回数组，实际上是个 XML 的 NodeList，需要自行取值。", "数组第二项的值：" + data[1].firstChild.nodeValue);
+            }, function(data, status){
+                alert("发生了错误噢，HTTP 状态码：" + status);
+            })
+        });
+    });
+    </textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <input type="button" id="ajax1" value="Web Service 演示一" />
+    <input type="button" id="ajax2" value="Web Service 演示二" />
+    <input type="button" id="ajax3" value="Web Service 演示三" />
+    <input type="button" id="ajax4" value="Web Service 演示四" />
+  </div>
+  
+  <div class="block">
+    <h3>问答</h3>
+    <ul class="faq">
+      <li>
+        <p>问：ezj.ajax.service 是通过什么协议工作的？</p>
+        <p>答：SOAP 1.1。</p>
+      </li>
+      <li>
+        <p>问：ezj.ajax.service 可以访问第三方 Web Service 文件吗？</p>
+        <p>答：ezj.ajax.service 运行于客户端，客户端浏览器基于安全的原因，不允许访问非本域的资源，所以想要在网站 A 通过 ezj.ajax.service 访问网站 B 的 Web Service 是不会有权限的，这跟 Ajax 一样。</p>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+ezj.ready(function(){
+    ajax1.click(function(){
+        ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayString", { name : "ezj" }, function(data){
+            alert("这里演示向 Web Service 传送一个参数，并获取返回的字符串。", "返回值：" + data);
+        }, function(data, status){
+            alert("发生了错误噢，HTTP 状态码：" + status);
+        })
+    });
+    ajax2.click(function(){
+        ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayStringXml", null, function(data){
+            alert("这里演示返回字符串，但这个字符串符合 XML。", "返回值：" + data, "用 $x 取 XML 的 item 值：" + $x(data).val("//item"));
+        }, function(data, status){
+            alert("发生了错误噢，HTTP 状态码：" + status);
+        })
+    });
+    ajax3.click(function(){
+        ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayInt", null, function(data){
+            alert("这里演示返回 int，这个 int 实际上是字符串格式的，我们需要用 Number.from 来转换。", "返回值：" + Number.from(data));
+        }, function(data, status){
+            alert("发生了错误噢，HTTP 状态码：" + status);
+        })
+    });
+    ajax4.click(function(){
+        ezj.ajax.service("inc/service.htm.asmx", "http://www.getezj.com/demo/", "SayIntArray", null, function(data){
+            alert("这里演示返回数组，实际上是个 XML 的 NodeList，需要自行取值。", "数组第二项的值：" + data[1].firstChild.nodeValue);
+        }, function(data, status){
+            alert("发生了错误噢，HTTP 状态码：" + status);
+        })
+    });
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

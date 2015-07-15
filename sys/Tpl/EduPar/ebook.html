@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_display/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_display/js/jquery.masonry.min.js"></script>
+<script type="text/javascript" src="../Public/team_display/js/jquery.infinitescroll.js"></script>
+<script type="text/javascript"> 
+$(function(){  
+    $('#main').imagesLoaded(function(){ 
+        $('#main').show();
+        $('#main').masonry({  
+            itemSelector : '.item'
+        }); 
+    });    
+    $('#main').infinitescroll({
+//         navSelector : '.page', //分页导航的选择器
+//         nextSelector : '.page a', //下页连接的选择器
+        extraScrollPx: 300,
+        itemSelector : '.item', //你要检索的所有项目的选择器
+        loading: {
+                finishedMsg: '已经显示完所有电子书',//结束显示信息
+                img: '../Public/team_display/images/ajax-loader.gif'//loading图片
+        }
+    }, function(newElements) {
+        // hide new items while they are loading
+        var $newElems = $( newElements ).css({ opacity: 0 });
+        // ensure that images load before adding to masonry layout
+        $newElems.imagesLoaded(function(){
+          // show elems now they're ready
+          $newElems.animate({ opacity: 1 });
+          $('#main').masonry( 'appended', $newElems, true ); 
+        });
+    });
+  });  
+  
+function k(key){
+	window.location="__URL__/download/type/ebook/id/"+key;
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	var category=jQuery('#category').val();
+	var url="__URL__/ebook";
+	if(searchkey!==''){
+		url=url+"/searchkey/"+searchkey;
+	}
+	if(category!==''){
+		url=url+"/category/"+category;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/ebook">电子书</a></div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="search">输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<html:select first="所有类别" options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+
+  <div id="main" style="margin-left:2%;display:none;" class="clearfix" style="position:relative;height:1010px;">
+  <volist name="my" id="my" mod="4"> 
+     <div class="item" style="width:200px;position:absolute;">
+     <a href="__URL__/download/type/ebook/id/{$my.id}" title="点击下载">
+        <img src="{$my.picurl|default='../Public/team_display/images/default_pic.jpg'}" align="absmiddle" width="200px"/>
+    </a><br/>
+     <div style="text-align:center;width:200px;word-break:break-all;margin:0 auto"><a href="__URL__/download/type/ebook/id/{$my.id}" width="200px" title="点击下载">{$my.filename}</a>
+     <php>
+        $predate = date("Y-m-d",strtotime("-2 week"));
+        if($my["ctime"]>=$predate) {
+    </php>
+    <img src="../Public/team_display/images/new_tip.jpg"></img>
+    <php>}</php>
+     <br />
+        <span>类型：{$my.category}</span>
+     </div>
+     </div>
+    <eq name="mod" value="3"></tr><tr></eq> 
+  </volist>
+  
+<!-- <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td>-->
+<!-- <div class="page" style="position:absolute;top:100%;width:100%; ">{$page}</div>-->
+  <nav class="page" style="position:absolute;top:100%;width:100%; ">{$page}</nav>
+  <!--</td></tr>
+ </table>-->
+</div>
+</div><!--end of main-->
+</body>
+</html>

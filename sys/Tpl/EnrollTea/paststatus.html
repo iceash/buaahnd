@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/js/dtree_original/dtree.css"> 
+<script type="text/javascript" src="../Public/team_border/correctPng.js"></script>
+<script type="text/javascript" src="../Public/js/dtree_original/dtree.js"></script>  
+</head>
+
+<body style="text-align:center;">
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+   <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+
+<div class="center" style=" width: 800px;margin:0 auto;">
+<!-- ampie script-->
+  <script type="text/javascript" src="../Public/ampie/swfobject.js"></script>
+	<div id="flashcontent">
+		<strong>You need to upgrade your Flash Player</strong>
+	</div>
+
+	<script type="text/javascript">
+		// <![CDATA[	
+		var so = new SWFObject("../Public/ampie/ampie.swf", "ampie", "800", "550", "8", "#FFF");
+		so.addVariable("path", "../Public/ampie/");
+		so.addVariable("settings_file", escape("__APP__/Tpl/Public/team_border/pastampieSetting.html"));
+		so.addVariable("data_file", escape("__URL__/pastampieData/year/{$year}"));
+		so.addVariable("preloader_color", "#999999");
+		so.write("flashcontent");
+		// ]]>
+	</script>
+<!-- end of ampie script -->
+</div>
+</body>
+</html>

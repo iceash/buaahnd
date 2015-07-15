@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store, must-revalidate" /> 
+<META HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT" /> 
+<META HTTP-EQUIV="expires" CONTENT="0" /> 
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/js/plupload_r/jquery.plupload.queue/css/jquery.plupload.queue.css" media="screen">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/plupload_r/plupload.js"></script>
+<script type="text/javascript" src="../Public/js/plupload_r/plupload.flash.js"></script>
+<script type="text/javascript" src="../Public/js/plupload_r/i18n/zh.js"></script>
+<script type="text/javascript" src="../Public/js/plupload_r/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/SingerInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					jQuery('#insertID').val(data.data);
+					window.location="__URL__/Singer";
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+	jQuery("#uploader").pluploadQueue({
+		// General settings
+		runtimes:  'flash',
+		url: '__URL__/plupload',
+		max_file_size: '10mb',
+		chunk_size: '512kb',
+		multiple_queues:true,
+		unique_names: true,
+	//	resize: {width: 200, height: 200, quality: 95},
+		filters: [
+			{title: "Image files", extensions: "jpg,gif,png"}
+		],
+		flash_swf_url: '../Public/js/plupload_r/plupload.flash.swf'
+	});
+});
+//验证歌手是否存在于数据库中
+function hasSinger(){
+	var singername=jQuery("#singername").val();
+		jQuery.ajax({
+			type:'GET',
+			url:'__URL__/HasSinger',
+			dataType:'json',
+			data:{singer:singername},
+			success: function(data){
+				if (data.status==1){
+					jQuery('#singerTips').html(data.info).css({'color':'#000'});
+				}else{
+					console.log(data);
+					jQuery('#singerTips').html(data.info).css({'color':'red'});
+				}
+			}
+		});
+	}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 歌手图片可选择多张上传</div>
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item"><span class="mustfill">*</span>歌手名称</td>
+    <td><input type="text" name="name" onblur="hasSinger();" id="singername" class="inputlong" /><span style="margin-left:10px;" id="singerTips"></span></td>
+  </tr>
+   <tr>
+    <td class="t_item">歌手图片</td>
+    <td><div id="uploader" style="width: 500px; height: 280px;">请安装flash插件.</div></td>
+   </tr>
+   <tr>
+    <td class="t_item">歌手介绍</td>
+    <td><textarea name="intro" class="textareanormal"></textarea></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="hidden" id="insertID" value="" /><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

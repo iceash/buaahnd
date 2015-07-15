@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script language="javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/changeTeacher',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);	
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+
+</script> 
+
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+	<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" ><a href="__URL__/detail/id/{$my.id}" class="blue">{$my.struename}</a>（录入时间：{$my.ctime}）</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->	
+	</div><!--end of people-->
+	<div>	<form id="form1">
+		<h4>当前咨询教师为：{$my.ttruename}，将该生转移到：</h4>
+		<html:radio radios="a" name="teacher" />
+		<input type="hidden" value="{$my.id}" name="id"/><input type="hidden" value="{$my.tusername}" name="oldteacher"/><input type="hidden" value="{$my.ttruename}" name="oldteachername"/>
+		</form>
+	</div>
+	<div class="btn_zone">
+		<input type="button" value="保存" id="save" />
+	</div>
+</div><!--end of main-->
+</body>
+</html>

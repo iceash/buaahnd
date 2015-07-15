@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+function changes(){
+		var a=jQuery('input[name="HND"]:checked').val();
+	if (typeof (a) == "undefined") { 
+		alert('南大HND库中无匹配结果');
+	}else{
+			window.location.href='__URL__/changeScore/id/'+a;
+	}
+}
+
+function getHND(){
+	var a=jQuery('#name').val();
+	var b=jQuery('#number').val();
+	if(a==''&&b==''){ 
+		alert('学生姓名或学生学号至少填写一项');
+	}else{
+		jQuery("#enroll_info").load("__URL__/getHND/",{name:a,number:b});
+	}
+}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item">学生姓名</td>
+    <td><input type="text" name="name" id="name" value="{$name}" class="inputshort" />&nbsp;&nbsp;或&nbsp;&nbsp;学生学号<input type="text" name="number" id="number" value="{$number}" class="inputshort" /><div style=" display:inline-block; margin-left:10px;"><input type="button" value="智能匹配" onclick="getHND();"/></div></td>
+  </tr>
+    <tr>
+    <td class="t_item">南大HND库中匹配结果</td>
+    <td><div id="enroll_info"></div></td>
+  </tr>
+ </table>
+ </form>
+
+</div><!--end of main-->
+</body>
+</html>

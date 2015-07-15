@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/ruleUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+function computeSys(id){ 
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/computeSys',
+		dataType:'json',
+		data:{content:jQuery('#'+id).val()},
+		success: function(data){
+			if (data.status==1){
+				alert(data.info);	
+			}else{
+				alert(data.info);
+			}
+		}
+	});
+}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> （1）参数值之间的逗号和冒号均为英文，切记不可使用中文标点。（2）规则为level:number（难度:数目），之间用英文逗号隔开，如1:2,8:3表示难度为1的题目抽取2道，难度为8的题目抽取3道。 （3）若不从某类题型中抽取，可留空。</div>
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+ <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>规则名称</td>
+    <td><input type="text" name="name" class="inputmid" value="{$my.name}"/></td>
+   </tr>
+      <tr>
+    <td class="t_item">选择题抽取规则</td>
+    <td><input type="text" name="slct" class="inputlong" id="slct" value="{$my.slct}" />&nbsp;<input type="button" value="计算题目数量" onclick="computeSys('slct')"/></td>
+   </tr>
+      <tr>
+    <td class="t_item">填空题抽取规则</td>
+    <td><input type="text" name="fill" class="inputlong" id="fill" value="{$my.fill}" />&nbsp;<input type="button" value="计算题目数量" onclick="computeSys('fill')"/></td>
+   </tr>
+    <tr>
+        <td class="t_item">完型填空抽取规则</td>
+        <td><input type="text" name="cloze"  id="cloze" class="inputlong"  value="{$my.cloze}" />&nbsp;<input type="button" value="计算题目数量" onclick="computeSys('cloze')"/></td>
+    </tr>
+      <tr>
+    <td class="t_item">阅读题抽取规则</td>
+    <td><input type="text" name="rd" class="inputlong" id="rd"  value="{$my.rd}"/>&nbsp;<input type="button" value="计算题目数量" onclick="computeSys('rd')"/></td>
+   </tr>
+      <tr>
+    <td class="t_item">写作题抽取规则</td>
+    <td><input type="text" name="wrt" class="inputlong" id="wrt"  value="{$my.wrt}"/>&nbsp;<input type="button" value="计算题目数量" onclick="computeSys('wrt')"/></td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

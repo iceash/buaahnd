@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script language="javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+
+});
+
+function my_start(id){
+      window.location  =" __URL__/start/enrollid/"+id;
+}
+function my_record(id){
+      window.location  =" __URL__/record/enrollid/"+id;
+}
+function my_change(id){
+      window.location  =" __URL__/change/enrollid/"+id;
+}
+function my_del(id){
+	if (window.confirm('确定要删除此记录吗？')){
+		jQuery.getJSON('__URL__/del/',{enrollid:id},function(data){
+			if(data.status==1){
+				alert(data.info);
+				window.location.reload();
+			}else{
+				alert(data.info);
+			}	
+		});
+	}
+}
+function mysearch(){
+	var truename=jQuery('#truename').val();
+    var mobile=jQuery('#mobile').val();
+	var schoolname=jQuery('#schoolname').val();
+	var school=jQuery('#school').val();
+	var status=jQuery('#status').val();
+	var teacher=jQuery('#teacher').val();
+	
+	var url="__URL__/search";
+	if(truename!==''){
+		url=url+"/truename/"+truename;
+	}
+    if(mobile!==''){
+		url=url+"/mobile/"+mobile;
+	}
+	if(schoolname!==''){
+		url=url+"/schoolname/"+schoolname;
+	}
+    if(school!==''){
+		url=url+"/school/"+school;
+	}
+    if(status!==''){
+		url=url+"/status/"+status;
+	}
+    if(teacher!==''){
+		url=url+"/teacher/"+teacher;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"></td>
+  </tr>
+</table>
+<div class="main">
+<div style=" text-align:right">学生姓名：<input type="text" value="{$truename}" id="truename" name="truename" onkeydown="searchkeydown(event)" />&nbsp;
+手机号码：<input type="text" value="{$mobile}" id="mobile" name="mobile" onkeydown="searchkeydown(event)"/>&nbsp;
+学校名称：<input type="text" value="{$schoolname}" id="schoolname" name="schoolname" onkeydown="searchkeydown(event)"/>&nbsp;
+<html:select first="不限高中所在地区" options="city_fortag" name="school" id="school" selected="city_select" />&nbsp;
+<html:select first="所有状态" options="all_status" name="status" id="status" selected="status_select" />&nbsp;
+<html:select first="所有老师" options="all_teacher" name="teacher" id="teacher" selected="teacher_select" />&nbsp;
+<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+	<div class="page">{$page}</div>
+	<volist name="my" id="my">
+		<div class="people">
+			<div class="people_title_zone">
+				<div class="people_title" >
+                    <a href="__URL__/student/enrollid/{$my.id}" class="blue">{$my.truename}</a>（最近咨询时间：{$my.rtime} 录入：{$my.fill} 咨询：{$my.counselorname} 状态：{$my.statustext}）
+                </div>
+				<div class="people_do" >
+					<eq name="my.status" value="z">
+						<input type="button" value="删除记录" onclick="my_del({$my.id});"/>&nbsp;
+						<input type="button" value="启动分配" onclick="my_start({$my.id});"/>			
+					</eq>
+					<neq name="my.status" value="z">
+						<input type="button" value="转移教师" onclick="my_change({$my.id});"/>&nbsp;
+						<input type="button" value="咨询记录" onclick="my_record({$my.id});"/>
+					</neq>
+				</div>
+				<div class="clear"></div>
+			</div><!--people_title_zone-->
+			<div class="people_detail"><B>性别：</B>{$my.sex}&nbsp;
+				<B>民族：</B>{$my.nationality} &nbsp;
+				<B>出生日期：</B>{$my.birthday|toDate='Y年m月d日'} &nbsp;
+				<B>身份证号码：</B>{$my.idcard} &nbsp;<br />
+				<B>家庭住址：</B>{$my.address} &nbsp;
+				<B>籍贯：</B>{$my.nativeprovince} {$my.nativecity}&nbsp;
+				<B>毕业学校：</B>{$my.schoolprovince} {$my.schoolcity} {$my.schoolname}&nbsp;<br />
+				<B>手机：</B>{$my.mobile} &nbsp;
+				<B>QQ：</B>{$my.qq} &nbsp;
+				<B>Email：</B>{$my.email}&nbsp;
+			</div><!--people_detail-->	
+		</div><!--end of people-->
+	</volist>
+	<div class="line"></div>
+	<div class="page">{$page}</div>
+</div><!--end of main-->
+</body>
+</html>

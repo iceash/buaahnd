@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#aaa').click(function(){
+		var g=0;
+		var s=0;
+		jQuery('input[name=key]:checked').each(function(){
+			temp=$(this).val().split(","); 
+			b0=parseInt(temp[0]);
+			b1=parseInt(temp[1]);
+			g=g+b0*getG(b1);
+			s=s+b0;
+		});
+		if(s==0){
+			alert('未勾选任何课程！');
+		}else{
+			alert('GPA成绩='+(g/s).toFixed(2) );
+		}
+	});
+});
+function getG(score){
+	switch(true){
+		case score>=0&&score<60:
+			g=0;break; 
+		case score>=60&&score<70:
+			g=1;break; 
+		case score>=70&&score<80:
+			g=2;break; 
+		case score>=80&&score<90:
+			g=3;break; 
+		case score>=90&&score<=100:
+			g=4;break; 
+		default:
+			g=0;break; 
+	}
+	return g;
+ }
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav"><a href="__URL__" title="控制中心">控制中心</a> >> <a href="__URL__/gpa">GPA计算</a>
+	</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 勾选加入GPA计算的课程，并点击最下方的计算按钮</div>
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+<volist name="my" id="temp">
+ 
+  <tr> 	
+  	<th width="5%"></th>
+    <th width="30%">{$temp['0'].term}</th>
+	<th width="15%" >学分</th>
+    <th width="15%" >成绩</th>
+  </tr>
+ 	 <volist name="temp" id="my">
+  <tr>
+  	<td><input type="checkbox" name="key" value="{$my.credit},{$my.score}" checked="checked"/></td>
+    <td>{$my.coursename}</td>
+	<td>{$my.credit}</td>
+	<td>{$my.score}</td>
+  </tr>
+  </volist>
+
+
+  </volist> </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" value="计算" id="aaa" /></div></td>
+  <td></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

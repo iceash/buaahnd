@@ -1,0 +1,28 @@
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/team_margin/js/checkboxRadio.js"></script>
+<form id='form1'>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0" border='1'>
+<thead>
+  <tr>
+   <th>学号</th>
+   <th>姓名</th>
+	<th colspan='2'>最终成绩百分制</th>
+	<th colspan='2'>最终成绩等级制</th>
+  </tr>
+</thead>
+<tbody>
+   <volist name="my" id="my">
+  <tr>
+    <input type='hidden' name='bscore_id' value='{$my.id}' />
+   <td>{$my.susername}</td>
+   <td style="border-right:1px solid #B2B2B2">{$my.struename}</td>
+	<td><?php if(isset($my["score"])): ?><?php if(!(strlen(trim($my["score"])) == 0)): ?><input type='checkbox' name='score{$my.id}' value='{$my.score}' onclick="selectOne(this,'score{$my.id}')"  <gt name='my.score' value='$my.bscore'>checked='checked'</gt> /><label>初考&nbsp;{$my.score}</label><?php endif; ?><?php endif; ?></td>
+    <td style="border-right:1px solid #B2B2B2"><?php if(isset($my["bscore"])): ?><?php if(!strlen(trim($my["bscore"])) ==0): ?><input type='checkbox' name='score{$my.id}' value='{$my.bscore}' onclick="selectOne(this,'score{$my.id}')" <egt name='my.bscore' value='$my.score'>checked='checked'</egt>/><label>补考&nbsp;{$my.bscore}</label><?php endif; ?><?php endif; ?></td>
+    <td><notempty name='my.levelscore'><input type='checkbox' name='levelscore{$my.id}' value='{$my.levelscore}' onclick="selectOne(this,'levelscore{$my.id}')"/><label>初考&nbsp;{$my.levelscore}</label></notempty></td>
+    <td><notempty name='my.blevelscore'><input type='checkbox' name='levelscore{$my.id}' value='{$my.blevelscore}' onclick="selectOne(this,'levelscore{$my.id}')"/><label>补考&nbsp;{$my.blevelscore}</label></notempty></td>
+ </tr>
+ </volist>
+ </tbody>
+ </table>
+ </form>

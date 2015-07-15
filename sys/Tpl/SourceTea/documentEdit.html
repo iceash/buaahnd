@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery('#content').val(editor.html());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/documentUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="content"]', {
+					uploadJson : '__APP__/Upload/uploadForKindeditor',
+					allowFileManager : false
+				});
+				K('input[name=setSummary]').click(function(e) {
+					jQuery('#summary').val(editor.selectedHtml());
+				});
+				var uploadbutton = K.uploadbutton({
+					button : K('#uploadButton')[0],
+					fieldName : 'imgFile',
+					url : '__APP__/Upload/uploadForKindeditor?dir=image',
+					afterUpload : function(data) {
+						if (data.error === 0) {
+							var url = K.formatUrl(data.url, 'absolute');
+							K('#titlepic').val(url);
+						} else {
+							alert(data.message);
+						}
+					},
+					afterError : function(str) {
+						alert('自定义错误信息: ' + str);
+					}
+				});
+				uploadbutton.fileBox.change(function(e) {
+					uploadbutton.submit();
+				});
+			});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+ <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>类别</td>
+    <td><html:select first="请选择" options="category_fortag" name="category" selected="my['category']"/></td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>标题</td>
+    <td><input type="text" name="title" class="inputbig" value="{$my.title}"/></td>
+   </tr>
+    <tr>
+    <td class="t_item">内容</td>
+    <td><textarea name="content" id="content" style="width:750px;height:400px;">{$my.content}</textarea>
+	</td>
+   </tr>
+    <tr>
+    <td class="t_item">代表图片</td>
+    <td><input type="text" name="titlepic" id="titlepic" class="inputlong" value="{$my.titlepic}"/> <input type="button" id="uploadButton" value="上传" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">摘要</td>
+    <td><textarea name="summary" id="summary" class="textareanormal" >{$my.summary}</textarea></td>
+   </tr>
+    <tr>
+    <td class="t_item">来源</td>
+    <td><input type="text" name="source" class="inputlong" value="{$my.source}" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">作者</td>
+    <td><input type="text" name="author" class="inputlong" value="{$my.author}" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">创建时间</td>
+    <td><input type="text" name="ctime" class="inputlong" value="{$my.ctime}"/></td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

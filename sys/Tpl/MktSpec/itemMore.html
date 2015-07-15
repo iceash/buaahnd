@@ -1,0 +1,26 @@
+<div style="width:auto;">
+<form id="form1">
+<table border="1" style="margin:auto 0;border-spacing:0px;" >
+<tr>
+<td>问卷主题</td>
+<td>{$my.theme}</input></td>
+</tr>
+<tr>
+<td>题目</td>
+<td>{$my.item}</td>
+</tr>
+<tr><td><php>if($my["type"]==3){</php>回答
+<php>}else{</php>
+选项<php>}</php>
+</td><td>{$my.options}</td></tr>
+<tr><td>类型</td>
+<td><php>if($my["type"]==1){</php>单选
+    <php>}else if($my["type"]==2){</php>多选
+    <php>}else{</php>问答
+    <php>}</php>
+    </td></tr>
+<tr><td>开始时间</td><td>{$my.beginTime}</td></tr>
+<tr><td>结束时间</td><td>{$my.endTime}</td></tr>
+</table>
+</form>
+</div>

@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/plugins/iframeTools.source.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+	jQuery('#check').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+		if(this.checked==true){
+			jQuery('.mytable tbody tr').addClass('tr_selected');
+		}else{
+			jQuery('.mytable tbody tr').removeClass('tr_selected');
+		}
+	});
+	jQuery('#btn_del0').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}	
+			doDelete(getSelectCheckboxValues(),0);
+	});
+	jQuery('#btn_del1').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}	
+			doDelete(getSelectCheckboxValues(),1);
+	});
+	jQuery('#btn_del2').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}	
+			doDelete(getSelectCheckboxValues(),2);
+	});
+	jQuery('#btn_del3').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}	
+			doDelete(getSelectCheckboxValues(),3);
+	});
+	jQuery('#btn_del4').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}	
+			doDelete(getSelectCheckboxValues(),4);
+	});
+	jQuery('#btn_del5').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}	
+			doDelete(getSelectCheckboxValues(),5);
+	});
+});
+function doDelete(CheckboxValues,score){ 
+	jQuery.getJSON('__URL__/asnGetScore/',{id:CheckboxValues,score:score},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+
+function k(key){
+art.dialog.open('__URL__/asnScoreView/id/'+key, {title: jQuery('#who'+key).val(),width: 820
+});
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">
+	<notempty name="user">
+	<a href="__URL__/teacher">所有教师</a> >> 
+	<a href="__URL__/asn/tusername/{$user}" class="on">{$username}</a></notempty>
+	</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> <B>当前作业：{$my.title}</B> [评分方法：勾选学生，并点击最下方的得分按钮。]</div>
+
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+ 
+	<th  height="30">学号</th>
+    <th>姓名</th>
+	<th width="140">成绩</th>
+	<th width="40">已提交</th>
+	<th width="140">提交时间</th>
+	<th width="160">操作</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my2" id="my">
+  <tr>
+  
+	<td>{$my.susername}</td>
+    <td>{$my.struename}</td>
+	<td>{$my.score|getFlag}</td>
+	<td><notempty name="my.ctime"><img src="../Public/images/ok.gif"/></notempty></td>
+	<td>{$my.ctime}</td>
+	<td><input type="button" value="查看作业" onclick="k('{$my.id}');" /> <input type="hidden" value="{$my.susername}{$my.struename}" id="who{$my.id}" />&nbsp;
+	</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">&nbsp;</div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

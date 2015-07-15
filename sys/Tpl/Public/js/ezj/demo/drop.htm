@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ezj.ext.drop - ezj</title>
+<link rel="stylesheet" type="text/css" href="css.css" />
+<style type="text/css">
+.nav{margin:0px;padding:0px;overflow:hidden;}
+.nav li{float:left;margin:0px 1px;padding:0px;width:100px;background-color:#099;color:#fff;text-align:center;list-style-type:none;cursor:default;}
+.subNav{display:none;width:100px;border:1px solid #ccc;background-color:#fff;color:#000;}
+</style>
+</head>
+
+<body>
+
+<div class="section">
+  <h1>ezj.ext.drop</h1>
+  
+  <div class="block">
+    <h3>CSS 代码</h3>
+    <textarea class="code css">
+.nav{margin:0px;padding:0px;overflow:hidden;}
+.nav li{float:left;margin:0px 1px;padding:0px;width:100px;background-color:#099;color:#fff;text-align:center;list-style-type:none;cursor:default;}
+.subNav{display:none;width:100px;border:1px solid #ccc;background-color:#fff;color:#000;}</textarea>
+    
+    <h3>HTML 代码</h3>
+    <textarea class="code xhtml">
+<ul class="nav">
+    <li>产品</li>
+    <li>文档</li>
+</ul>
+<ul class="subNav">
+    <li>ezj</li>
+    <li>文本比较工具</li>
+    <li>剔重工具</li>
+</ul>
+<ul class="subNav">
+    <li>ASP.NET</li>
+    <li>JavaScript</li>
+    <li>CSS</li>
+</ul></textarea>
+    
+    <h3>JavaScript 代码（ezj 代码）</h3>
+    <textarea class="code javascript">
+ezj.ext.drop(".nav <li", ".subNav"); // 指定第三个参数，可以将浮动块右边显、左边显、上边显……参见 $1.pos(baseElement[, base])。</textarea>
+  </div>
+  
+  <div class="block">
+    <h3>演示</h3>
+    <div>
+        <ul class="nav">
+            <li>产品</li>
+            <li>文档</li>
+        </ul>
+        <ul class="subNav">
+            <li>ezj</li>
+            <li>文本比较工具</li>
+            <li>剔重工具</li>
+        </ul>
+        <ul class="subNav">
+            <li>ASP.NET</li>
+            <li>JavaScript</li>
+            <li>CSS</li>
+        </ul>
+    </div>
+  </div>
+  
+  <div class="block footer">
+  版权所有 &copy; 2008 - 2011 <a href="http://www.getezj.com/" target="_blank">www.getezj.com</a>
+  </div>
+</div>
+
+<script type="text/javascript" src="../ezj.js"></script>
+<script type="text/javascript">
+<!--
+$(window).ready(function(){
+    ezj.ext.drop(".nav <li", ".subNav"); // 指定第三个参数，可以将浮动块右边显、左边显、上边显……参见 $1.pos(baseElement[, base])。
+    
+    ezj.ext.codelighter(".code");
+});
+//-->
+</script>
+
+</body>
+
+</html>

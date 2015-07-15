@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<!--<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_border/my.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_border/css/tabs.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_border/css/global.css">-->
+<style type="text/css">
+li a{
+text-decoration:none;
+}
+#nav{border-left:1px solid black;border-right:1px solid black;border-bottom:1px solid black;float:left}
+</style>
+<script type="text/javascript" src="../Public/team_border/js/tabs.js"></script>
+<script type="text/javascript">
+(function(){
+	jQuery.tabs(
+    {
+		tabs: $('#hashfirst-tabslist').find('.tab'),
+		contents: $('#hashfirst-contents').find('.info'),
+		hashFirst: true
+	});
+});
+</script>
+</head>
+
+<body style="text-align:center;">
+<div width="20%" align="left" style="float:left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></div>
+<div class="md tabsview" id="hashfirst-tabs" style="height:250px;margin-left:250px">   
+     <div class="hd tabs">   
+     <div align="right">
+        <ul id="hashfirst-tabslist" style="list-style:none;padding:0;">
+            <li class="tab current" title="进程" style="float:left;border:1px solid black"><a href="__URL__/paststatus/year/{$year}">按招生进程查看</a></li>
+            <li class="tab" title="老师" style="float:left;border:1px solid black"><a href="__URL__/pastteacher/year/{$year}">按老师查看</a></li>
+            <li class="tab" title="所在地" style="float:left;border:1px solid black"><a href="__URL__/pastschool/year/{$year}">按所在地查看</a></li>
+        </ul>
+        </div>
+    </div>
+    <div class="bd" id="hashfirst-contents" align="right" >
+		<div class="info">
+			 <div id="nav" align="right" >
+                <a href="__URL__/paststatus/year/{$year}" class="on">招生进程图</a> | 
+                <a href="__URL__/pastcategory/statusid/5/year/{$year}">尚未分配</a> | 
+                <a href="__URL__/pastcategory/statusid/0/year/{$year}">新分配</a> | 
+                <a href="__URL__/pastcategory/statusid/1/year/{$year}">正在咨询</a> | 
+                <a href="__URL__/pastcategory/statusid/2/year/{$year}">已交报名费</a> | 
+                <a href="__URL__/pastcategory/statusid/3/year/{$year}">已录取</a> | 
+                <a href="__URL__/pastcategory/statusid/4/year/{$year}">不录取</a> | 
+                <a href="__URL__/pastsearch/year/{$year}">搜索</a> | <a href="__URL__/pasttoExcel/year/{$year}">导出数据</a></div>	
+            </div>
+            	
+    </div>
+</div>  
+    
+<div class="center" style=" width: 800px;margin:-130px auto;">
+<!-- ampie script-->
+  <script type="text/javascript" src="../Public/ampie/swfobject.js"></script>
+	<div id="flashcontent">
+		<strong>You need to upgrade your Flash Player</strong>
+	</div>
+
+	<script type="text/javascript">
+		// <![CDATA[		
+		var so = new SWFObject("../Public/ampie/ampie.swf", "ampie", "800", "550", "8", "#FFF")
+		so.addVariable("path", "../Public/ampie/");
+		so.addVariable("settings_file", escape("__APP__/Index/pastampieSetting"));
+		so.addVariable("data_file", escape("__URL__/pastampieData/year/{$year}"));
+		so.addVariable("preloader_color", "#999999");
+		so.write("flashcontent");
+		// ]]>
+	</script>
+<!-- end of ampie script -->
+</div>
+</body>
+</html>

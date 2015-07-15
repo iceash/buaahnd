@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript">
+jQuery(window).load(function(){
+
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="com_content"]', {
+					uploadJson : '__APP__/Upload/uploadForHomework',
+					allowFileManager : false
+				});
+			});
+			
+jQuery(function(){
+	
+				jQuery('#zf_changeBtn').toggle(function(){
+					jQuery('#zf_change').show(600);
+					//jQuery('#zf_flag').val('1');
+				},function(){
+					jQuery('#zf_change').hide(600);
+					//jQuery('#zf_flag').val('0');
+				});
+	
+});
+
+    
+</script>
+</head>
+
+<body>
+<form id="form1" >
+<div style="width:800px;">{$my.content}</div><input id="content" type="hidden" value='{$my.content}' name="content" />
+<input type="button" id="zf_changeBtn" value="Modify"  /><input id="zf_flag" type="hidden" name="flag" value="0" />
+
+
+<div id="zf_change" style="width:800px;">
+    <div style="font-size: 12px;">
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> Please highlight the modified part to make it easier for student to view.</p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> This editor possesses many functions – text editing, image inserting for example, and mainly divided into seven parts. (Vertical bars to separate) </p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> The fourth part of first line (the first ten icons) and the first two parts of second line (eleven icons totally) were designed for editing text, defining styles (similar to word), such as Align, typeface, highlight, boldface. </p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> The third part of second line (thirteen icons totally) were designed for inserting image, AV (audio/video), attachment.</p>
+        <p><img src="../Public/images/info.gif" align="absmiddle" /> More details please see small icons.</p>
+    </div>
+    <textarea id="com_content" name="com_content" style="width:800px; height:400px;"><empty name="my['correct']">{$my.content}<else />{$my.correct}</empty>
+    </textarea>
+</div>
+<p>Comment：</p>
+<div ><textarea id="comment" name="comment" style="width:800px; height:200px;">{$my.comment}</textarea></div>
+
+<div style="margin: 10px;">Please mark this homework, otherwise student enable modify it.
+
+<empty name="my.score"><input type="hidden" name="score" value="-1" id="score0"/>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top: 10px;">
+        <tr><td>
+        <input type="radio" name="score" value="0"/>Score0&nbsp;
+        <input type="radio" name="score" value="1"/>Score1&nbsp;
+        <input type="radio" name="score" value="2"/>Score2&nbsp;
+        <input type="radio" name="score" value="3"/>Score3&nbsp;
+        <input type="radio" name="score" value="4"/>Score4&nbsp;
+        <input type="radio" name="score" value="5"/>Score5（Excellent）&nbsp;
+        </td></tr>
+     </table>
+<else />
+    <input type="hidden" name="score" value="{$my.score}" id="score0"/>
+    Mark Now：{$my.score|getFlag}
+    <hr />
+    <div style="margin: 10px;">If any change needs to be made on students' mark, please choose：
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top: 10px;">
+            <tr><td>
+            <input type="radio" name="score" value="0"/>Score0&nbsp;
+            <input type="radio" name="score" value="1"/>Score1&nbsp;
+            <input type="radio" name="score" value="2"/>Score2&nbsp;
+            <input type="radio" name="score" value="3"/>Score3&nbsp;
+            <input type="radio" name="score" value="4"/>Score4&nbsp;
+            <input type="radio" name="score" value="5"/>Score5（Excellent）&nbsp;
+            </td></tr>
+         </table>
+    </div>
+</empty>
+
+</div>
+
+</form>
+</body>
+</html>
+

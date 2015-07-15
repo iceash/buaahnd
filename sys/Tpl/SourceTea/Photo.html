@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/team_backgroud/css/style.css">
+
+<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_backgroud/js/photo.js"></script>
+<script type="text/javascript" src="../Public/js/plupload_r/plupload.js"></script>
+<script type="text/javascript" src="../Public/js/plupload_r/plupload.flash.js"></script>
+
+
+<script type="text/javascript"> 
+
+jQuery(function(){ 
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('所删除内容将不可恢复，确实要删除选择项吗？')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#uploadfiles').click(function(){
+		uploader.start();
+		return false;
+	});
+	// Custom example logic
+
+uploader.init();
+
+
+});
+
+var uploader = new plupload.Uploader({
+		// General settings
+		runtimes:  'flash',
+		url: '__URL__/photopicInsert/id/{$singerid}',
+		browse_button : 'pickfiles',
+		container: 'container',
+		max_file_size: '2mb',
+		chunk_size: '512kb',
+		multiple_queues:true,
+		unique_names: true,
+		filters: [
+			{title: "Image files", extensions: "jpg,gif,png"}
+		],
+		flash_swf_url: '../Public/js/plupload_r/plupload.flash.swf'
+});
+
+	
+
+
+uploader.bind('FilesAdded', function(up, files) {
+	for (var i in files) {
+		jQuery('#filelist').append( '<div id="' + files[i].id + '">' + files[i].name + ' (' + plupload.formatSize(files[i].size) + ') <b id="b'+files[i].id+'"></b></div>');
+	}
+});
+
+uploader.bind('UploadProgress', function(up, file) {
+	jQuery('#b'+file.id).html('<span>' + file.percent + "%</span>");
+	 if (uploader.total.uploaded == uploader.files.length ){
+                window.location.reload();
+            }
+
+});
+
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/photopicDel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			 window.location.reload();
+		}	
+	});
+}
+function Delete(CheckboxValues){ 
+if (window.confirm('所删除内容将不可恢复，确实要删除选择项吗？')){			
+		
+		
+	jQuery.getJSON('__URL__/photopicDel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			 window.location.reload();
+		}	
+	});
+  }
+}
+function cover(Id,Url){ 
+	jQuery.getJSON('__URL__/Cover/',{id:Id,url:Url},function(data){
+		if(data.status==1){
+			alert(data.info);
+			 window.location.reload();
+		}else{
+			alert(data.info);	
+		}
+	});
+
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+ function resizeImage(maxWidth,maxHeight,objImg){
+var img = new Image();
+img.src = objImg.src;
+var hRatio;
+var wRatio;
+var Ratio = 1;
+var w = img.width;
+var h = img.height;
+wRatio = maxWidth / w;
+hRatio = maxHeight / h;
+if (maxWidth ==0 && maxHeight==0){
+Ratio = 1;
+}else {
+if (maxWidth==0){//
+if (hRatio<1) Ratio = hRatio;
+} 
+if (maxHeight==0){
+if (wRatio<1) Ratio = wRatio;
+}
+if (wRatio<1 || hRatio<1){
+Ratio = (wRatio<=hRatio?wRatio:hRatio);
+}
+if (Ratio<1){
+w = w * Ratio;
+h = h * Ratio;
+//document.getElementById('proportion').value = Ratio;
+ 
+}
+}
+objImg.height = h;
+objImg.width = w;
+
+　　}
+
+
+</script>
+</head>
+
+<body><form id="form1" >
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<div class="mainbody">
+   <div class="col titbg">
+                        <p><a href="__URL__/Singer">所有歌手</a> 》{$singername['name']}</p>
+                       
+					     </div>
+                         <div class="clear"></div>
+                         <div class="innercol grid" >
+  <div class="gallary_wrap" id="pic_left">
+  <volist name="my" id="vo">
+    <div class="gallary_item">
+      <div class="item">
+        <div class="pic_box">
+          <table>
+            <tr>
+              <td><a target="_blank" href="{$vo.fileurl}"> <img width="170" height="160" src="{$vo.fileurl}"  onload="resizeImage(170,160,this)" /></a></td>
+            </tr>
+          </table>
+        </div>
+        <div class="pic_ctl">
+          <ul class="btns">
+            <li><a href="javascript:void(0)" onclick="Delete('{$vo.id}');" title="移动到回收站"><span class="i_littletrash sprite"></span></a></li>
+           <li><a title="设为封面" href="javascript:void(0)" onclick="cover('{$singername['id']}','{$vo.fileurl}');"><span class="i_cover sprite"></span></a></li>
+          </ul>
+        </div>
+        <div class="clears brief"> <span class="f_left"></span> <span class="f_right gray"> {$vo.ctime} </span> </div>
+      </div>
+      <div class="info">
+        <div class="title">
+          <input class="selitem" type="checkbox" name="key" value="{$vo.id}" />
+          <span class="name">{$singername.name}</span> </div>
+        <span class="f_right gray"><eq name="vo['fileurl']" value="$singername['pic']" ><span class="cover">封面</span></eq></span>
+      </div>
+    </div>
+  </volist>
+
+  </div><!--end of pic_left-->
+  <div id="pic_right"><div id="container">
+    <div id="filelist"></div>
+    <br />
+  <input type="button" value="选择图片" id="pickfiles" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="button" value="上传图片" id="uploadfiles" /><br />
+   
+</div>
+    </div><!--end of pic_right-->
+  <div class="bot_toolbar">
+    <div class="f_left paginator"><span class="page">{$page}</span> </div>
+    <div class="f_right">
+      <label>
+        <input type="checkbox" value="1" onclick="Madmin.check_all('.selitem',this.checked)" />
+        全选</label>
+      <span class="i_trash_sp sprite"></span> <a href="javascript:void(0)"  id="btn_del">删除选中项</a> </div>
+    <div class="clear"></div>
+  </div>
+</div>
+</div>
+</div><!--end of main-->
+</form>
+</body>
+</html>

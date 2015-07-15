@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="StyleSheet" type="text/css" href="../Public/js/dtree/dtree.css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function() {
+    jQuery('#check').click(function(){
+        jQuery('[name=classid[]]:checkbox').attr('checked',this.checked);
+    });
+});
+function getclass(subjectid){ 
+    var url="__URL__/getClass";
+ 	if(subjectid==''){ 
+ 		alert('请选择课程');
+ 	}else{
+        url = url+'/subjectid/'+subjectid;
+ 		jQuery("#class").load(url);
+ 	}
+}
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+        if (jQuery('input[name=classid[]]:checked').length==0){
+			alert('请选择班级！');
+			return false;
+		}
+		jQuery('#content').val(editor.html());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/asnInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+var editor;
+			KindEditor.ready(function(K) {
+				editor = K.create('textarea[name="content"]', {
+					uploadJson : '__APP__/Upload/uploadForHomework',
+					allowFileManager : false
+				});
+			});
+
+
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1">
+<div>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> 该编辑器具有编辑文本、插入图片等多种功能，主要分为7个部分（以竖线分隔）</p>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> 第一行的第4部分（前10个图标）、第二行的前两部分（共11个图标）用于编辑文本，定义样式（类似word），如对齐、字体、高亮、加粗等</p>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> 第二行的第3部分（共13个图标）用于插入图片、音视频、附件等</p>
+    <p><img src="../Public/images/info.gif" align="absmiddle" /> 更多详情见小图标</p>
+</div>
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>课程选择</td>
+    <td><html:select first="请选择" options="category_fortag" name="subjectid" selected="subjectid_latest" id="subjectid" change="getclass(this.options[this.selectedIndex].value);" />（已提交考试成绩的课程不在此显示）<img src="../Public/images/info.gif" align="absmiddle" /> 重新选择“类别”后，稍等片刻选择最下方的对应“班级”</td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>标题</td>
+    <td><input type="text" name="title" class="inputbig" /></td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>具体内容和要求</td>
+    <td><textarea name="content" id="content" style="width:750px;height:400px;"></textarea>
+	</td>
+   </tr>
+ </table>
+
+   <div id="class">
+   &nbsp;&nbsp;&nbsp;&nbsp;<span class="mustfill">*</span><input type="checkbox" id="check"/>所有班级</td>
+        <table>
+        <volist name="my" id="vo" mod="6" >
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="classid[]" value="{$vo.id}" />{$vo.name}</td>
+            <eq name="mod" value="5"><tr></tr></eq>  
+        </volist>
+        </table>
+    </div>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>
