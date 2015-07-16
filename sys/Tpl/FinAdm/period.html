@@ -1,0 +1,339 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/tongji.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<style type="text/css">
+<!--
+.STYLE1 {
+	color: #000000;
+	font-weight: bold;
+}
+.STYLE2 {
+	font-size: 24px;
+	font-weight: bold;
+	font-family: "宋体", "Microsoft YaHei UI";
+}
+.STYLE3 {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+-->
+</style>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="96%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a><h2 style="font-size: 18px;position: absolute;width: 90px;top: 15px;left: 126px;"></h2></td>
+    <td width="80%" align="right">
+      <div id="nav"><a   href="./index">交易记录</a> | <a class="on" href="">收入分配</a> </a></div>
+    </td>
+  </tr>
+</table>
+<div class="main" style="width: 96%;">
+
+<div>
+  <div align="center" class="STYLE2">学院收入及分配情况表</div>
+</div>
+<div>
+  <div align="center" class="STYLE3">（{$data[0]['startdate']}——{$data[0]['enddate']}止）</div><br>
+  <br>
+</div>
+<div>
+  <?php
+       echo "<select id='choose'><option value ='0'>当前期</option>";
+          foreach($periodid as $num =>$va){
+            
+            
+            echo "<option value ='".$va["id"]."'>".$va["id"]."</option>";
+          
+          
+      };echo "</select>";
+       ?>
+  <input type="button" value="选择" onclick="choose()">
+
+ <br> <br>
+</div>
+	<table width="100%" border="0" class="mytable3" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="130px" rowspan="2">年度</th>
+    <th colspan="4">收&nbsp;&nbsp;入</th>
+    <th colspan="5">拨&nbsp;&nbsp;款</th>
+    </tr>
+  <tr>
+    <th width="" height="67">项目</th>
+    <th width="">收入</th>
+	<th width="">退费</th>
+	<th><p>实际收入</p>	  </th>
+	<th width="">南邮</th>
+  <th width="">百度推广</th>
+    <th width="">阿里去啊</th>
+    <th width="">东方航空</th>
+  <th width="">青梦家</th>
+  </tr>
+</thead>
+<tbody>
+        <tr>
+          <td><div align="center" class="STYLE1">上年度期末余额</div></td>
+          <td>&nbsp;</td>
+          <td style='text-align:right'>{$lastperiod['getall']}</td>
+          <td style='text-align:right'>{$lastperiod['giveall']}</td>
+          <td style='text-align:right'>{$lastperiod['realincomeall']}</td>
+          <td style='text-align:right'>{$lastperiod['part1all']}</td>
+          <td style='text-align:right'>{$lastperiod['part2all']}</td>
+          <td style='text-align:right'>{$lastperiod['part3all']}</td>
+          <td style='text-align:right'>{$lastperiod['part4all']}</td>
+          <td style='text-align:right'>{$lastperiod['part5all']}</td>
+        </tr>
+        
+
+       <?php
+       
+          foreach($data as $num =>$va){
+            echo "<tr>";
+            if($num==0){
+              echo "<td style='text-align:center' rowspan='".count($data)."'>本年度收入和分配</td>";
+            };
+            echo "<td style='text-align:center'>".$va["feename"]."</td>
+                  <td style='text-align:right'>".$va["gets"]."</td>
+                  <td style='text-align:right'>".$va["give"]."</td>
+                  <td style='text-align:right'>".$va["gets"]."</td>
+                  <td style='text-align:right'>".$va["part1"]."</td>
+                  <td style='text-align:right'>".$va["part2"]."</td>
+                  <td style='text-align:right'>".$va["part3"]."</td>
+                  <td style='text-align:right'>".$va["part4"]."</td>
+                  <td style='text-align:right'>".$va["part5"]."</td>";
+          
+          echo "</tr>";
+      };
+       ?>
+       <?php
+       echo "</tr>";
+          echo"<td><div align='center' class='STYLE1'>本年度小计</div></td>";
+          echo"<td></td>";
+          
+          foreach($data as $num =>$va){
+            $gets[] = $va['gets'];
+          }
+            echo"<td style='text-align:right'>".array_sum($gets)."</td>";
+          //echo "<td>array_sum($data["give"])</td>";
+          
+          foreach($data as $num =>$va){
+            $give[] = $va['give'];
+          }
+            echo"<td style='text-align:right'>".array_sum($give)."</td>";
+          foreach($data as $num =>$va){
+            $realincome[] = $va['realincome'];
+          }
+            echo"<td style='text-align:right'>".array_sum($realincome)."</td>";
+          foreach($data as $num =>$va){
+            $part1[] = $va['part1'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part1)."</td>";
+          foreach($data as $num =>$va){
+            $part2[] = $va['part2'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part2)."</td>"; 
+            foreach($data as $num =>$va){
+            $part3[] = $va['part3'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part3)."</td>";
+            foreach($data as $num =>$va){
+            $part4[] = $va['part4'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part4)."</td>";
+            foreach($data as $num =>$va){
+            $part5[] = $va['part5'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part5)."</td>";     
+      echo "</tr>";
+      ?>
+       <?php
+          foreach($data2 as $num =>$vb){
+            echo "<tr>";
+            if($num==0){
+              echo "<td style='text-align:center' rowspan='".count($data2)."'>本年度分配后退费</td>";
+            };
+            echo "<td style='text-align:center'>".$vb["feename"]."</td>
+                  <td style='text-align:right'>".$vb["gets"]."</td>
+                  <td style='text-align:right'>".$vb["give"]."</td>
+                  <td style='text-align:right'>".$vb["realincome"]."</td>
+                  <td style='text-align:right'>".$vb["part1"]."</td>
+                  <td style='text-align:right'>".$vb["part2"]."</td>
+                  <td style='text-align:right'>".$vb["part3"]."</td>
+                  <td style='text-align:right'>".$vb["part4"]."</td>
+                  <td style='text-align:right'>".$vb["part5"]."</td>";
+          
+          echo "</tr>";
+      };
+       ?>
+       <?php
+       echo "</tr>";
+          echo"<td><div align='center' class='STYLE1'>本年度分配后退费小计</div></td>";
+          echo"<td></td>";
+          foreach($data2 as $num2 =>$vb){
+            $gets1[] = $vb['gets'];
+          }
+            echo"<td style='text-align:right'>".array_sum($gets1)."</td>";
+          //echo "<td>array_sum($data["give"])</td>";
+          
+          foreach($data2 as $num2 =>$vb){
+            $give1[] = $vb['give'];
+            // dump($give);
+          }
+            echo"<td style='text-align:right'>".array_sum($give1)."</td>";
+          foreach($data2 as $num2 =>$vb){
+            $realincome1[] = $vb['realincome'];
+          }
+            echo"<td style='text-align:right'>".array_sum($realincome1)."</td>";
+          foreach($data2 as $num2 =>$vb){
+            $part11[] = $vb['part1'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part11)."</td>";
+          foreach($data2 as $num2 =>$vb){
+            $part12[] = $vb['part2'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part12)."</td>"; 
+            foreach($data2 as $num2 =>$vb){
+            $part13[] = $vb['part3'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part13)."</td>";
+            foreach($data2 as $num2 =>$vb){
+            $part14[] = $vb['part4'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part14)."</td>";
+            foreach($data2 as $num2 =>$vb){
+            $part15[] = $vb['part5'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part15)."</td>";     
+      echo "</tr>";
+      ?>
+        <tr >
+          <td rowspan="3"><div align="center"><strong>本年度拨款和支出</strong></div></td>
+          <td><div align="center">HND</div></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr >
+          <td><div align="center">2+2</div></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr >
+          <td><div align="center">其他</div></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <?php
+       echo "</tr>";
+          echo"<td><div align='center' class='STYLE1'>本年度期末余额</div></td>";
+          echo"<td></td>";
+          
+          foreach($data2 as $num =>$va){
+            $gets[] = $va['gets'];
+          }
+            echo"<td style='text-align:right'>".array_sum($gets)."</td>";
+          //echo "<td>array_sum($data["give"])</td>";
+          
+          foreach($data2 as $num =>$va){
+            $give[] = $va['give'];
+          }
+            echo"<td style='text-align:right'>".array_sum($give)."</td>";
+          foreach($data2 as $num =>$va){
+            $realincome[] = $va['realincome'];
+          }
+            echo"<td style='text-align:right'>".array_sum($realincome)."</td>";
+          foreach($data2 as $num =>$va){
+            $part1[] = $va['part1'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part1)."</td>";
+          foreach($data2 as $num =>$va){
+            $part2[] = $va['part2'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part2)."</td>"; 
+            foreach($data2 as $num =>$va){
+            $part3[] = $va['part3'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part3)."</td>";
+            foreach($data2 as $num =>$va){
+            $part4[] = $va['part4'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part4)."</td>";
+            foreach($data2 as $num =>$va){
+            $part5[] = $va['part5'];
+          }
+            echo"<td style='text-align:right'>".array_sum($part5)."</td>";     
+      echo "</tr>";
+      ?>
+</tbody>
+</table>
+
+<div class="search"  style="text-align: left"><a id="excel" style="margin:3px;float:right;" href="./download" >导出EXCEL文件</a><img style="  width: 20px;height: 20px;float:right;" src="../Public/images/excel.png"> <br><br></div>
+ <div style="width:96%;" ><input  id="end" style="width:134px;  left: 48%; position: absolute;" type="button" value="结算并结束本期"   onclick=""/></div>
+ <br /> <br /> <br />
+
+</div><!--end of main-->
+</body>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#choose').val('{$choose}');
+    var geturl = window.location.search;
+    $('#excel').attr('href','./downloadperiod'+geturl); 
+    var period = $('#choose').val();
+    if(period!=0){
+      $('#end').css('display','none');
+    }
+   $('#end').click(function(){
+    var r=confirm("确定结算并结束本期并开始新的一期吗？")
+  if (r==true)
+    {
+    $.ajax({
+      type:'POST',
+      url:"__URL__/endperiod",
+      dataType:'JSON',
+      success:function(back){
+        if(back.status == 1){
+          alert(back.info);
+          location.reload();
+        }else{
+          alert(back.info);
+        }
+      }
+
+
+    })
+    }
+
+   })
+  });
+  function choose(){
+  window.location="__URL__/period?period="+$('#choose').val()
+}
+</script>
+</html>
