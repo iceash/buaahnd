@@ -84,4 +84,157 @@ function stuToParent($s) {//入口参数：学生学号，返回值：家长帐�
     $temp='JZ'.substr($s,2);
     return $temp;
 }
+/**********
+*将该学生在该收费项目的所有收费记录相加覆盖已交金额和判断付费状态
+**需要传入参数isRefund,feeid和idcard
+***$isRefund为1时状态固定为“退费”
+****函数返回值为$checkU
+*********/
+function updatePaymentStatus($isRefund,$feeid,$idcard){
+    $payment=M('payment');$deal=M('deal');
+    $mapU['feeid']=$feeid;
+    $mapU['idcard']=$idcard;
+    $mapU['period']=0;
+    $allPay=$deal->where($mapU)->field('money')->select();
+    $sum=0;
+    for ($i=0; $i < count($allPay); $i++) { 
+        $sum+=$allPay[$i]['money'];
+    }
+    $dataU['paid']=$sum;
+    $standard=$payment->where($mapU)->getField('standard');
+    if (!($isRefund)) {
+        if ($sum>=$standard) {
+            $dataU['status']=2;
+        }elseif ($sum<=0) {
+            $dataU['status']=0;
+        }else{
+            $dataU['status']=1;
+        }
+    }else{
+        $dataU['status']=3;
+    }
+     return $checkU=$payment->where($mapU)->save($dataU);
+}
+
+function downloads()
+{
+            $mapEn=$_GET['searchkey'];
+      $mapFn=$_GET['searchtype'];
+      $item =$_GET['item'];
+      $grade =$_GET['grade'];
+      $classes =$_GET['classes'];
+      $majorname =$_GET['majorname'];
+      $period =$_GET['period'];
+      $status1 =$_GET['status1'];
+      if($item){$where['item']  = array('like','%'.$item.'%');}
+      if($grade){$where['grade']  = array('like','%'.$grade.'%');}
+      if($classes){$where['classes']  = array('like','%'.$classes.'%');}
+      if($majorname){$where['majorname']  = array('like','%'.$majorname.'%');}
+      if($_GET['datefrom']&&$_GET['dateto']){$where['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
+      if($_GET['sbfrom']&&$_GET['sbto']){$where['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
+      $where['period']=0;
+      if($period){$where['period']  = $period;}
+      if($status1){$where['status']  = $status1-1;}
+      $Form  =  M('statistics');
+
+      if(!$_GET['searchkey']){
+      import("ORG.Util.Page");
+      $count=  $Form ->where($where) ->count();
+      $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $Model =  $Form ->where($where)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+
+            for ($i=0; $i <count($Model);$i++) {
+        $status=$Model[$i]['status'];
+      switch ($status) {
+        case '0':
+          $statusname='未交费';
+          break;
+        case '1':
+          $statusname='费用未交清';
+          break;
+        case '2':
+          $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+      }
+        $Model[$i]['statusname']=$statusname;
+       }
+      foreach ($Model as $mo => $va) {
+        $Model[$mo]["standard"] = floatval($Model[$mo]["standard"]);
+        $Model[$mo]["paid"] = floatval($Model[$mo]["paid"]);
+        $Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
+        //dump($Model[$mo]);
+      };
+        
+        return($Model);
+
+
+      }
+      else{
+        switch ($mapFn) {
+          case '1':
+          import("ORG.Util.Page");
+          $count=  $Form ->Table(array('u_enroll'=>'enroll','u_payment'=>'payment','u_fee'=>'fee','u_deal'=>'deal'))->where('enroll.id=payment.stunum AND fee.name=payment.feename AND deal.idcard=payment.idcard AND deal.feename=fee.name AND deal.period=0 AND enroll.truename ="'.$mapEn.'"')->order('date desc')->count();
+          $Page= new Page($count,20);
+          $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+          $show= $Page->show();
+          $Model =  $Form ->Table(array('u_enroll'=>'enroll','u_payment'=>'payment','u_fee'=>'fee','u_deal'=>'deal'))->where('enroll.id=payment.stunum AND fee.name=payment.feename AND deal.idcard=payment.idcard AND deal.feename=fee.name AND deal.period=0 AND enroll.truename ="'.$mapEn.'"')->order('date desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+            break;
+          case '2':
+          import("ORG.Util.Page");
+          $count=  $Form ->Table(array('u_enroll'=>'enroll','u_payment'=>'payment','u_fee'=>'fee','u_deal'=>'deal'))->where('enroll.id=payment.stunum AND fee.name=payment.feename AND deal.idcard=payment.idcard AND deal.feename=fee.name AND deal.period=0 AND deal.stunum='.$mapEn)->order('date desc')->count();
+          $Page= new Page($count,20);
+          $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+          $show= $Page->show();
+          $Model =  $Form ->Table(array('u_enroll'=>'enroll','u_payment'=>'payment','u_fee'=>'fee','u_deal'=>'deal'))->where('enroll.id=payment.stunum AND fee.name=payment.feename AND deal.idcard=payment.idcard AND deal.feename=fee.name AND deal.period=0 AND deal.stunum='.$mapEn)->order('date desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+            break;
+          case '3':
+          import("ORG.Util.Page");
+          $count=  $Form ->Table(array('u_enroll'=>'enroll','u_payment'=>'payment','u_fee'=>'fee','u_deal'=>'deal'))->where('enroll.id=payment.stunum AND fee.name=payment.feename AND deal.idcard=payment.idcard AND deal.feename=fee.name AND deal.period=0 AND deal.idcard='.$mapEn)->order('date desc')->count();
+          $Page= new Page($count,20);
+          $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+          $show= $Page->show();
+          $Model =  $Form ->Table(array('u_enroll'=>'enroll','u_payment'=>'payment','u_fee'=>'fee','u_deal'=>'deal'))->where('enroll.id=payment.stunum AND fee.name=payment.feename AND deal.idcard=payment.idcard AND deal.feename=fee.name AND deal.period=0 AND deal.idcard='.$mapEn)->order('date desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+            break;
+        }
+      
+      
+      }
+      //dump($Model);
+      for ($i=0; $i <count($Model);$i++) {
+            $status=$Model[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+            }
+            $Model[$i]['statusname']=$statusname;
+         }
+      foreach ($Model as $mo => $va) {
+        $Model[$mo]["standard"] = floatval($Model[$mo]["standard"]);
+        $Model[$mo]["paid"] = floatval($Model[$mo]["paid"]);
+        $Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
+        //dump($Model[$mo]);
+      };
+      
+      if($Model[0]["idcard"]==0){
+        $this->assign('thead','该同学不存在!');
+      }
+        else{        
+        return($Model);
+        }// 模板变量赋值
+}
 ?>
