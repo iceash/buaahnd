@@ -35,9 +35,9 @@
 		<label>项目：</label>
 				<select name="item" id="itemS">
 					<option value="">请选择项目</option>
-					<option value="美帝一周游">美帝一周游</option>
-					<option value="英伦自由行">英伦自由行</option>
-					<option value="欧盟一日行">欧盟一日行</option>
+					<volist name="project" id="po">
+					<option value="{$po}">{$po}</option>
+					</volist>
 				</select>
 				<label>交易方式：</label>
 				<select name="way" id="wayS">
@@ -60,13 +60,13 @@
 					<option value="审核中">审核中</option>
 				</select>
 			<label>交易日期：</label>
-			<input type="text" name="datefrom" id="datefrom" class="calendar" value="{$_GET['datefrom']}" />
+			<input type="text" name="datefrom" id="datefrom" class="calendar inputM" value="{$_GET['datefrom']}" />
 			<label>至</label>
 			<input type="text" name="dateto" id="dateto" class="calendar inputM"  value="{$_GET['dateto']}"/>
 			<label>校财务交费日期：</label>
 			<input type="text" name="sbfrom" id="sbfrom" class="calendar inputM"  value="{$_GET['sbfrom']}"/>
 			<label>至</label>
-			<input type="text" name="sbto" id="sbto" class="calendar"  value="{$_GET['sbto']}"/><br />
+			<input type="text" name="sbto" id="sbto" class="calendar inputM"  value="{$_GET['sbto']}"/><br />
 			<label>发票号：</label><input type="text" name="invoice"  value="{$_GET['invoice']}"/>		
 			<label>交费人员：</label><input type="text" name="operator"  value="{$_GET['operator']}"/>
 			<label>姓名：</label><input type="text" name="name"  value="{$_GET['name']}"/>

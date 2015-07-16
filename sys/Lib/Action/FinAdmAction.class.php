@@ -421,9 +421,12 @@ class FinAdmAction extends CommonAction{
         $this->assign('page',$show);
         $way=M('system')->where('name="paymode"')->getField('content');
         $wayArr=explode(',',$way);
+        $project=M('system')->where('name="project"')->getField('content');
+        $projectArr=explode(',',$project);
         $periodArr=M('period')->field('id')->select();
         $this->assign('periodList',$periodArr);
         $this->assign('way',$wayArr);
+        $this->assign('project',$projectArr);
         $this->display();
     }
     public function change(){

@@ -103,5 +103,30 @@ class FinTeaAction extends CommonAction{
             $this->success("退费成功","json");
         }else{$this->error("退费出错");}
     }
+    public function view(){
+        $paymentV=D('ClassstudentpaymentView');
+        $list=$paymentV->select();
+        for ($i=0; $i <count($list);$i++) {
+            $status=$list[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+            }
+            $list[$i]['statusname']=$statusname;
+         }
+        $this->assign('list',$list);
+        $this->display();
+
+    }
 
 }
