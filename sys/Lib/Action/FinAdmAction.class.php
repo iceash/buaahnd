@@ -531,6 +531,7 @@ class FinAdmAction extends CommonAction{
       $majorname =$_GET['majorname'];
       $period =$_GET['period'];
       $status1 =$_GET['status1'];
+      $oldall = M("fee")->where("period=0")->order("id")->group('item')->select();
       if($item){$where['item']  = array('like','%'.$item.'%');}
       if($grade){$where['grade']  = array('like','%'.$grade.'%');}
       if($classes){$where['classes']  = array('like','%'.$classes.'%');}
