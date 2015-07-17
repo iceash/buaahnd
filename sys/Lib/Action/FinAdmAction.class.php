@@ -522,7 +522,9 @@ class FinAdmAction extends CommonAction{
         $feename=M('fee')->where($map2)->Field('name')->select();
         $this->ajaxReturn($feename);
     }
-        public function stat(){
+        
+    
+    public function stat(){
       $mapEn=$_GET['searchkey'];
       $mapFn=$_GET['searchtype'];
       $item =$_GET['item'];
@@ -532,6 +534,7 @@ class FinAdmAction extends CommonAction{
       $period =$_GET['period'];
       $status1 =$_GET['status1'];
       $oldall = M("fee")->where("period=0")->order("id")->group('item')->select();
+      
       if($item){$where['item']  = array('like','%'.$item.'%');}
       if($grade){$where['grade']  = array('like','%'.$grade.'%');}
       if($classes){$where['classes']  = array('like','%'.$classes.'%');}
@@ -584,6 +587,7 @@ class FinAdmAction extends CommonAction{
         $this->assign('status1',$status1);
         $this->assign('list',$Model);
         $this->assign('page',$show);
+        $this->assign('oldall',$oldall);
 
       }
       else{
@@ -618,23 +622,23 @@ class FinAdmAction extends CommonAction{
       }
       //dump($Model);
       for ($i=0; $i <count($Model);$i++) {
-            $status=$Model[$i]['status'];
-            switch ($status) {
-                case '0':
-                    $statusname='未交费';
-                    break;
-                case '1':
-                    $statusname='费用未交清';
-                    break;
-                case '2':
-                    $statusname='已交齐费用';
+        $status=$Model[$i]['status'];
+      switch ($status) {
+        case '0':
+          $statusname='未交费';
+          break;
+        case '1':
+          $statusname='费用未交清';
+          break;
+        case '2':
+          $statusname='已交齐费用';
                     break;
                 case '3':
                     $statusname='退费';
                     break;
-            }
-            $Model[$i]['statusname']=$statusname;
-         }
+      }
+        $Model[$i]['statusname']=$statusname;
+       }
       foreach ($Model as $mo => $va) {
         $Model[$mo]["standard"] = doubleval($Model[$mo]["standard"]);
         $Model[$mo]["paid"] = doubleval($Model[$mo]["paid"]);
@@ -645,14 +649,14 @@ class FinAdmAction extends CommonAction{
       if($Model[0]["idcard"]==0){
         $this->assign('thead','该同学不存在!');
       }
-        else{        
+      else{        
         $this->assign('list',$Model);
         $this->assign('page',$show);
         }// 模板变量赋值
         
       
 
-        $this->display();
+      $this->display();
 
 
     }
@@ -1765,7 +1769,6 @@ class FinAdmAction extends CommonAction{
     header("Content-Transfer-Encoding:binary");
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
     $objWriter->save('php://output');
-    exit;
+    exit;}
 
-      }
 }
