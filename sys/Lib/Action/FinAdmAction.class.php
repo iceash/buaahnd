@@ -513,5 +513,4 @@ class FinAdmAction extends CommonAction{
         $feename=M('fee')->where($map2)->Field('name')->select();
         $this->ajaxReturn($feename);
     }
-
 }

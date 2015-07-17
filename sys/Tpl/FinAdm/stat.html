@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/tongji.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="96%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right">
+      <div id="nav"><a  class="on" href="">交易记录</a> | <a href="./period">收入分配</a> </a></div>
+    </td>
+  </tr>
+</table>
+<div class="main" style="width: 96%;">
+<div class="search" style="text-align: left">
+    <span >项目：</span>
+    <?php
+       echo "<select id='item'><option value =''>请选择</option>";
+          foreach($oldall as $num =>$va1){
+            
+            
+            echo "<option value ='".$va1["item"]."'>".$va1["item"]."</option>";
+          
+          
+      };echo "</select>&nbsp;&nbsp;";
+       ?>
+  &nbsp;&nbsp;
+    <span >年级：</span>
+  <select id="grade">
+      <option value="">请选择</option>
+      <option value="1">大一</option>
+      <option value="2">大二</option>
+      <option value="3">大三</option>
+      <option value="4">大四</option>
+    </select>&nbsp;&nbsp;
+    <span >专业：</span>
+  <select id="majorname">
+      <option value="" >请选择</option>
+
+    </select>&nbsp;&nbsp;
+    <span >班次：</span>
+  <select id="classes">
+      <option value="">请选择</option>
+      
+    </select>&nbsp;&nbsp;
+    <span >交费状态：</span>
+  <select id="status">
+      <option value="0">请选择</option>
+      <option value ="1">未交费</option>
+      <option value="2">费用未交清</option>
+      <option value="3">已交齐费用</option>
+      <option value="4">退费</option>
+    </select>&nbsp;&nbsp;
+     <span >期数：</span>
+
+    <?php
+       echo "<select id='period'><option value ='0'>当前期</option>";
+          foreach($periodid as $num =>$va){
+            
+            
+            echo "<option value ='".$va["id"]."'>".$va["id"]."</option>";
+          
+          
+      };echo "</select>&nbsp;&nbsp;";
+       ?>
+    </div>
+    <div>
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;交费日期：</td>
+        <td><input type="text" name="datefrom" id="datefrom" class="calendar" value="{$_GET['datefrom']}" style="width:95px"/></td>
+        <td>&nbsp;至&nbsp;</td>
+        <td><input type="text" name="dateto" id="dateto" class="calendar"  value="{$_GET['dateto']}" style="width:95px"/></td>&nbsp;&nbsp;&nbsp;&nbsp;
+        <td>校财务交费日期：</td>
+        <td><input type="text" name="sbfrom" id="sbfrom" class="calendar"  value="{$_GET['sbfrom']}" style="width:95px"/></td>
+        <td>&nbsp;至&nbsp;</td>
+        <td><input type="text" name="sbto" id="sbto" class="calendar"  value="{$_GET['sbto']}" style="width:95px"/></td>
+      </tr> &nbsp;
+      <input type="button" value="筛&nbsp;选"   onclick="filter()"/> 
+   </div>
+ 
+<div  style="text-align: left" class="search"><span>搜索类型：</span>
+<select id="searchtype">
+      <option value ="0">请选择</option> 
+      <option value ="1">姓名</option>
+      <option value ="2">学号</option>
+      <option value="3">身份证</option>
+</select>&nbsp;&nbsp;
+<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;&nbsp;&nbsp;<input type="button" value="搜索"   onclick="mysearch()"/>&nbsp;&nbsp;<input type="button" value="显示全部"   onclick="allshow()"/><a id="excel" style="margin:3px;float:right;" href="./download">导出EXCEL文件</a><img style="  width: 20px;height: 20px;float:right;" src="../Public/images/excel.png"></div>
+	<table width="100%" border="0" class="mytable2" cellpadding="0" cellspacing="0">
+
+<thead>
+  <tr>
+    <th width="">学员姓名</th>
+    <th width="">学号</th>
+    <th width="">身份证号</th>
+	<th width="">项目</th>
+  <th width="">收费项</th>
+	<th>年级</th>
+	<th width="">预科班次</th>
+  <th width="">专业</th>
+    <th width="">班次</th>
+    <th width="">课程</th>
+  <th>收费类别</th>
+  <th width="">交费日期</th>
+  <th width="">交费金额</th>
+  <th width="">发票号</th>
+  <th width="">交费状态</th>
+  <th width="">总应交费</th>
+  <th width="">已交费</th>
+  <th width="">总欠费</th>
+   <th width="">校财务交费日期</th>
+  </tr>
+</thead>
+<tbody>
+
+  <volist name="list" id="vo">
+        <tr id="tr-{$vo.id}">
+          <td>{$vo.truename}</td>
+          <td>{$vo.stunum}</td>
+          <td>{$vo.idcard}</td>
+          <td>{$vo.item}</td>
+          <td>{$vo.feename}</td>
+          <td>{$vo.grade}</td>
+          <td>{$vo.yukeclass}</td>
+          <td>{$vo.majorname}</td>
+          <td>{$vo.class}</td>
+          <td>{$vo.subject}</td>
+          <td>{$vo.type}</td>
+          <td>{$vo.date}</td>
+          <td>{$vo.money}</td>
+          <td>{$vo.invoice}</td>
+          <td>{$vo.statusname}</td>
+          <td>{$vo.standard}</td>
+          <td>{$vo.paid}</td>
+          <td>{$vo.needpay}</td>
+          <td>{$vo.submitdate}</td>
+        </tr>
+        
+       </volist>
+
+ <tbody>
+ </table> 
+ <div class="page">{$page}</div>
+ <br>
+ <br>
+ <br>
+ <br>
+ <div style="text-align:center;"><span >{$thead}</span></div>
+ 
+
+
+</div><!--end of main-->
+<script type="text/javascript">
+$(document).ready(function(){
+  $('#grade').val('{$grade}');
+  $('#item').val('{$item}');
+  $('#classes').val('{$classes}');
+  $('#majorname').val('{$majorname}');
+  $('#period').val('{$period}');
+  $('#status').val('{$status1}');
+  var geturl = window.location.search;
+  $('#excel').attr('href','./download'+geturl); 
+  $('#datefrom').calendar({onSetDate:function(){
+      $('#dateto').calendar({minDate:'#datefrom'});
+    }});
+    $('#dateto').calendar({onSetDate:function(){
+      $('#datefrom').calendar({maxDate:'#dateto'});
+    }});
+    $('#sbfrom').calendar({onSetDate:function(){
+      $('#sbto').calendar({minDate:'#sbfrom'});
+    }});
+    $('#sbto').calendar({onSetDate:function(){
+      $('#sbfrom').calendar({maxDate:'#sbto'});
+    }});
+});
+  function mysearch(){
+  var searchkey=jQuery('#searchkey').val();
+  if($('#searchtype').val()==0){
+    alert("请选择搜索类型！");
+    window.location.reload();
+  }else{
+  window.location="__URL__/stat?searchtype="+$('#searchtype').val()+"&searchkey="+searchkey;}
+}
+function allshow(){
+  window.location="__URL__/stat";
+}
+function searchkeydown(e){
+  var e = e || event;
+  if (e.keyCode==13){
+    mysearch();
+  }
+}
+function filter(){
+  window.location="__URL__/stat?item="+$('#item').val()+"&grade="+$('#grade').val()+"&majorname="+$('#majorname').val()+"&classes="+$("#classes").val()+"&status1="+$('#status').val()+"&period="+$('#period').val()+"&datefrom="+$('#datefrom').val()+"&dateto="+$('#dateto').val()+"&sbfrom="+$('#sbfrom').val()+"&sbto="+$('#sbto').val();
+}
+
+
+
+</script>
+</body>
+</html>
