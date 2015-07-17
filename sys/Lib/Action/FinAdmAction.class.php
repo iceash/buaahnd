@@ -258,9 +258,7 @@ class FinAdmAction extends CommonAction{
         $this->display();
     }
     public function boundLeft(){
-        $project = M("system")->where("name='project'")->find();
-        $items = explode(",", $project["content"]);
-        // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
+        $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
         $fees = M("fee")->where("period=0 and parent=0")->order("id")->select();
         foreach ($fees as $fee) {
             foreach ($items as $itemname) {
@@ -459,8 +457,70 @@ class FinAdmAction extends CommonAction{
         updatePaymentStatus($isRefund,$feeid,$idcard);
         if ($checkD) {$this->success("修改成功");}else{$this->error("数据没有变化");}
     }
-    
-    public function stat(){
+    public function view(){
+        $paymentV=D('ClassstudentpaymentView');$class=M('class');$system=M('system');
+        if($_GET['major']){
+            $map['major']=$_GET['major'];
+            $mapcl['major']=$_GET['major'];
+            $classList=$class->where($mapcl)->Field('name')->select();
+        }
+        if($_GET['class']){$map['classname']=$_GET['class'];}
+        if($_GET['item']){
+            $map['item']=$_GET['item'];
+            $mapfe['item']=$_GET['item'];
+            $mapfe['parent']=0;
+            $feeList=M('fee')->where($mapfe)->select();
+        }
+        if($_GET['fee']){$map['feename']=$_GET['fee'];}
+        if($_GET['status']){$map['status']=$_GET['status']-1;}
+        if($_GET['period']){$map['period']=$_GET['period'];}
+        if($_GET['name']){$map['name']=$_GET['name'];}
+        if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
+        if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
+        $list=$paymentV->where($map)->order('name')->select();
+        for ($i=0; $i <count($list);$i++) {
+            $status=$list[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+            }
+            $list[$i]['statusname']=$statusname;
+         }
+        $this->assign('list',$list);
+        $this->assign('classList',$classList);
+        $this->assign('feeList',$feeList);
+        $major=$class->group('major')->Field('major')->select();
+        $this->assign('major',$major);
+        $project=$system->where('name="project"')->getField('content');
+        $projectArr=explode(',',$project);
+        $periodArr=M('period')->field('id')->select();
+        $this->assign('periodList',$periodArr);
+        $this->assign('project',$projectArr);
+        $this->display();
+
+    }
+    public function getClass(){
+        $map['major']=$_POST['major'];
+        $classname=M('class')->where($map)->Field('name')->select();
+        $this->ajaxReturn($classname);   
+    }
+    public function getFee(){
+        $map2['item']=$_POST['item'];
+        $map2['parent']=0;
+        $feename=M('fee')->where($map2)->Field('name')->select();
+        $this->ajaxReturn($feename);
+    }
+        public function stat(){
       $mapEn=$_GET['searchkey'];
       $mapFn=$_GET['searchtype'];
       $item =$_GET['item'];
@@ -469,8 +529,6 @@ class FinAdmAction extends CommonAction{
       $majorname =$_GET['majorname'];
       $period =$_GET['period'];
       $status1 =$_GET['status1'];
-      $oldall = M("fee")->where("period=0")->order("id")->group('item')->select();
-      
       if($item){$where['item']  = array('like','%'.$item.'%');}
       if($grade){$where['grade']  = array('like','%'.$grade.'%');}
       if($classes){$where['classes']  = array('like','%'.$classes.'%');}
@@ -523,7 +581,6 @@ class FinAdmAction extends CommonAction{
         $this->assign('status1',$status1);
         $this->assign('list',$Model);
         $this->assign('page',$show);
-        $this->assign('oldall',$oldall);
 
       }
       else{
@@ -558,41 +615,41 @@ class FinAdmAction extends CommonAction{
       }
       //dump($Model);
       for ($i=0; $i <count($Model);$i++) {
-    	 	$status=$Model[$i]['status'];
- 			switch ($status) {
- 				case '0':
- 					$statusname='未交费';
- 					break;
- 				case '1':
- 					$statusname='费用未交清';
- 					break;
- 				case '2':
- 					$statusname='已交齐费用';
+            $status=$Model[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
                     break;
                 case '3':
                     $statusname='退费';
                     break;
- 			}
-    	 	$Model[$i]['statusname']=$statusname;
-    	 }
+            }
+            $Model[$i]['statusname']=$statusname;
+         }
       foreach ($Model as $mo => $va) {
-      	$Model[$mo]["standard"] = doubleval($Model[$mo]["standard"]);
-      	$Model[$mo]["paid"] = doubleval($Model[$mo]["paid"]);
-      	$Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
-      	//dump($Model[$mo]);
+        $Model[$mo]["standard"] = doubleval($Model[$mo]["standard"]);
+        $Model[$mo]["paid"] = doubleval($Model[$mo]["paid"]);
+        $Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
+        //dump($Model[$mo]);
       };
       
       if($Model[0]["idcard"]==0){
         $this->assign('thead','该同学不存在!');
       }
-	    else{        
+        else{        
         $this->assign('list',$Model);
         $this->assign('page',$show);
         }// 模板变量赋值
         
       
 
-    	$this->display();
+        $this->display();
 
 
     }
@@ -1708,7 +1765,4 @@ class FinAdmAction extends CommonAction{
     exit;
 
       }
-
-
-
 }
