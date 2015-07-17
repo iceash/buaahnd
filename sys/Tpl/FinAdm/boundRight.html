@@ -71,6 +71,10 @@
         $("#year").append('<option value="'+i+'">'+i+'年</option>');
     };
     $("#year").find("option[value='<?php echo($theyear) ?>']").attr("selected",true);
+    //是否全选初始化
+    $(".mytable").find("tr").each(function(){
+        isallcheck($(this));
+    });
 
     $(document).on("change","#year",function(){
         var url = window.location.href;
@@ -116,6 +120,20 @@
     /*$(document).on("click","",function(){
         
     });*/
+    $(document).on("click",".classcheck",function(){
+        var tr = $(this).parents("tr");
+        isallcheck(tr);
+    });
+    function isallcheck(tr){
+        var allchecked = true;
+        tr.find(".classcheck").each(function(){
+            if (this.checked != true) {
+                allchecked = false;
+                return false;
+            };
+        });
+        tr.find(".majorcheck").attr("checked",allchecked);
+    }
 
 });
 </script>

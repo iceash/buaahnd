@@ -290,9 +290,9 @@ $(document).ready(function(){
                         separate.push(tmp);
                     };
                 });
-                console.log(name,type,separate);
+                // console.log(name,type,separate);
                 addfee.find("input[name='name']").attr("value",name);
-                addfee.find("input[name='type']").attr("value",type);
+                addfee.find("select.feetype").attr("value",type);
                 addfee.find("input[name='standard']").attr("value",separate[separate.length - 1]);
                 separate.pop();
                 if (separate.length > 0) {
@@ -317,7 +317,12 @@ $(document).ready(function(){
                     <td  colspan="6">
                         <input type="hidden" name="id">
                         <label>名称：<input type="text" name="name" /></label>
-                        <label>类别：<input type="text" name="type" /></label>
+                        <label>类别：<select class="feetype" name="type">
+                                <option value="">请选择...</option>
+                            <volist name="paytype" id="onetype">
+                                <option value="{$onetype}">{$onetype}</option>
+                            </volist>
+                        </select>
                         <label>收费标准：<input type="text" name="standard" /></label>
                         <label>分隔值：<input type="text" value="0" class="separate" /><span class="add_separate">+</span> </label>
                         <input type="button" value="更新" class="btn_update"/>

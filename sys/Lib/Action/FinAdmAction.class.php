@@ -76,6 +76,9 @@ class FinAdmAction extends CommonAction{
         $project = M("system")->where("name='project'")->find();
         $items = explode(",", $project["content"]);
         // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
+
+        $paytypes = M("system")->where("name='paytype'")->find();
+        $paytype = explode(",", $paytypes["content"]);
         foreach ($items as $item => $va) {
             foreach ($all as $one => $vo) {
                 if ($vo["item"] == $va) {
@@ -84,6 +87,7 @@ class FinAdmAction extends CommonAction{
             }
         }
         $this->assign("items",$items);
+        $this->assign("paytype",$paytype);
         $this->assign("fees",$fees);
         $partner = ["南邮","百度推广","青梦家","东方航空","阿里去啊"];//合作方列表，这里定死；
         $this->assign("partner",$partner);
