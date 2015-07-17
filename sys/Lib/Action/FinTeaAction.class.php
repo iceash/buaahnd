@@ -104,8 +104,26 @@ class FinTeaAction extends CommonAction{
         }else{$this->error("退费出错");}
     }
     public function view(){
-        $paymentV=D('ClassstudentpaymentView');
-        $list=$paymentV->select();
+        $paymentV=D('ClassstudentpaymentView');$class=M('class');$system=M('system');
+        if($_GET['major']){
+            $map['major']=$_GET['major'];
+            $mapcl['major']=$_GET['major'];
+            $classList=$class->where($mapcl)->Field('name')->select();
+        }
+        if($_GET['class']){$map['classname']=$_GET['class'];}
+        if($_GET['item']){
+            $map['item']=$_GET['item'];
+            $mapfe['item']=$_GET['item'];
+            $mapfe['parent']=0;
+            $feeList=M('fee')->where($mapfe)->select();
+        }
+        if($_GET['fee']){$map['feename']=$_GET['fee'];}
+        if($_GET['status']){$map['status']=$_GET['status']-1;}
+        if($_GET['period']){$map['period']=$_GET['period'];}
+        if($_GET['name']){$map['name']=$_GET['name'];}
+        if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
+        if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
+        $list=$paymentV->where($map)->order('name')->select();
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {
@@ -125,8 +143,28 @@ class FinTeaAction extends CommonAction{
             $list[$i]['statusname']=$statusname;
          }
         $this->assign('list',$list);
+        $this->assign('classList',$classList);
+        $this->assign('feeList',$feeList);
+        $major=$class->group('major')->Field('major')->select();
+        $this->assign('major',$major);
+        $project=$system->where('name="project"')->getField('content');
+        $projectArr=explode(',',$project);
+        $periodArr=M('period')->field('id')->select();
+        $this->assign('periodList',$periodArr);
+        $this->assign('project',$projectArr);
         $this->display();
 
+    }
+    public function getClass(){
+        $map['major']=$_POST['major'];
+        $classname=M('class')->where($map)->Field('name')->select();
+        $this->ajaxReturn($classname);   
+    }
+    public function getFee(){
+        $map2['item']=$_POST['item'];
+        $map2['parent']=0;
+        $feename=M('fee')->where($map2)->Field('name')->select();
+        $this->ajaxReturn($feename);
     }
 
 }
