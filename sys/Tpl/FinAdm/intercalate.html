@@ -25,7 +25,9 @@
     <div class="search">
         <input type="button" id="btn_del" value="删除收费项"  />&nbsp;收费项名称：<input type="text"/>&nbsp;<input type="button" value="搜索"/>
     </div>
-    <?php foreach ($fees as $item => $fee) { ?>
+    <?php foreach ($items as $item) { 
+        $fee = $fees[$item];
+        ?>
     <div class="item" value="{$item}">
         <div class="item_title">
             <span>

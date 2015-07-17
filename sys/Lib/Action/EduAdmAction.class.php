@@ -1733,7 +1733,7 @@ class EduAdmAction extends CommonAction {
         } 
         $php_path = dirname(__FILE__) . '/';
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
-        $inputFileName = $php_path .'../../..'.$titlepic;
+        $inputFileName = $php_path .'../../../..'.$titlepic;
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
         $count=count($sheetData);

@@ -73,7 +73,9 @@ class FinAdmAction extends CommonAction{
                 unset($all[$num]);
             }
         }
-        $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
+        $project = M("system")->where("name='project'")->find();
+        $items = explode(",", $project["content"]);
+        // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
         foreach ($items as $item => $va) {
             foreach ($all as $one => $vo) {
                 if ($vo["item"] == $va) {
@@ -81,6 +83,7 @@ class FinAdmAction extends CommonAction{
                 }
             }
         }
+        $this->assign("items",$items);
         $this->assign("fees",$fees);
         $partner = ["南邮","百度推广","青梦家","东方航空","阿里去啊"];//合作方列表，这里定死；
         $this->assign("partner",$partner);
@@ -251,7 +254,9 @@ class FinAdmAction extends CommonAction{
         $this->display();
     }
     public function boundLeft(){
-        $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
+        $project = M("system")->where("name='project'")->find();
+        $items = explode(",", $project["content"]);
+        // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
         $fees = M("fee")->where("period=0 and parent=0")->order("id")->select();
         foreach ($fees as $fee) {
             foreach ($items as $itemname) {
