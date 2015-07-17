@@ -258,7 +258,9 @@ class FinAdmAction extends CommonAction{
         $this->display();
     }
     public function boundLeft(){
-        $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
+        $project = M("system")->where("name='project'")->find();
+        $items = explode(",", $project["content"]);
+        // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
         $fees = M("fee")->where("period=0 and parent=0")->order("id")->select();
         foreach ($fees as $fee) {
             foreach ($items as $itemname) {
