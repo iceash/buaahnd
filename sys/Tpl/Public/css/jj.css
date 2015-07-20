@@ -61,7 +61,7 @@ a.blue:hover{color:#5E9EF3}
 .page a:hover{border:1px solid #990000;height:20px;text-decoration:none;color:#990000;padding:5px;}
 .current{border:1px solid #990000;height:20px;text-decoration:none;color:#FFF;padding:5px;background:#A21513}
 .record_detail{ line-height:22px;}
-.search{ text-align:right; margin:10px;}
+.search{float:right; margin:10px;}
 .tr_selected{background:#FFFFCA;}
 .td_forselect{}
 .helpzone{ margin:10px 0; line-height:22px; }

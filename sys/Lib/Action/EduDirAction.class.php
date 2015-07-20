@@ -760,13 +760,17 @@ class EduDirAction extends CommonAction {
         $this->assign('menu',$this ->autoMenu($menu));  
 	}
     
-    public function attend() {        
+    public function attend() {      
+        $map['tusername'] =session('username');
+        $classList=M('attend')->where($map)->Field('classname')->select();
+        $this->assign('classList',$classList);       
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
             $this -> assign('searchkey', $_GET['searchkey']);
-        } 
+        }
+        if($_GET['classname']){$map['classname']=$_GET['classname'];}
+        if($_GET['datefrom']&&$_GET['dateto']){$map['timezone']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
         $dao = D('attend');
-        $map['tusername'] =session('username'); 
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -779,7 +783,12 @@ class EduDirAction extends CommonAction {
         } 
         $this -> menuattend();
         $this -> display();
-    } 
+    }
+    public function getClass(){
+    $map['major']=$_POST['major'];
+    $classname=M('class')->where($map)->Field('name')->select();
+    $this->ajaxReturn($classname);   
+}
     public function attendToday() {        
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
@@ -788,7 +797,7 @@ class EduDirAction extends CommonAction {
         $dao = D('attend');
         $map['tusername'] =session('username'); 
         $today=Date('Y-m-d');
-        $map['ctime'] =array('gt',$today);
+        $map['ctime'] =array('egt',$today);
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -813,7 +822,7 @@ class EduDirAction extends CommonAction {
         $a['A']='班级';
         $a['B']='学号';
         $a['C']='姓名';
-        $a['D']='时间段（格式：2012-2013学年第二学期第十一周）';
+        $a['D']='考勤日期(格式：2015/3/1)';
         $a['E']='考勤记录';
         $a['F']='旷课次数';
         $a['G']='事假次数';
@@ -830,8 +839,9 @@ class EduDirAction extends CommonAction {
                     ->setCellValue('B'.$temp, $my_value['student'])
                     ->setCellValue('C'.$temp, $my_value['studentname']);
         }
+
         $objPHPExcel-> getActiveSheet() -> getColumnDimension('A') -> setwidth(18);
-        $objPHPExcel-> getActiveSheet() -> getColumnDimension('B') -> setAutoSize(true);
+        $objPHPExcel-> getActiveSheet() -> getColumnDimension('B') -> setwidth(20);
         $objPHPExcel-> getActiveSheet() -> getColumnDimension('C') -> setwidth(15);
         $objPHPExcel-> getActiveSheet() -> getColumnDimension('D') -> setwidth(45);
         $objPHPExcel-> getActiveSheet() -> getColumnDimension('E') -> setwidth(20);
@@ -951,7 +961,7 @@ class EduDirAction extends CommonAction {
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
         
         $count=count($sheetData);
-        $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
+        $arr = array('/'=>'-','０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
 '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
 'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
 'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
@@ -976,13 +986,10 @@ class EduDirAction extends CommonAction {
 '＂'=>'"'); 
         
         for($i=2;$i<=$count;$i++){
+            $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
             $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
             $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
-            if(!preg_match("/学期第/",strtr($sheetData[$i]['D'],$arr))){
-                $this->error('第'.$i.'行时间段格式不正确');
-            }else{
-                $data_a[$i-2]['timezone'] = strtr($sheetData[$i]['D'],$arr);
-            }
+            $data_a[$i-2]['timezone'] = strtr($sheetData[$i]['D'],$arr);
             $data_a[$i-2]['content'] = $sheetData[$i]['E'];
             $data_a[$i-2]['truant'] = $sheetData[$i]['F'];
             $data_a[$i-2]['tvacate'] = $sheetData[$i]['G'];
@@ -992,12 +999,10 @@ class EduDirAction extends CommonAction {
             $data_a[$i-2]['ttruename'] = session('truename');
             $data_a[$i-2]['ctime'] = date("Y-m-d H:i:s");
         }
-        
+
         $dao=D('Attend');
         $dao -> addAll($data_a);
         $this -> success("已成功保存");
-
-        
     }  
     public function stuCommon() {
         $this -> display();
@@ -1387,7 +1392,7 @@ class EduDirAction extends CommonAction {
 		$this -> assign('nationality', $nationality);
 		
 		$Enroll = D('enroll');
-		$map['username'] = $id;
+		$map['id'] = $id;
 		$my = $Enroll -> where($map) -> find();
         
 		if ($my) {

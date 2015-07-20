@@ -6,8 +6,19 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<style>
+	.filter{float: left;margin: 10px;}
+</style>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
+	$('#classS').val("{$_GET['classname']}");
+	$('#datefrom').calendar({onSetDate:function(){
+		$('#dateto').calendar({minDate:'#datefrom'});
+	}});
+	$('#dateto').calendar({onSetDate:function(){
+		$('#datefrom').calendar({maxDate:'#dateto'});
+	}});
 });
 jQuery(function(){ 
 	$('tr:has(:checked)').addClass('tr_selected');
@@ -64,14 +75,26 @@ function k(key){
 }
 function mysearch(){
 	var searchkey=jQuery('#searchkey').val();
-	var category=jQuery('#category').val();
+	var datefrom=$('#datefrom').val();
+	var dateto=$('#dateto').val();
+	var classname=$('#classS').val();
+	// var category=jQuery('#category').val();
 	var url="__URL__/attend";
 	if(searchkey!==''){
 		url=url+"/searchkey/"+searchkey;
 	}
-	if(category!==''){
-		url=url+"/category/"+category;
+	if(datefrom!==''){
+		url=url+"/datefrom/"+datefrom;
 	}
+	if(dateto!==''){
+		url=url+"/dateto/"+dateto;
+	}
+	if(classname!==''){
+		url=url+"/classname/"+classname;
+	}
+	// if(category!==''){
+	// 	url=url+"/category/"+category;
+	// }
 	window.location=url;
 }
 function searchkeydown(e){
@@ -93,14 +116,26 @@ function searchkeydown(e){
   </tr>
 </table>
 <div class="main">
+<div class="filter">
+	班级：
+	<select name="class" id="classS">
+		<option value="">请选择班级</option>
+		<volist name="classList" id="co"><option value="{$co.classname}">{$co.classname}</option></volist>
+	</select>
+	<label>考勤日期：</label>
+	<input type="text" name="datefrom" id="datefrom" class="calendar" value="{$_GET['datefrom']}" />
+	<label>至</label>
+	<input type="text" name="dateto" id="dateto" class="calendar"  value="{$_GET['dateto']}"/>
+</div>
 <div class="search">输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
 <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
 <thead>
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
+  	<th>班级</th>
 	<th width="100">学号</th>
     <th width="60">姓名</th>
-	<th width="100">时间</th>
+	<th width="100">考勤日期</th>
 	<th>内容</th>
     <th width="60">旷课次数</th>
     <th width="60">事假次数</th>
@@ -114,9 +149,10 @@ function searchkeydown(e){
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
+  	<td>{$my.classname}</td>
 	<td>{$my.susername}</td>
     <td>{$my.struename}</td>
-    <td>{$my.timezone}</td>
+    <td>{$my.timezone|toDate='Y-m-d'}</td>
 	<td>{$my.content}</td>
     <td>{$my.truant}</td>
     <td>{$my.tvacate}</td>

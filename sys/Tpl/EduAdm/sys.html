@@ -13,15 +13,19 @@ jQuery(window).load(function(){
 jQuery(function(){ 
 });
 
-function saveSys(id){ 
+function delmajor(id){ 
+    if (!confirm("是否确认删除")) {
+        return;
+    };
 	jQuery.ajax({
 		type:'POST',
-		url:'__URL__/saveSys',
+		url:'__URL__/delmajor',
 		dataType:'json',
-		data:{id:id,content:jQuery('#content'+id).val()},
+		data:{id:id},
 		success: function(data){
 			if (data.status==1){
-				alert(data.info);	
+				alert(data.info);
+                $("#tr_"+id).remove();
 			}else{
 				alert(data.info);
 			}
@@ -37,7 +41,7 @@ function saveSys(id){
 <table width="95%" border="0" align="center" cellspacing="10">
   <tr>
     <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
   </tr>
 </table>
 <div class="main">
@@ -48,13 +52,15 @@ function saveSys(id){
 	<th>年份</td>
     <th>操作</th>
   </tr>
-  <volist name="my" id="my">
-  <tr>
-    <td>{$my.name}</td>
-    <td>{$my.explain}</td>
-	<td><input type="text" value="{$my.content}" class="inputmid" id="content{$my.id}"/>
-	</td>
-    <td><input type="button" value="保存" onclick="saveSys('{$my.id}')"/></td>
+  <volist name="majors" id="vm">
+  <tr id="tr_{$vm.id}">
+    <td>{$vm.major}</td>
+    <td>{$vm.item}</td>
+	<td>{$vm.year}</td>
+    <td>
+        <a href="__URL__/majorEdit/id/{$vm.id}"><input type="button" value="编辑" class="editmajor"/></a>
+        <input type="button" value="删除" class="delmajor" onclick="delmajor('{$vm.id}')" />
+    </td>
   </tr>
   </volist>
  </table>
