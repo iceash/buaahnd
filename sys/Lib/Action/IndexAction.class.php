@@ -50,10 +50,10 @@ class IndexAction extends Action {
 			session('truename', $my['truename']);
            
 		} 
-        $check = true;
-        session('role', "EnrollTea,EnrollAdm,FinTea,FinAdm,EduTea,TeaAdm,EduDir,EduSen,EduAdm,TrainTea,TrainAdm,AbroadTea,AbroadAdm,ExamTea,SourceTea,Office,SysAdm");
-        session('username', "admin");
-        session('truename', "系统管理员");
+        // $check = true;
+        // session('role', "EnrollTea,EnrollAdm,FinTea,FinAdm,EduTea,TeaAdm,EduDir,EduAdm,TrainTea,TrainAdm,AbroadTea,AbroadAdm,ExamTea,SourceTea,Office,SysAdm");
+        // session('username', "admin");
+        // session('truename', "系统管理员");
 		if ($check) {
 			$this -> success() ;
 		} else {
