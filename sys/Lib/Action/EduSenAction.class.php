@@ -1,6 +1,6 @@
 <?php
 class EduSenAction extends CommonAction {
-	public function index() {
+    public function index() {
         $User = D('User');
         $map['username'] = session('username');
         $photo = $User->where($map)->getField('photo');
@@ -15,23 +15,23 @@ class EduSenAction extends CommonAction {
             $this->assign('my_role',$my_role);
             $this->assign('select_role',$this -> getActionName());
         }
-		$this -> display();
-	} 
+        $this -> display();
+    } 
          public function city() {
-		$bigid = $_GET["province"];
-		if (isset($bigid)) {
-			$area = D("Area");
-			$bigid = $area -> where("parent_id = 1 and region_name = '$bigid'") -> getField('region_id');
-			$province = $area -> where("parent_id = " . $bigid) -> Field("region_name") -> select();
-			$this -> ajaxReturn($province, '成功', 1);
-		} else {
-			$this -> ajaxReturn(0, '获取信息失败', 0);
-		} 
-	} 
+        $bigid = $_GET["province"];
+        if (isset($bigid)) {
+            $area = D("Area");
+            $bigid = $area -> where("parent_id = 1 and region_name = '$bigid'") -> getField('region_id');
+            $province = $area -> where("parent_id = " . $bigid) -> Field("region_name") -> select();
+            $this -> ajaxReturn($province, '成功', 1);
+        } else {
+            $this -> ajaxReturn(0, '获取信息失败', 0);
+        } 
+    } 
     public function menunotice() {
         $menu['notice']='所有通知';
         $this->assign('menu',$this ->autoMenu($menu));  
-	}
+    }
     public function getSex($stusex){
         $allsex=array('male','female');
         $sex='';
@@ -77,9 +77,9 @@ class EduSenAction extends CommonAction {
         $a=explode(',',$str);
         $allc=array();
         foreach($a as $key => $value) {
-			$allc[$value] = $value;
-		} 
-		return $allc;
+            $allc[$value] = $value;
+        } 
+        return $allc;
         
     }
 
@@ -250,7 +250,7 @@ class EduSenAction extends CommonAction {
             $a[$i]=$i;
         }
         return $a; 
-	}
+    }
     public function getTerm() {
         $a=array();
         $current_year=Date('Y');
@@ -263,35 +263,36 @@ class EduSenAction extends CommonAction {
             }
         }
         return $a; 
-	}
+    }
     public function menuClass() {
         $menu['uclass']='所有班级';
+        $menu['uploadStu'] = '上传学生分班信息';
         $menu['uclassAdd']='新建班级';
         $this->assign('menu',$this ->autoMenu($menu));  
-	}
+    }
     public function menuCourse() {
         $menu['subject']='课程与教师';
         $menu['subjectAdd']='新建课程与教师的关联';
         $menu['course']='课程总库';
         $menu['courseAdd']='新建课程';
         $this->assign('menu',$this ->autoMenu($menu));  
-	}
+    }
     public function menuGrade() {
         $menu['grade']='成绩首页';
         $menu['usualGrade']='查看导入成绩';
         $menu['usualResultAdd']='导入往年成绩';
         $menu['resultComplemented']='补全成绩信息';
         $this->assign('menu',$this ->autoMenu($menu));  
-	}
+    }
     public function menuReward() {
         $menu['reward']='所有奖惩记录';
         $menu['rewardAdd']='新建记录';
         $this->assign('menu',$this ->autoMenu($menu));  
-	}
+    }
     public function menuStu() {
         $menu['stu']='学生首页';
         $this->assign('menu',$this ->autoMenu($menu));  
-	}
+    }
     public function uclass() {
         $this -> assign('category_fortag', $this->getYear());
         if (isset($_GET['searchkey'])) {
@@ -332,18 +333,18 @@ class EduSenAction extends CommonAction {
         $menu['stuCommonProcess']='留学进程';
         $menu['stuCommonInfo']='基本信息';
         $this->assign('menu',$this ->autoMenu($menu,$id));  
-	}
+    }
     
     public function stuCommonScore() {
         $id = $_GET['id'];
-		if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
         $Score = D("Score");
-		$map['susername']=$id;
-		$map['isvisible']=1;
+        $map['susername']=$id;
+        $map['isvisible']=1;
         $term=$Score -> where($map) ->field('term')->group('term')->order('term asc')-> select();
-		$term_num=count($term);
+        $term_num=count($term);
         if($term_num>0){
             foreach($term as $key=>$value){
                 $map['term']=$value['term'];
@@ -354,12 +355,12 @@ class EduSenAction extends CommonAction {
         } 
         $this->stuCommonMenu($id);
         $this -> display();
-	}
+    }
     public function stuCommonCertification(){
          $id = $_GET['id'];
         if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
+            $this -> error('参数缺失');
+        } 
         $student=D('classstudent');
         $enroll=D('enroll');
         $class=D('class');
@@ -443,22 +444,22 @@ class EduSenAction extends CommonAction {
     }
     public function stuCommonAttend() {
         $id = $_GET['id'];
-		if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
         $Attend = D("Attend");
-		$map['susername']=$id;
-		$map1['susername']=$id;
-		$count = $Attend -> where($map) -> count();
-		if ($count > 0) {
+        $map['susername']=$id;
+        $map1['susername']=$id;
+        $count = $Attend -> where($map) -> count();
+        if ($count > 0) {
             import("@.ORG.Page");
             $listRows=10;
-			$p = new Page($count, $listRows);
-			$my = $Attend -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
-			$page = $p -> show();
-			$this -> assign("page", $page);
-			$this -> assign('my', $my);			
-		} 
+            $p = new Page($count, $listRows);
+            $my = $Attend -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
          $rid=$Attend->where($map)->field('id')->order('ctime DESC') ->select();
             $rid_num=count($rid);
             $a=array();
@@ -483,36 +484,36 @@ class EduSenAction extends CommonAction {
             $this->assign('late',$late_num);
         $this->stuCommonMenu($id);
         $this -> display();
-	}
+    }
     public function stuCommonReward() {
         $id = $_GET['id'];
-		if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
         $Reward = D("Reward");
-		$map['susername']=$id;
-		$count = $Reward -> where($map) -> count();
-		if ($count > 0) {
+        $map['susername']=$id;
+        $count = $Reward -> where($map) -> count();
+        if ($count > 0) {
             import("@.ORG.Page");
             $listRows=10;
-			$p = new Page($count, $listRows);
-			$my = $Reward -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
-			$page = $p -> show();
-			$this -> assign("page", $page);
-			$this -> assign('my', $my);			
-		} 
+            $p = new Page($count, $listRows);
+            $my = $Reward -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
         $this->stuCommonMenu($id);
         $this -> display();
-	}
+    }
     public function stuCommonGetSystem($category,$name) {
-		$system = D("System");
-		$temp = explode(',', $system -> where("category='" . $category . "' and name='" . $name . "'") -> getField("content"));
-		$a = array();
-		foreach($temp as $key => $value) {
-			$a[$value] = $value;
-		} 
-		return $a;
-	} 
+        $system = D("System");
+        $temp = explode(',', $system -> where("category='" . $category . "' and name='" . $name . "'") -> getField("content"));
+        $a = array();
+        foreach($temp as $key => $value) {
+            $a[$value] = $value;
+        } 
+        return $a;
+    } 
     public function stuCommonGrade(){
         $this->assign('id',$_GET['id']);
         $this->assign('info',$this->students());
@@ -526,59 +527,59 @@ class EduSenAction extends CommonAction {
     }
     public function stuCommonInfo() {
         $id = $_GET['id'];
-		if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
-		$area = D("Area");
-		$province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
-		$a = array();
-		foreach($province as $key => $value) {
-			$a[$value['region_name']] = $value['region_name'];
-		} 
-		$is_or_not = array('是' => '是', '否' => '否');
-		$education = $this -> stuCommonGetSystem("enroll","education");
-		$entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
-		$englishfull = $this -> stuCommonGetSystem("enroll","englishfull");
-		$mathfull = $this -> stuCommonGetSystem("enroll","mathfull");
-		$abroad = $this -> stuCommonGetSystem("enroll","abroad");
-		$coursewant = $this -> stuCommonGetSystem("enroll","coursewant");
-		$englishtrain = $this -> stuCommonGetSystem("enroll","englishtrain");
-		$sourcenewspaper = $this -> stuCommonGetSystem("enroll","sourcenewspaper");
-		$sourcenet = $this -> stuCommonGetSystem("enroll","sourcenet");
-		$nationality = $this -> stuCommonGetSystem("enroll","nationality");
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $area = D("Area");
+        $province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
+        $a = array();
+        foreach($province as $key => $value) {
+            $a[$value['region_name']] = $value['region_name'];
+        } 
+        $is_or_not = array('是' => '是', '否' => '否');
+        $education = $this -> stuCommonGetSystem("enroll","education");
+        $entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
+        $englishfull = $this -> stuCommonGetSystem("enroll","englishfull");
+        $mathfull = $this -> stuCommonGetSystem("enroll","mathfull");
+        $abroad = $this -> stuCommonGetSystem("enroll","abroad");
+        $coursewant = $this -> stuCommonGetSystem("enroll","coursewant");
+        $englishtrain = $this -> stuCommonGetSystem("enroll","englishtrain");
+        $sourcenewspaper = $this -> stuCommonGetSystem("enroll","sourcenewspaper");
+        $sourcenet = $this -> stuCommonGetSystem("enroll","sourcenet");
+        $nationality = $this -> stuCommonGetSystem("enroll","nationality");
 
-		$this -> assign('a', $a);
-		$this -> assign('is_or_not', $is_or_not);
-		$this -> assign('education', $education);
-		$this -> assign('entrancefull', $entrancefull);
-		$this -> assign('englishfull', $englishfull);
-		$this -> assign('mathfull', $mathfull);
-		$this -> assign('abroad', $abroad);
-		$this -> assign('coursewant', $coursewant);
-		$this -> assign('englishtrain', $englishtrain);
-		$this -> assign('sourcenewspaper', $sourcenewspaper);
-		$this -> assign('sourcenet', $sourcenet);
-		$this -> assign('nationality', $nationality);
-		
-		$Enroll = D('Enroll');
-		$map['username'] = $id;
-		$my = $Enroll -> where($map) -> find();
-		if ($my) {
-			$this -> assign('nativecity', $this -> getBrotherCity($my['nativecity']));
-			$this -> assign('fcity', $this -> getBrotherCity($my['fcity']));
-			$this -> assign('mcity', $this -> getBrotherCity($my['mcity']));
-			$this -> assign('ocity', $this -> getBrotherCity($my['ocity']));
-			$this -> assign('schoolcity', $this -> getBrotherCity($my['schoolcity']));
-			$this -> assign('abroad_selected', explode(',', $my['abroad']));
-			$this -> assign('newspaper_selected', explode(',', $my['sourcenewspaper']));
-			$this -> assign('net_selected', explode(',', $my['sourcenet']));
-			$this -> assign('infosource_selected', explode(',', $my['infosource']));
-			$this -> assign('try', $my['try']);
-		} 
+        $this -> assign('a', $a);
+        $this -> assign('is_or_not', $is_or_not);
+        $this -> assign('education', $education);
+        $this -> assign('entrancefull', $entrancefull);
+        $this -> assign('englishfull', $englishfull);
+        $this -> assign('mathfull', $mathfull);
+        $this -> assign('abroad', $abroad);
+        $this -> assign('coursewant', $coursewant);
+        $this -> assign('englishtrain', $englishtrain);
+        $this -> assign('sourcenewspaper', $sourcenewspaper);
+        $this -> assign('sourcenet', $sourcenet);
+        $this -> assign('nationality', $nationality);
+        
+        $Enroll = D('Enroll');
+        $map['username'] = $id;
+        $my = $Enroll -> where($map) -> find();
+        if ($my) {
+            $this -> assign('nativecity', $this -> getBrotherCity($my['nativecity']));
+            $this -> assign('fcity', $this -> getBrotherCity($my['fcity']));
+            $this -> assign('mcity', $this -> getBrotherCity($my['mcity']));
+            $this -> assign('ocity', $this -> getBrotherCity($my['ocity']));
+            $this -> assign('schoolcity', $this -> getBrotherCity($my['schoolcity']));
+            $this -> assign('abroad_selected', explode(',', $my['abroad']));
+            $this -> assign('newspaper_selected', explode(',', $my['sourcenewspaper']));
+            $this -> assign('net_selected', explode(',', $my['sourcenet']));
+            $this -> assign('infosource_selected', explode(',', $my['infosource']));
+            $this -> assign('try', $my['try']);
+        } 
         $this -> assign('my', $my);
         $this->stuCommonMenu($id);
         $this -> display();
-	} 
+    } 
          public function checkEnrollPlus() {
         load("@.idcard");
         load("@.check");
@@ -652,9 +653,9 @@ class EduSenAction extends CommonAction {
     } 
     public function stuCommonProcess(){
         $id = $_GET['id'];
-		if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
         $dao=D('Abroad');
         $map['susername']=$id;
         $my=$dao->where($map)->find();
@@ -1842,7 +1843,7 @@ class EduSenAction extends CommonAction {
         $my=$score->where($map)->select();
         $this->assign('my',$my);
         $this->display();
-	}
+    }
     
     public function scoreEdit(){
         $dao = D('score');
@@ -1948,10 +1949,10 @@ class EduSenAction extends CommonAction {
         $stuname= D("Classstudent")->where($map1)->getField('studentname');
         $this->assign('id',$id);
         $this->assign('stuname',$stuname);
-		$Score = D("Score");
+        $Score = D("Score");
         $map['susername']=$id;
         $term=$Score -> where($map) ->field('term')->group('term')->order('term asc')-> select();
-		$term_num=count($term);
+        $term_num=count($term);
         if($term_num>0){
             foreach($term as $key=>$value){
                 $map['term']=$value['term'];
@@ -1961,7 +1962,7 @@ class EduSenAction extends CommonAction {
         } 
         $this -> menuStu();
         $this -> display();
-	}
+    }
     
     public function downScore(){
         $id = $_GET['id'];
@@ -1986,13 +1987,13 @@ class EduSenAction extends CommonAction {
         $mystuename = $my_xing." ".ucfirst(strtolower($my_ming));
 
         $classid = $student["classid"];
-		$classtab = D("Class");
-		$majorinfo = $classtab->Field("major,majore")->where("id='".$classid."'")->find();
+        $classtab = D("Class");
+        $majorinfo = $classtab->Field("major,majore")->where("id='".$classid."'")->find();
 
 
         $Score=D("Score");
         $map['susername']=$id;
-		$map['isvisible']=1;
+        $map['isvisible']=1;
 //        $map['ispublic']=1;
     $a=array('一','二');//中文学期
     $b=array('Fall','Spring');//英文学期
@@ -2716,8 +2717,8 @@ class EduSenAction extends CommonAction {
     public function downCertification(){
         $id = $_GET['id'];
         if (!isset($id)) {
-			$this -> error('参数缺失');
-		} 
+            $this -> error('参数缺失');
+        } 
         $student=D('classstudent');
         $enroll=D('enroll');
         $class=D('class');
@@ -2842,9 +2843,9 @@ class EduSenAction extends CommonAction {
                 'name'=>'宋体',
                 'bold' => true,
                 'size' => 12,
-                'color'	 => array(
-	 				'rgb' => 'FF0000'
-	 			)
+                'color'  => array(
+                    'rgb' => 'FF0000'
+                )
             ),
             'alignment' => array(
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
@@ -2861,7 +2862,7 @@ class EduSenAction extends CommonAction {
                 'name'=>'宋体',
                 'bold' => true,
                 'size' => 12
-	 			),
+                ),
             'alignment' => array(
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
                 'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
@@ -2937,9 +2938,9 @@ class EduSenAction extends CommonAction {
                 'name'=>'宋体',
                 'bold' => true,
                 'size' => 12,
-                'color'	 => array(
-	 				'rgb' => 'FF0000'
-	 			)
+                'color'  => array(
+                    'rgb' => 'FF0000'
+                )
             ),
             'alignment' => array(
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
@@ -3038,9 +3039,9 @@ class EduSenAction extends CommonAction {
             'font' => array(
                 'name'=>'宋体',
                 'size' => 12,
-                 'color'	 => array(
-	 				'rgb' => 'FF0000'
-	 			)
+                 'color'     => array(
+                    'rgb' => 'FF0000'
+                )
             ),
             'alignment' => array(
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
@@ -3085,6 +3086,107 @@ class EduSenAction extends CommonAction {
         $objWriter->save('php://output');
         exit; 
     }
+    public function uploadStu(){
+        $this->menuClass();
+        $this->display();
+    }
+    public function classStudentInsert() {
+        $titlepic = $_POST['titlepic'];
+        if (empty($titlepic)) {
+            $this -> error('未上传文件');
+        } 
+        if (substr($titlepic,-3,3) !=='xls') {
+            $this -> error('上传的不是xls文件');
+        } 
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $inputFileName = $php_path .'../../../..'.$titlepic;
+        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+        $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
+'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+'ｙ' => 'y', 'ｚ' => 'z',    
+'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+'》' => '>',    
+'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+'＂'=>'"'); 
+        $count = count($sheetData);//一共有多少行
+        if ($count < 3) {
+            $this->ajaxReturn($count, "请填写信息", 0);
+        }
+        $class = M("class");
+        $map["year"]=Date('Y');
+        $classlistall = M("class")->where($map)->select();
+        foreach ($classlistall as $vc) {
+            $classlist[] = $vc["name"];
+        }
+        for($i = 3; $i <= $count; $i++){
+            $b = true;
+            for($j = 1; $j < 7; $j++){
+                if(strlen($sheetData[$i][chr(65+$j)]) == 0){
+                    $errors[] = chr(65+$j).$i;
+                    $b = false;
+                }
+            }
+            if (!$b) {
+                continue;
+            }
+            // if (preg_match("/^[x{4e00}-x{9fa5}]+$/u",$sheetData[$i]['C'])) {
+            //     $errors[] = 'C'.$i;//学生姓名中文检测
+            //     continue;
+            // }
+            // $map['susername']=$sheetData[$i]['A'];
+            // $map['coursenumber']=$sheetData[$i]['G'];
+            // $map['term']=$sheetData[$i]['J'];
+            // $find=$dao->where($map)->find();
+            // if($find){
+            //     $this->error('学号'.strtr($sheetData[$i]['A'], $arr).'课程编号'.strtr($sheetData[$i]['G'], $arr).'学期'.strtr($sheetData[$i]['J'], $arr).'已经存在！学号，课程编号和学期必须是唯一的');
+            // }
+            if (!in_array($sheetData[$i-3]['A'], $classlist)) {
+                $classdata["name"] = $sheetData[$i-3]['A'];
+                $classdata["major"] = $sheetData[$i-3]['B'];
+                $classdata["year"] = Date('Y');
+                $class->add($classdata);
+            }
+            $data_a[$i-3]['susername'] = strtr($sheetData[$i]['A'], $arr);
+            $data_a[$i-3]['struename'] = $sheetData[$i]['B'];
+            $data_a[$i-3]['tusername'] = strtr($sheetData[$i]['C'], $arr);
+            $data_a[$i-3]['ttruename'] = $sheetData[$i]['D'];
+            $data_a[$i-3]['coursename'] = $sheetData[$i]['E'];
+            $data_a[$i-3]['courseename'] = strtr($sheetData[$i]['F'], $arr);
+            $data_a[$i-3]['coursenumber'] = strtr($sheetData[$i]['G'], $arr);
+            $data_a[$i-3]['coursetime'] = strtr($sheetData[$i]['H'], $arr);
+            $data_a[$i-3]['credit'] = strtr($sheetData[$i]['I'], $arr);
+            $data_a[$i-3]['term'] = strtr($sheetData[$i]['J'], $arr);
+            $data_a[$i-3]['score'] = strtr($sheetData[$i]['K'], $arr);
+            $data_a[$i-3]['plus'] = strtr($sheetData[$i]['L'], $arr);
+            $data_a[$i-3]['bscore'] = strtr($sheetData[$i]['M'], $arr);
+            $data_a[$i-3]['ispublic'] = 1;
+            $data_a[$i-3]['subtime'] = '1888-08-08 08:08:08';
+        }//for循环结束
+        if (count($errors) > 0) {
+            $this->ajaxReturn($classlist, "信息格式不正确", 0);
+        }
+        $classstudent = M('classstudent');//连接数据库
+        // $dao -> addAll($data_a);
+        $this -> success("已成功保存");
+    }  
 } 
 
 ?>
