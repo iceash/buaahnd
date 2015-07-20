@@ -237,4 +237,101 @@ function downloads()
         return($Model);
         }// 模板变量赋值
 }
+
+     function excelwarning($excelurl)
+    {
+      $excelurl = dirname(__FILE__).'/../upload_editor/file/20150717/20150717160153_68150.xls';
+      Vendor("PHPExcel");   
+      $objPHPExcel = new PHPExcel();   
+      $PHPReader = new PHPExcel_Reader_Excel5(); 
+      $filePath=$excelurl;
+      if(!$PHPReader->canRead($filePath)){   
+          echo 'no Excel';   
+          return ;   
+      }   
+       $PHPExcel = $PHPReader->load($filePath);  
+       $currentSheet = $PHPExcel->getSheet(0);  
+       
+        $allColumn = $currentSheet->getHighestColumn();    //取得一共有多少列   
+         
+        $allRow = $currentSheet->getHighestRow(); //取得一共有多少行  
+        //循环读取数据,默认是utf-8输出  
+        $data=array();
+         for ($i = 1; $i <= $allRow; $i++){
+            $item['A']=$PHPExcel->getExcelValue($sheet0,'A'.$i);
+            $item['B']=$PHPExcel->getExcelValue($sheet0,'B'.$i);
+            $item['C']=$PHPExcel->getExcelValue($sheet0,'C'.$i);
+            $item['D']=$PHPExcel->getExcelValue($sheet0,'D'.$i);
+            $item['E']=$PHPExcel->getExcelValue($sheet0,'E'.$i);
+            $item['F']=$PHPExcel->getExcelValue($sheet0,'F'.$i);
+            $item['G']=$PHPExcel->getExcelValue($sheet0,'G'.$i);
+            $item['H']=$PHPExcel->getExcelValue($sheet0,'H'.$i);
+            $item['I']=$PHPExcel->getExcelValue($sheet0,'I'.$i);
+            $item['J']=$PHPExcel->getExcelValue($sheet0,'J'.$i);
+            $item['K']=$PHPExcel->getExcelValue($sheet0,'K'.$i);
+            $item['L']=$PHPExcel->getExcelValue($sheet0,'L'.$i);
+            $item['M']=$PHPExcel->getExcelValue($sheet0,'M'.$i);
+            $item['N']=$PHPExcel->getExcelValue($sheet0,'N'.$i);
+            $item['O']=$PHPExcel->getExcelValue($sheet0,'O'.$i);
+            $item['P']=$PHPExcel->getExcelValue($sheet0,'P'.$i);
+            $item['Q']=$PHPExcel->getExcelValue($sheet0,'Q'.$i);
+            $item['R']=$PHPExcel->getExcelValue($sheet0,'R'.$i);
+            $item['S']=$PHPExcel->getExcelValue($sheet0,'S'.$i);
+            $item['T']=$PHPExcel->getExcelValue($sheet0,'T'.$i);
+            $item['U']=$PHPExcel->getExcelValue($sheet0,'U'.$i);
+            $item['V']=$PHPExcel->getExcelValue($sheet0,'V'.$i);
+            $item['W']=$PHPExcel->getExcelValue($sheet0,'W'.$i);
+            $item['X']=$PHPExcel->getExcelValue($sheet0,'X'.$i);
+            $item['Y']=$PHPExcel->getExcelValue($sheet0,'Y'.$i);
+            $item['Z']=$PHPExcel->getExcelValue($sheet0,'Z'.$i);
+            $data[]=$item;
+        }   
+        $objPHPExcelnew = new PHPExcel();
+        foreach($data as $k=>$v){
+    $objPHPExcelnew->setActiveSheetIndex(0)
+                ->setCellValue('A'.$i, $v['A'])
+                ->setCellValue('B'.$i, $v['B'])
+                ->setCellValue('C'.$i, $v['C'])
+                ->setCellValue('D'.$i, $v['D'])
+                ->setCellValue('E'.$i, $v['E'])
+                ->setCellValue('F'.$i, $v['F'])
+                ->setCellValue('G'.$i, $v['G'])
+                ->setCellValue('H'.$i, $v['H'])
+                ->setCellValue('I'.$i, $v['I'])
+                ->setCellValue('J'.$i, $v['J'])
+                ->setCellValue('K'.$i, $v['K'])
+                ->setCellValue('L'.$i, $v['L'])
+                ->setCellValue('M'.$i, $v['M'])
+                ->setCellValue('N'.$i, $v['N'])
+                ->setCellValue('O'.$i, $v['O'])
+                ->setCellValue('P'.$i, $v['P'])
+                ->setCellValue('Q'.$i, $v['Q'])
+                ->setCellValue('R'.$i, $v['R'])
+                ->setCellValue('S'.$i, $v['S'])
+                ->setCellValue('T'.$i, $v['T'])
+                ->setCellValue('U'.$i, $v['U'])
+                ->setCellValue('V'.$i, $v['V'])
+                ->setCellValue('W'.$i, $v['W'])
+                ->setCellValue('X'.$i, $v['X'])
+                ->setCellValue('Y'.$i, $v['Y'])
+                ->setCellValue('Z'.$i, $v['Z']);
+    $i++;
+    }
+    $objPHPExcelnew->getActiveSheet()->setTitle('sheet1');//设置sheet标签的名称
+    $objPHPExcelnew->setActiveSheetIndex(0);
+    ob_end_clean();  //清空缓存 
+    header("Pragma: public");
+    header("Expires: 0");
+    header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+    header("Content-Type:application/force-download");
+    header("Content-Type:application/vnd.ms-execl");
+    header("Content-Type:application/octet-stream");
+    header("Content-Type:application/download");
+    header('Content-Disposition:attachment;filename=表.xls');//设置文件的名称
+    header("Content-Transfer-Encoding:binary");
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcelnew, 'Excel5');
+    $objWriter->save('php://output');
+    exit;
+
+    }
 ?>

@@ -995,7 +995,8 @@ class EduDirAction extends CommonAction {
         
         $dao=D('Attend');
         $dao -> addAll($data_a);
-         $this -> success("已成功保存");
+        $this -> success("已成功保存");
+
         
     }  
     public function stuCommon() {
@@ -3257,6 +3258,10 @@ class EduDirAction extends CommonAction {
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
         exit; 
+    }
+     public function text()
+    {
+        excelwarning();
     }
 } 
 
