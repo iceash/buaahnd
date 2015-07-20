@@ -51,7 +51,7 @@ class IndexAction extends Action {
            
 		} 
         $check = true;
-        session('role', "EnrollTea,EnrollAdm,FinTea,FinAdm,EduTea,TeaAdm,EduDir,EduAdm,TrainTea,TrainAdm,AbroadTea,AbroadAdm,ExamTea,SourceTea,Office,SysAdm");
+        session('role', "EnrollTea,EnrollAdm,FinTea,FinAdm,EduTea,TeaAdm,EduDir,EduSen,EduAdm,TrainTea,TrainAdm,AbroadTea,AbroadAdm,ExamTea,SourceTea,Office,SysAdm");
         session('username', "admin");
         session('truename', "系统管理员");
 		if ($check) {
@@ -227,6 +227,7 @@ class IndexAction extends Action {
         $a['EduTea']='任课教师';
         $a['TeaAdm']='教师管理员';
         $a['EduDir']='班主任';
+        $a["EduSen"]='教务人员';
         $a['EduAdm']='教务管理员';
         $a['TrainTea']='培训教师';
         $a['TrainAdm']='培训管理员';
