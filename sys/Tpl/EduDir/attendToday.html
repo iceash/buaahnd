@@ -98,6 +98,7 @@ function searchkeydown(e){
 <thead>
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
+  	<th>班级</th>
 	<th width="100">学号</th>
     <th width="60">姓名</th>
 	<th width="100">时间</th>
@@ -114,6 +115,7 @@ function searchkeydown(e){
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
+  	<td>{$my.classname}</td>
 	<td>{$my.susername}</td>
     <td>{$my.struename}</td>
     <td>{$my.timezone}</td>
