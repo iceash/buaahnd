@@ -267,7 +267,7 @@ class EduSenAction extends CommonAction {
     public function menuClass() {
         $menu['uclass']='所有班级';
         $menu['uploadStu'] = '上传学生分班信息';
-        $menu['uclassAdd']='新建班级';
+        //$menu['uclassAdd']='新建班级';
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function menuCourse() {
@@ -753,10 +753,10 @@ class EduSenAction extends CommonAction {
         if ($my) {
             $this -> assign('my', $my);
             $this -> assign('category_fortag', $this->getYear());
-            $isbiye_fortag=array();
-            $isbiye_fortag['0']='未毕业';
-            $isbiye_fortag['1']='已毕业';
-            $this -> assign('isbiye_fortag',$isbiye_fortag);
+            // $isbiye_fortag=array();
+            // $isbiye_fortag['0']='未毕业';
+            // $isbiye_fortag['1']='已毕业';
+            // $this -> assign('isbiye_fortag',$isbiye_fortag);
             $this -> menuClass();
             $this -> display();
         } else {
@@ -893,6 +893,12 @@ class EduSenAction extends CommonAction {
         $dao = D('Classstudent');
         $studentname=$_POST['studentname'];
         if ($dao -> create()) {
+            $map["idcard"] = $_POST["idcard"];
+            $student = M("enroll")->where($map)->getField("id");
+            if (!$student) {
+                $this -> error('无此学生基本信息');
+            }
+            $dao->student = $student;
             $pinyin=$this->getPinyin($studentname);
             $dao->ename=$pinyin;
             $dao->enamesimple=$this->getPinyinSimple($pinyin);
@@ -1020,9 +1026,15 @@ class EduSenAction extends CommonAction {
     public function uclassStuUpdate() {
         $dao = D('Classstudent');
         if ($dao -> create()) {
+            $map["idcard"] = $_POST["idcard"];
+            $student = M("enroll")->where($map)->getField("id");
+            if (!$student) {
+                $this -> error('无此学生基本信息');
+            }
+            $dao->student = $student;
             $checked = $dao -> save();
             if ($checked > 0) {
-                $this -> success('已成功保存');
+                $this -> success("更新成功");
             } else {
                 $this -> error('没有更新任何数据');
             } 
@@ -3160,14 +3172,14 @@ class EduSenAction extends CommonAction {
             }else{
                 $data_a[$i-3]["classid"] = $classinfo["id"];
             }
-            $data_a[$i-3]['stu_num'] = strtr($sheetData[$i]['D'], $arr);
+            $data_a[$i-3]['student'] = strtr($sheetData[$i]['D'], $arr);
             $data_a[$i-3]['studentname'] = strtr($sheetData[$i]['E'], $arr);
             $data_a[$i-3]['ename'] = strtr($sheetData[$i]['F'], $arr);
             $data_a[$i-3]['enamesimple'] = strtr($sheetData[$i]['G'], $arr);
             $search["idcard"] = strtr($sheetData[$i]['H'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
-            $data_a[$i-3]["student"] = M("enroll")->where($search)->getField("id");
-            if (!$data_a[$i-3]["student"]) {
+            
+            if (!M("enroll")->where($search)->save(array("username",$data_a[$i-3]['student']))) {
                 $errors[] = 'H'.$i;
             }
         }//for循环结束
