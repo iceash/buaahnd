@@ -3131,10 +3131,10 @@ class EduSenAction extends CommonAction {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
         $class = M("class");
-        $map["year"]=Date('Y');
-        $classlistall = M("class")->where($map)->select();
+        //$map["year"] = Date('Y');
+        //$classlistall = M("class")->where($map)->select();
         foreach ($classlistall as $vc) {
-            $classlist[] = $vc["name"];
+            $classlist[$vc["name"]] = $vc["id"];
         }
         for($i = 3; $i <= $count; $i++){
             $b = true;
@@ -3144,47 +3144,38 @@ class EduSenAction extends CommonAction {
                     $b = false;
                 }
             }
-            if (!$b) {
-                continue;
+            $map["year"] = $sheetData[$i]['A'];
+            $map["name"] = $sheetData[$i]['B'];
+            $classinfo = M("class")->where($map)->find();
+            if (!$classinfo) {
+                $classdata[$i]["year"] = strtr($sheetData[$i]['A'], $arr);
+                $classdata[$i]["major"] = strtr($sheetData[$i]['C'], $arr);
+                if (!M("major")->where($classdata[$i])->find()) {
+                    $errors[] = 'C'.$i;
+                    continue;
+                }
+                $classdata[$i]["name"] = strtr($sheetData[$i]['B'], $arr);
+                $classdata[$i]["ctime"] = date('y-m-d h:i:s',time());
+                $data_a[$i-3]["classid"] = $class->add($classdata[$i]);
+            }else{
+                $data_a[$i-3]["classid"] = $classinfo["id"];
             }
-            // if (preg_match("/^[x{4e00}-x{9fa5}]+$/u",$sheetData[$i]['C'])) {
-            //     $errors[] = 'C'.$i;//学生姓名中文检测
-            //     continue;
-            // }
-            // $map['susername']=$sheetData[$i]['A'];
-            // $map['coursenumber']=$sheetData[$i]['G'];
-            // $map['term']=$sheetData[$i]['J'];
-            // $find=$dao->where($map)->find();
-            // if($find){
-            //     $this->error('学号'.strtr($sheetData[$i]['A'], $arr).'课程编号'.strtr($sheetData[$i]['G'], $arr).'学期'.strtr($sheetData[$i]['J'], $arr).'已经存在！学号，课程编号和学期必须是唯一的');
-            // }
-            if (!in_array($sheetData[$i-3]['A'], $classlist)) {
-                $classdata["name"] = $sheetData[$i-3]['A'];
-                $classdata["major"] = $sheetData[$i-3]['B'];
-                $classdata["year"] = Date('Y');
-                $class->add($classdata);
+            $data_a[$i-3]['stu_num'] = strtr($sheetData[$i]['D'], $arr);
+            $data_a[$i-3]['studentname'] = strtr($sheetData[$i]['E'], $arr);
+            $data_a[$i-3]['ename'] = strtr($sheetData[$i]['F'], $arr);
+            $data_a[$i-3]['enamesimple'] = strtr($sheetData[$i]['G'], $arr);
+            $search["idcard"] = strtr($sheetData[$i]['H'], $arr);
+            $data_a[$i-3]['idcard'] = $search["idcard"];
+            $data_a[$i-3]["student"] = M("enroll")->where($search)->getField("id");
+            if (!$data_a[$i-3]["student"]) {
+                $errors[] = 'H'.$i;
             }
-            $data_a[$i-3]['susername'] = strtr($sheetData[$i]['A'], $arr);
-            $data_a[$i-3]['struename'] = $sheetData[$i]['B'];
-            $data_a[$i-3]['tusername'] = strtr($sheetData[$i]['C'], $arr);
-            $data_a[$i-3]['ttruename'] = $sheetData[$i]['D'];
-            $data_a[$i-3]['coursename'] = $sheetData[$i]['E'];
-            $data_a[$i-3]['courseename'] = strtr($sheetData[$i]['F'], $arr);
-            $data_a[$i-3]['coursenumber'] = strtr($sheetData[$i]['G'], $arr);
-            $data_a[$i-3]['coursetime'] = strtr($sheetData[$i]['H'], $arr);
-            $data_a[$i-3]['credit'] = strtr($sheetData[$i]['I'], $arr);
-            $data_a[$i-3]['term'] = strtr($sheetData[$i]['J'], $arr);
-            $data_a[$i-3]['score'] = strtr($sheetData[$i]['K'], $arr);
-            $data_a[$i-3]['plus'] = strtr($sheetData[$i]['L'], $arr);
-            $data_a[$i-3]['bscore'] = strtr($sheetData[$i]['M'], $arr);
-            $data_a[$i-3]['ispublic'] = 1;
-            $data_a[$i-3]['subtime'] = '1888-08-08 08:08:08';
         }//for循环结束
         if (count($errors) > 0) {
-            $this->ajaxReturn($classlist, "信息格式不正确", 0);
+            $this->ajaxReturn($errors, "信息不正确", 0);
         }
         $classstudent = M('classstudent');//连接数据库
-        // $dao -> addAll($data_a);
+        $classstudent -> addAll($data_a);
         $this -> success("已成功保存");
     }  
 } 

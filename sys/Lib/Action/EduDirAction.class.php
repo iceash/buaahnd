@@ -1003,7 +1003,7 @@ class EduDirAction extends CommonAction {
         $dao=D('Attend');
         $dao -> addAll($data_a);
         $this -> success("已成功保存");
-        
+
     }  
     public function stuCommon() {
         $this -> display();
@@ -3407,7 +3407,7 @@ class EduDirAction extends CommonAction {
         } else {
             $this -> error($dao->getError());
         } 
-    }  
+    }
 } 
 
 ?>

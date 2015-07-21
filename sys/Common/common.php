@@ -116,9 +116,8 @@ function updatePaymentStatus($isRefund,$feeid,$idcard){
      return $checkU=$payment->where($mapU)->save($dataU);
 }
 
-function downloads()
-{
-            $mapEn=$_GET['searchkey'];
+function downloads(){
+      $mapEn=$_GET['searchkey'];
       $mapFn=$_GET['searchtype'];
       $item =$_GET['item'];
       $grade =$_GET['grade'];
@@ -237,4 +236,125 @@ function downloads()
         return($Model);
         }// 模板变量赋值
 }
+
+     function excelwarning($excelurl,$errorarr){
+       Vendor('PHPExcel'); 
+       $errorarr=array('B3','F5');
+        $excelurl = dirname(__FILE__).'/../upload_editor/file/20150717/20150717160153_68150.xls';
+        $p = PHPExcel_IOFactory::load($excelurl);
+        for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
+        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->getStartColor()->setARGB('FFFF7F50'); 
+        }
+        
+          header("Pragma: public");
+          header("Expires: 0");
+          header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+          header("Content-Type:application/force-download");
+          header("Content-Type:application/vnd.ms-execl");
+          header("Content-Type:application/octet-stream");
+          header("Content-Type:application/download");
+          header('Content-Disposition:attachment;filename=表.xls');//设置文件的名称
+          header("Content-Transfer-Encoding:binary");
+          $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+          $objWriter->save('php://output');
+        //PHPExcel_IOFactory::createWriter($p, 'Excel5') //根据需要也可以是 Excel2007
+          //->save($excelurl)
+       
+      
+    //   $objPHPExcel = new PHPExcel();   
+    //   $PHPReader = new PHPExcel_Reader_Excel5(); 
+    //   $filePath=$excelurl;
+    //   if(!$PHPReader->canRead($filePath)){   
+    //       echo 'no Excel';   
+    //       return ;   
+    //   }   
+    //    $PHPExcel = $PHPReader->load($filePath);  
+    //    $sheetData = $PHPExcel->getActiveSheet()->toArray(null,true,true,true);
+    //    dump($sheetData);
+    //    $currentSheet = $PHPExcel->getSheet(0);  
+       
+    //     $allColumn = $currentSheet->getHighestColumn();    //取得一共有多少列   
+         
+    //     $allRow = $currentSheet->getHighestRow(); //取得一共有多少行  
+    //     //循环读取数据,默认是utf-8输出  
+    //     $data=array();
+    //      for ($ia = 0; $ia <= $allRow; $ia++){
+    //         $item['A']=$sheetData[$ia]['A'];
+    //         $item['B']=$sheetData[$ia]['B'];
+    //         $item['C']=$sheetData[$ia]['C'];
+    //         $item['D']=$sheetData[$ia]['D'];
+    //         $item['E']=$sheetData[$ia]['E'];
+    //         $item['F']=$sheetData[$ia]['F'];
+    //         $item['G']=$sheetData[$ia]['G'];
+    //         $item['H']=$sheetData[$ia]['H'];
+    //         $item['I']=$sheetData[$ia]['I'];
+    //         $item['J']=$sheetData[$ia]['J'];
+    //         $item['K']=$sheetData[$ia]['K'];
+    //         $item['L']=$sheetData[$ia]['L'];
+    //         $item['M']=$sheetData[$ia]['M'];
+    //         $item['N']=$sheetData[$ia]['N'];
+    //         $item['O']=$sheetData[$ia]['O'];
+    //         $item['P']=$sheetData[$ia]['P'];
+    //         $item['Q']=$sheetData[$ia]['Q'];
+    //         $item['R']=$sheetData[$ia]['R'];
+    //         $item['S']=$sheetData[$ia]['S'];
+    //         $item['T']=$sheetData[$ia]['T'];
+    //         $item['U']=$sheetData[$ia]['U'];
+    //         $item['V']=$sheetData[$ia]['V'];
+    //         $item['W']=$sheetData[$ia]['W'];
+    //         $item['X']=$sheetData[$ia]['X'];
+    //         $item['Y']=$sheetData[$ia]['Y'];
+    //         $item['Z']=$sheetData[$ia]['Z'];
+    //         $data[]=$item;
+    //     }   
+    //     $objPHPExcelnew = new PHPExcel();
+    //     $i =0;
+    //     foreach($data as $k=>$v){
+    // $objPHPExcelnew->setActiveSheetIndex(0)
+    //             ->setCellValue('A'.$i, $v['A'])
+    //             ->setCellValue('B'.$i, $v['B'])
+    //             ->setCellValue('C'.$i, $v['C'])
+    //             ->setCellValue('D'.$i, $v['D'])
+    //             ->setCellValue('E'.$i, $v['E'])
+    //             ->setCellValue('F'.$i, $v['F'])
+    //             ->setCellValue('G'.$i, $v['G'])
+    //             ->setCellValue('H'.$i, $v['H'])
+    //             ->setCellValue('I'.$i, $v['I'])
+    //             ->setCellValue('J'.$i, $v['J'])
+    //             ->setCellValue('K'.$i, $v['K'])
+    //             ->setCellValue('L'.$i, $v['L'])
+    //             ->setCellValue('M'.$i, $v['M'])
+    //             ->setCellValue('N'.$i, $v['N'])
+    //             ->setCellValue('O'.$i, $v['O'])
+    //             ->setCellValue('P'.$i, $v['P'])
+    //             ->setCellValue('Q'.$i, $v['Q'])
+    //             ->setCellValue('R'.$i, $v['R'])
+    //             ->setCellValue('S'.$i, $v['S'])
+    //             ->setCellValue('T'.$i, $v['T'])
+    //             ->setCellValue('U'.$i, $v['U'])
+    //             ->setCellValue('V'.$i, $v['V'])
+    //             ->setCellValue('W'.$i, $v['W'])
+    //             ->setCellValue('X'.$i, $v['X'])
+    //             ->setCellValue('Y'.$i, $v['Y'])
+    //             ->setCellValue('Z'.$i, $v['Z']);
+    // $i++;
+    // }
+    // $objPHPExcelnew->getActiveSheet()->setTitle('sheet1');//设置sheet标签的名称
+    // $objPHPExcelnew->setActiveSheetIndex(0);
+    // ob_end_clean();  //清空缓存 
+    // header("Pragma: public");
+    // header("Expires: 0");
+    // header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+    // header("Content-Type:application/force-download");
+    // header("Content-Type:application/vnd.ms-execl");
+    // header("Content-Type:application/octet-stream");
+    // header("Content-Type:application/download");
+    // header('Content-Disposition:attachment;filename=表.xls');//设置文件的名称
+    // header("Content-Transfer-Encoding:binary");
+    // $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcelnew, 'Excel5');
+    // $objWriter->save('php://output');
+    // exit;
+
+    }
 ?>
