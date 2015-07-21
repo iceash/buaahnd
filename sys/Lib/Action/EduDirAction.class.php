@@ -3265,6 +3265,149 @@ class EduDirAction extends CommonAction {
         $objWriter->save('php://output');
         exit; 
     }
+    public function menujudge() {
+    $menu['judge']='所有评价记录';
+    $menu['judgeAdd']='新建评价';
+    $this->assign('menu',$this ->autoMenu($menu));  
+}
+    public function judge(){
+        $map['tusername'] =session('username');
+        $classList=M('judge')->where($map)->Field('classname')->select();
+        $this->assign('classList',$classList);       
+        if (isset($_GET['searchkey'])) {
+            $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $this -> assign('searchkey', $_GET['searchkey']);
+        }
+        if($_GET['classname']){$map['classname']=$_GET['classname'];}
+        if($_GET['datefrom']&&$_GET['dateto']){$map['jdate']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
+        $dao = D('judge');
+        $count = $dao -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 100;
+            $p = new Page($count, $listRows);
+            $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('date desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);
+        } 
+        $this -> menujudge();
+        $this -> display();
+    }
+    public function judgeAdd(){
+        $dao = D('ClassTeacherView');
+        $map['teacher'] = session('username');
+        $my = $dao -> where($map) ->order('year desc,name asc')-> select();
+        $this -> assign('my', $my);
+        $this -> menujudge();
+        $this -> display();
+    }
+    public function judgeInsert() {
+    $titlepic = $_POST['titlepic'];
+    if (empty($titlepic) ) {
+        $this -> error('未上传文件');
+    } 
+    if (substr($titlepic,-3,3) !=='xls') {
+        $this -> error('上传的不是xls文件');
+    } 
+    $php_path = dirname(__FILE__) . '/';
+    include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+    $inputFileName = $php_path .'../../../..'.$titlepic;
+    $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+   
+    $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+    
+    $count=count($sheetData);
+    $arr = array('/'=>'-','０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4', 
+'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+'ｙ' => 'y', 'ｚ' => 'z',    
+'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+'》' => '>',    
+'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+'＂'=>'"'); 
+    
+    for($i=2;$i<=$count;$i++){
+        $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
+        $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
+        $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
+        $data_a[$i-2]['jdate'] = strtr($sheetData[$i]['D'],$arr);
+        $data_a[$i-2]['content'] = $sheetData[$i]['E'];
+        $data_a[$i-2]['tusername'] = session('username');
+        $data_a[$i-2]['ttruename'] = session('truename');
+        $data_a[$i-2]['date'] = date("Y-m-d H:i:s");
+    }
+
+    $dao=D('judge');
+    $dao -> addAll($data_a);
+    $this -> success("已成功保存");
+    
+}
+    public function judgeDel() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $map['id'] = array('in', $id);
+        $dao = D('judge');
+        $count = $dao -> where($map) -> delete();
+        if ($count > 0) {
+            $this -> success('已成功删除');
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    }
+    public function judgeEdit() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $dao = D('judge');
+        $map['id'] = $id;
+        $my = $dao -> where($map) -> find();
+        if ($my) {
+            $this -> assign('my', $my);
+            $this -> menujudge();
+            $this -> display();
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    } 
+    public function judgeUpdate() {
+        $susername = $_POST['susername'];
+        $struename = $_POST['struename'];
+        $jdate = $_POST['jdate'];
+        $content = $_POST['content'];
+        if (empty($susername) || empty($struename)|| empty($jdate)|| empty($content)) {
+            $this -> error('必填项不能为空');
+        } 
+        $dao = D('judge');
+        if ($dao -> create()) {
+            $checked = $dao -> save();
+            if ($checked > 0) {
+                $this -> success('已成功保存');
+            } else {
+                $this -> error('没有更新任何数据');
+            } 
+        } else {
+            $this -> error($dao->getError());
+        } 
+    }  
 } 
 
 ?>
