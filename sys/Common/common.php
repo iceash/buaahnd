@@ -239,8 +239,8 @@ function downloads(){
 
      function excelwarning($excelurl,$errorarr){
        Vendor('PHPExcel'); 
-       $errorarr=array('B3','F5');
-        $excelurl = dirname(__FILE__).'/../upload_editor/file/20150717/20150717160153_68150.xls';
+       // $errorarr=array('B3','F5');
+       // $excelurl = dirname(__FILE__).'/../upload_editor/file/20150720/20150720202248_38828.xls';
         $p = PHPExcel_IOFactory::load($excelurl);
         for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
         $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
@@ -250,14 +250,16 @@ function downloads(){
           header("Pragma: public");
           header("Expires: 0");
           header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
-          header("Content-Type:application/force-download");
-          header("Content-Type:application/vnd.ms-execl");
+          header("Pragma: no-cache");
           header("Content-Type:application/octet-stream");
-          header("Content-Type:application/download");
+          header('content-Type:application/vnd.ms-excel;charset=utf-8');
           header('Content-Disposition:attachment;filename=表.xls');//设置文件的名称
           header("Content-Transfer-Encoding:binary");
           $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
-          $objWriter->save('php://output');
+          $objWriter->save($excelurl);
+          return true;
+          exit;
+
         //PHPExcel_IOFactory::createWriter($p, 'Excel5') //根据需要也可以是 Excel2007
           //->save($excelurl)
        

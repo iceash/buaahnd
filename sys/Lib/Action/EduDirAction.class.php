@@ -3408,6 +3408,10 @@ class EduDirAction extends CommonAction {
             $this -> error($dao->getError());
         } 
     }
+    public function text()
+    {
+        excelwarning();
+    }
 } 
 
 ?>
