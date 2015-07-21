@@ -3172,7 +3172,8 @@ class EduSenAction extends CommonAction {
             }
         }//for循环结束
         if (count($errors) > 0) {
-            $this->ajaxReturn($errors, "信息不正确", 0);
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
         $classstudent = M('classstudent');//连接数据库
         $classstudent -> addAll($data_a);

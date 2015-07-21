@@ -24,8 +24,9 @@ jQuery(function(){
                     alert(data.info);
                     window.location='__URL__/uclass';
                 }else{
-                    console.log(data.data);
                     alert(data.info);
+                    $("#warning").attr("href",data.data);
+                    $("#warning").show();
                 }
             }
         });
@@ -82,6 +83,7 @@ var editor;
  <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr>
   <td><div class="btn_zone"><input type="button" id="btn_save" value="提交"  /></div></td>
+  <td><a href="#" id="warning" style="display:none;">点击下载错误文件</a></td>
     </tr>
  </table>
 </div><!--end of main-->
