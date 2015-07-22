@@ -803,10 +803,41 @@ class AbroadTeaAction extends CommonAction {
     }
     public function downloadstudyconfirm()
     {
-
+        $truename = $_GET['stuname'];
         $A =D('ClassstudentView');
-        $data = $A ->select();
-        dump($data);
+        $map['studentname']=$truename;
+        $data = $A ->where($map)->select();
+        $list=explode('-', $data["birthdat"]);
+        $data["y"] = $list[0];
+        $data["m"] = $list[1];
+        $data["d"] = $list[2];
+
+        Vendor('PHPWord');
+        $PHPWord = new PHPWord();
+        $section = $PHPWord->createSection();
+        $section->addTextBreak(5);
+        $FontStyle1 = array('size'=>16,'name'=>'仿宋_GB2312');
+        $section->addText('在读证明',$FontStyle1,'aStyle');
+        $section->addTextBreak(3);
+        $section->addText('兹证明姓名'.$truename.'，'.$data['sex'].'，1995年5月10日生，自2014年9月开始在我校学习“英国高等教育文凭”课程，就读专业为“国际贸易”。',$FontStyle1,'aStyle');
+        $section->addText('I am inline styled.', array('name'=>'Verdana', 'color'=>'006699'));
+        $section->addTextBreak(5);
+
+        $PHPWord->addFontStyle('rStyle', array('bold'=>true, 'italic'=>true, 'size'=>16));
+        $PHPWord->addParagraphStyle('aStyle', array('align'=>'center', 'spaceAfter'=>100));
+        $section->addText('I am styled by two style definitions.', 'rStyle', 'pStyle');
+        $section->addText('I have only a paragraph style definition.', null, 'pStyle');
+
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Content-Type:application/force-download");
+        header("Content-Type:application/octet-stream");
+        header("Content-Type:application/download");
+        header('Content-Disposition:attachment;filename='.$truename.'_在读证明.docx');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
+        $objWriter->save('php://output');
     }
 } 
 

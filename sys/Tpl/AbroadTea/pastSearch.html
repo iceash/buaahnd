@@ -109,7 +109,6 @@ function getScore(susername){
     <th>留学进程</th>
 	<th width="140">入库时间</th>
     <th width="140">完成时间</th>
-        <th width="60">在读证明</th>
     <th width="60">毕业证明</th>
     <th width="90">归国院校认证函</th>  
 	<th width="80">操作</th>
@@ -123,9 +122,8 @@ function getScore(susername){
     <td>{$my.status|getAbroadStatus}</td>
     <td>{$my.ctime}</td>
     <td>{$my.finishtime}</td>
-    <td><input type="button" value="导出" class="studyconfirm"/></td>
-    <td><input type="button" value="导出" onclick="" /></td>
-    <td><input type="button" value="导出" onclick="" /></td>
+    <td><input type="button" value="详情" class="studyconfirm"/></td>
+    <td><input type="button" value="详情" onclick="" /></td>
 	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
 	</td>
   </tr>
