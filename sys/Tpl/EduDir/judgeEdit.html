@@ -6,8 +6,10 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
+  $('.calendar').calendar();
 });
 jQuery(function(){ 
 	jQuery('#btn_save').click(function(){
@@ -51,7 +53,7 @@ jQuery(function(){
    </tr>
      <tr>
     <td class="t_item"><span class="mustfill">*</span>评价时间</td>
-    <td><input type="text" name="jdate" class="inputbig" value="{$my.jdate}"/></td>
+    <td><input type="text" name="jdate" class="calendar" value="{$my.jdate}"/></td>
    </tr>       
     <tr>
     <td class="t_item"><span class="mustfill">*</span>评价内容</td>

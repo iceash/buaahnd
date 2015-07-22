@@ -6,8 +6,10 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
+  $('.calendar').calendar();
 });
 jQuery(function(){ 
 	jQuery('#btn_save').click(function(){
@@ -51,10 +53,10 @@ jQuery(function(){
    </tr>
      <tr>
     <td class="t_item"><span class="mustfill">*</span>时间</td>
-    <td><input type="text" name="timezone" class="inputbig" value="{$my.timezone}"/></td>
+    <td><input type="text" name="timezone" class="calendar" value="{$my.timezone}"/></td>
    </tr>       
     <tr>
-    <td class="t_item"><span class="mustfill">*</span>内容</td>
+    <td class="t_item"><span></span>内容</td>
     <td><textarea name="content" id="content" class="textareanormal" >{$my.content}</textarea></td>
    </tr>
    <tr>
