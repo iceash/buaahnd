@@ -115,7 +115,16 @@ function updatePaymentStatus($isRefund,$feeid,$idcard){
     }
      return $checkU=$payment->where($mapU)->save($dataU);
 }
-
+function isDate($date){
+  if($date == date('Y-m-d',strtotime($date))){
+    return true;
+  }else{
+    return false;
+  }
+}
+/****************************************************************
+*****************************************************************
+****************************************************************/
 function downloads(){
       $mapEn=$_GET['searchkey'];
       $mapFn=$_GET['searchtype'];
