@@ -183,27 +183,33 @@ var editor;
 	
 	  <span class="mustfill">*</span> 
 	  学号 
-	  <input type="text" name="student" class="inputshort" /> 
+	  <input type="text" name="stunum" class="inputshort" /> 
+
 	  <span class="mustfill">*</span> 
 	  姓名 
 	  <input type="text" name="studentname" class="inputshort" /> 
+
+	  <span class="mustfill">*</span> 
+	  身份证号码 
+	  <input type="text" name="idcard" class="inputshort" /> 
+
 	 <input type="hidden" name="classid" value="{$classname.id}"/>
 
 
 	<input type="button" id="btn_save" value="保存"  />
 	
 	</td> </form>
-   </tr>
-   <tr>
-    <td class="t_item">批量新增学生</td>
-    <td><p><br />
-请下载学生名单模板文件<a href="../Public/download/student.xls">student.xls</a>，填写后点“上传”->“提交”</p>
+	</tr>
+	<!-- <tr>
+	<td class="t_item">批量新增学生</td>
+	<td><p><br />
+	请下载学生名单模板文件<a href="../Public/download/student.xls">student.xls</a>，填写后点“上传”->“提交”</p>
 	<form id="form3"><input type="hidden" value="{$classname.id}" name="classidALot" />
 	<input type="text" name="titlepic" id="titlepic" class="inputlong" /> <input type="button" id="uploadButton" value="上传" />
 	</form>
 	<div class="btn_zone"><input type="button" id="btn_submit" value="提交"  /></div>
-</td>
-   </tr>
+	</td>
+	</tr> -->
  </table>
 
 
