@@ -947,7 +947,7 @@ class EduDirAction extends CommonAction {
     } 
     public function attendInsert() {
         $titlepic = $_POST['titlepic'];
-        if (empty($titlepic) ) {
+        if (empty($titlepic)) {
             $this -> error('未上传文件');
         } 
         if (substr($titlepic,-3,3) !=='xls') {
@@ -956,40 +956,67 @@ class EduDirAction extends CommonAction {
         $php_path = dirname(__FILE__) . '/';
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $inputFileName = $php_path .'../../../..'.$titlepic;
-        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
-       
-        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-        
+        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);     
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);        
         $count=count($sheetData);
         $arr = array('/'=>'-','０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
-'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
-'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
-'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
-'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
-'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
-'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
-'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
-'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
-'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
-'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
-'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
-'ｙ' => 'y', 'ｚ' => 'z',    
-'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
-'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
-'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
-'》' => '>',    
-'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
-'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
-'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
-'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
-'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
-'＂'=>'"'); 
-        
-        for($i=2;$i<=$count;$i++){
-            $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
-            $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
-            $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
-            $data_a[$i-2]['timezone'] = strtr($sheetData[$i]['D'],$arr);
+        '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+        'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+        'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+        'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+        'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+        'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+        'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+        'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+        'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+        'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+        'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+        'ｙ' => 'y', 'ｚ' => 'z',    
+        '（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+        '】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+        '‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+        '》' => '>',    
+        '％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+        '：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+        '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+        '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+        '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+        '＂'=>'"'); 
+        $count = count($sheetData);//一共有多少行
+        if ($count < 2) {
+            $this->ajaxReturn($count, "请填写信息", 0);
+        }
+        for ($i=2; $i <=$count; $i++) { 
+            for ($j=1; $j < 9; $j++) {
+                if($j==5){continue;}else{
+                   if(strlen($sheetData[$i][chr(64+$j)])==0){
+                    $errors[]=chr(64+$j).$i;
+                    } 
+                }    
+            }//检查非空项（第5列非必填）
+            $mapForClassid['teacher']=session('username');
+            $classidArr=M('classteacher')->where($mapForClassid)->Field('classid')->select();
+            for ($k=0; $k < count($classidArr); $k++) { 
+                $cia[]=$classidArr[$k]['classid'];
+            }
+            $mapClassNtoI['name']=$sheetData[$i]['A'];
+            $thisId=M('class')->where($mapClassNtoI)->getField('id');
+            if(in_array($thisId,$cia)){
+                $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
+            }else{$errors[]='A'.$i;}
+            $mapB['student']=$sheetData[$i]['B'];
+            $bClassId=M('classstudent')->where($mapB)->getField('classid');
+            if($bClassId==$thisId){
+                $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
+            }else{$errors[]='B'.$i;}
+            $mapC['studentname']=$sheetData[$i]['C'];
+            $cClassId=M('classstudent')->where($mapC)->getField('classid');
+            if($cClassId==$thisId){
+                $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
+            }else{$errors[]='C'.$i;}
+            if(isDate($sheetData[$i]['D'])){
+                $data_a[$i-2]['timezone'] = $sheetData[$i]['D'];
+            }else{$errors[]='D'.$i;}
             $data_a[$i-2]['content'] = $sheetData[$i]['E'];
             $data_a[$i-2]['truant'] = $sheetData[$i]['F'];
             $data_a[$i-2]['tvacate'] = $sheetData[$i]['G'];
@@ -999,7 +1026,10 @@ class EduDirAction extends CommonAction {
             $data_a[$i-2]['ttruename'] = session('truename');
             $data_a[$i-2]['ctime'] = date("Y-m-d H:i:s");
         }
-
+        if(count($errors) > 0){
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic,"信息不正确",0);
+        }
         $dao=D('Attend');
         $dao -> addAll($data_a);
         $this -> success("已成功保存");
@@ -3265,11 +3295,12 @@ class EduDirAction extends CommonAction {
         $objWriter->save('php://output');
         exit; 
     }
+/**********************************评价***************************************************************************/
     public function menujudge() {
     $menu['judge']='所有评价记录';
     $menu['judgeAdd']='新建评价';
     $this->assign('menu',$this ->autoMenu($menu));  
-}
+    }
     public function judge(){
         $map['tusername'] =session('username');
         $classList=M('judge')->where($map)->Field('classname')->select();

@@ -25,6 +25,8 @@ jQuery(function(){
 					window.location="__URL__/attendToday";
 				}else{
 					alert(data.info);
+					$("#warning").attr("href",data.data);
+                    $("#warning").show();
 				}
 			}
 		});
@@ -83,7 +85,7 @@ var editor;
  </form>
  <table width="100%" border="0" cellpadding="0" cellspacing="0">
   <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="提交"  /></div></td>
-  <td></td></tr>
+  <td><a href="#" id="warning" style="display:none;">点击下载错误文件</a></tr>
  </table>
 </div><!--end of main-->
 </body>
