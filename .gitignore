@@ -47,5 +47,4 @@ Temporary Items
 sys/Runtime/Cache/47f60531298edf77b2e1e17628325e96.php
 sys/Runtime
 sys/Conf/config.php
-sys/Tpl/upload_editor
-*.xls
+sys/upload_editor

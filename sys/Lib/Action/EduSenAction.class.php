@@ -3152,7 +3152,7 @@ class EduSenAction extends CommonAction {
         }
         for($i = 3; $i <= $count; $i++){
             $b = true;
-            for($j = 1; $j < 7; $j++){
+            for($j = 1; $j < 8; $j++){
                 if(strlen($sheetData[$i][chr(65+$j)]) == 0){
                     $errors[] = chr(65+$j).$i;
                     $b = false;
@@ -3238,6 +3238,47 @@ class EduSenAction extends CommonAction {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
         //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
+        for ($i = 3; $i <= $count; $i++) { 
+            for ($j = 1; $j <= 6; $j++){
+                if(strlen($sheetData[$i][chr(65+$j)]) == 0){
+                    $errors[] = chr(65+$j).$i;
+                    $b = false;
+                }
+            }
+            if (!$b) {
+                continue;
+            }
+            $map["year"] = strtr($sheetData[$i]['A'], $arr);
+            $map["name"] = strtr($sheetData[$i]['B'], $arr);
+            $classid = M("class")->where($map)->getField("id");
+            if (!$classid) {
+                $errors[] = 'B'.$i;
+                continue;
+            }
+            $data_a[$i-3]['classid'] = $classid;
+            $data_a[$i-3]['name'] = strtr($sheetData[$i]['C'], $arr);
+            $data_a[$i-3]['ename'] = strtr($sheetData[$i]['D'], $arr);
+            $data_a[$i-3]['category2'] = strtr($sheetData[$i]['E'], $arr);
+            $data_a[$i-3]['credit'] = strtr($sheetData[$i]['F'], $arr);
+            $data_a[$i-3]['school'] = strtr($sheetData[$i]['G'], $arr);
+            $data_a[$i-3]['category1'] = strtr($sheetData[$i]['H'], $arr);
+            $data_a[$i-3]['coursetime'] = strtr($sheetData[$i]['I'], $arr);
+            $data_a[$i-3]['exammethod'] = strtr($sheetData[$i]['J'], $arr);
+            $data_a[$i-3]['category3'] = strtr($sheetData[$i]['K'], $arr);
+            $data_a[$i-3]['level'] = strtr($sheetData[$i]['L'], $arr);
+            $data_a[$i-3]['master'] = strtr($sheetData[$i]['M'], $arr);
+            $data_a[$i-3]['teachers'] = strtr($sheetData[$i]['N'], $arr);
+            $data_a[$i-3]['book'] = strtr($sheetData[$i]['O'], $arr);
+            $data_a[$i-3]['intro'] = strtr($sheetData[$i]['P'], $arr);
+            $data_a[$i-3]['eintro'] = strtr($sheetData[$i]['Q'], $arr);
+            $data_a[$i-3]['plus'] = strtr($sheetData[$i]['R'], $arr);
+        }
+        if (count($errors) > 0) {
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
+        }
+        M("course")->addAll($data_a);
+        $this -> success("已成功保存");
     }
 } 
 
