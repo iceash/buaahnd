@@ -123,18 +123,28 @@
 		$('#wayS').val("{$_GET['way']}");
 		$('#periodS').val("{$_GET['period']}");
 		$('#checkS').val("{$_GET['check']}");
-		$('#datefrom').calendar({onSetDate:function(){
-			$('#dateto').calendar({minDate:'#datefrom'});
-		}});
-		$('#dateto').calendar({onSetDate:function(){
-			$('#datefrom').calendar({maxDate:'#dateto'});
-		}});
-		$('#sbfrom').calendar({onSetDate:function(){
-			$('#sbto').calendar({minDate:'#sbfrom'});
-		}});
-		$('#sbto').calendar({onSetDate:function(){
-			$('#sbfrom').calendar({maxDate:'#sbto'});
-		}});
+		  function a(){
+		    $('#datefrom').calendar({maxDate:'#dateto',onSetDate:function(){
+		      b(this.getDate('date'));
+		    }});
+		  }
+		  function b(){
+		    $('#dateto').calendar({minDate:'#datefrom',onSetDate:function(){
+		      a(this.getDate('date'));
+		    }});
+		  }
+		  a();b();
+		  function aa(){
+		    $('#sbfrom').calendar({maxDate:'#sbto',onSetDate:function(){
+		      bb(this.getDate('date'));
+		    }});
+		  }
+		  function bb(){
+		    $('#sbto').calendar({minDate:'#sbfrom',onSetDate:function(){
+		      aa(this.getDate('date'));
+		    }});
+		  }
+		  aa();bb();
 		var lock=1;
 		$('.edit').click(function(){
 			if(lock==1){

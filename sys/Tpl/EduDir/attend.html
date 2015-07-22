@@ -12,13 +12,17 @@
 </style>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
-	$('#classS').val("{$_GET['classname']}");
-	$('#datefrom').calendar({onSetDate:function(){
-		$('#dateto').calendar({minDate:'#datefrom'});
-	}});
-	$('#dateto').calendar({onSetDate:function(){
-		$('#datefrom').calendar({maxDate:'#dateto'});
-	}});
+  function a(){
+    $('#datefrom').calendar({maxDate:'#dateto',onSetDate:function(){
+      b(this.getDate('date'));
+    }});
+  }
+  function b(){
+    $('#dateto').calendar({minDate:'#datefrom',onSetDate:function(){
+      a(this.getDate('date'));
+    }});
+  }
+  a();b();
 });
 jQuery(function(){ 
 	$('tr:has(:checked)').addClass('tr_selected');
