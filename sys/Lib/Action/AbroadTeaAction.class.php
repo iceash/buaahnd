@@ -801,43 +801,162 @@ class AbroadTeaAction extends CommonAction {
         $this->assign('year', $_GET['year']);
         $this->display();
     }
-    public function downloadstudyconfirm()
+    public function stugraduationconfirm()
     {
         $truename = $_GET['stuname'];
         $A =D('ClassstudentView');
         $map['studentname']=$truename;
         $data = $A ->where($map)->select();
-        $list=explode('-', $data["birthdat"]);
-        $data["y"] = $list[0];
-        $data["m"] = $list[1];
-        $data["d"] = $list[2];
 
-        Vendor('PHPWord');
+        if($data[0]['sex'] == '男'){
+                $data[0]['ensex'] = 'Mr.';
+                $data[0]['sexname'] = 'him';
+            }
+        if($data[0]['sex'] == '女'){
+                $data[0]['ensex'] = 'Ms.';
+                $data[0]['sexname'] = 'her';
+            }
+        $data[0]['graduteyear'] = $data[0]['year'] + 3;
+        $data[0]['birthday']=date('j M Y',time($data[0]['birthday']));
+        if($data[0]['sex']==''||$data[0]['birthday'] == ''||$data[0]['birthday'] == '0000-00-00'||$data[0]['majore'] == ''||$data[0]['year'] == ''){
+            $tips='下划线处信息不全，请下载后补全!';
+        }
+        if($data[0]['sex']==''){
+            $data[0]['ensex']='______'.'(Ms. or Mr.)';
+            $data[0]['sexname']='______'.'(him or her)';
+        }
+        if($data[0]['birthday'] == '' || $data[0]['birthday'] == '0000-00-00'){
+            $data[0]['birthday']='____________________'.'(birthday)';
+        }
+        if($data[0]['majore'] == ''){
+            $data[0]['majore']='________________________'.'(major)';
+        }
+        if($data[0]['year'] == ''){
+            $data[0]['year']='_______________';
+            $data[0]['graduateyear']='_______________';
+        }
+
+        $this->assign('tips',$tips);        
+        $this->assign('data',$data);
+        $this->assign('current_time',date('M.j,Y',time()));
+        $this->display(graduationconfirm);
+    }
+     public function downgraduateconfirm(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        $student=D('classstudent');
+        $enroll=D('enroll');
+        $class=D('class');
+        $map['student']=$id;
+        $map1['username']=$id;
+        $stu=$student->where($map)->select();
+
+        $mystuename = $stu[0][ename];
+        $mystuename_begin = ucfirst(strtolower($mystuename));
+        $len = strlen($mystuename);
+        $position = 0;
+        for($i=0;$i<$len;$i++){
+            if($mystuename[$i]!=$mystuename_begin[$i]){
+                $position = $i;
+                break;
+            }
+        }
+        $my_xing = substr($mystuename_begin,0,$position);
+        $my_ming = substr($mystuename_begin,$position);
+        $mystuename = $my_xing." ".ucfirst(strtolower($my_ming));
+
+        $map2[id]=$stu[0]['classid'];
+        $classinfo=$class->where($map2)->select();
+        $stuinfo=$enroll->where($map1)->select();
+        $name=$stu[0][studentname];
+        $zsex='';
+        $year='';
+        $month='';
+        $day='';
+        $major='';
+        $sex='';
+        $birthday='';
+        $majore='';
+        if($stuinfo[0][sex]==''){
+            $zsex='______'."(性别)";$sex='____'."(sex)";
+        }else{
+            $zsex=$stuinfo[0][sex];$sex=$this->getSex($stuinfo[0][sex]);
+        }
+        if($stuinfo[0][birthday] == '' || $stuinfo[0][birthday] == '0000-00-00 00:00:00'){
+            $year='____';$month='____';$day='____';$birthday='__________';
+        }else{
+            $year=substr($stuinfo[0][birthday],0,4);
+            $month=substr($stuinfo[0][birthday],5,2);
+            $day=substr($stuinfo[0][birthday],8,2);
+            $birthday=date('M.j,Y',strtotime($stuinfo[0][birthday]));
+        }
+        if($classinfo[0][major] == ''){
+            $major='________________________';
+        }else{
+            $major=$classinfo[0][major];
+        }
+        if($classinfo[0][majore] == ''){
+            $majore='__________________';
+        }else{
+            $majore=$classinfo[0][majore];
+        }
+        $enrollyear=$classinfo[0][year];
+        $nowyear=substr(date('Y-m-d',time()),0,4);
+        $nowmonth=substr(date('Y-m-d',time()),5,2);
+        $nowday=substr(date('Y-m-d',time()),8,2);
+        $current_time=date('M.j,Y',time());
+        $current_grade=$this->getGrade(date('Y-m-d',time()),$classinfo[0][year]);
+        $current_egrade=$this->getEgrade(date('Y-m-d',time()),$classinfo[0][year]);
+        $ename=$stu[0][ename];
+        include dirname(__FILE__).'/../../Lib/ORG/PHPWord.php';
         $PHPWord = new PHPWord();
         $section = $PHPWord->createSection();
-        $section->addTextBreak(5);
-        $FontStyle1 = array('size'=>16,'name'=>'仿宋_GB2312');
-        $section->addText('在读证明',$FontStyle1,'aStyle');
+        $zhongzhengwen = array('name'=>'Arial','size'=>'12');
+        $PHPWord->addFontStyle('rStyle', array('bold'=>true,'name'=>'Arial','size'=>'15'));
+        $PHPWord->addFontStyle('cStyle', array('name'=>'Arial','size'=>'12'));
+        $PHPWord->addFontStyle('aStyle', array('name'=>'Times New Roman','size'=>'12'));
+        $PHPWord->addParagraphStyle('pStyle', array('align'=>'center', 'spaceAfter'=>100));
+        $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>100));
+        $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>100));
         $section->addTextBreak(3);
-        $section->addText('兹证明姓名'.$truename.'，'.$data['sex'].'，1995年5月10日生，自2014年9月开始在我校学习“英国高等教育文凭”课程，就读专业为“国际贸易”。',$FontStyle1,'aStyle');
-        $section->addText('I am inline styled.', array('name'=>'Verdana', 'color'=>'006699'));
-        $section->addTextBreak(5);
-
-        $PHPWord->addFontStyle('rStyle', array('bold'=>true, 'italic'=>true, 'size'=>16));
-        $PHPWord->addParagraphStyle('aStyle', array('align'=>'center', 'spaceAfter'=>100));
-        $section->addText('I am styled by two style definitions.', 'rStyle', 'pStyle');
-        $section->addText('I have only a paragraph style definition.', null, 'pStyle');
-
-        header("Pragma: public");
-        header("Expires: 0");
-        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
-        header("Content-Type:application/force-download");
-        header("Content-Type:application/octet-stream");
-        header("Content-Type:application/download");
-        header('Content-Disposition:attachment;filename='.$truename.'_在读证明.docx');//设置文件的名称
-        header("Content-Transfer-Encoding:binary");
+        $section->addText('HND'.' '.'在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
+        $section->addTextBreak(2);
+        $textrun = $section->createTextRun();
+        $textrun->addText("　　"."兹证明",$zhongzhengwen);
+        $textrun->addText($name,array('bold'=>true,'name'=>'Arial','size'=>'12'));
+        $textrun->addText("同学，".$zsex."，生于".$year."年".$month."月".$day."日，于".$enrollyear."年9月进入南京大学大学外语部英国高等教育文凭（Higher National Diploma 简称HND）项目学习。（该项目引进自苏格兰学历管理委员会）。",$zhongzhengwen);
+        $section->addTextBreak(1);
+        $section->addText("　　"."该学生目前为该项目".$major."专业".$current_grade."年级学生。",$zhongzhengwen);
+        $section->addTextBreak(1);
+        $section->addText('特此证明',$zhongzhengwen);
+        $section->addTextBreak(2);
+        $section->addText('南京大学 大学外语部',$zhongzhengwen,'YStyle');
+        $section->addText($nowyear."年".$nowmonth."月".$nowday."日",$zhongzhengwen,'YStyle');
+        $section->addTextBreak(3);
+        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'));
+        $section->addText('HND Student Status Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
+        $section->addTextBreak(3);
+        $textrun = $section->createTextRun();
+        $textrun->addText("This is to certify that student ",array('name'=>'Times New Roman','size'=>'12'));
+        $textrun->addText($mystuename,array('bold'=>true,'name'=>'Times New Roman','size'=>'12'));
+        $textrun->addText("," .$sex.", born on"." ".$birthday.", was enrolled in Department of Applied Foreign Language Studies, Nanjing University in Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
+        $section->addTextBreak(1);
+        $section->addText("The student above is now in the"." ".$current_egrade." "."year of Higher National Diploma, which is introduced from Scottish Qualifications Authority (SQA, UK), with the major of"." ".$majore.".",array('name'=>'Times New Roman','size'=>'12'));
+        $section->addTextBreak(1);
+        $section->addText('Hereby Certify.',array('name'=>'Times New Roman','size'=>'12'));
+        $section->addTextBreak(1);
+        $section->addText('Department of Applied Foreign Language Studies',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $section->addText('Nanjing University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
+        $filename='HND'.''.'在读证明-'.$name;
+        $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
+        header("Content-type: application/vnd.ms-word");
+        header("Content-Disposition:attachment;filename=".$filename.".docx");
+        header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
+        exit;
     }
 } 
 
