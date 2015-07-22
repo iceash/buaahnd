@@ -246,11 +246,10 @@ function downloads(){
         }// 模板变量赋值
 }
 
-     function excelwarning($excelurl,$errorarr){
+     function excelwarning($excelurl,$errorarr,$sheetnum=0){
        Vendor('PHPExcel'); 
-       // $errorarr=array('B3','F5');
-       // $excelurl = dirname(__FILE__).'/../upload_editor/file/20150720/20150720202248_38828.xls';
         $p = PHPExcel_IOFactory::load($excelurl);
+        $p -> setActiveSheetIndex($sheetnum);
         for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
         $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
         $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->getStartColor()->setARGB('FFFF7F50'); 

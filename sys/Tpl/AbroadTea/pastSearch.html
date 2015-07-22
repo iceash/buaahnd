@@ -119,11 +119,11 @@ function getScore(susername){
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
-	<td><a onclick="getScore('{$my.susername}')" title='查看该生成绩' style='cursor:pointer'>{$my.struename}</a></td>
+	<td><a onclick="getScore('{$my.susername}')" class='stuname'  title='查看该生成绩' style='cursor:pointer'>{$my.struename}</a></td>
     <td>{$my.status|getAbroadStatus}</td>
     <td>{$my.ctime}</td>
     <td>{$my.finishtime}</td>
-        <td><input type="button" value="导出" onclick="downloadstudyconfirm($my.struename)" /></td>
+    <td><input type="button" value="导出" class="studyconfirm"/></td>
     <td><input type="button" value="导出" onclick="" /></td>
     <td><input type="button" value="导出" onclick="" /></td>
 	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
@@ -139,4 +139,11 @@ function getScore(susername){
 
 </div><!--end of main-->
 </body>
+<script type="text/javascript">
+		$(".studyconfirm").click(function(){
+		var name =$(this).parent().siblings().children('.stuname').text();
+		window.location='__URL__/downloadstudyconfirm?stuname='+name;
+		});
+
+</script>
 </html>

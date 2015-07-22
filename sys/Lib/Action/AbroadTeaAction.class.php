@@ -801,6 +801,13 @@ class AbroadTeaAction extends CommonAction {
         $this->assign('year', $_GET['year']);
         $this->display();
     }
+    public function downloadstudyconfirm()
+    {
+
+        $A =D('ClassstudentView');
+        $data = $A ->select();
+        dump($data);
+    }
 } 
 
 ?>
