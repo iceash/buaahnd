@@ -987,7 +987,7 @@ class EduDirAction extends CommonAction {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
         for ($i=2; $i <=$count; $i++) { 
-            for ($j=1; $j < 9; $j++) {
+            for ($j=1; $j <= 9; $j++) {
                 if($j==5){continue;}else{
                    if(strlen($sheetData[$i][chr(64+$j)])==0){
                     $errors[]=chr(64+$j).$i;
@@ -1018,10 +1018,10 @@ class EduDirAction extends CommonAction {
                 $data_a[$i-2]['timezone'] = $sheetData[$i]['D'];
             }else{$errors[]='D'.$i;}
             $data_a[$i-2]['content'] = $sheetData[$i]['E'];
-            $data_a[$i-2]['truant'] = $sheetData[$i]['F'];
-            $data_a[$i-2]['tvacate'] = $sheetData[$i]['G'];
-            $data_a[$i-2]['svacate'] = $sheetData[$i]['H'];
-            $data_a[$i-2]['late'] = $sheetData[$i]['I'];
+            $data_a[$i-2]['truant'] = (int)$sheetData[$i]['F'];
+            $data_a[$i-2]['tvacate'] = (int)$sheetData[$i]['G'];
+            $data_a[$i-2]['svacate'] = (int)$sheetData[$i]['H'];
+            $data_a[$i-2]['late'] = (int)$sheetData[$i]['I'];
             $data_a[$i-2]['tusername'] = session('username');
             $data_a[$i-2]['ttruename'] = session('truename');
             $data_a[$i-2]['ctime'] = date("Y-m-d H:i:s");
@@ -3372,22 +3372,51 @@ class EduDirAction extends CommonAction {
 '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
 '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
 '＂'=>'"'); 
-    
-    for($i=2;$i<=$count;$i++){
-        $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
-        $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
-        $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
-        $data_a[$i-2]['jdate'] = strtr($sheetData[$i]['D'],$arr);
-        $data_a[$i-2]['content'] = $sheetData[$i]['E'];
-        $data_a[$i-2]['tusername'] = session('username');
-        $data_a[$i-2]['ttruename'] = session('truename');
-        $data_a[$i-2]['date'] = date("Y-m-d H:i:s");
-    }
-
-    $dao=D('judge');
-    $dao -> addAll($data_a);
-    $this -> success("已成功保存");
-    
+        $count = count($sheetData);//一共有多少行
+        if ($count < 2) {
+            $this->ajaxReturn($count, "请填写信息", 0);
+        }
+        for ($i=2; $i <=$count; $i++) { 
+            for ($j=1; $j <= 5; $j++) {
+               if(strlen($sheetData[$i][chr(64+$j)])==0){
+                    $errors[]=chr(64+$j).$i;
+                }    
+            }//检查非空项（第5列非必填）
+            $mapForClassid['teacher']=session('username');
+            $classidArr=M('classteacher')->where($mapForClassid)->Field('classid')->select();
+            for ($k=0; $k < count($classidArr); $k++) { 
+                $cia[]=$classidArr[$k]['classid'];
+            }
+            $mapClassNtoI['name']=$sheetData[$i]['A'];
+            $thisId=M('class')->where($mapClassNtoI)->getField('id');
+            if(in_array($thisId,$cia)){
+                $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
+            }else{$errors[]='A'.$i;}
+            $mapB['student']=$sheetData[$i]['B'];
+            $bClassId=M('classstudent')->where($mapB)->getField('classid');
+            if($bClassId==$thisId){
+                $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
+            }else{$errors[]='B'.$i;}
+            $mapC['studentname']=$sheetData[$i]['C'];
+            $cClassId=M('classstudent')->where($mapC)->getField('classid');
+            if($cClassId==$thisId){
+                $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
+            }else{$errors[]='C'.$i;}
+            if(isDate($sheetData[$i]['D'])){
+                $data_a[$i-2]['jdate'] = $sheetData[$i]['D'];
+            }else{$errors[]='D'.$i;}
+            $data_a[$i-2]['content'] = $sheetData[$i]['E'];
+            $data_a[$i-2]['tusername'] = session('username');
+            $data_a[$i-2]['ttruename'] = session('truename');
+            $data_a[$i-2]['date'] = date("Y-m-d H:i:s");
+        }
+        if(count($errors) > 0){
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic,"信息不正确",0);
+        }
+        $dao=D('judge');
+        $dao -> addAll($data_a);
+        $this -> success("已成功保存");
 }
     public function judgeDel() {
         $id = $_GET['id'];
