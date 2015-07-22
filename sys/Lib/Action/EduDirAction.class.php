@@ -762,7 +762,7 @@ class EduDirAction extends CommonAction {
     
     public function attend() {      
         $map['tusername'] =session('username');
-        $classList=M('attend')->where($map)->Field('classname')->select();
+        $classList=M('attend')->where($map)->Field('classname')->group('classname')->select();
         $this->assign('classList',$classList);       
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
@@ -902,7 +902,7 @@ class EduDirAction extends CommonAction {
         $struename = $_POST['struename'];
         $timezone = $_POST['timezone'];
         $content = $_POST['content'];
-        if (empty($susername) || empty($struename)|| empty($timezone)|| empty($content)) {
+        if (empty($susername) || empty($struename)|| empty($timezone)) {
             $this -> error('必填项不能为空');
         } 
         $dao = D('attend');
@@ -1024,7 +1024,7 @@ class EduDirAction extends CommonAction {
             $data_a[$i-2]['late'] = (int)$sheetData[$i]['I'];
             $data_a[$i-2]['tusername'] = session('username');
             $data_a[$i-2]['ttruename'] = session('truename');
-            $data_a[$i-2]['ctime'] = date("Y-m-d H:i:s");
+            $data_a[$i-2]['ctime'] = date("Y-m-d");
         }
         if(count($errors) > 0){
             excelwarning($inputFileName,$errors);
@@ -3303,7 +3303,7 @@ class EduDirAction extends CommonAction {
     }
     public function judge(){
         $map['tusername'] =session('username');
-        $classList=M('judge')->where($map)->Field('classname')->select();
+        $classList=M('judge')->where($map)->Field('classname')->group('classname')->select();
         $this->assign('classList',$classList);       
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
@@ -3408,7 +3408,7 @@ class EduDirAction extends CommonAction {
             $data_a[$i-2]['content'] = $sheetData[$i]['E'];
             $data_a[$i-2]['tusername'] = session('username');
             $data_a[$i-2]['ttruename'] = session('truename');
-            $data_a[$i-2]['date'] = date("Y-m-d H:i:s");
+            $data_a[$i-2]['date'] = date("Y-m-d");
         }
         if(count($errors) > 0){
             excelwarning($inputFileName,$errors);
@@ -3476,15 +3476,18 @@ class EduDirAction extends CommonAction {
 }
     public function summary(){
         $map['tusername'] =session('username');
-        $classList=M('summary')->where($map)->Field('classname')->select();
-        $this->assign('classList',$classList);       
+        $classList=M('summary')->where($map)->Field('classname')->group('classname')->select();
+        $this->assign('classList',$classList);    
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
             $this -> assign('searchkey', $_GET['searchkey']);
         }
         if($_GET['classname']){$map['classname']=$_GET['classname'];}
-        if($_GET['datefrom']&&$_GET['dateto']){$map['jdate']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
-        $dao = D('summary');
+        if($_GET['datefrom']&&$_GET['dateto']){
+            $f=$_GET['datefrom'];$t=$_GET['dateto'];
+            $map['_string']='NOT((sbdate<='.'"'.$f.'"'.' AND sedate<='.'"'.$f.'"'.')OR('.'"'.$t.'"'.'<=sbdate AND '.'"'.$t.'"'.'<=sedate))';
+        }
+        $dao = D('summary');//dump($map);
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -3513,72 +3516,29 @@ class EduDirAction extends CommonAction {
     public function getAttendInfo(){
         $classname=$_POST['classname'];
         $map['classname']=$_POST['classname'];
-        $map['timezone']=array(array('egt',$_GET['sbdate']),array('elt',$_GET['sedate']));
+        $map['timezone']=array(array('egt',$_POST['sbdate']),array('elt',$_POST['sedate']));
         $Attend=M('attend');
         $truantSum=$Attend->where($map)->sum("truant");
         $tvacateSum=$Attend->where($map)->sum("tvacate");
         $svacateSum=$Attend->where($map)->sum("svacate");
         $lateSum=$Attend->where($map)->sum("late");
-        if(!($truantSum||$tvacateSum||$svacateSum||$lateSum)){$info="请选择班级和时间段";}
-        else{$info=$classname."在此时间段内发生旷课".$truantSum."次，事假".$tvacateSum."次，病假".$svacateSum."次，迟到".$lateSum."次";}
+        if(!($truantSum||$tvacateSum||$svacateSum||$lateSum)){$info="无考勤记录";}
+        else{$info="从".$_POST['sbdate']."至".$_POST['sedate']."期间，".$classname."学生共计旷课".$truantSum."次，事假".$tvacateSum."次，病假".$svacateSum."次，迟到".$lateSum."次";}
         $this->ajaxReturn($info);
     }
     public function summaryInsert() {
-    $titlepic = $_POST['titlepic'];
-    if (empty($titlepic) ) {
-        $this -> error('未上传文件');
-    } 
-    if (substr($titlepic,-3,3) !=='xls') {
-        $this -> error('上传的不是xls文件');
-    } 
-    $php_path = dirname(__FILE__) . '/';
-    include $php_path .'../../Lib/ORG/PHPExcel.class.php';
-    $inputFileName = $php_path .'../../../..'.$titlepic;
-    $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
-   
-    $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-    
-    $count=count($sheetData);
-    $arr = array('/'=>'-','０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4', 
-'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
-'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
-'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
-'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
-'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
-'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
-'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
-'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
-'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
-'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
-'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
-'ｙ' => 'y', 'ｚ' => 'z',    
-'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
-'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
-'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
-'》' => '>',    
-'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
-'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
-'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
-'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
-'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
-'＂'=>'"'); 
-    
-    for($i=2;$i<=$count;$i++){
-        $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
-        $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
-        $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
-        $data_a[$i-2]['jdate'] = strtr($sheetData[$i]['D'],$arr);
-        $data_a[$i-2]['content'] = $sheetData[$i]['E'];
-        $data_a[$i-2]['tusername'] = session('username');
-        $data_a[$i-2]['ttruename'] = session('truename');
-        $data_a[$i-2]['date'] = date("Y-m-d H:i:s");
-    }
-
+    $data['classname'] = $_POST['classname'];
+    $data['tusername'] = session('username');
+    $data['ttruename'] = session('truename');
+    $data['content'] = $_POST['content'];
+    $data['type'] = $_POST['type'];
+    $data['sbdate'] = $_POST['sbdate'];
+    $data['sedate'] = $_POST['sedate'];
+    $data['date'] = date("Y-m-d");
     $dao=D('summary');
-    $dao -> addAll($data_a);
-    $this -> success("已成功保存");
-    
-}
+    $check = $dao -> add($data);
+    if($check){$this -> success("已成功保存");}else{$this->error("保存失败");}  
+    }
     public function summaryDel() {
         $id = $_GET['id'];
         if (!isset($id)) {
@@ -3597,7 +3557,10 @@ class EduDirAction extends CommonAction {
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
-        } 
+        }
+        $mapCL['tusername'] =session('username');
+        $classList=M('summary')->where($mapCL)->Field('classname')->group('classname')->select();
+        $this->assign('classList',$classList);
         $dao = D('summary');
         $map['id'] = $id;
         $my = $dao -> where($map) -> find();
@@ -3610,11 +3573,15 @@ class EduDirAction extends CommonAction {
         } 
     } 
     public function summaryUpdate() {
-        $susername = $_POST['susername'];
-        $struename = $_POST['struename'];
-        $jdate = $_POST['jdate'];
+        $classname = $_POST['classname'];
+        $tusername = session('username');
+        $ttruename = session('truename');
         $content = $_POST['content'];
-        if (empty($susername) || empty($struename)|| empty($jdate)|| empty($content)) {
+        $type = $_POST['type'];
+        $sbdate = $_POST['sbdate'];
+        $sedate = $_POST['sedate'];
+        $date = date("Y-m-d");
+        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)) {
             $this -> error('必填项不能为空');
         } 
         $dao = D('summary');
@@ -3627,7 +3594,7 @@ class EduDirAction extends CommonAction {
             } 
         } else {
             $this -> error($dao->getError());
-        } 
+        }
     }
 } 
 

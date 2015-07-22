@@ -31,6 +31,7 @@ jQuery(function(){
 			success: function(data){
 				if (data.status==1){
 					alert(data.info);
+          window.location="__URL__/summary";
 				}else{
 					alert(data.info);
 				}
@@ -42,6 +43,7 @@ function copy(){
   document.getElementById("attendInfo").select();
   document.execCommand("Copy");
   alert("已复制，可粘贴至总结");
+  $('#content').focus();
 }
 function getAttendInfo(){
   var classname=$('#classS').val();
@@ -63,7 +65,7 @@ function getAttendInfo(){
   </tr>
 </table>
 <div class="main">
-<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<form id="form1">
  <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
    <tr>
     <td class="t_item"><span class="mustfill">*</span>班级</td>
@@ -85,10 +87,19 @@ function getAttendInfo(){
     <td class="t_item"><span class="mustfill">*</span>总结内容</td>
     <td><textarea name="content" id="content" class="textareanormal" ></textarea></td><td></td>
    </tr>  
-   <tr><td class="t_item"><span>考勤情况</span></td><td><textarea id="attendInfo" cols="100"></textarea></td><td><a href="javascript:copy()">点击复制考勤情况</a></td></tr>
+   
  </table>
  </form>
- <table width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td></tr>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+ <tr>
+   <td width="195px">
+     <div class="btn_zone"><input type="button" id="btn_save" value="保存"  /> <a href="javascript:getAttendInfo()">获取考勤情况</a>
+     </div>
+   </td>
+   <td>
+     <span><a href="javascript:copy()">点击复制考勤情况</a></span> 考勤情况: <input type="text" id="attendInfo" style="width:600px;border:0;background:transparent;">
+   </td>
+ </tr>
  </table>
 </div><!--end of main-->
 </body>
