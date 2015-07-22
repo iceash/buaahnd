@@ -271,10 +271,11 @@ class EduSenAction extends CommonAction {
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function menuCourse() {
-        $menu['subject']='课程与教师';
-        $menu['subjectAdd']='新建课程与教师的关联';
+        // $menu['subject']='课程与教师';
+        // $menu['subjectAdd']='新建课程与教师的关联';
         $menu['course']='课程总库';
-        $menu['courseAdd']='新建课程';
+        // $menu['courseAdd']='新建课程';
+        $menu["courseUpload"]='上传课程';
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function menuGrade() {
@@ -894,14 +895,14 @@ class EduSenAction extends CommonAction {
         $studentname=$_POST['studentname'];
         if ($dao -> create()) {
             $map["idcard"] = $_POST["idcard"];
-            $student = M("enroll")->where($map)->getField("id");
-            if (!$student) {
+            if (M("enroll")->where($map)->count() == 0) {
                 $this -> error('无此学生基本信息');
             }
-            $dao->student = $student;
-            $pinyin=$this->getPinyin($studentname);
-            $dao->ename=$pinyin;
-            $dao->enamesimple=$this->getPinyinSimple($pinyin);
+            M("enroll")->where($map)->setField("username",$_POST["student"]);
+            //$dao->student = $student;
+            // $pinyin=$this->getPinyin($studentname);
+            // $dao->ename=$pinyin;
+            // $dao->enamesimple=$this->getPinyinSimple($pinyin);
             $insertID = $dao -> add();
             if ($insertID) {
                 $this -> ajaxReturn($insertID, '已成功保存！', 1);
@@ -1027,11 +1028,11 @@ class EduSenAction extends CommonAction {
         $dao = D('Classstudent');
         if ($dao -> create()) {
             $map["idcard"] = $_POST["idcard"];
-            $student = M("enroll")->where($map)->getField("id");
+            $student = M("enroll")->where($map)->setField("username",$_POST["student"]);
             if (!$student) {
                 $this -> error('无此学生基本信息');
             }
-            $dao->student = $student;
+            //$dao->student = $student;
             $checked = $dao -> save();
             if ($checked > 0) {
                 $this -> success("更新成功");
@@ -1939,19 +1940,19 @@ class EduSenAction extends CommonAction {
             $this -> error($dao->getError());
         } 
     } 
-    public function courseInsert() {
-        $dao = D('Course');
-        if ($dao -> create()) {
-            $insertID = $dao -> add();
-            if ($insertID) {
-                $this -> ajaxReturn($insertID, '已成功保存！', 1);
-            } else {
-                $this -> error('没有更新任何数据');
-            } 
-        } else {
-            $this -> error($dao->getError());
-        } 
-    }      
+    // public function courseInsert() {
+    //     $dao = D('Course');
+    //     if ($dao -> create()) {
+    //         $insertID = $dao -> add();
+    //         if ($insertID) {
+    //             $this -> ajaxReturn($insertID, '已成功保存！', 1);
+    //         } else {
+    //             $this -> error('没有更新任何数据');
+    //         } 
+    //     } else {
+    //         $this -> error($dao->getError());
+    //     } 
+    // }      
     public function stuGrade() {
         $id = $_GET['id'];
         if (!isset($id)) {
@@ -3142,6 +3143,7 @@ class EduSenAction extends CommonAction {
         if ($count < 3) {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
+        //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
         $class = M("class");
         //$map["year"] = Date('Y');
         //$classlistall = M("class")->where($map)->select();
@@ -3179,7 +3181,7 @@ class EduSenAction extends CommonAction {
             $search["idcard"] = strtr($sheetData[$i]['H'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
             
-            if (!M("enroll")->where($search)->save(array("username",$data_a[$i-3]['student']))) {
+            if (!M("enroll")->where($search)->setField("username",$data_a[$i-3]['student'])) {
                 $errors[] = 'H'.$i;
             }
         }//for循环结束
@@ -3191,6 +3193,52 @@ class EduSenAction extends CommonAction {
         $classstudent -> addAll($data_a);
         $this -> success("已成功保存");
     }  
+    public function courseUpload(){
+        $this->menuCourse();
+        $this->display();
+    }
+    public function courseInsert(){
+        $titlepic = $_POST['titlepic'];
+        if (empty($titlepic)) {
+            $this -> error('未上传文件');
+        } 
+        if (substr($titlepic,-3,3) !=='xls') {
+            $this -> error('上传的不是xls文件');
+        } 
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $inputFileName = $php_path .'../../../..'.$titlepic;
+        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+        $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
+'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+'ｙ' => 'y', 'ｚ' => 'z',    
+'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+'》' => '>',    
+'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+'＂'=>'"'); 
+        $count = count($sheetData);//一共有多少行
+        if ($count < 3) {
+            $this->ajaxReturn($count, "请填写信息", 0);
+        }
+        //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
+    }
 } 
 
 ?>
