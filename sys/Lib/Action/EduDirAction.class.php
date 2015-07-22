@@ -3290,7 +3290,7 @@ class EduDirAction extends CommonAction {
             $page = $p -> show();
             $this -> assign("page", $page);
             $this -> assign('my', $my);
-        } 
+        }
         $this -> menujudge();
         $this -> display();
     }
@@ -3397,6 +3397,167 @@ class EduDirAction extends CommonAction {
             $this -> error('必填项不能为空');
         } 
         $dao = D('judge');
+        if ($dao -> create()) {
+            $checked = $dao -> save();
+            if ($checked > 0) {
+                $this -> success('已成功保存');
+            } else {
+                $this -> error('没有更新任何数据');
+            } 
+        } else {
+            $this -> error($dao->getError());
+        } 
+    }
+/**********************总结*****************************/
+    public function menusummary() {
+    $menu['summary']='总结记录';
+    $menu['summaryAdd']='新建总结';
+    $this->assign('menu',$this ->autoMenu($menu));  
+}
+    public function summary(){
+        $map['tusername'] =session('username');
+        $classList=M('summary')->where($map)->Field('classname')->select();
+        $this->assign('classList',$classList);       
+        if (isset($_GET['searchkey'])) {
+            $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $this -> assign('searchkey', $_GET['searchkey']);
+        }
+        if($_GET['classname']){$map['classname']=$_GET['classname'];}
+        if($_GET['datefrom']&&$_GET['dateto']){$map['jdate']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
+        $dao = D('summary');
+        $count = $dao -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 100;
+            $p = new Page($count, $listRows);
+            $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('date desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);
+        }
+        $this -> menusummary();
+        $this -> display();
+    }
+    public function summaryAdd(){
+        $dao = D('ClassTeacherView');$class=M('class');
+        $map['teacher'] = session('username');
+        $classid=M('classteacher')->where($map)->Field('classid')->select();
+        for ($i=0; $i < count($classid); $i++) { 
+            $classList[$i]=$class->where('id='.$classid[$i]['classid'])->getField('name');
+        }
+        $this->assign('classList',$classList);
+        $this -> assign('my', $my);
+        $this -> menusummary();
+        $this -> display();
+    }
+    public function getAttendInfo(){
+        $classname=$_POST['classname'];
+        $map['classname']=$_POST['classname'];
+        $map['timezone']=array(array('egt',$_GET['sbdate']),array('elt',$_GET['sedate']));
+        $Attend=M('attend');
+        $truantSum=$Attend->where($map)->sum("truant");
+        $tvacateSum=$Attend->where($map)->sum("tvacate");
+        $svacateSum=$Attend->where($map)->sum("svacate");
+        $lateSum=$Attend->where($map)->sum("late");
+        if(!($truantSum||$tvacateSum||$svacateSum||$lateSum)){$info="请选择班级和时间段";}
+        else{$info=$classname."在此时间段内发生旷课".$truantSum."次，事假".$tvacateSum."次，病假".$svacateSum."次，迟到".$lateSum."次";}
+        $this->ajaxReturn($info);
+    }
+    public function summaryInsert() {
+    $titlepic = $_POST['titlepic'];
+    if (empty($titlepic) ) {
+        $this -> error('未上传文件');
+    } 
+    if (substr($titlepic,-3,3) !=='xls') {
+        $this -> error('上传的不是xls文件');
+    } 
+    $php_path = dirname(__FILE__) . '/';
+    include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+    $inputFileName = $php_path .'../../../..'.$titlepic;
+    $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+   
+    $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+    
+    $count=count($sheetData);
+    $arr = array('/'=>'-','０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4', 
+'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+'ｙ' => 'y', 'ｚ' => 'z',    
+'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+'》' => '>',    
+'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+'＂'=>'"'); 
+    
+    for($i=2;$i<=$count;$i++){
+        $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
+        $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
+        $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
+        $data_a[$i-2]['jdate'] = strtr($sheetData[$i]['D'],$arr);
+        $data_a[$i-2]['content'] = $sheetData[$i]['E'];
+        $data_a[$i-2]['tusername'] = session('username');
+        $data_a[$i-2]['ttruename'] = session('truename');
+        $data_a[$i-2]['date'] = date("Y-m-d H:i:s");
+    }
+
+    $dao=D('summary');
+    $dao -> addAll($data_a);
+    $this -> success("已成功保存");
+    
+}
+    public function summaryDel() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $map['id'] = array('in', $id);
+        $dao = D('summary');
+        $count = $dao -> where($map) -> delete();
+        if ($count > 0) {
+            $this -> success('已成功删除');
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    }
+    public function summaryEdit() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $dao = D('summary');
+        $map['id'] = $id;
+        $my = $dao -> where($map) -> find();
+        if ($my) {
+            $this -> assign('my', $my);
+            $this -> menusummary();
+            $this -> display();
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    } 
+    public function summaryUpdate() {
+        $susername = $_POST['susername'];
+        $struename = $_POST['struename'];
+        $jdate = $_POST['jdate'];
+        $content = $_POST['content'];
+        if (empty($susername) || empty($struename)|| empty($jdate)|| empty($content)) {
+            $this -> error('必填项不能为空');
+        } 
+        $dao = D('summary');
         if ($dao -> create()) {
             $checked = $dao -> save();
             if ($checked > 0) {
