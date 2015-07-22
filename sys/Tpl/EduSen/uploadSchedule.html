@@ -16,18 +16,17 @@ jQuery(function(){
     jQuery('#btn_save').click(function(){
         jQuery.ajax({
             type:'POST',
-            url:'__URL__/courseInsert',
+            url:'__URL__/scheduleInsert',
             dataType:'json',
             data:jQuery("#form1").serialize(),
             success: function(data){
                 if (data.status==1){
                     alert(data.info);
-                    window.location='__URL__/course';
+                    window.location='__URL__/schedule';
                 }else{
                     alert(data.info);
                     $("#warning").attr("href",data.data);
                     $("#warning").show();
-                    // console.log(data.data);
                 }
             }
         });
@@ -71,7 +70,7 @@ var editor;
 <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
     <tr>
         <td class="t_item_left">请下载excel表格，填写后上传并点击最下方的“提交”按钮：<br />
-            <a href="../Public/download/course.xls">下载课程设置模板</a>
+            <a href="../Public/download/schedule.xls">下载课程表模板</a>
         </td>
     </tr>
     <tr>

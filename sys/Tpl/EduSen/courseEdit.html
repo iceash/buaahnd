@@ -42,9 +42,13 @@ jQuery(function(){
 <div class="main">
 <form id="form1"><input type="hidden" value="{$my.id}" name="id" />
  <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
-    <tr>
+    <!-- <tr>
     <td class="t_item"><span class="mustfill">*</span>课程号</td>
     <td><input type="text" name="number" class="inputlong" value="{$my.number}"/></td>
+   </tr> -->
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>班级</td>
+    <td><html:select first="请选择" options="category_fortag" name="classid" selected="my['classid']"/></td>
    </tr>
    <tr>
     <td class="t_item"><span class="mustfill">*</span>课程中文名</td>
@@ -72,7 +76,7 @@ jQuery(function(){
     <td><input type="text" name="credit" class="inputlong" value="{$my.credit}" /></td>
    </tr>
     <tr>
-    <td class="t_item"><span class="mustfill">*</span>学时</td>
+    <td class="t_item">学时</td>
     <td><input type="text" name="coursetime" class="inputlong" value="{$my.coursetime}" /></td>
    </tr>
     <tr>
@@ -93,7 +97,7 @@ jQuery(function(){
    </tr>
     <tr>
     <td class="t_item">师资队伍</td>
-    <td><textarea name="teachers" class="textareanormal">{$my.teachersr}</textarea></td>
+    <td><textarea name="teachers" class="textareanormal">{$my.teachers}</textarea></td>
    </tr>
     <tr>
     <td class="t_item">教材</td>

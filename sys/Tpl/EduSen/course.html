@@ -98,9 +98,10 @@ function searchkeydown(e){
 <thead>
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
- 	 <th width="80">课程号</th>
+ 	 <th width="80">开课班级</th>
 	<th>课程中文名</th>
     <th>课程英文名</th>
+    <th>课程分类</th>
 	<th width="100">学分</th>
 	<th width="80">学时</th>
 	<th width="80">操作</th>
@@ -110,9 +111,10 @@ function searchkeydown(e){
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
-  <td>{$my.number}</td>
+  <td>{$my.classname}</td>
 	<td>{$my.name}</td>
     <td>{$my.ename}</td>
+    <td>{$my.category2}</td>
     <td>{$my.credit}</td>
 	<td>{$my.coursetime}</td>
 	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
