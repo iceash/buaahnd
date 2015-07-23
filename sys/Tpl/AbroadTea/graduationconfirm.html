@@ -9,10 +9,10 @@
 <script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
 <script type="text/javascript"> 
 
-function word(stuname){
+function word(){
 	var url="__URL__/downgraduateconfirm";
-		url=url+stuname;
-	window.location=url;
+		var name = '{$stuname}';
+		window.location=url+'?name='+name;
 }
 </script> 
 </head>
@@ -26,7 +26,7 @@ function word(stuname){
 </table>
 <div class="main">
  <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
- <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生毕业证明  <img src="../Public/team_margin/images/word.png" align="absmiddle"/><a href="javascript:word('{$data['studentname']}');">[导出为word文档]</a></div></td>
+ <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生毕业证明  <img src="../Public/team_margin/images/word.png" align="absmiddle"/><a href="javascript:word();">[导出为word文档]</a></div></td>
   <td>&nbsp;</td></tr>
  </table>
 

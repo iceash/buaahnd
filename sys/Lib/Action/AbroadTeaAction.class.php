@@ -835,81 +835,31 @@ class AbroadTeaAction extends CommonAction {
             $data[0]['year']='_______________';
             $data[0]['graduateyear']='_______________';
         }
-
+        $this->assign('stuname',$truename);
         $this->assign('tips',$tips);        
         $this->assign('data',$data);
         $this->assign('current_time',date('M.j,Y',time()));
         $this->display(graduationconfirm);
     }
      public function downgraduateconfirm(){
-        $id = $_GET['id'];
-        if (!isset($id)) {
+        $name = $_GET['name'];
+        if (!isset($name)) {
             $this -> error('参数缺失');
         }
-        $student=D('classstudent');
-        $enroll=D('enroll');
-        $class=D('class');
-        $map['student']=$id;
-        $map1['username']=$id;
-        $stu=$student->where($map)->select();
+       $A =D('ClassstudentView');
+        $map['studentname']=$truename;
+        $data = $A ->where($map)->select();
 
-        $mystuename = $stu[0][ename];
-        $mystuename_begin = ucfirst(strtolower($mystuename));
-        $len = strlen($mystuename);
-        $position = 0;
-        for($i=0;$i<$len;$i++){
-            if($mystuename[$i]!=$mystuename_begin[$i]){
-                $position = $i;
-                break;
+        if($data[0]['sex'] == '男'){
+                $data[0]['ensex'] = 'Mr.';
+                $data[0]['sexname'] = 'him';
             }
-        }
-        $my_xing = substr($mystuename_begin,0,$position);
-        $my_ming = substr($mystuename_begin,$position);
-        $mystuename = $my_xing." ".ucfirst(strtolower($my_ming));
-
-        $map2[id]=$stu[0]['classid'];
-        $classinfo=$class->where($map2)->select();
-        $stuinfo=$enroll->where($map1)->select();
-        $name=$stu[0][studentname];
-        $zsex='';
-        $year='';
-        $month='';
-        $day='';
-        $major='';
-        $sex='';
-        $birthday='';
-        $majore='';
-        if($stuinfo[0][sex]==''){
-            $zsex='______'."(性别)";$sex='____'."(sex)";
-        }else{
-            $zsex=$stuinfo[0][sex];$sex=$this->getSex($stuinfo[0][sex]);
-        }
-        if($stuinfo[0][birthday] == '' || $stuinfo[0][birthday] == '0000-00-00 00:00:00'){
-            $year='____';$month='____';$day='____';$birthday='__________';
-        }else{
-            $year=substr($stuinfo[0][birthday],0,4);
-            $month=substr($stuinfo[0][birthday],5,2);
-            $day=substr($stuinfo[0][birthday],8,2);
-            $birthday=date('M.j,Y',strtotime($stuinfo[0][birthday]));
-        }
-        if($classinfo[0][major] == ''){
-            $major='________________________';
-        }else{
-            $major=$classinfo[0][major];
-        }
-        if($classinfo[0][majore] == ''){
-            $majore='__________________';
-        }else{
-            $majore=$classinfo[0][majore];
-        }
-        $enrollyear=$classinfo[0][year];
-        $nowyear=substr(date('Y-m-d',time()),0,4);
-        $nowmonth=substr(date('Y-m-d',time()),5,2);
-        $nowday=substr(date('Y-m-d',time()),8,2);
-        $current_time=date('M.j,Y',time());
-        $current_grade=$this->getGrade(date('Y-m-d',time()),$classinfo[0][year]);
-        $current_egrade=$this->getEgrade(date('Y-m-d',time()),$classinfo[0][year]);
-        $ename=$stu[0][ename];
+        if($data[0]['sex'] == '女'){
+                $data[0]['ensex'] = 'Ms.';
+                $data[0]['sexname'] = 'her';
+            }
+        $data[0]['graduteyear'] = $data[0]['year'] + 3;
+        $data[0]['birthday']=date('j M Y',time($data[0]['birthday']));
         include dirname(__FILE__).'/../../Lib/ORG/PHPWord.php';
         $PHPWord = new PHPWord();
         $section = $PHPWord->createSection();
@@ -950,7 +900,7 @@ class AbroadTeaAction extends CommonAction {
         $section->addText('Department of Applied Foreign Language Studies',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
         $section->addText('Nanjing University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
-        $filename='HND'.''.'在读证明-'.$name;
+        $filename='HND'.''.'毕业证明-'.$name;
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
         header("Content-type: application/vnd.ms-word");
         header("Content-Disposition:attachment;filename=".$filename.".docx");

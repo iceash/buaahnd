@@ -3003,8 +3003,8 @@ class EduDirAction extends CommonAction {
         exit;
     }
     public function downCertification(){
-        $id = $_GET['stuname'];
-        if (!isset($stuname)) {
+        $truename = $_GET['name'];
+        if (!empty($truename)) {
             $this -> error('参数缺失');
         }
         $student=D('classstudent');
