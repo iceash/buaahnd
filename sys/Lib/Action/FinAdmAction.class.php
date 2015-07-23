@@ -73,7 +73,7 @@ class FinAdmAction extends CommonAction{
                 unset($all[$num]);
             }
         }
-        $project = M("system")->where("name='project'")->find();
+        $project = M("system")->where("name='items'")->find();
         $items = explode(",", $project["content"]);
         // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
 
@@ -89,7 +89,9 @@ class FinAdmAction extends CommonAction{
         $this->assign("items",$items);
         $this->assign("paytype",$paytype);
         $this->assign("fees",$fees);
-        $partner = ["南邮","百度推广","青梦家","东方航空","阿里去啊"];//合作方列表，这里定死；
+        $tmppartners = M("system")->where("name='partners'")->find();
+        $partner = explode(",", $project["tmppartners"]);
+        // $partner = ["南邮","百度推广","青梦家","东方航空","阿里去啊"];//合作方列表，这里定死；
         $this->assign("partner",$partner);
         $this->display();
     }
@@ -258,7 +260,7 @@ class FinAdmAction extends CommonAction{
         $this->display();
     }
     public function boundLeft(){
-        $project = M("system")->where("name='project'")->find();
+        $project = M("system")->where("name='items'")->find();
         $items = explode(",", $project["content"]);
         // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
         $fees = M("fee")->where("period=0 and parent=0")->order("id")->select();
@@ -280,9 +282,9 @@ class FinAdmAction extends CommonAction{
             $allstudent = D("ClassstudentView")->where('year='.$year)->select();
         }
         foreach ($allstudent as $one) {
-            $stu["stunum"] = $one["student"];
-            $stu["name"] = $one["studentname"];
-            $stu["idcard"] = $one["idcard"];
+            // $stu["stunum"] = $one["student"];
+            // $stu["name"] = $one["studentname"];
+            // $stu["idcard"] = $one["idcard"];
             $all[$one["major"]][$one["name"]]["has"]++;
             $map["feeid"] = $id;
             $map["idcard"] = $one["idcard"];

@@ -3511,6 +3511,135 @@ class EduSenAction extends CommonAction {
             $this->error("删除失败");
         }
     }
+    public function menuExam() {
+        $menu['exam']='考试安排';
+        $menu["examUpload"]='上传考试安排';
+        $this->assign('menu',$this ->autoMenu($menu));  
+    }
+    public function exam(){
+        //考试列表
+        $this -> assign('term_fortag', $this->getTerm());
+        if (isset($_GET['term'])) {
+            $map['term'] = $_GET['term'];
+            $this -> assign('term_current', $_GET['term']);
+        } 
+        if (isset($_GET["classid"])) {
+            $this->assign('class_current',$_GET['classid']);
+        }
+        $all_class=D('Class')->order('year desc,name asc')->select();
+        $class_fortag=array();
+        foreach($all_class as $key=>$value){
+            $class_fortag[$value['id']]='['.$value['year'].']'.$value['name'];
+        }
+        if (isset($_GET["term"]) && isset($_GET["classid"])) {
+            $map["term"] = $_GET["term"];
+            $map["classid"] = $_GET["classid"];
+            $examlist = M("examlist")->where($map)->select();
+            $this->assign("examlist",$examlist);
+        }
+        //此处还需要查询考试列表
+        $this -> assign('class_fortag', $class_fortag); 
+        $this->menuExam();
+        $this->display();
+    }
+    public function examUpload(){
+        $this->menuExam();
+        $this->display();
+    }
+    public function examInsert(){
+        $titlepic = $_POST['titlepic'];
+        if (empty($titlepic)) {
+            $this -> error('未上传文件');
+        } 
+        if (substr($titlepic,-3,3) !=='xls') {
+            $this -> error('上传的不是xls文件');
+        } 
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $inputFileName = $php_path .'../../../..'.$titlepic;
+        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+        $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
+'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+'ｙ' => 'y', 'ｚ' => 'z',    
+'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+'》' => '>',    
+'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+'＂'=>'"'); 
+        $count = count($sheetData);//一共有多少行
+        if ($count < 3) {
+            $this->ajaxReturn($count, "请填写信息", 0);
+        }
+        //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
+        for($i = 3; $i <= $count; $i++){
+            $b = true;
+            for($j = 1; $j <= 4; $j++){
+                if(strlen($sheetData[$i][chr(64+$j)]) == 0){
+                    $errors[] = chr(64+$j).$i;
+                    $b = false;
+                }
+            }
+            if (!$b) {
+                continue;
+            }
+            $reg='/^[0-9]{4}-[0-9]{4}学年第[1-2]{1}学期$/';
+            $term = strtr($sheetData[$i]['A'], $arr);
+            if(!preg_match($reg,  strtr($term, $arr))){
+                $errors[] = "A".$i;
+            }
+            $map["year"] = explode("-", $term)[0];
+            $map["name"] = strtr($sheetData[$i]['B'], $arr);
+            if (!$map["name"]) {
+                $errors[] = "B".$i;
+            }
+            $data[$i-3]["term"] = $term;
+            $data[$i-3]["classid"] = M("class")->where($map)->getField("id");
+            if (!$data[$i-3]["classid"]) {
+                $errors[] = "A".$i;
+                $errors[] = "B".$i;
+            }else{
+                $data[$i-3]["course"] = strtr($sheetData[$i]['C'], $arr);
+                $data[$i-3]["time"] = strtr($sheetData[$i]['D'], $arr);
+                $data[$i-3]["teacher"] = strtr($sheetData[$i]['E'], $arr);
+            }
+        }
+        if (count($errors) > 0) {
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
+        }
+        $result = M("examlist")->addAll($data);
+        $this -> success("已成功保存");
+    }
+    public function examDel(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $map['id'] = array('in', $id);
+        $dao = M("examlist");
+        $count = $dao -> where($map) -> delete();
+        if ($count > 0) {
+            $this -> success('已成功删除');
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    }
 } 
 
 ?>
