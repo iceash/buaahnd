@@ -846,8 +846,8 @@ class AbroadTeaAction extends CommonAction {
         if (!isset($name)) {
             $this -> error('参数缺失');
         }
-       $A =D('ClassstudentView');
-        $map['studentname']=$truename;
+        $A =D('ClassstudentView');
+        $map['studentname']=$name;
         $data = $A ->where($map)->select();
 
         if($data[0]['sex'] == '男'){
@@ -860,6 +860,21 @@ class AbroadTeaAction extends CommonAction {
             }
         $data[0]['graduteyear'] = $data[0]['year'] + 3;
         $data[0]['birthday']=date('j M Y',time($data[0]['birthday']));
+        $current_time=date('M j, Y',time());
+        if($data[0]['sex']==''){
+            $data[0]['ensex']='______'.'(Ms. or Mr.)';
+            $data[0]['sexname']='______'.'(him or her)';
+        }
+        if($data[0]['birthday'] == '' || $data[0]['birthday'] == '0000-00-00'){
+            $data[0]['birthday']='____________________'.'(birthday)';
+        }
+        if($data[0]['majore'] == ''){
+            $data[0]['majore']='________________________'.'(major)';
+        }
+        if($data[0]['year'] == ''){
+            $data[0]['year']='_______________';
+            $data[0]['graduateyear']='_______________';
+        }
         include dirname(__FILE__).'/../../Lib/ORG/PHPWord.php';
         $PHPWord = new PHPWord();
         $section = $PHPWord->createSection();
@@ -867,38 +882,36 @@ class AbroadTeaAction extends CommonAction {
         $PHPWord->addFontStyle('rStyle', array('bold'=>true,'name'=>'Arial','size'=>'15'));
         $PHPWord->addFontStyle('cStyle', array('name'=>'Arial','size'=>'12'));
         $PHPWord->addFontStyle('aStyle', array('name'=>'Times New Roman','size'=>'12'));
-        $PHPWord->addParagraphStyle('pStyle', array('align'=>'center', 'spaceAfter'=>100));
-        $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>100));
-        $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>100));
+        $PHPWord->addParagraphStyle('pStyle', array('align'=>'center', 'spaceAfter'=>250));
+        $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>250));
+        $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>250));
+
+        $section->addTextBreak(6);
+        $section->addText('GRADUATION CERTIFICATE',array('name'=>'Arial','size'=>'15'), 'pStyle');
         $section->addTextBreak(3);
-        $section->addText('HND'.' '.'在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
+        $section->addText("$current_time",array('name'=>'Arial','size'=>'14'),'YStyle');
         $section->addTextBreak(2);
-        $textrun = $section->createTextRun();
-        $textrun->addText("　　"."兹证明",$zhongzhengwen);
-        $textrun->addText($name,array('bold'=>true,'name'=>'Arial','size'=>'12'));
-        $textrun->addText("同学，".$zsex."，生于".$year."年".$month."月".$day."日，于".$enrollyear."年9月进入南京大学大学外语部英国高等教育文凭（Higher National Diploma 简称HND）项目学习。（该项目引进自苏格兰学历管理委员会）。",$zhongzhengwen);
-        $section->addTextBreak(1);
-        $section->addText("　　"."该学生目前为该项目".$major."专业".$current_grade."年级学生。",$zhongzhengwen);
-        $section->addTextBreak(1);
-        $section->addText('特此证明',$zhongzhengwen);
-        $section->addTextBreak(2);
-        $section->addText('南京大学 大学外语部',$zhongzhengwen,'YStyle');
-        $section->addText($nowyear."年".$nowmonth."月".$nowday."日",$zhongzhengwen,'YStyle');
-        $section->addTextBreak(3);
-        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addText('HND Student Status Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
-        $section->addTextBreak(3);
-        $textrun = $section->createTextRun();
-        $textrun->addText("This is to certify that student ",array('name'=>'Times New Roman','size'=>'12'));
-        $textrun->addText($mystuename,array('bold'=>true,'name'=>'Times New Roman','size'=>'12'));
-        $textrun->addText("," .$sex.", born on"." ".$birthday.", was enrolled in Department of Applied Foreign Language Studies, Nanjing University in Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText("The student above is now in the"." ".$current_egrade." "."year of Higher National Diploma, which is introduced from Scottish Qualifications Authority (SQA, UK), with the major of"." ".$majore.".",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText('Hereby Certify.',array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText('Department of Applied Foreign Language Studies',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
-        $section->addText('Nanjing University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $textrun = $section->createTextRun(array('spacing'=>250));
+        $textrun->addText("This is to certify that ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['ensex'] ,array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['ename'],array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText(" (Full Name of the student), born on ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['birthday'],array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText(", has been a student of SQA HND programme at our university since September ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['year'],array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText(". ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['ensex'] ,array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['ename'],array('color'=>'blue','name'=>'Arial','size'=>'14'));        
+        $textrun->addText(" has completed all the units in HND Courses of ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['majore'],array('italic'=>'true','color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText(" successfully. The HND Diploma from Scottish Qualifications Authority (SQA) is expected to be issued to ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['sexname'],array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText(" in June ",array('name'=>'Arial','size'=>'14'));
+        $textrun->addText($data[0]['graduteyear'],array('color'=>'blue','name'=>'Arial','size'=>'14'));
+        $textrun->addText(". ",array('name'=>'Arial','size'=>'14'));
+        $section->addTextBreak(4);
+        $section->addText('Entrepreneurship Management and Training School',array('name'=>'Arial','size'=>'14'), 'lStyle');
+        $section->addText('Beihang University',array('name'=>'Arial','size'=>'14'), 'lStyle');
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
         $filename='HND'.''.'毕业证明-'.$name;
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
