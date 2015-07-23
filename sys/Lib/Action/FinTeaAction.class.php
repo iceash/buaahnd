@@ -18,13 +18,13 @@ class FinTeaAction extends CommonAction{
         $this -> display();
     }
     public function paylist(){
-        if($_GET['num']!=0){
-        $mapEn['id|idcard']=$_GET['num']; 
+        if(isset($_GET['num'])){
+        $mapEn['username|idcard']=$_GET['num']; 
         $enroll=M('enroll');
-        $name=$enroll->where($mapEn)->getField('truename');     
+        $name=$enroll->where($mapEn)->getField('truename');
         if($name){
             $idcard=$enroll->where($mapEn)->getField('idcard');
-            $stunum=$enroll->where($mapEn)->getField('id');
+            $stunum=$enroll->where($mapEn)->getField('username');
             $info="<span>姓名：</span><span id='name'>".$name."</span><span>学号：</span><span id='stunum'>".$stunum."</span><span>身份证号:</span><span id='idcard'>".$idcard."</span></tr>";        
             $this->assign('info',$info);
         }else{
@@ -69,7 +69,7 @@ class FinTeaAction extends CommonAction{
         $dataD['way']=$_POST['way'];
         $dataD['invoice']=$_POST['invoice'];
         $dataD['money']=$_POST['money'];
-        $dataD['operator']="测试";
+        $dataD['operator']=session('truename');
         if ($_POST['date']) {
            $dataD['date']=$_POST['date'];
         }else{$dataD['date']=date('Y-m-d');}
@@ -91,7 +91,7 @@ class FinTeaAction extends CommonAction{
         $dataD['idcard']=$_POST['idcard'];
         $dataD['way']=$_POST['way'];
         $dataD['money']=-$_POST['money'];
-        $dataD['operator']="测试";
+        $dataD['operator']=session('username');
         if ($_POST['date']) {
            $dataD['date']=$_POST['date'];
         }else{$dataD['date']=date('Y-m-d');}
