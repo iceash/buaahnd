@@ -442,7 +442,15 @@ class AbroadAdmAction extends CommonAction {
             } else{
                 $dao -> quittime = NULL;
             }
- 
+            if (empty($_POST['bentime'])) {
+                $dao -> bentime = NULL;   
+            }
+            if (empty($_POST['shuotime'])) {
+                $dao -> shuotime = NULL;   
+            }
+            if (empty($_POST['botime'])) {
+                $dao -> botime = NULL;   
+            }
             $checked = $dao -> save();
             if ($checked > 0) {
                 $this -> success('已成功保存');

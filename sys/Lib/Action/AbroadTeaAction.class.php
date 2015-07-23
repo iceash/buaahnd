@@ -438,6 +438,15 @@ class AbroadTeaAction extends CommonAction {
                     $dao -> finishtime = NULL;
                 }
             }
+            if (empty($_POST['bentime'])) {
+                $dao -> bentime = NULL;   
+            }
+            if (empty($_POST['shuotime'])) {
+                $dao -> shuotime = NULL;   
+            }
+            if (empty($_POST['botime'])) {
+                $dao -> botime = NULL;   
+            }
             $dao -> country = implode(',', $_POST['country']);
             $dao -> degree = implode(',', $_POST['degree']);
             if($_POST['quit'] == 1) {
@@ -611,7 +620,7 @@ class AbroadTeaAction extends CommonAction {
         $objPHPExcel->getProperties()->setTitle("NJU-HND auto generated Document");
         $styleHead= array(
             'font' => array(
-                'name'=>'楷体_GB2312',
+                'name'=>'楷体',
                 'bold' => true,
                 'size' => 18
             ),
@@ -878,7 +887,6 @@ class AbroadTeaAction extends CommonAction {
         include dirname(__FILE__).'/../../Lib/ORG/PHPWord.php';
         $PHPWord = new PHPWord();
         $section = $PHPWord->createSection();
-        $zhongzhengwen = array('name'=>'Arial','size'=>'12');
         $PHPWord->addFontStyle('rStyle', array('bold'=>true,'name'=>'Arial','size'=>'15'));
         $PHPWord->addFontStyle('cStyle', array('name'=>'Arial','size'=>'12'));
         $PHPWord->addFontStyle('aStyle', array('name'=>'Times New Roman','size'=>'12'));
@@ -914,6 +922,122 @@ class AbroadTeaAction extends CommonAction {
         $section->addText('Beihang University',array('name'=>'Arial','size'=>'14'), 'lStyle');
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
         $filename='HND'.''.'毕业证明-'.$name;
+        $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
+        header("Content-type: application/vnd.ms-word");
+        header("Content-Disposition:attachment;filename=".$filename.".docx");
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function backcountryconfirm()
+    {
+        $truename = $_GET['stuname'];
+        $A =D('ClassstudentView');
+        $map['studentname']=$truename;
+        $data = $A ->where($map)->select();
+        $data[0]['graduateyear'] = $data[0]['year'] + 3;
+        $data[0]['birthday']=date('Y年m月d日 ',time($data[0]['birthday']));
+        $tips='下划线处信息不全，请下载后补全!';
+        if($data[0]['sex']==''){
+            $data[0]['sex']='______'.'(性别)';
+        }
+        if($data[0]['birthday'] == '' || $data[0]['birthday'] == '0000-00-00'){
+            $data[0]['birthday']='____________________'.'(生日)';
+        }
+        if($data[0]['major'] == ''){
+            $data[0]['major']='________________________'.'(专业)';
+        }
+        if($data[0]['year'] == ''){
+            $data[0]['year']='_______________';
+            $data[0]['graduateyear']='_______________';
+        }
+        if($data[0]['passport'] == ''){
+            $data[0]['passport']='_______________';
+        }
+        if($data[0]['idcard'] == ''){
+            $data[0]['idcard']='_______________';
+        }
+        $this->assign('stuname',$truename);
+        $this->assign('tips',$tips);        
+        $this->assign('data',$data);
+        $this->assign('current_time',date('Y年m月d日 ',time()));
+        $this->display(backconfirm);
+    }
+     public function downbackconfirm(){
+        $name = $_GET['name'];
+        if (!isset($name)) {
+            $this -> error('参数缺失');
+        }
+        $A =D('ClassstudentView');
+        $map['studentname']=$name;
+        $data = $A ->where($map)->select();
+        $data[0]['graduateyear'] = $data[0]['year'] + 3;
+        $data[0]['birthday']=date('Y年m月d日',time($data[0]['birthday']));
+        $current_time=date('Y年m月d日',time());
+        if($data[0]['sex']==''){
+            $data[0]['sex']='______'.'(性别)';
+        }
+        if($data[0]['birthday'] == '' || $data[0]['birthday'] == '0000-00-00'){
+            $data[0]['birthday']='____________________'.'(生日)';
+        }
+        if($data[0]['major'] == ''){
+            $data[0]['major']='________________________'.'(专业)';
+        }
+        if($data[0]['year'] == ''){
+            $data[0]['year']='_______________';
+            $data[0]['graduateyear']='_______________';
+        }
+        if($data[0]['passport'] == ''){
+            $data[0]['passport']='_______________';
+        }
+        if($data[0]['idcard'] == ''){
+            $data[0]['idcard']='_______________';
+        }
+        include dirname(__FILE__).'/../../Lib/ORG/PHPWord.php';
+        $PHPWord = new PHPWord();
+        $section = $PHPWord->createSection();
+        $PHPWord->addFontStyle('rStyle', array('bold'=>true,'name'=>'楷体','size'=>'15'));
+        $PHPWord->addFontStyle('cStyle', array('name'=>'楷体','size'=>'12'));
+        $PHPWord->addFontStyle('aStyle', array('name'=>'Times New Roman','size'=>'12'));
+        $PHPWord->addParagraphStyle('pStyle', array('align'=>'center', 'spaceAfter'=>250));
+        $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>250));
+        $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>250));
+
+        $section->addTextBreak(6);
+        $section->addText('国内项目院校的证明函',array('name'=>'宋体','bold'=>'true','size'=>'22'), 'pStyle');
+        $section->addTextBreak(3);
+        $section->addText("中国留学服务中心：",array('name'=>'楷体','size'=>'14'),'lStyle');
+        $textrun = $section->createTextRun(array('spacing'=>250));
+        $textrun->addText("    ",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['studentname'] ,array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("，",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['sex'],array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("，",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['birthday'],array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("生，身份证：",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['idcard'],array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("，系我院英国高等教育文凭项目（SQA HND ) ",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['year'] ,array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("级",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['major'],array('color'=>'blue','name'=>'楷体','size'=>'14'));        
+        $textrun->addText("专业学生[中留服注册号CHN为____________，注册号SCN为____________]。该生 ",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['year'],array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("年9月开始学习，",array('name'=>'楷体','size'=>'14'));
+        $textrun->addText($data[0]['graduateyear'],array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun->addText("年5月获得英国苏格兰学历管理委员会（SQA）颁发的HND文凭。该项目在我校属于计划外招生。",array('name'=>'楷体','size'=>'14'));
+        $textrun2 = $section->createTextRun(array('spacing'=>250));
+        $textrun2->addText("    经核实",array('name'=>'楷体','size'=>'14'));
+        $textrun2->addText($data[0]['studentname'] ,array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun2->addText("（护照号：",array('name'=>'楷体','size'=>'14'));
+        $textrun2->addText($data[0]['passport'],array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun2->addText("）在____年__月至____年__月在_____大学_______专业学习大学本科第__年课程。____年__月，",array('name'=>'楷体','size'=>'14'));
+        $textrun2->addText($data[0]['studentname'] ,array('color'=>'blue','name'=>'楷体','size'=>'14'));
+        $textrun2->addText("获得_____大学___学位。" ,array('name'=>'楷体','size'=>'14'));
+        $section->addTextBreak(4);
+        $section->addText('北航创业管理培训学院',array('name'=>'楷体','size'=>'14'), 'YStyle');
+        $section->addText($current_time,array('name'=>'楷体','size'=>'14'), 'YStyle');
+        $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
+        $filename='回国认证-'.$name;
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
         header("Content-type: application/vnd.ms-word");
         header("Content-Disposition:attachment;filename=".$filename.".docx");

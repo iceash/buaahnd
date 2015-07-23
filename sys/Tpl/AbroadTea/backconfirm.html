@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script> 
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+
+function word(){
+	var url="__URL__/downbackconfirm";
+		var name = '{$stuname}';
+		window.location=url+'?name='+name;
+}
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"  target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+ <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生回国认证函  <img src="../Public/team_margin/images/word.png" align="absmiddle"/><a href="javascript:word();">[导出为word文档]</a></div></td>
+  <td>&nbsp;</td></tr>
+ </table>
+
+
+ <div id="tips" ><span><font color='red' style="margin-left:410px">{$tips}</font></span></div><br/>
+<br/><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style="margin-left:240px"><b>国内项目院校的证明函</b></span>
+<br/>
+<div style='text-align:left'>
+<span style='margin-right:77px;margin-left:82px;'>中国留学服务中心：</span>
+</div>
+<p style='margin-right:77px;margin-left:82px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$data[0]['studentname']}，{$data[0]['sex']}，{$data[0]['birthday']}生，身份证：{$data[0]['idcard'] }，系我院英国高等教育文凭项目（SQA HND ) {$data[0]['year'] }级{$data[0]['major'] }专业学生[中留服注册号CHN为__________，注册号SCN为___________]。该生{$data[0]['year'] }年9月开始学习，{$data[0]['graduateyear'] }年5月获得英国苏格兰学历管理委员会（SQA）颁发的HND文凭。该项目在我校属于计划外招生。</p>
+<p style='margin-right:77px;margin-left:82px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;经核实，{$data[0]['studentname']}（护照号：{$data[0]['passport'] }）在____年__月至____年__月在_____大学_______专业学习大学本科第__年课程。____年__月，{$data[0]['studentname']}获得_____大学___学位。</p>
+
+
+</div><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
+<span style="margin-right:77px;margin-left:82px;">北航创业管理培训学院</span><br/>
+<span style="margin-right:77px;margin-left:82px;">{$current_time}&nbsp;&nbsp;&nbsp;&nbsp;<span>
+</div>
+ 
+ 
+</div><!--end of main-->
+</body>
+</html>

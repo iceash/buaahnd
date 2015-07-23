@@ -123,7 +123,7 @@ function getScore(susername){
     <td>{$my.ctime}</td>
     <td>{$my.finishtime}</td>
     <td><input type="button" value="详情" class="studyconfirm"/></td>
-    <td><input type="button" value="详情" onclick="" /></td>
+    <td><input type="button" value="详情" class="backcountryconfirm" /></td>
 	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
 	</td>
   </tr>
@@ -141,6 +141,10 @@ function getScore(susername){
 		$(".studyconfirm").click(function(){
 		var name =$(this).parent().siblings().children('.stuname').text();
 		window.location='__URL__/stugraduationconfirm?stuname='+name;
+		});
+		$(".backcountryconfirm").click(function(){
+		var name =$(this).parent().siblings().children('.stuname').text();
+		window.location='__URL__/backcountryconfirm?stuname='+name;
 		});
 
 </script>
