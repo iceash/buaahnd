@@ -227,6 +227,7 @@ class IndexAction extends Action {
         $a['EduTea']='任课教师';
         $a['TeaAdm']='教师管理员';
         $a['EduDir']='班主任';
+        $a['Eater']='学管人员';
         $a["EduSen"]='教务人员';
         $a['EduAdm']='教务管理员';
         $a['TrainTea']='培训教师';

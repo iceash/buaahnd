@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" href="../Public/js/kindeditor-4.1.1/themes/default/default.css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/payInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location="__URL__/paylist";
+				}else{
+					alert(data.info);
+					$("#warning").attr("href",data.data);
+                    $("#warning").show();
+				}
+			}
+		});
+	});
+});
+var editor;
+			KindEditor.ready(function(K) {			
+				var uploadbutton = K.uploadbutton({
+					button : K('#uploadButton')[0],
+					fieldName : 'imgFile',
+					url : '__APP__/Upload/uploadForKindeditor?dir=file',
+					afterUpload : function(data) {
+						if (data.error === 0) {
+							var url = K.formatUrl(data.url, 'absolute');
+							K('#titlepic').val(url);
+						} else {
+							alert(data.message);
+						}
+					},
+					afterError : function(str) {
+						alert('自定义错误信息: ' + str);
+					}
+				});
+				uploadbutton.fileBox.change(function(e) {
+					uploadbutton.submit();
+				});
+			});
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right">
+    	<div id="nav"><a href="__URL__/paylist">收费退费登记</a> | <a href="__URL__/view">查看交费情况</a> | <a href="__URL__/exceladd" class="on">批量导入</a></div>
+    </td>
+  </tr>
+</table>
+<div class="main">
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item_left">请下载excel表格，填写后上传并点击最下方的“提交”按钮：<br />
+
+
+ <a href="../Public/download/pay.xls">下载模板</a>
+ <!--<a href="__URL__/downStudent">下载信息不详学生名单</a>-->
+
+	</td>
+   </tr>
+    <tr>
+    <td height="100"><input type="text" name="titlepic" id="titlepic" class="inputlong" /> <input type="button" id="uploadButton" value="上传" /></td>
+   </tr>
+    
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="提交"  /></div></td>
+  <td><a href="#" id="warning" style="display:none;">点击下载错误文件</a></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

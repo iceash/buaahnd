@@ -30,7 +30,7 @@ class FinTeaAction extends CommonAction{
         }else{
             $this->assign('info','<span>该同学不存在</span>');
         }
-        $mapPa['stunum|idcard']=$_GET['num'];
+        $mapPa['idcard']=$idcard;
         $mapPa['period']=0;
         $payment=M('payment');
         $list=$payment->where($mapPa)->select();
@@ -153,6 +153,117 @@ class FinTeaAction extends CommonAction{
         $this->assign('periodList',$periodArr);
         $this->assign('project',$projectArr);
         $this->display();
+
+    }
+    public function exceladd(){
+        $this->display();
+    }
+    public function payInsert() {
+        $titlepic = $_POST['titlepic'];
+        if (empty($titlepic)) {
+            $this -> error('未上传文件');
+        } 
+        if (substr($titlepic,-3,3) !=='xls') {
+            $this -> error('上传的不是xls文件');
+        } 
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $inputFileName = $php_path .'../../../..'.$titlepic;
+        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);     
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);        
+        $count=count($sheetData);
+        $arr = array('/'=>'-','０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
+        '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+        'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+        'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+        'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+        'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+        'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+        'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+        'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+        'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+        'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+        'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+        'ｙ' => 'y', 'ｚ' => 'z',    
+        '（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+        '】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+        '‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+        '》' => '>',    
+        '％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+        '：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+        '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+        '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+        '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+        '＂'=>'"'); 
+        $count = count($sheetData);//一共有多少行
+        if ($count < 2) {
+            $this->ajaxReturn($count, "请填写信息", 0);
+        }
+        for ($i=2; $i <=$count; $i++) {
+            for ($j=1; $j <= 9; $j++) {
+                if($j==6||$j==9){continue;}else{
+                   if(strlen($sheetData[$i][chr(64+$j)])==0){
+                    $errors[]=chr(64+$j).$i;
+                    } 
+                }    
+            }//检查非空项
+            $map['name']=$sheetData[$i]['A'];
+            $feeid=M('fee')->where($map)->getField('id');
+            if($feeid){
+                $data_a[$i-2]['feeid']=$feeid;
+                $data_a[$i-2]['feename']=$sheetData[$i]['A'];
+            }
+            $way=M('system')->where('name="paymode"')->getField('content');
+            $wayArr=explode(',',$way);
+            if(in_array($sheetData[$i]['B'],$wayArr)){
+                $data_a[$i-2]['way'] = $sheetData[$i]['B'];
+            }else{$errors[]='B'.$i;}
+            if(is_numeric($sheetData[$i]['D'])){
+                if($sheetData[$i]['C']=='收费'){
+                    $data_a[$i-2]['money']=$sheetData[$i]['D'];
+                }elseif ($sheetData[$i]['C']=='退费') {
+                    $data_a[$i-2]['money']=-$sheetData[$i]['D'];
+                }else{$errors[]='C'.$i;}
+            }else{$errors[]='D'.$i;}
+            $mapP['name']=$sheetData[$i]['E'];
+            $feename1=M('payment')->where($mapP)->getField('feename');
+            if($feename1==$sheetData[$i]['A']){
+                $data_a[$i-2]['name']=$sheetData[$i]['E'];
+            }else{$errors[]='E'.$i;}
+            if(isset($sheetData[$i]['F'])){
+                $map1['username']=$sheetData[$i]['F'];
+                $name1=M('enroll')->where($map1)->getField('truename');
+                if($name1==$sheetData[$i]['E']){
+                    $data_a[$i-2]['stunum'] = $sheetData[$i]['F'];
+                }else{$errors[]='F'.$i;}
+            }
+            $map2['idcard']=$sheetData[$i]['G'];
+            $name2=M('enroll')->where($map2)->getField('truename');
+            if($name2==$sheetData[$i]['E']){
+                $data_a[$i-2]['idcard'] = $sheetData[$i]['G'];
+            }else{$errors[]='G'.$i;}
+            if(isDate($sheetData[$i]['H'])){
+                $data_a[$i-2]['date'] = $sheetData[$i]['H'];
+            }else{$errors[]='H'.$i;}
+            $data_a[$i-2]['invoice'] = $sheetData[$i]['I'];
+            $data_a[$i-2]['check'] = '审核中';
+            $data_a[$i-2]['operator'] = session('truename');
+            $data_a[$i-2]['date'] = date("Y-m-d");
+        }
+        if(count($errors) > 0){
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic,"信息不正确",0);
+        }
+        $dao=D('deal');
+        $dao -> addAll($data_a);
+        for ($k=0; $k <=$count; $k++) { 
+            if($sheetData[$k]['C']=='收费'){$isRefund=0;}else{$isRefund=1;}
+            $mapf['name']=$sheetData[$k]['A'];
+            $feeid=M('fee')->where($mapf)->getField('id');
+            $idcard=$sheetData[$k]['G'];
+            updatePaymentStatus($isRefund,$feeid,$idcard);
+        }
+        $this -> success("已成功保存");
 
     }
     public function getClass(){
