@@ -6,17 +6,21 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
 <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
 <script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('.calendar').live('click',function(){jQuery('.calendar').calendar({
+		zIndex:99999
+		})});
+});
 jQuery(window).load(function(){
-  $('.calendar').calendar();
 });
 jQuery(function(){ 
 	jQuery('#btn_save').click(function(){
 		jQuery.ajax({
 			type:'POST',
-			url:'__URL__/attendUpdate',
+			url:'__URL__/TalkUpdate',
 			dataType:'json',
 			data:jQuery("#form1").serialize(),
 			success: function(data){
@@ -44,39 +48,15 @@ jQuery(function(){
 <div class="main">
 <form id="form1"><input type="hidden" value="{$my.id}" name="id" />
  <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
-   <tr>
-    <td class="t_item"><span class="mustfill">*</span>学号</td>
-    <td><input type="text" name="susername" class="inputshort" value="{$my.susername}"/></td>
-   </tr>
-   <tr>
-    <td class="t_item"><span class="mustfill">*</span>姓名</td>
-    <td><input type="text" name="struename" class="inputshort" value="{$my.struename}"/></td>
-   </tr>
      <tr>
     <td class="t_item"><span class="mustfill">*</span>时间</td>
-    <td><input type="text" name="timezone" class="calendar" value="{$my.timezone}"/></td>
+    <td><input type="text" name="time" class="inputshort calendar" value="{$time}" style="width:140px"/></td>
    </tr>       
     <tr>
-    <td class="t_item"><span></span>内容</td>
+    <td class="t_item"><span class="mustfill">*</span>内容</td>
     <td><textarea name="content" id="content" class="textareanormal" >{$my.content}</textarea></td>
+    <td><input type="hidden" name="teacher" value="{$my.ttruename}"/></td>
    </tr>
-   <tr>
-    <td class="t_item"><span class="mustfill">*</span>旷课次数</td>
-    <td><input type="text" name="truant" class="inputshort" value="{$my.truant}"/></td>
-   </tr>
-   <tr>
-    <td class="t_item"><span class="mustfill">*</span>事假次数</td>
-    <td><input type="text" name="tvacate" class="inputshort" value="{$my.tvacate}"/></td>
-   </tr>
-   <tr>
-    <td class="t_item"><span class="mustfill">*</span>病假次数</td>
-    <td><input type="text" name="svacate" class="inputshort" value="{$my.svacate}"/></td>
-   </tr>
-   <tr>
-    <td class="t_item"><span class="mustfill">*</span>迟到次数</td>
-    <td><input type="text" name="late" class="inputshort" value="{$my.late}"/></td>
-   </tr>
-   
  </table>
  </form>
  <table width="100%" border="0" cellpadding="0" cellspacing="0">

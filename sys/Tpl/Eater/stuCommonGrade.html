@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+    jQuery('input:checkbox').attr('checked','checked');
+	jQuery('#check').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+	});
+});
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function excel(id){
+if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+    var url = '__URL__/downGradeInfo';
+    var key = getSelectCheckboxValues();
+    if(key!==''){
+		url=url+"/id/"+id+"/key/"+key;
+	}
+	window.location=url;
+}
+</script> 
+<style type="text/css">
+.btn_zone{ margin:20px 0}
+</style>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%"><div id="nav" style="margin-left:270px"><h3>导出{$id}级学生信息</h3></div></td>
+  </tr>
+</table>
+<div class="main">
+<form id='form1'>
+	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+        <tr><td style="border-bottom:0px solid #B2B2B2">&nbsp;&nbsp;<input type="checkbox" id="check"/>&nbsp;<label>全选</label></td></tr>
+        <tr>
+            <td style="border-bottom:0px solid #B2B2B2">
+                <table>
+                    <volist name="info" id="my" mod="5">
+                    <td style="border-bottom:0px solid #B2B2B2"><input style="vertical-align:middle" type="checkbox" name="key" value='{$key}'/><label style="vertical-align:middle">{$my}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+                    <eq name="mod" value="4"><tr></tr></eq>
+                    </volist>
+                </table>
+            </td>
+        </tr>
+    </table>
+</form>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr><td><div class="btn_zone"><input type="button" value="导出为xls文件" onclick='excel({$id})' /></div></td></tr>
+    </table>
+</div><!--end of main-->
+</body>
+</html>
