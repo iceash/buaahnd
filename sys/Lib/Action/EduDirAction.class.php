@@ -1056,10 +1056,8 @@ class EduDirAction extends CommonAction {
     public function stuCommonMenu($id) {
         $menu['stuCommonScore']=' 成绩单';
         $menu['stuCommonCertification']='在读证明';
-        $menu['stuCommonHomework']='作业情况';
         $menu['stuCommonAttend']='考勤记录';
         $menu['stuCommonReward']='奖惩记录';
-        $menu['stuCommonTalk']='谈话记录';
         $menu['stuCommonProcess']='留学进程';
         $menu['stuCommonInfo']='基本信息';
         $this->assign('menu',$this ->autoMenu($menu,$id));  
@@ -1423,7 +1421,7 @@ class EduDirAction extends CommonAction {
 		$this -> assign('nationality', $nationality);
 		
 		$Enroll = D('enroll');
-		$map['id'] = $id;
+		$map['username'] = $id;
 		$my = $Enroll -> where($map) -> find();
         
 		if ($my) {
@@ -1440,6 +1438,9 @@ class EduDirAction extends CommonAction {
 		}
         $this->assign('a',$a);
         $this -> assign('my', $my);
+        $mapJ['susername']=$id;
+        $list=M('judge')->where($mapJ)->select();
+        $this->assign('list',$list);
         $this->stuCommonMenu($id);
         $this -> display();
 	} 

@@ -91,7 +91,7 @@ class FinTeaAction extends CommonAction{
         $dataD['idcard']=$_POST['idcard'];
         $dataD['way']=$_POST['way'];
         $dataD['money']=-$_POST['money'];
-        $dataD['operator']=session('username');
+        $dataD['operator']=session('truename');
         if ($_POST['date']) {
            $dataD['date']=$_POST['date'];
         }else{$dataD['date']=date('Y-m-d');}

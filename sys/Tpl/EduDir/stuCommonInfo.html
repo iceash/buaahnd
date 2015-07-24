@@ -17,7 +17,7 @@ jQuery(function(){
 	jQuery('#mycontent1').slideDown("slow");
 });
 function setTab(current){
-	for(i=1;i<7;i++){
+	for(i=1;i<8;i++){
 		 a=jQuery("#mycontent"+i);
 		if(i==current){
 			if(a.is(":visible")){
@@ -596,6 +596,15 @@ function getNationality(a){
     <td class="ziduan">学费收据号</td>
     <td><input type="text" name="tuitionfees" class="inputshort"value="{$my.tuitionfees}" /> &nbsp;日期 <input type="text" name="tuitionfeesdate" class="inputshort calendar" value="{$my.tuitionfeesdate}"/></td>
   </tr>
+</table>
+	</div><!--end of mycontent-->
+<div class="mytitle"  onclick="setTab(7);"><h3>Part7 老师评价</h3></div>
+	<div class="mycontent" id="mycontent7" style="display:none">
+<table width="100%" border="0">
+	<tr><th>评价内容</th><th>评价时间</th></tr>
+	<volist name="list" id="vo">
+		<tr><td>{$vo.content}</td><td>{$vo.jdate}</td></tr>
+	</volist>
 </table>
 	</div><!--end of mycontent-->
 

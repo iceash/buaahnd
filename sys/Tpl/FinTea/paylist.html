@@ -126,7 +126,7 @@
 			if(lock1){
 				if (way&&money) {
 					if (isNaN(money)){alert("金额必须是数字");}else{
-						if (money<0) {alert("交费金额不能为负");}else{
+						if (money<=0) {alert("交费金额不能为负");}else{
 							lock1=0;
 							$.ajax({
 								type:'post',
@@ -142,7 +142,7 @@
 						}
 					}	
 				}else{
-				alert("金额必须为数字");
+				alert("信息错误");
 				}
 			}
 		});
@@ -160,7 +160,7 @@
 			if(lock2){
 				if (money) {
 					if (isNaN(money)){alert("金额必须是数字");}else{
-						if (money<0) {alert("退费金额不能为负");}else{
+						if (money<=0) {alert("退费金额不能为负");}else{
 							lock2=0;
 							$.ajax({
 								type:'post',
@@ -176,7 +176,7 @@
 						}
 					}	
 				}else{
-				alert("金额必须为数字");
+				alert("信息错误");
 				}
 			}
 		});
