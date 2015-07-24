@@ -1020,9 +1020,9 @@ class FinAdmAction extends CommonAction{
           $newstatics[$h]['gets']=$data[$h]['gets'];
           $newstatics[$h]['give']=$data[$h]['give'];
           for ($cc=0; $cc <count($partner) ; $cc++) { 
-              $partarr[] = $data[$h]['part'.($cc+1).''];
+              $partarr[$h][] = $data[$h]['part'.($cc+1).''];
           }
-          $newstatics[$h]['returns']=implode(",",$partarr);
+          $newstatics[$h]['returns']=implode(",",$partarr[$h]);
           $newstatics[$h]['period']=$lastperiodid+1;
           $newstatics[$h]['getorgive']=0;
         }
@@ -1031,12 +1031,13 @@ class FinAdmAction extends CommonAction{
           $newstatics2[$h1]['gets']=$data2[$h1]['gets'];
           $newstatics2[$h1]['give']=$data2[$h1]['give'];
           for ($cd=0; $cd <count($partner) ; $cd++) { 
-              $partarr2[] = $data2[$h]['part'.($cd+1).''];
+              $partarr2[$h1][] = $data2[$h1]['part'.($cd+1).''];
           }
-          $newstatics2[$h1]['returns']=implode(",",$partarr2);
+          $newstatics2[$h1]['returns']=implode(",",$partarr2[$h1]);
           $newstatics2[$h1]['period']=$lastperiodid+1;
           $newstatics2[$h1]['getorgive']=1;
         }
+
         $add = M('statics') -> addall($newstatics);
         $add2 = M('statics') -> addall($newstatics2);
         $newperiod['startdate']=$lastperiod['enddate'];
@@ -1046,26 +1047,40 @@ class FinAdmAction extends CommonAction{
           $give[$iforgive]=$data2[$iforgive]['give'];
           $realincome[$iforgive]=$data2[$iforgive]['realincome'];
           for ($dd=0; $dd <count($partner) ; $dd++) { 
-              $part[$dd+1][$iforgive]=$data2[$iforgive]['part'.($dd+1).''];
+              $part[$iforgive][$dd]=$data2[$iforgive]['part'.($dd+1).''];
           }
+
         }
+        for ($kkk=0; $kkk <count($partner) ; $kkk++) { 
+            for ($kk=0; $kk <count($data2) ; $kk++) { 
+            $pat[$kkk][$kk]=$part[$kk][$kkk];
+            } 
+            $parts[$kkk]=array_sum($pat[$kkk]);
+        }
+                 
+        
         for ($iforgive1=0; $iforgive1 < count($data); $iforgive1++) { 
           $gets1[$iforgive1]=$data[$iforgive1]['gets'];
           $give1[$iforgive1]=$data[$iforgive1]['give'];
           $realincome1[$iforgive1]=$data[$iforgive1]['realincome'];
           for ($da=0; $da <count($partner) ; $da++) { 
-              $part2[$da+1][$iforgive]=$data[$iforgive]['part'.($da+1).''];
+              $part2[$iforgive1][$da]=$data[$iforgive1]['part'.($da+1).''];
           }
         }
-
+        for ($kkk1=0; $kkk1 <count($partner) ; $kkk1++) { 
+            for ($kk1=0; $kk1 <count($data) ; $kk1++) { 
+                $pat2[$kkk1][$kk1]=$part2[$kk1][$kkk1];
+            } 
+            $parts2[$kkk1]=array_sum($pat2[$kkk1]);
+        }
         $newperiod['getall']=array_sum($gets)+array_sum($gets1);
         $newperiod['giveall']=array_sum($give)+array_sum($give1);
         $newperiod['realincomeall']=array_sum($realincome)+array_sum($realincome1);
         for ($db=0; $db <count($partner) ; $db++) { 
-             $newperiod['part'.($db+1).'all']=array_sum($part[$db])+array_sum($part2[$db]);
+             $newperiod['part'.($db+1).'all']=$parts[$db]+$parts2[$db];
         }
         for ($dc=0; $dc <count($partner) ; $dc++) { 
-            $partalll[]=$newperiod['part'.($db+1).'all'];
+            $partalll[]=$newperiod['part'.($dc+1).'all'];
         }
         $newperiod['partall']=implode(",",$partalll);
         $newperiod['partners']=$tmppartners['content'];
