@@ -66,18 +66,17 @@
   <tr>
     <th width="130px" rowspan="2">年度</th>
     <th colspan="4">收&nbsp;&nbsp;入</th>
-    <th colspan="5">拨&nbsp;&nbsp;款</th>
+    <th colspan="{$partnernum}">拨&nbsp;&nbsp;款</th>
     </tr>
   <tr>
     <th width="" height="67">项目</th>
     <th width="">收入</th>
 	<th width="">退费</th>
 	<th><p>实际收入</p>	  </th>
-	<th width="">南邮</th>
-  <th width="">百度推广</th>
-    <th width="">阿里去啊</th>
-    <th width="">东方航空</th>
-  <th width="">青梦家</th>
+  <volist  name="partners" id="vo">
+	<th width="">{$vo}</th>
+
+  </volist>
   </tr>
 </thead>
 <tbody>
@@ -87,11 +86,9 @@
           <td style='text-align:right'>{$lastperiod['getall']}</td>
           <td style='text-align:right'>{$lastperiod['giveall']}</td>
           <td style='text-align:right'>{$lastperiod['realincomeall']}</td>
-          <td style='text-align:right'>{$lastperiod['part1all']}</td>
-          <td style='text-align:right'>{$lastperiod['part2all']}</td>
-          <td style='text-align:right'>{$lastperiod['part3all']}</td>
-          <td style='text-align:right'>{$lastperiod['part4all']}</td>
-          <td style='text-align:right'>{$lastperiod['part5all']}</td>
+          <volist name="lastperiod2" id="vo">
+          <td style='text-align:right'>{$vo}</td>
+          </volist>
         </tr>
         
 
