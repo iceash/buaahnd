@@ -27,7 +27,7 @@ class EaterAction extends CommonAction {
     public function menusummary() {
     $menu['summary']='总结记录';
     $this->assign('menu',$this ->autoMenu($menu));  
-}
+    }
     public function summary(){
         $classList=M('class')->Field('name')->select();
         $this->assign('classList',$classList);    
@@ -188,19 +188,17 @@ class EaterAction extends CommonAction {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
         for ($i=2; $i <=$count; $i++) { 
-            for ($j=1; $j <= 4; $j++) {             
+            for ($j=1; $j <= 7; $j++) {             
                if(strlen($sheetData[$i][chr(64+$j)])==0){
                     $errors[]=chr(64+$j).$i;
                 }    
             }//检查非空项
-            $map1['studentname']=$sheetData[$i]['C'];
-            $map1['student']=$sheetData[$i]['D'];
+            $map1['studentname']=$sheetData[$i]['F'];
+            $map1['student']=$sheetData[$i]['G'];
             $check=M('classstudent')->where($map1)->select();
-            if($check){
-                $data_a['room']=$sheetData[$i]['B'];
-            }else{
-                $errors[]='C'.$i;
-                $errors[]='D'.$i;
+            if(!$check){
+                $errors[]='F'.$i;
+                $errors[]='G'.$i;
             }
         }
         if(count($errors) > 0){
@@ -208,9 +206,12 @@ class EaterAction extends CommonAction {
             $this->ajaxReturn($titlepic,"信息不正确",0);
         }
         for ($j=0; $j <=$count; $j++) {
-           $map['studentname']=$sheetData[$j]['C'];
-           $map['student']=$sheetData[$j]['D'];
-           $data_a['room']=$sheetData[$j]['B'];
+           $map['studentname']=$sheetData[$j]['F'];
+           $map['student']=$sheetData[$j]['G'];
+           $data_a['house']=$sheetData[$j]['B'];
+           $data_a['room']=$sheetData[$j]['C'];           
+           $data_a['cell']=$sheetData[$j]['D'];
+           $data_a['bed']=$sheetData[$j]['E'];
            M('classstudent')->where($map)->save($data_a);
         }
         $this -> success("已成功保存");
@@ -2681,6 +2682,39 @@ class EaterAction extends CommonAction {
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
         exit; 
+    }
+/*******************************宿舍管理**********************************/
+    public function menuhouseparent() {
+        $menu['houseparent']='宿舍条例';
+        $menu['exchange']='更换宿舍';
+        $this->assign('menu',$this ->autoMenu($menu));  
+    }
+    public function houseparent(){
+        $rules=M('system')->where('name="rules"')->getField('content');
+        $this->assign('rules',$rules);
+        $this->menuhouseparent();
+        $this->display();
+    }
+    public function houseparentEdit(){
+        $rules=M('system')->where('name="rules"')->getField('content');
+        $r=str_replace("<br>",' \n',$rules);
+        $this->assign('rules',$r);
+        $this->menuhouseparent();
+        $this->display();
+    }
+    public function updateRules(){
+        $rules=$_POST['rules'];
+
+        if (empty($rules)) {
+            $this -> error('必填项不能为空');
+        }
+        $dao = M('system');
+        $checked = $dao -> where('name="rules"')->setField('content',$rules);
+        if ($checked != false) {
+            $this -> success('已成功保存');
+        } else {
+            $this -> error('没有更新任何数据');
+        }
     }
 }
 ?>

@@ -116,7 +116,10 @@ function searchkeydown(e){
 <thead>
   <tr>
   	<th>班级</th>
-	<th>宿舍</th>
+	<th>楼号</th>
+	<th>房号</th>
+	<th>室号</th>
+	<th>床号</th>
     <th>姓名</th>
 	<th>学号</th>
 	<th>操作</th>
@@ -126,7 +129,10 @@ function searchkeydown(e){
   <volist name="my" id="my">
   <tr>
   	<td>{$my.classname}</td>
+	<td>{$my.house}</td>
 	<td>{$my.room}</td>
+	<td>{$my.cell}</td>
+	<td>{$my.bed}</td>
     <td>{$my.studentname}</td>
     <td>{$my.student}</td>
 	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
