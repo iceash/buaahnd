@@ -55,10 +55,8 @@
     <span >交费状态：</span>
   <select id="status">
       <option value="0">请选择</option>
-      <option value ="1">未交费</option>
-      <option value="2">费用未交清</option>
-      <option value="3">已交齐费用</option>
-      <option value="4">退费</option>
+      <option value ="交费">交费</option>
+      <option value="退费">退费</option>
     </select>&nbsp;&nbsp;
      <span >期数：</span>
 
@@ -99,25 +97,22 @@
 
 <thead>
   <tr>
-    <th width="">学员姓名</th>
-    <th width="">学号</th>
-    <th width="">身份证号</th>
-  <th width="">项目</th>
-  <th width="">收费项</th>
+    <th>学员姓名</th>
+    <th>学号</th>
+    <th>身份证号</th>
+  <th>项目</th>
+  <th>收费项</th>
   <th>年级</th>
-  <th width="">预科班次</th>
-  <th width="">专业</th>
-    <th width="">班次</th>
-    <th width="">课程</th>
+  <th>预科班次</th>
+  <th>专业</th>
+    <th>班次</th>
+    <th>课程</th>
   <th>收费类别</th>
-  <th width="">交费日期</th>
-  <th width="">交费金额</th>
-  <th width="">发票号</th>
-  <th width="">交费状态</th>
-  <th width="">总应交费</th>
-  <th width="">已交费</th>
-  <th width="">总欠费</th>
-   <th width="">校财务交费日期</th>
+  <th>交费日期</th>
+  <th>交费金额</th>
+  <th>发票号</th>
+  <th>交费状态</th>
+   <th>校财务交费日期</th>
   </tr>
 </thead>
 <tbody>
@@ -139,9 +134,6 @@
           <td>{$vo.money}</td>
           <td>{$vo.invoice}</td>
           <td>{$vo.statusname}</td>
-          <td>{$vo.standard}</td>
-          <td>{$vo.paid}</td>
-          <td>{$vo.needpay}</td>
           <td>{$vo.submitdate}</td>
         </tr>
         

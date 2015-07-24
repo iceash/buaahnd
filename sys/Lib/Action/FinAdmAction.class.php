@@ -546,7 +546,16 @@ class FinAdmAction extends CommonAction{
       $where['period']=0;
       $where['check']='已提交';
       if($period){$where['period']  = $period;}
-      if($status1){$where['status']  = $status1-1;}
+      if($status1){
+        if($status1=='交费'){
+            $where['money'] = array('gt',0);
+            
+        }
+        if($status1=='退费'){
+            $where['money'] = array('lt',0);
+            
+        }
+      }
       $Form  =  M('statistics');
 
       if(!$_GET['searchkey']){
@@ -558,21 +567,13 @@ class FinAdmAction extends CommonAction{
         $Model =  $Form ->where($where)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
 
       for ($i=0; $i <count($Model);$i++) {
-      $status=$Model[$i]['status'];
-      switch ($status) {
-        case '0':
-          $statusname='未交费';
-          break;
-        case '1':
-          $statusname='费用未交清';
-          break;
-        case '2':
-          $statusname='已交齐费用';
-                    break;
-                case '3':
-                    $statusname='退费';
-                    break;
-      }
+          if($Model[$i]['money']>0){
+              $statusname='交费';
+          }
+          if($Model[$i]['money']<0){
+            $statusname='退费';
+          }
+     
         $Model[$i]['statusname']=$statusname;
        }
       foreach ($Model as $mo => $va) {
@@ -623,22 +624,14 @@ class FinAdmAction extends CommonAction{
       
       }
       //dump($Model);
-      for ($i=0; $i <count($Model);$i++) {
-        $status=$Model[$i]['status'];
-      switch ($status) {
-        case '0':
-          $statusname='未交费';
-          break;
-        case '1':
-          $statusname='费用未交清';
-          break;
-        case '2':
-          $statusname='已交齐费用';
-                    break;
-                case '3':
-                    $statusname='退费';
-                    break;
-      }
+        for ($i=0; $i <count($Model);$i++) {
+          if($Model[$i]['money']>0){
+              $statusname='交费';
+          }
+          if($Model[$i]['money']<0){
+            $statusname='退费';
+          }
+     
         $Model[$i]['statusname']=$statusname;
        }
       foreach ($Model as $mo => $va) {
