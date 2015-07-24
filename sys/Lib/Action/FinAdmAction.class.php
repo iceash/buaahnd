@@ -659,7 +659,7 @@ class FinAdmAction extends CommonAction{
     {
     Vendor('PHPExcel');
     $objPHPExcel = new PHPExcel();
-    $objPHPExcel->getActiveSheet()->mergeCells('A1:S1'); 
+    $objPHPExcel->getActiveSheet()->mergeCells('A1:P1'); 
     $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
     $objPHPExcel->getActiveSheet()->getRowDimension('2')->setRowHeight(22); //设置行高
     $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(10);  
@@ -688,10 +688,9 @@ class FinAdmAction extends CommonAction{
     $objPHPExcel->getActiveSheet()->getStyle('E')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $objPHPExcel->getActiveSheet()->getStyle('K')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $objPHPExcel->getActiveSheet()->getStyle('L')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-    $objPHPExcel->getActiveSheet()->getStyle('S')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
     $objPHPExcel->getActiveSheet()->getStyle('H')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER );
-    $objPHPExcel->getActiveSheet()->getStyle('A2:S2')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-    $objPHPExcel->getActiveSheet()->getStyle('A2:S2')->getFill()->getStartColor()->setARGB('FFF0FFF0');
+    $objPHPExcel->getActiveSheet()->getStyle('A2:P2')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+    $objPHPExcel->getActiveSheet()->getStyle('A2:P2')->getFill()->getStartColor()->setARGB('FFF0FFF0');
     $objPHPExcel->getActiveSheet()->getStyle('C')->getNumberFormat()->setFormatCode('0');
     $objPHPExcel->getActiveSheet()->getStyle('N')->getNumberFormat()->setFormatCode('0');
     $objPHPExcel->getActiveSheet()->getStyle('A1')->getFont() ->setSize(20);

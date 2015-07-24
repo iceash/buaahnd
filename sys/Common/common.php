@@ -142,7 +142,16 @@ function downloads(){
       if($_GET['sbfrom']&&$_GET['sbto']){$where['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
       $where['period']=0;
       if($period){$where['period']  = $period;}
-      if($status1){$where['status']  = $status1-1;}
+      if($status1){
+        if($status1=='交费'){
+            $where['money'] = array('gt',0);
+            
+        }
+        if($status1=='退费'){
+            $where['money'] = array('lt',0);
+            
+        }
+      }
       $Form  =  M('statistics');
 
       if(!$_GET['searchkey']){
@@ -153,30 +162,16 @@ function downloads(){
         $show= $Page->show();
         $Model =  $Form ->where($where)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
 
-            for ($i=0; $i <count($Model);$i++) {
-        $status=$Model[$i]['status'];
-      switch ($status) {
-        case '0':
-          $statusname='未交费';
-          break;
-        case '1':
-          $statusname='费用未交清';
-          break;
-        case '2':
-          $statusname='已交齐费用';
-                    break;
-                case '3':
-                    $statusname='退费';
-                    break;
-      }
+        for ($i=0; $i <count($Model);$i++) {
+          if($Model[$i]['money']>0){
+              $statusname='交费';
+          }
+          if($Model[$i]['money']<0){
+            $statusname='退费';
+          }
+     
         $Model[$i]['statusname']=$statusname;
        }
-      foreach ($Model as $mo => $va) {
-        $Model[$mo]["standard"] = floatval($Model[$mo]["standard"]);
-        $Model[$mo]["paid"] = floatval($Model[$mo]["paid"]);
-        $Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
-        //dump($Model[$mo]);
-      };
         
         return($Model);
 
@@ -213,30 +208,16 @@ function downloads(){
       
       }
       //dump($Model);
-      for ($i=0; $i <count($Model);$i++) {
-            $status=$Model[$i]['status'];
-            switch ($status) {
-                case '0':
-                    $statusname='未交费';
-                    break;
-                case '1':
-                    $statusname='费用未交清';
-                    break;
-                case '2':
-                    $statusname='已交齐费用';
-                    break;
-                case '3':
-                    $statusname='退费';
-                    break;
-            }
-            $Model[$i]['statusname']=$statusname;
-         }
-      foreach ($Model as $mo => $va) {
-        $Model[$mo]["standard"] = floatval($Model[$mo]["standard"]);
-        $Model[$mo]["paid"] = floatval($Model[$mo]["paid"]);
-        $Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
-        //dump($Model[$mo]);
-      };
+        for ($i=0; $i <count($Model);$i++) {
+          if($Model[$i]['money']>0){
+              $statusname='交费';
+          }
+          if($Model[$i]['money']<0){
+            $statusname='退费';
+          }
+     
+        $Model[$i]['statusname']=$statusname;
+       }
       
       if($Model[0]["idcard"]==0){
         $this->assign('thead','该同学不存在!');
