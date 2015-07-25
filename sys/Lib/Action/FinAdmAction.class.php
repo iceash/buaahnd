@@ -1107,6 +1107,8 @@ class FinAdmAction extends CommonAction{
       $lastperiod=$period->where('id='.$lastperiodid)->find();
       $periodid = $B->select();
       if($Period){
+        $tmppartners = M("period")->where('id='.$Period.'')->find();
+      $partner = explode(",", $tmppartners["partners"]);
       $data   =   $A->where('getorgive = 0 AND period = '.$Period)->select();
       $data2   =  $A->where('getorgive = 1 AND period = '.$Period)->select();
       
@@ -1135,16 +1137,23 @@ class FinAdmAction extends CommonAction{
         //dump($dato[$mo]);
         
       };
-
+        for ($ef=0; $ef <count($partner) ; $ef++) { 
+        $partarrr = explode(",",$lastperiod["partall"]);
+        $lastperiod2[$ef]=$partarrr[$ef];
+    }
     }
     else{
-
+    $tmppartners = M("system")->where("name='partners'")->find();
+    $partner = explode(",", $tmppartners["content"]);  
     $reback=M('reback');
     $deal=M('deal');
     $fee=M('fee');
     $period =M('period');
     $lastperiod=$period->order('id desc')->find();
-    
+    for ($ee=0; $ee <count($partner) ; $ee++) { 
+        $partarrr = explode(",",$lastperiod["partall"]);
+        $lastperiod2[$ee]=$partarrr[$ee];
+    }  
     $mapU['period']=0;
     $mapU['haschildren']=0;
     $data=$fee->where($mapU)->Field('id,name')->select();
@@ -1163,93 +1172,24 @@ class FinAdmAction extends CommonAction{
       $data[$i]['give']=0;
     }
     for ($a=0; $a < count($data); $a++) { 
-      $mapP['feename']=$data[$a]['name'];
-      $mapP['partner']='南邮';        
-      $middle=$reback->where($mapP)->select();
-      $type = $middle[0]['type'];
-        switch ($type) {
-          case '0':
-            $data[$a]['part1']=$data[$a]['gets']*$middle[0]['value'];
-            break;
-          case '1':
-            $data[$a]['part1']=$middle[0]['value'];
-            break;
-          default:
-            $otherid =intval($middle[0]['otherid'])-1;
-
-            $data[$a]['part1']=$middle[0]['value']*$data[$otherid]['gets'];
-            break;
+        for ($bb=0; $bb <count($partner) ; $bb++) { 
+            $mapP['feename']=$data[$a]['name'];
+            $mapP['partner']=$partner[$bb];        
+            $middle=$reback->where($mapP)->select();
+            $type = $middle[0]['type'];
+             switch ($type) {
+                  case '0':
+                    $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value'];
+                 break;
+                  case '1':
+                    $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
+                    break;
+                  default:
+                    $otherid =intval($middle[0]['otherid'])-1;
+                   $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets'];
+                 break;
+            }
           }
-      $mapP1['feename']=$data[$a]['name'];
-      $mapP1['partner']='百度推广';        
-      $middle1=$reback->where($mapP1)->select();
-      $type = $middle1[0]['type'];
-        switch ($type) {
-          case '0':
-            $data[$a]['part2']=$data[$a]['gets']*$middle1[0]['value'];
-            break;
-          case '1':
-            $data[$a]['part2']=$middle1[0]['value'];
-            break;
-          default:
-           $otherid =intval($middle1[0]['otherid'])-1;
-
-            $data[$a]['part2']=$middle1[0]['value']*$data[$otherid]['gets'];
-            break;      
-        }
-      $mapP2['feename']=$data[$a]['name'];
-      $mapP2['partner']='阿里去啊';        
-      $middle2=$reback->where($mapP2)->select();
-      $type = $middle2[0]['type'];
-        switch ($type) {
-          case '0':
-            $data[$a]['part3']=$data[$a]['gets']*$middle2[0]['value'];
-            break;
-          case '1':
-            $data[$a]['part3']=$middle2[0]['value'];
-            break;
-          default:
-            $otherid =intval($middle2[0]['otherid'])-1;
-
-            $data[$a]['part3']=$middle2[0]['value']*$data[$otherid]['gets'];
-            break;      
-        }
-      $mapP3['feename']=$data[$a]['name'];
-      $mapP3['partner']='东方航空';        
-      $middle3=$reback->where($mapP3)->select();
-      $type = $middle3[0]['type'];
-        switch ($type) {
-          case '0':
-            $data[$a]['part4']=$data[$a]['gets']*$middle3[0]['value'];
-            break;
-          case '1':
-            $data[$a]['part4']=$middle3[0]['value'];
-            break;
-          default:
-            $otherid =intval($middle3[0]['otherid'])-1;
-
-            $data[$a]['part4']=$middle3[0]['value']*$data[$otherid]['gets'];
-            break;        
-        } 
-        $mapP4['feename']=$data[$a]['name'];
-        $mapP4['partner']='青梦家';        
-        $middle4=$reback->where($mapP4)->select();
-        $type = $middle4[0]['type'];
-        switch ($type) {
-          case '0':
-            $data[$a]['part5']=$data[$a]['gets']*$middle4[0]['value'];
-            break;
-          case '1':
-            $data[$a]['part5']=$middle4[0]['value'];
-            break;
-          default:
-            $otherid =intval($middle4[0]['otherid'])-1;
-
-            $data[$a]['part5']=$middle4[0]['value']*$data[$otherid]['gets'];
-            break;      
-        }
-
-
     }
     foreach ($data as $mo => $va) {
             $data[$mo]["give"] = doubleval($data[$mo]["give"]);
@@ -1270,86 +1210,24 @@ class FinAdmAction extends CommonAction{
       $data2[$i]['gets']=0;
     }
     for ($a=0; $a < count($data2); $a++) { 
-      $mapP['feename']=$data2[$a]['name'];
-      $mapP['partner']='南邮';        
-      $middle=$reback->where($mapP)->select();
-      $type = $middle[0]['type'];
-        switch ($type) {
-          case '0':
-            $data2[$a]['part1']=$data2[$a]['give']*$middle[0]['value'];
-            break;
-          case '1':
-            $data2[$a]['part1']=0;
-            break;
-          default:
-            $otherid =intval($middle[0]['otherid'])-1;
-            $data2[$a]['part1']=$middle[0]['value']*$data2[$otherid]['give'];
-            break;
-          }
-      $mapP1['feename']=$data2[$a]['name'];
-      $mapP1['partner']='百度推广';        
-      $middle1=$reback->where($mapP1)->select();
-      $type = $middle1[0]['type'];
-        switch ($type) {
-          case '0':
-            $data2[$a]['part2']=$data2[$a]['give']*$middle1[0]['value'];
-            break;
-          case '1':
-            $data2[$a]['part2']=0;
-            break;
-          default:
-           $otherid =intval($middle1[0]['otherid'])-1;
-            $data2[$a]['part2']=$middle1[0]['value']*$data2[$otherid]['give'];
-            break;      
-        }
-      $mapP2['feename']=$data2[$a]['name'];
-      $mapP2['partner']='阿里去啊';        
-      $middle2=$reback->where($mapP2)->select();
-      $type = $middle2[0]['type'];
-        switch ($type) {
-          case '0':
-            $data2[$a]['part3']=$data2[$a]['give']*$middle2[0]['value'];
-            break;
-          case '1':
-            $data2[$a]['part3']=0;
-            break;
-          default:
-            $otherid =intval($middle2[0]['otherid'])-1;
-            $data2[$a]['part3']=$middle2[0]['value']*$data2[$otherid]['give'];
-            break;      
-        }
-      $mapP3['feename']=$data2[$a]['name'];
-      $mapP3['partner']='东方航空';        
-      $middle3=$reback->where($mapP3)->select();
-      $type = $middle3[0]['type'];
-        switch ($type) {
-          case '0':
-            $data2[$a]['part4']=$data2[$a]['give']*$middle3[0]['value'];
-            break;
-          case '1':
-            $data2[$a]['part4']=0;
-            break;
-          default:
-            $otherid =intval($middle3[0]['otherid'])-1;
-            $data2[$a]['part4']=$middle3[0]['value']*$data2[$otherid]['give'];
-            break;        
-        } 
-        $mapP4['feename']=$data2[$a]['name'];
-        $mapP4['partner']='青梦家';        
-        $middle4=$reback->where($mapP4)->select();
-        $type = $middle4[0]['type'];
-        switch ($type) {
-          case '0':
-            $data2[$a]['part5']=$data2[$a]['give']*$middle4[0]['value'];
-            break;
-          case '1':
-            $data2[$a]['part5']=0;
-            break;
-          default:
-            $otherid =intval($middle4[0]['otherid'])-1;
-            $data2[$a]['part5']=$middle4[0]['value']*$data2[$otherid]['give'];
-            break;      
-        }
+        for ($bc=0; $bc <count($partner) ; $bc++) { 
+            $mapP['feename']=$data2[$a]['name'];
+            $mapP['partner']=$partner[$bc];        
+            $middle=$reback->where($mapP)->select();
+            $type = $middle[0]['type'];
+             switch ($type) {
+                  case '0':
+                    $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value'];
+                 break;
+                  case '1':
+                    $data2[$a]['part'.($bc+1).'']=0;
+                    break;
+                  default:
+                    $otherid =intval($middle[0]['otherid'])-1;
+                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$data2[$otherid]['give'];
+                 break;
+            }
+          }        
     }
     foreach ($data2 as $mo => $va) {
         $data2[$mo]["give"] = doubleval($data2[$mo]["give"]);
@@ -1420,40 +1298,24 @@ class FinAdmAction extends CommonAction{
                 ->setCellValue('C6', '收入')
                 ->setCellValue('D6', '退费')
                 ->setCellValue('E6', '实际收入')
-                ->setCellValue('F6', '南邮')
-                ->setCellValue('G6', '百度推广')
-                ->setCellValue('H6', '阿里去啊')
-                ->setCellValue('I6', '东方航空')
-                ->setCellValue('J6', '青梦家')
+
                 ->setCellValue('A7', '上年度期末余额')
                 ->setCellValue('C7', $lastperiod['getall'])
                 ->setCellValue('D7', $lastperiod['giveall'])
                 ->setCellValue('E7', $lastperiod['realincomeall'])
-                ->setCellValue('F7', $lastperiod['part1all'])
-                ->setCellValue('G7', $lastperiod['part2all'])
-                ->setCellValue('H7', $lastperiod['part3all'])
-                ->setCellValue('I7', $lastperiod['part4all'])
-                ->setCellValue('J7', $lastperiod['part5all'])
+
                 ->setCellValue('A8', '本年度收入和分配')
                 ->setCellValue('A'.$shourunum.'', '本年度小计')
                 ->setCellValue('C'.$shourunum.'', '=SUM(C8:C'.$datanum.')')
                 ->setCellValue('D'.$shourunum.'', '=SUM(D8:D'.$datanum.')')
                 ->setCellValue('E'.$shourunum.'', '=SUM(E8:E'.$datanum.')')
-                ->setCellValue('F'.$shourunum.'', '=SUM(F8:F'.$datanum.')')
-                ->setCellValue('G'.$shourunum.'', '=SUM(G8:G'.$datanum.')')
-                ->setCellValue('H'.$shourunum.'', '=SUM(H8:H'.$datanum.')')
-                ->setCellValue('I'.$shourunum.'', '=SUM(I8:I'.$datanum.')')
-                ->setCellValue('J'.$shourunum.'', '=SUM(J8:J'.$datanum.')')
+
                 ->setCellValue('A'.($datanum+2).'', '本年度分配后退费')
                 ->setCellValue('A'.$shourunum2.'', '本年度分配后退费小计')
                 ->setCellValue('C'.$shourunum2.'', '=SUM(C'.($datanum+2).':C'.$data2num.')')
                 ->setCellValue('D'.$shourunum2.'', '=SUM(D'.($datanum+2).':D'.$data2num.')')
                 ->setCellValue('E'.$shourunum2.'', '=SUM(E'.($datanum+2).':E'.$data2num.')')
-                ->setCellValue('F'.$shourunum2.'', '=SUM(F'.($datanum+2).':F'.$data2num.')')
-                ->setCellValue('G'.$shourunum2.'', '=SUM(G'.($datanum+2).':G'.$data2num.')')
-                ->setCellValue('H'.$shourunum2.'', '=SUM(H'.($datanum+2).':H'.$data2num.')')
-                ->setCellValue('I'.$shourunum2.'', '=SUM(I'.($datanum+2).':I'.$data2num.')')
-                ->setCellValue('J'.$shourunum2.'', '=SUM(J'.($datanum+2).':J'.$data2num.')')
+
                 ->setCellValue('A'.($data2num+2).'', ' 本年度拨付款和支出')
                 ->setCellValue('B'.($data2num+2).'', 'HND')
                 ->setCellValue('B'.($data2num+3).'', '2+2')
@@ -1463,12 +1325,44 @@ class FinAdmAction extends CommonAction{
 
                 ->setCellValue('C'.($shourunum2+4).'', '=SUM(C'.($datanum+1).':C'.$data2num.')')
                 ->setCellValue('D'.($shourunum2+4).'', '=SUM(D'.($datanum+1).':D'.$data2num.')')
-                ->setCellValue('E'.($shourunum2+4).'', '=SUM(E'.($datanum+1).':E'.$data2num.')')
-                ->setCellValue('F'.($shourunum2+4).'', '=SUM(F'.($datanum+1).':F'.$data2num.')')
-                ->setCellValue('G'.($shourunum2+4).'', '=SUM(G'.($datanum+1).':G'.$data2num.')')
-                ->setCellValue('H'.($shourunum2+4).'', '=SUM(H'.($datanum+1).':H'.$data2num.')')
-                ->setCellValue('I'.($shourunum2+4).'', '=SUM(I'.($datanum+1).':I'.$data2num.')')
-                ->setCellValue('J'.($shourunum2+4).'', '=SUM(J'.($datanum+1).':J'.$data2num.')');
+                ->setCellValue('E'.($shourunum2+4).'', '=SUM(E'.($datanum+1).':E'.$data2num.')');
+                for ($excel1=0; $excel1 <count($partner) ; $excel1++) { 
+                    $li = chr(70+$excel1);
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(''.$li.'6',$partner[$excel1]);
+                }
+                for ($excel2=0; $excel2 <count($partner) ; $excel2++) { 
+                    $la = chr(70+$excel2);
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue(''.$la.'7',$lastperiod2[$excel2]);
+                }
+                for ($excel3=0; $excel3 <count($partner) ; $excel3++) { 
+                    $la = chr(70+$excel3);
+                    $le = chr(70+$excel3);
+                    $lf = chr(70+$excel3);
+                    $lf.=$datanum;
+                    $le.=$shourunum;
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($le, '=SUM('.$la.'8:'.$lf.')');
+                }
+                for ($excel4=0; $excel4 <count($partner) ; $excel4++) { 
+                    $la = chr(70+$excel4);
+                    $le = chr(70+$excel4);
+                    $lf = chr(70+$excel4);
+                    $la.=($datanum+2);
+                    $lf.=$shourunum2;
+                    $le.=$data2num;
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($lf, '=SUM('.$la.':'.$le.')');
+                }
+                for ($excel5=0; $excel5 <count($partner) ; $excel5++) { 
+                    $la = chr(70+$excel5);
+                    $le = chr(70+$excel5);
+                    $lf = chr(70+$excel5);
+                    $la.=($datanum+1);
+                    $lf.=($shourunum2+4);
+                    $le.=$data2num;
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue($lf, '=SUM('.$la.':'.$le.')');
+                }
+
+
+                
     $objPHPExcel->setActiveSheetIndex(0);
     $i=8;
     foreach($data as $k=>$v){
@@ -1476,13 +1370,12 @@ class FinAdmAction extends CommonAction{
                 ->setCellValue('B'.$i, $v['feename'])
                 ->setCellValue('C'.$i, $v['gets'])
                 ->setCellValue('D'.$i, $v['give'])
-                ->setCellValue('E'.$i, $v['realincome'])
-                ->setCellValue('F'.$i, $v['part1'])
-                ->setCellValue('G'.$i, $v['part2'])
-                ->setCellValue('H'.$i, $v['part3'])
-                ->setCellValue('I'.$i, $v['part4'])
-                ->setCellValue('J'.$i, $v['part5']);  
-
+                ->setCellValue('E'.$i, $v['realincome']);
+    for ($ec=0; $ec <count($partner) ; $ec++) { 
+        $la = chr(70+$ec);
+        $la.=$i;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($la, $v['part'.($ec+1).'']);
+    }
     $i++;
     }
     $j=$datanum+2;
@@ -1491,13 +1384,12 @@ class FinAdmAction extends CommonAction{
                 ->setCellValue('B'.$j, $v['feename'])
                 ->setCellValue('C'.$j, $v['gets'])
                 ->setCellValue('D'.$j, $v['give'])
-                ->setCellValue('E'.$j, $v['realincome'])
-                ->setCellValue('F'.$j, $v['part1'])
-                ->setCellValue('G'.$j, $v['part2'])
-                ->setCellValue('H'.$j, $v['part3'])
-                ->setCellValue('I'.$j, $v['part4'])
-                ->setCellValue('J'.$j, $v['part5']);  
-
+                ->setCellValue('E'.$j, $v['realincome']);
+    for ($ec2=0; $ec2 <count($partner) ; $ec2++) { 
+        $la = chr(70+$ec2);
+        $la.=$j;
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue($la, $v['part'.($ec2+1).'']);
+    }            
     $j++;
     }
     $objPHPExcel->getActiveSheet()->setTitle('sheet1');//设置sheet标签的名称
