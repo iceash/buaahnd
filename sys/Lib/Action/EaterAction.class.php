@@ -114,6 +114,7 @@ class EaterAction extends CommonAction {
     public function menudistribute() {
         $menu['distribute']='宿舍情况';
         $menu['distributeAdd']='分配宿舍';
+        $menu['houseparent']='宿舍条例';
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function distribute() {
@@ -236,12 +237,23 @@ class EaterAction extends CommonAction {
         } 
     } 
     public function distributeUpdate() {
+        $house = $_POST['house'];
         $room = $_POST['room'];
-        if (empty($room)) {
+        $cell = $_POST['cell'];
+        $bed = $_POST['bed'];
+        if (empty($house)||empty($room)||empty($cell)||empty($bed)) {
             $this -> error('必填项不能为空');
         } 
         $dao = D('classstudent');
         if ($dao -> create()) {
+            $ckB['house']=$house;
+            $ckB['room']=$room;
+            $ckB['cell']=$cell;
+            $ckB['bed']=$bed;
+            $resB=$dao->where($ckB)->find();
+            if($resB&&$resB['id']!=$_POST['id']){
+                $this->ajaxReturn($resB,'该床位已有同学',0);
+            }
             $checked = $dao -> save();
             if ($checked > 0) {
                 $this -> success('已成功保存');
@@ -251,7 +263,66 @@ class EaterAction extends CommonAction {
         } else {
             $this -> error($dao->getError());
         } 
-    } 
+    }
+    public function change(){
+        $classstudent=M('classstudent');
+        $a['id']=$_POST['id'];
+        $dataA=$classstudent->where($a)->find();
+        $b['house']=$_POST['house'];
+        $b['room']=$_POST['room'];
+        $b['cell']=$_POST['cell'];
+        $b['bed']=$_POST['bed'];
+        $dataB=$classstudent->where($b)->find();
+        $bb['id']=$classstudent->where($b)->getField('id');
+        $saveForA['house']=$dataB['house'];
+        $saveForA['room']=$dataB['room'];
+        $saveForA['cell']=$dataB['cell'];
+        $saveForA['bed']=$dataB['bed'];
+        $saveForB['house']=$dataA['house'];
+        $saveForB['room']=$dataA['room'];
+        $saveForB['cell']=$dataA['cell'];
+        $saveForB['bed']=$dataA['bed'];
+        $ca=$classstudent->where($a)->save($saveForA);
+        $cb=$classstudent->where($bb)->save($saveForB);
+        if($ca&&$cb){$this->success('更换成功');}else{$this->error('更换失败');}
+    }
+/*******************************宿舍管理**********************************/
+    public function houseparent(){
+        $rules=M('system')->where('name="rules"')->getField('content');
+        $this->assign('rules',$rules);
+        $this->menudistribute();
+        $this->display();
+    }
+    public function houseparentEdit(){
+        $rules=M('system')->where('name="rules"')->getField('content');
+        $r=str_replace("<br>",' \n',$rules);
+        $this->assign('rules',$r);
+        $this->menudistribute();
+        $this->display();
+    }
+    public function updateRules(){
+        $data['content']=$_POST['rules'];
+
+        if (empty($data['content'])) {
+            $this -> error('必填项不能为空');
+        }
+        $dao = M('system');
+        $checked = $dao -> where('name="rules"')->save($data);
+        if ($checked) {
+            $this -> success('已成功保存');
+        } else {
+            $this -> error('没有更新任何数据');
+        }
+    }
+    public function out(){
+        $map['id']=$_POST['id'];
+        $data['house']='';
+        $data['room']='';
+        $data['cell']='';
+        $data['bed']='';
+        $check=M('classstudent')->where($map)->save($data);
+        if($check){$this->success('退宿成功');}else{$this->error('退宿失败');}
+    }
 /*****************************学生信息*******************************************/
     public function students(){
         $a = array('zhname'=>'名','FamilyName'=>'FamilyName','surname'=>'姓','FirstName'=>'FirstName','birthday'=>'出生日期','sex'=>'性别','gender'=>'Gender','address'=>'家庭住址','HomeAddress'=>'HomeAddress','postaladdress'=>'通信地址','CorrespondenceAddress'=>'CorrespondenceAddress','phone'=>'固定电话','mobile'=>'手机','email'=>'Email1','Email2'=>'Email2','MSN'=>'MSN','qq'=>'OICQ','nativeprovince'=>'省份','Province'=>'Province','nativecity'=>'城市','City'=>'City','idcardpassport'=>'身份证护照号码','project'=>'就读国内项目名称','HNDCenter'=>'HNDCenter','year'=>'入学时间','grade'=>'所属年级','entrancescore'=>'高考成绩总分','englishscore'=>'英语单科成绩','entrancefull'=>'高考分数标准','major'=>'HND专业','drop'=>'是否退学','repeat'=>'是否留级','SCN'=>'SCN号','listeningscore'=>'听力得分','readingscore'=>'阅读得分','writingscore'=>'写作得分','speakingscore'=>'口语得分','testscore'=>'进入专业课英语成绩总分','score1'=>'最优有效雅思成绩','score1id'=>'雅思考试号','plus'=>'其他','HNDtime'=>'获得HND证书时间','quit'=>'是否留学','country'=>'留学国家','Country'=>'Country','school'=>'国外院校名称','ForeignUniversityApplied'=>'ForeignUniversityApplied','fmajor'=>'留学所学专业','together'=>'出国所经过中介名称','employ'=>'是否就业','enterprise'=>'就业企业名称','workaddress'=>'就业企业所在省市','enterprisenature'=>'就业企业性质','individualorientationandspecialty'=>'个人情况介绍及特长','professionalcertificate'=>'所获得职业资格证书','xuben'=>'续本','xubensch'=>'续本国内院校名称','degreesch'=>'将获得哪所院校颁发学位','xubenmajor'=>'续本专业');
@@ -2683,38 +2754,6 @@ class EaterAction extends CommonAction {
         $objWriter->save('php://output');
         exit; 
     }
-/*******************************宿舍管理**********************************/
-    public function menuhouseparent() {
-        $menu['houseparent']='宿舍条例';
-        $menu['exchange']='更换宿舍';
-        $this->assign('menu',$this ->autoMenu($menu));  
-    }
-    public function houseparent(){
-        $rules=M('system')->where('name="rules"')->getField('content');
-        $this->assign('rules',$rules);
-        $this->menuhouseparent();
-        $this->display();
-    }
-    public function houseparentEdit(){
-        $rules=M('system')->where('name="rules"')->getField('content');
-        $r=str_replace("<br>",' \n',$rules);
-        $this->assign('rules',$r);
-        $this->menuhouseparent();
-        $this->display();
-    }
-    public function updateRules(){
-        $rules=$_POST['rules'];
 
-        if (empty($rules)) {
-            $this -> error('必填项不能为空');
-        }
-        $dao = M('system');
-        $checked = $dao -> where('name="rules"')->setField('content',$rules);
-        if ($checked != false) {
-            $this -> success('已成功保存');
-        } else {
-            $this -> error('没有更新任何数据');
-        }
-    }
 }
 ?>

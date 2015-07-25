@@ -13,6 +13,20 @@
 <script type="text/javascript"> 
 jQuery(window).load(function(){
 $('#classS').val("{$_GET['classname']}");
+$('.out').click(function(){
+  jQuery.ajax({
+    type:'POST',
+    url:'__URL__/out',
+    dataType:'json',
+    data:{id:$(this).attr('key')},
+    success:function(data){
+      alert(data.info);
+      if(data.status==1){
+        window.location='__URL__/distribute';
+      }
+    }
+  });
+});
 });
 jQuery(function(){ 
 	$('tr:has(:checked)').addClass('tr_selected');
@@ -91,7 +105,6 @@ function searchkeydown(e){
 		mysearch();
 	}
 }
-
 </script> 
 </head>
 
@@ -135,7 +148,7 @@ function searchkeydown(e){
 	<td>{$my.bed}</td>
     <td>{$my.studentname}</td>
     <td>{$my.student}</td>
-	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
+	<td><input type="button" value="详情" onclick="k('{$my.id}');" /> <input type="button" value="退宿" class="out" key="{$my.id}"/>
 	</td>
   </tr>
   </volist>
