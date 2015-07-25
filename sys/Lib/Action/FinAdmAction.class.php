@@ -536,7 +536,13 @@ class FinAdmAction extends CommonAction{
       $period =$_GET['period'];
       $status1 =$_GET['status1'];
       $oldall = M("fee")->where("period=0")->order("id")->group('item')->select();
-      
+      $B = M('period');
+      $C =M('class');
+      $D =D('ClasstudentView');
+      $major = $C ->group('major')->select();
+      $yearnum = $C ->group('year')->select();
+      $classses = $C ->group('name')->select();
+      $periodid = $B->select();
       if($item){$where['item']  = array('like','%'.$item.'%');}
       if($grade){$where['grade']  = array('like','%'.$grade.'%');}
       if($classes){$where['classes']  = array('like','%'.$classes.'%');}
@@ -573,18 +579,15 @@ class FinAdmAction extends CommonAction{
           if($Model[$i]['money']<0){
             $statusname='退费';
           }
-     
+        $mapa['studentname']=$Model[$i]['truename'];
+        $stugrade= $D ->where($mapa)->select();
+        $Model[$i]['grade']=$stugrade[0]['year'];
+        $Model[$i]['class']=$stugrade[0]['name'];
         $Model[$i]['statusname']=$statusname;
        }
-      foreach ($Model as $mo => $va) {
-        $Model[$mo]["standard"] = doubleval($Model[$mo]["standard"]);
-        $Model[$mo]["paid"] = doubleval($Model[$mo]["paid"]);
-        $Model[$mo]["needpay"] = $Model[$mo]["standard"] - $Model[$mo]["paid"];
-        //dump($Model[$mo]);
-      };
         $this->assign('grade',$grade);
         $this->assign('item',$item);
-        $this->assign('classes',$classes);
+        $this->assign('classses',$classses);
         $this->assign('majorname',$majorname);
         $this->assign('period',$period);
         $this->assign('status1',$status1);
@@ -631,7 +634,10 @@ class FinAdmAction extends CommonAction{
           if($Model[$i]['money']<0){
             $statusname='退费';
           }
-     
+        $mapa['studentname']=$Model[$i]['truename'];
+        $stugrade= $D ->where($mapa)->select();
+        $Model[$i]['grade']=$stugrade[0]['year'];
+        $Model[$i]['class']=$stugrade[0]['name'];
         $Model[$i]['statusname']=$statusname;
        }
       foreach ($Model as $mo => $va) {
@@ -648,9 +654,10 @@ class FinAdmAction extends CommonAction{
         $this->assign('list',$Model);
         $this->assign('page',$show);
         }// 模板变量赋值
-        
-      
-
+      $this->classes =$classes;  
+      $this->major =$major;
+      $this->yearnum =$yearnum;
+      $this->periodid =$periodid;
       $this->display();
 
 

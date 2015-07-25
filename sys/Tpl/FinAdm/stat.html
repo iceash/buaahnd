@@ -35,23 +35,26 @@
        ?>
   &nbsp;&nbsp;
     <span >年级：</span>
-  <select id="grade">
-      <option value="">请选择</option>
-      <option value="1">大一</option>
-      <option value="2">大二</option>
-      <option value="3">大三</option>
-      <option value="4">大四</option>
-    </select>&nbsp;&nbsp;
-    <span >专业：</span>
-  <select id="majorname">
-      <option value="" >请选择</option>
+  <?php  echo "<select id='grade'><option value =''>请选择</option>";
+          foreach($yearnum as $num =>$va){
+            echo "<option value ='".$va["year"]."'>".$va["year"]."</option>";
+      };echo "</select>&nbsp;&nbsp;"; ?>
 
-    </select>&nbsp;&nbsp;
+    <span >专业：</span>
+
+        <?php
+       echo "<select id='majorname'><option value =''>请选择</option>";
+          foreach($major as $num =>$va){
+            echo "<option value ='".$va["major"]."'>".$va["major"]."</option>";
+      };echo "</select>&nbsp;&nbsp;";
+       ?>
     <span >班次：</span>
-  <select id="classes">
-      <option value="">请选择</option>
-      
-    </select>&nbsp;&nbsp;
+  <?php
+       echo "<select id='classes'><option value =''>请选择</option>";
+          foreach($classses as $num =>$va){
+            echo "<option value ='".$va["name"]."'>".$va["name"]."</option>";
+      };echo "</select>&nbsp;&nbsp;";
+       ?>
     <span >交费状态：</span>
   <select id="status">
       <option value="0">请选择</option>
@@ -63,11 +66,7 @@
     <?php
        echo "<select id='period'><option value ='0'>当前期</option>";
           foreach($periodid as $num =>$va){
-            
-            
             echo "<option value ='".$va["id"]."'>".$va["id"]."</option>";
-          
-          
       };echo "</select>&nbsp;&nbsp;";
        ?>
     </div>
