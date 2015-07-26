@@ -16,6 +16,16 @@ function excel(id){
 	}
 	window.location=url;
 }
+function preexcel(id){
+  var url="__URL__/downPreScore";
+  url=url+"/id/"+id;
+  window.location=url;
+}
+function proexcel(id){
+  var url="__URL__/downProScore";
+  url=url+"/id/"+id;
+  window.location=url;
+}
 
 </script> 
 </head>
@@ -29,7 +39,9 @@ function excel(id){
 </table>
 <div class="main">
  <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
- <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有成绩  <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:excel('{$id}');">[导出为xls文件]</a></div></td>
+  <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有预科成绩  <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:preexcel('{$id}');">[导出为xls文件]</a></div></td>
+  <td>&nbsp;</td></tr>
+ <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有专业课成绩  <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:proexcel('{$id}');">[导出为xls文件]</a></div></td>
   <td>&nbsp;</td></tr>
  </table>
 <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
