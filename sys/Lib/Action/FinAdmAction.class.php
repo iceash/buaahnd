@@ -538,14 +538,29 @@ class FinAdmAction extends CommonAction{
       $oldall = M("fee")->where("period=0")->order("id")->group('item')->select();
       $B = M('period');
       $C =M('class');
-      $D =D('ClasstudentView');
+      $D =D('ClassstudentView');
       $major = $C ->group('major')->select();
       $yearnum = $C ->group('year')->select();
       $classses = $C ->group('name')->select();
       $periodid = $B->select();
       if($item){$where['item']  = array('like','%'.$item.'%');}
-      if($grade){$where['grade']  = array('like','%'.$grade.'%');}
-      if($classes){$where['classes']  = array('like','%'.$classes.'%');}
+      if($grade){
+        $mapccd['year']=$grade;
+         $mapin2=  $D ->where($mapccd) ->Field('idcard')->select();
+         for ($ll=0; $ll <count($mapin2); $ll++) { 
+             $mapi2[]=$mapin2[$ll]['idcard'];
+         }
+         $where['idcard'] = array('in',$mapi2);
+     }
+      if($classes){
+        $mapcc['name']=$classes;
+         $mapin1 =  $D ->where($mapcc) ->Field('studentname')->select();
+         for ($ll2=0; $ll2 <count($mapin2); $ll2++) { 
+             $mapi1[]=$mapin1[$ll2]['studentname'];
+         }
+          $where['truename'] = array('in',$mapi1);
+
+        }
       if($majorname){$where['majorname']  = array('like','%'.$majorname.'%');}
       if($_GET['datefrom']&&$_GET['dateto']){$where['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
       if($_GET['sbfrom']&&$_GET['sbto']){$where['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
@@ -743,7 +758,7 @@ class FinAdmAction extends CommonAction{
                 ->setCellValue('F'.$i, $v['grade'])
                 ->setCellValue('G'.$i, $v['yukeclass'])
                 ->setCellValue('H'.$i, $v['majorname'])
-                ->setCellValue('I'.$i, $v['classes'])
+                ->setCellValue('I'.$i, $v['class'])
                 ->setCellValue('J'.$i, $v['subject'])
                 ->setCellValue('K'.$i, $v['type'])
                 ->setCellValue('L'.$i, $v['date'])

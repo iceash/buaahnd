@@ -134,9 +134,25 @@ function downloads(){
       $majorname =$_GET['majorname'];
       $period =$_GET['period'];
       $status1 =$_GET['status1'];
+      $D =D('ClassstudentView');
       if($item){$where['item']  = array('like','%'.$item.'%');}
-      if($grade){$where['grade']  = array('like','%'.$grade.'%');}
-      if($classes){$where['classes']  = array('like','%'.$classes.'%');}
+      if($grade){
+        $mapccd['year']=$grade;
+         $mapin2=  $D ->where($mapccd) ->Field('idcard')->select();
+         for ($ll=0; $ll <count($mapin2); $ll++) { 
+             $mapi2[]=$mapin2[$ll]['idcard'];
+         }
+         $where['idcard'] = array('in',$mapi2);
+     }
+      if($classes){
+        $mapcc['name']=$classes;
+         $mapin1 =  $D ->where($mapcc) ->Field('studentname')->select();
+         for ($ll2=0; $ll2 <count($mapin2); $ll2++) { 
+             $mapi1[]=$mapin1[$ll2]['studentname'];
+         }
+          $where['truename'] = array('in',$mapi1);
+
+        }
       if($majorname){$where['majorname']  = array('like','%'.$majorname.'%');}
       if($_GET['datefrom']&&$_GET['dateto']){$where['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
       if($_GET['sbfrom']&&$_GET['sbto']){$where['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
@@ -170,7 +186,12 @@ function downloads(){
             $statusname='退费';
           }
      
+        $mapa['studentname']=$Model[$i]['truename'];
+        $stugrade= $D ->where($mapa)->select();
+        $Model[$i]['grade']=$stugrade[0]['year'];
+        $Model[$i]['class']=$stugrade[0]['name'];
         $Model[$i]['statusname']=$statusname;
+
        }
         
         return($Model);
@@ -216,7 +237,12 @@ function downloads(){
             $statusname='退费';
           }
      
+        $mapa['studentname']=$Model[$i]['truename'];
+        $stugrade= $D ->where($mapa)->select();
+        $Model[$i]['grade']=$stugrade[0]['year'];
+        $Model[$i]['class']=$stugrade[0]['name'];
         $Model[$i]['statusname']=$statusname;
+
        }
       
       if($Model[0]["idcard"]==0){
