@@ -3257,12 +3257,16 @@ class EduSenAction extends CommonAction {
             $search["idcard"] = strtr($sheetData[$i]['G'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
             $search["truename"] = strtr($sheetData[$i]['E'], $arr);
-            $mbp["student"] = $data_a[$i-3]['student'];
-            $mbp["idcard"] = $search["idcard"];
-            $mbp["_logic"] = "or";
-            if (M("enroll")->where($search)->count() == 0 || M("classstudent")->where($mbp)->count() > 0) {
-                $errors[] = 'H'.$i;
-            }else{
+            // $mbp["student"] = $data_a[$i-3]['student'];
+            // $mbp["idcard"] = $search["idcard"];
+            // $mbp["_logic"] = "or";
+            if (M("enroll")->where($search)->count() == 0 ) {
+                $errors[] = 'G'.$i;
+            }else if (M("classstudent")->where(array("idcard"=>$search["idcard"]))->count() > 0){
+                $errors[] = 'G'.$i;
+            }else if (M("classstudent")->where(array("student"=>$data_a[$i-3]['student']))->count() > 0) {
+                $errors[] = 'D'.$i;
+            } else{
                 M("enroll")->where($search)->setField("username",$data_a[$i-3]['student']);
             }
         }//for循环结束
