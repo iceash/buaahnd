@@ -90,7 +90,7 @@ class FinAdmAction extends CommonAction{
         $this->assign("paytype",$paytype);
         $this->assign("fees",$fees);
         $tmppartners = M("system")->where("name='partners'")->find();
-        $partner = explode(",", $project["tmppartners"]);
+        $partner = explode(",", $tmppartners["content"]);
         // $partner = ["南邮","百度推广","青梦家","东方航空","阿里去啊"];//合作方列表，这里定死；
         $this->assign("partner",$partner);
         $this->display();
