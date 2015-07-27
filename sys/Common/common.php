@@ -253,13 +253,13 @@ function downloads(){
         }// 模板变量赋值
 }
 
-     function excelwarning($excelurl,$errorarr,$sheetnum=0){
+     function excelwarning($excelurl,$errorarr,$color='FFFF7F50',$sheetnum=0){
        Vendor('PHPExcel'); 
         $p = PHPExcel_IOFactory::load($excelurl);
         $p -> setActiveSheetIndex($sheetnum);
         for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
         $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->getStartColor()->setARGB('FFFF7F50'); 
+        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->getStartColor()->setARGB($color); 
         }
         
           header("Pragma: public");

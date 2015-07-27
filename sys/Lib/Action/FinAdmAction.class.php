@@ -433,7 +433,7 @@ class FinAdmAction extends CommonAction{
         $this->assign('page',$show);
         $way=M('system')->where('name="paymode"')->getField('content');
         $wayArr=explode(',',$way);
-        $project=M('system')->where('name="project"')->getField('content');
+        $project=M('system')->where('name="items"')->getField('content');
         $projectArr=explode(',',$project);
         $periodArr=M('period')->field('id')->select();
         $this->assign('periodList',$periodArr);
@@ -506,7 +506,7 @@ class FinAdmAction extends CommonAction{
         $this->assign('feeList',$feeList);
         $major=$class->group('major')->Field('major')->select();
         $this->assign('major',$major);
-        $project=$system->where('name="project"')->getField('content');
+        $project=$system->where('name="items"')->getField('content');
         $projectArr=explode(',',$project);
         $periodArr=M('period')->field('id')->select();
         $this->assign('periodList',$periodArr);

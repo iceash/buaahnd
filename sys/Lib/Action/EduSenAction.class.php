@@ -3210,9 +3210,14 @@ class EduSenAction extends CommonAction {
             $data_a[$i-3]['enamesimple'] = strtr($sheetData[$i]['G'], $arr);
             $search["idcard"] = strtr($sheetData[$i]['H'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
-            
-            if (!M("enroll")->where($search)->setField("username",$data_a[$i-3]['student'])) {
+            $search["truename"] = strtr($sheetData[$i]['E'], $arr);
+            $mbp["student"] = $data_a[$i-3]['student'];
+            $mbp["idcard"] = $search["idcard"];
+            $mbp["_logic"] = "or";
+            if (M("enroll")->where($search)->count() == 0 || M("classstudent")->where($mbp)->count() > 0) {
                 $errors[] = 'H'.$i;
+            }else{
+                M("enroll")->where($search)->setField("username",$data_a[$i-3]['student']);
             }
         }//for循环结束
         if (count($errors) > 0) {
@@ -3274,6 +3279,12 @@ class EduSenAction extends CommonAction {
                 if(strlen($sheetData[$i][chr(64+$j)]) == 0){
                     $errors[] = chr(64+$j).$i;
                     $b = false;
+                }
+            }
+            for ($k=$i+1; $k < $count; $k++) { 
+                if(strtr($sheetData[$i]['H'], $arr) == strtr($sheetData[$k]['H'], $arr)){
+                    $errors[] = 'H'.$i;
+                    $errors[] = 'H'.$k;
                 }
             }
             if (!$b) {
