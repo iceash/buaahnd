@@ -395,6 +395,8 @@ class FinAdmAction extends CommonAction{
         $this->display();
     }
     public function subGo(){
+        if(empty($_POST['submitdate'])||empty($_POST['singlemoney'])){$this->error('必填项不能为空');}
+        if(!is_numeric($_POST['singlemoney'])){$this->error('金额必须是数字');}
         $deal=M('deal');
         $id=$_POST['id'];
         $map['id']=array('in',$id);

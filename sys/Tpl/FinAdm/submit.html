@@ -85,7 +85,7 @@ $(document).ready(function(){
         			lock=0;
         			$.post('__URL__/subGo',submitData,function(a){
         				var data=eval('(' + a + ')');
-						alert(data.info);lock1=1;
+						alert(data.info);lock=1;
 						if(data.status==1){location.reload();
 						};
         			});

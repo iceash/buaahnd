@@ -218,7 +218,7 @@ class FinTeaAction extends CommonAction{
             if(in_array($sheetData[$i]['B'],$wayArr)){
                 $data_a[$i-2]['way'] = $sheetData[$i]['B'];
             }else{$errors[]='B'.$i;}
-            if(is_numeric($sheetData[$i]['D'])){
+            if(is_numeric($sheetData[$i]['D'])&&$sheetData[$i]['D']>0){
                 if($sheetData[$i]['C']=='收费'){
                     $data_a[$i-2]['money']=$sheetData[$i]['D'];
                 }elseif ($sheetData[$i]['C']=='退费') {
@@ -248,7 +248,6 @@ class FinTeaAction extends CommonAction{
             $data_a[$i-2]['invoice'] = $sheetData[$i]['I'];
             $data_a[$i-2]['check'] = '审核中';
             $data_a[$i-2]['operator'] = session('truename');
-            $data_a[$i-2]['date'] = date("Y-m-d");
         }
         if(count($errors) > 0){
             excelwarning($inputFileName,$errors);

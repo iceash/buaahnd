@@ -3394,15 +3394,15 @@ class EduDirAction extends CommonAction {
                 $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
             }else{$errors[]='A'.$i;}
             $mapB['student']=$sheetData[$i]['B'];
+            $mapB['studentname']=$sheetData[$i]['C'];
             $bClassId=M('classstudent')->where($mapB)->getField('classid');
             if($bClassId==$thisId){
                 $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
-            }else{$errors[]='B'.$i;}
-            $mapC['studentname']=$sheetData[$i]['C'];
-            $cClassId=M('classstudent')->where($mapC)->getField('classid');
-            if($cClassId==$thisId){
                 $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
-            }else{$errors[]='C'.$i;}
+            }else{
+                $errors[]='B'.$i;
+                $errors[]='C'.$i;
+            }
             if(isDate($sheetData[$i]['D'])){
                 $data_a[$i-2]['jdate'] = $sheetData[$i]['D'];
             }else{$errors[]='D'.$i;}

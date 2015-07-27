@@ -17,7 +17,7 @@ jQuery(function(){
 	jQuery('#mycontent1').slideDown("slow");
 });
 function setTab(current){
-	for(i=1;i<7;i++){
+	for(i=1;i<8;i++){
 		 a=jQuery("#mycontent"+i);
 		if(i==current){
 			if(a.is(":visible")){
@@ -294,18 +294,19 @@ function getNationality(a){
 </table>
 <div id="main"><form id="form1"> <input type="hidden" value="{$my.id}" name="id"/>
 <empty name="my"><span style="margin-left:270px"><font color="red">该生的基本信息不在招生档案中，请联系招生管理员导入数据！</font></span>
-<else/>
-<div id="myleft">
+<else/><div id="myleft">
+
 	<h2>招生信息查看及补录</h2>
 	<h2>学生姓名：{$my.truename}</h2>
 	<div class="m20">填写说明：内容填写完毕后，点击“数据校验”按钮，校验通过之后再点“确认提交”。<span class="mustfill">*</span>为必填项， <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/> 表示可用身份证阅读器便捷录入。</div>
-	<div class="m20">填表人 <input name="fill" type="text" class="inputshort" value="{$my.fill}"/></div>
+	<div class="m20">　<span class="mustfill"></span>填表人 <input name="fill" type="text" class="inputshort" value="{$my.fill}"/></div>
 	<div><input type="button" value="数据校验" onclick="check(0);"/>&nbsp;<input type="button" value="确认提交"  onclick="check(1);"/>
 	</div>
 	<div id="tips" class="m20"></div>
 </div><!--end of myleft-->
 <div id="myright">
-	<div class="mytitle"  onclick="setTab(1);"><h3>Part1 基本信息</h3></div>
+
+<div class="mytitle"  onclick="setTab(1);"><h3>Part1 基本信息</h3></div>
 	<div class="mycontent" id="mycontent1" style="display:none">
 <table width="100%" border="0">
  <tr>
@@ -597,7 +598,18 @@ function getNationality(a){
   </tr>
 </table>
 	</div><!--end of mycontent-->
+<div class="mytitle"  onclick="setTab(7);"><h3>Part7 老师评价</h3></div>
+	<div class="mycontent" id="mycontent7" style="display:none">
+<table width="100%" border="0">
+	<tr><th>评价内容</th><th>评价时间</th></tr>
+	<volist name="list" id="vo">
+		<tr><td>{$vo.content}</td><td>{$vo.jdate}</td></tr>
+	</volist>
+</table>
+	</div><!--end of mycontent-->
+
 </div><!--end of myright--></form>
-</empty></div><!--end of main-->
+</empty>
+</div><!--end of main-->
 </body>
 </html>

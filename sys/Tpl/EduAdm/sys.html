@@ -54,8 +54,8 @@ function delmajor(id){
   </tr>
   <volist name="majors" id="vm">
   <tr id="tr_{$vm.id}">
-    <td>{$vm.major}</td>
     <td>{$vm.item}</td>
+    <td>{$vm.major}</td>
 	<td>{$vm.year}</td>
     <td>
         <a href="__URL__/majorEdit/id/{$vm.id}"><input type="button" value="编辑" class="editmajor"/></a>

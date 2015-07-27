@@ -582,6 +582,9 @@ class EduSenAction extends CommonAction {
             $this -> assign('try', $my['try']);
         } 
         $this -> assign('my', $my);
+        $mapJ['susername']=$id;
+        $list=M('judge')->where($mapJ)->select();
+        $this->assign('list',$list);
         $this->stuCommonMenu($id);
         $this -> display();
     } 
@@ -3188,6 +3191,12 @@ class EduSenAction extends CommonAction {
                     $b = false;
                 }
             }
+            for ($k=$i+1; $k < $count; $k++) { 
+                if(strtr($sheetData[$i]['H'], $arr) == strtr($sheetData[$k]['H'], $arr)){
+                    $errors[] = 'H'.$i;
+                    $errors[] = 'H'.$k;
+                }
+            }
             $map["year"] = $sheetData[$i]['A'];
             $map["name"] = $sheetData[$i]['B'];
             $classinfo = M("class")->where($map)->find();
@@ -3202,6 +3211,10 @@ class EduSenAction extends CommonAction {
                 $classdata[$i]["ctime"] = date('y-m-d h:i:s',time());
                 $data_a[$i-3]["classid"] = $class->add($classdata[$i]);
             }else{
+                if ($classinfo["major"] != strtr($sheetData[$i]['C'], $arr)) {
+                    $errors[] = 'C'.$i;
+                    continue;
+                }
                 $data_a[$i-3]["classid"] = $classinfo["id"];
             }
             $data_a[$i-3]['student'] = strtr($sheetData[$i]['D'], $arr);
@@ -3279,12 +3292,6 @@ class EduSenAction extends CommonAction {
                 if(strlen($sheetData[$i][chr(64+$j)]) == 0){
                     $errors[] = chr(64+$j).$i;
                     $b = false;
-                }
-            }
-            for ($k=$i+1; $k < $count; $k++) { 
-                if(strtr($sheetData[$i]['H'], $arr) == strtr($sheetData[$k]['H'], $arr)){
-                    $errors[] = 'H'.$i;
-                    $errors[] = 'H'.$k;
                 }
             }
             if (!$b) {
@@ -3391,7 +3398,7 @@ class EduSenAction extends CommonAction {
                 $errors[$sheetnum][] = "C2";
             }
             if (count($errors[$sheetnum]) > 0) {
-                excelwarning($inputFileName,$errors[$sheetnum],$sheetnum);
+                excelwarning($inputFileName,$errors[$sheetnum],'FFFF7F50',$sheetnum);
             }else{
                 $data[$sheetnum]["table"] = '';
                 $data[$sheetnum]["table"] .= '
@@ -3528,6 +3535,7 @@ class EduSenAction extends CommonAction {
             }
         }
         if (count($errors) > 0) {
+            // excelwarning($inputFileName,$errors,'FFFF7F50');
             $this->ajaxReturn($titlepic,"信息不正确",0);
         }else{
             M("schedule")->addAll($data);
@@ -3649,6 +3657,12 @@ class EduSenAction extends CommonAction {
                 $data[$i-3]["course"] = strtr($sheetData[$i]['C'], $arr);
                 $data[$i-3]["time"] = strtr($sheetData[$i]['D'], $arr);
                 $data[$i-3]["teacher"] = strtr($sheetData[$i]['E'], $arr);
+                $mbp["classid"] = $data[$i-3]["classid"];
+                $mbp["name|ename"] = $data[$i-3]["course"];
+                if (M("course")->where($mbp)->count() == 0) {
+                    $errors[] = "B".$i;
+                    $errors[] = "C".$i;
+                }
             }
         }
         if (count($errors) > 0) {
@@ -3900,7 +3914,7 @@ class EduSenAction extends CommonAction {
                     case 'u':
                         $grade[$num]["letter"] = "U";
                         $grade[$num]["hundred"] = 0;
-                        repair();//这里进行重修的处理
+                        // repair();//这里进行重修的处理
                         break;
                     default:
                         $errors[] = chr(66+$m).$i;
