@@ -147,7 +147,7 @@ function downloads(){
       if($classes){
         $mapcc['name']=$classes;
          $mapin1 =  $D ->where($mapcc) ->Field('studentname')->select();
-         for ($ll2=0; $ll2 <count($mapin2); $ll2++) { 
+         for ($ll2=0; $ll2 <count($mapin1); $ll2++) { 
              $mapi1[]=$mapin1[$ll2]['studentname'];
          }
           $where['truename'] = array('in',$mapi1);
