@@ -25,6 +25,12 @@ class EduAdmAction extends CommonAction {
     }
     public function majorAdd(){
         $this -> assign('category_fortag', $this->getYear());
+        $system = M("system")->where('name="items"')->getField("content");
+        $items = explode(",", $system);
+        foreach ($items as $va) {
+            $item[$va] = $va;
+        }
+        $this->assign("items",$item);
         $this->menuMajor();
         $this->display();
     }
@@ -66,6 +72,12 @@ class EduAdmAction extends CommonAction {
         $this -> assign('category_fortag', $this->getYear());
         $my = M("major")->where(array("id" => $id))->find();
         $this->assign("my",$my);
+        $system = M("system")->where('name="items"')->getField("content");
+        $items = explode(",", $system);
+        foreach ($items as $va) {
+            $item[$va] = $va;
+        }
+        $this->assign("items",$item);
         $this->display();
     }
     public function majorUpdate(){

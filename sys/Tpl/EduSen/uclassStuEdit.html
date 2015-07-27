@@ -21,6 +21,7 @@ jQuery(function(){
 			success: function(data){
 				if (data.status==1){
 					alert(data.info);
+          window.location.href=document.referrer;
 				}else{
 					alert(data.info);
 				}
@@ -55,13 +56,13 @@ jQuery(function(){
     <td><input type="text" name="idcard" class="inputmid" value="{$my.idcard}"/></td>
    </tr>
     <tr>
-    <td class="t_item"><!-- <span class="mustfill">*</span> -->姓名拼音</td>
+    <td class="t_item"><!-- <span class="mustfill">*</span> -->英文名</td>
     <td><input type="text" name="ename" class="inputmid" value="{$my.ename}"/>（用于生成英文成绩单、在读证明等）</td>
    </tr>
-    <tr>
-    <td class="t_item"><!-- <span class="mustfill">*</span> -->姓名拼音首字母</td>
+    <!-- <tr>
+    <td class="t_item">姓名拼音首字母</td>
     <td><input type="text" name="enamesimple" class="inputmid" value="{$my.enamesimple}"/>（用于快速检索）</td>
-   </tr>
+   </tr> -->
    <tr>
     <td class="t_item"><span class="mustfill">*</span>班级</td>
     <td><html:select first="请选择" options="category_fortag" name="classid" selected="my['classid']"/></td>

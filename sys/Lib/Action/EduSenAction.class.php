@@ -350,14 +350,14 @@ class EduSenAction extends CommonAction {
         // $map['isvisible']=1;
         $term=$Score -> where($map) ->field('term')->group('term')->order('term asc')-> select();
         $term_num=count($term);
-        if($term_num>0){
+        // if($term_num>0){
             foreach($term as $key=>$value){
                 $map['term']=$value['term'];
                 $my[$key]=$Score -> where($map) -> select();
             }
             $this->assign('id',$id);//这里的id指的是学号
             $this->assign('my',$my);
-        }
+        // }
         $this->stuCommonMenu($id);
         $this -> display();
     }
@@ -1035,10 +1035,10 @@ class EduSenAction extends CommonAction {
         $dao = D('Classstudent');
         if ($dao -> create()) {
             $map["idcard"] = $_POST["idcard"];
-            $student = M("enroll")->where($map)->setField("username",$_POST["student"]);
-            if (!$student) {
+            if (M("enroll")->where($map)->count() == 0) {
                 $this -> error('无此学生基本信息');
             }
+            $student = M("enroll")->where($map)->setField("username",$_POST["student"]);
             //$dao->student = $student;
             $checked = $dao -> save();
             if ($checked > 0) {
@@ -3136,6 +3136,40 @@ class EduSenAction extends CommonAction {
         $this->menuClass();
         $this->display();
     }
+    public function downloadallstudent(){
+        Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/classstudent.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $p = PHPExcel_IOFactory::load($excelurl);
+        $p -> setActiveSheetIndex(0);
+        /*for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
+        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->getStartColor()->setARGB($color); 
+        }*/
+        $stuinfo = M("enroll")->where("username='z'")->select();
+        $p->getActiveSheet()->getStyle('H')->getNumberFormat()
+            ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+        foreach ($stuinfo as $i => $vs) {
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue('E'.($i+3), $vs["truename"]) 
+                // ->setCellValue('H'.($i+3), "233333333333333333") ;
+                ->setCellValueExplicit('G'.($i+3), $vs["idcard"],PHPExcel_Cell_DataType::TYPE_STRING);
+
+        }
+          header("Pragma: public");
+          header("Expires: 0");
+          header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+          header("Pragma: no-cache");
+          header("Content-Type:application/octet-stream");
+          header('content-Type:application/vnd.ms-excel;charset=utf-8');
+          header('Content-Disposition:attachment;filename=所有未分班学生.xls');//设置文件的名称
+          header("Content-Transfer-Encoding:binary");
+          $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+          $objWriter->save('php://output');
+          return true;
+          exit;
+    }
     public function classStudentInsert() {
         $titlepic = $_POST['titlepic'];
         if (empty($titlepic)) {
@@ -3185,16 +3219,16 @@ class EduSenAction extends CommonAction {
         }
         for($i = 3; $i <= $count; $i++){
             $b = true;
-            for($j = 1; $j <= 8; $j++){
+            for($j = 1; $j <= 7; $j++){
                 if(strlen($sheetData[$i][chr(64+$j)]) == 0){
                     $errors[] = chr(64+$j).$i;
                     $b = false;
                 }
             }
             for ($k=$i+1; $k < $count; $k++) { 
-                if(strtr($sheetData[$i]['H'], $arr) == strtr($sheetData[$k]['H'], $arr)){
-                    $errors[] = 'H'.$i;
-                    $errors[] = 'H'.$k;
+                if(strtr($sheetData[$i]['G'], $arr) == strtr($sheetData[$k]['G'], $arr)){
+                    $errors[] = 'G'.$i;
+                    $errors[] = 'G'.$k;
                 }
             }
             $map["year"] = $sheetData[$i]['A'];
@@ -3220,8 +3254,7 @@ class EduSenAction extends CommonAction {
             $data_a[$i-3]['student'] = strtr($sheetData[$i]['D'], $arr);
             $data_a[$i-3]['studentname'] = strtr($sheetData[$i]['E'], $arr);
             $data_a[$i-3]['ename'] = strtr($sheetData[$i]['F'], $arr);
-            $data_a[$i-3]['enamesimple'] = strtr($sheetData[$i]['G'], $arr);
-            $search["idcard"] = strtr($sheetData[$i]['H'], $arr);
+            $search["idcard"] = strtr($sheetData[$i]['G'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
             $search["truename"] = strtr($sheetData[$i]['E'], $arr);
             $mbp["student"] = $data_a[$i-3]['student'];

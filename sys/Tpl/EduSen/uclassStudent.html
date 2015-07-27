@@ -154,8 +154,8 @@ var editor;
             <th width="5" height="30"><input type="checkbox" id="check"/></th>
             <th width="150">学号</th>
             <th>姓名</th>
-            <th width="150">拼音</th>
-            <th width="100">首字母</th>
+            <th width="150">英文名</th>
+            <!-- <th width="100">首字母</th> -->
             <th width="80">操作</th>
         </tr>
          <volist name="my" id="my">
@@ -164,7 +164,7 @@ var editor;
                  <td>{$my.student}</td>
                  <td>{$my.studentname}</td>
                   <td>{$my.ename}</td>
-                   <td>{$my.enamesimple}</td>
+                   <!-- <td>{$my.enamesimple}</td> -->
                  <td><input type="button" value="修改/转移班级" onclick="k('{$my.id}');" /></td>
             </tr>
         </volist>
@@ -204,10 +204,10 @@ var editor;
                     英文名 
                     <input type="text" name="ename" class="inputshort" /> 
                 </td>
-                <td style="border:0;">
+                <!-- <td style="border:0;">
                     英文名简称
                     <input type="text" name="enamesimple" class="inputshort" /> 
-                </td>
+                </td> -->
                 <td style="border:0;">
                     <input type="button" id="btn_save" value="保存"  />
                 </td>
