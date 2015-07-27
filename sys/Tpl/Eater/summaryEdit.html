@@ -6,6 +6,8 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
 <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
@@ -23,8 +25,9 @@ jQuery(window).load(function(){
   }
   a();b();
 });
-jQuery(function(){ 
+jQuery(function(){
 	jQuery('#btn_save').click(function(){
+    jQuery('#content').val(editor.html());
 		jQuery.ajax({
 			type:'POST',
 			url:'__URL__/summaryUpdate',
@@ -39,8 +42,29 @@ jQuery(function(){
 			}
 		});
 	});
+var editor;
+      KindEditor.ready(function(K) {
+        editor = K.create('textarea[name="content"]', {
+          uploadJson : '__APP__/Upload/uploadForHomework',
+          allowFileManager : false
+        });
+      });
 });
-
+function copy(){
+  document.getElementById("attendInfo").select();
+  document.execCommand("Copy");
+  alert("已复制，可粘贴至总结");
+  $('.ke-content').focus();
+}
+function getAttendInfo(){
+  var classname=$('#classS').val();
+  var sbdate=$('#sbdate').val();
+  var sedate=$('#sedate').val();
+  $.post('__URL__/getAttendInfo',{classname:classname,sbdate:sbdate,sedate:sedate},function(a){
+    var data=eval('(' + a + ')');
+    $('#attendInfo').val(data.data);
+  });
+}
 </script>
 </head>
 <body>
@@ -69,7 +93,11 @@ jQuery(function(){
 <tr>
 <td class="t_item"><span class="mustfill">*</span>截止时间</td>
 <td><input type="text" name="sedate" id="sedate" class="calendar" value="{$my.sedate}" /></td><td></td>
-</tr>       
+</tr>
+<tr>
+<td class="t_item"><span class="mustfill">*</span>标题</td>
+<td><input type="text" name="title" id="title" value="{$my.title}" /></td><td></td>
+</tr>     
 <tr>
 <td class="t_item"><span class="mustfill">*</span>总结内容</td>
 <td><textarea name="content" id="content" class="textareanormal" >{$my.content}</textarea></td><td></td>
@@ -77,8 +105,15 @@ jQuery(function(){
  </table>
  </form>
  <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
-  <td></td></tr>
+ <tr>
+   <td width="195px">
+     <div class="btn_zone"><input type="button" id="btn_save" value="保存"  /> <a href="javascript:getAttendInfo()">获取考勤情况</a>
+     </div>
+   </td>
+   <td>
+     <span><a href="javascript:copy()">点击复制考勤情况</a></span> 考勤情况: <input type="text" id="attendInfo" style="width:600px;border:0;background:transparent;">
+   </td>
+ </tr>
  </table>
 </div><!--end of main-->
 </body>

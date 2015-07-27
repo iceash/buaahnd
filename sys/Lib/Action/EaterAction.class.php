@@ -72,16 +72,30 @@ class EaterAction extends CommonAction {
             $this -> error('该记录不存在');
         } 
     }
+    public function getAttendInfo(){
+        $classname=$_POST['classname'];
+        $map['classname']=$_POST['classname'];
+        $map['timezone']=array(array('egt',$_POST['sbdate']),array('elt',$_POST['sedate']));
+        $Attend=M('attend');
+        $truantSum=$Attend->where($map)->sum("truant");
+        $tvacateSum=$Attend->where($map)->sum("tvacate");
+        $svacateSum=$Attend->where($map)->sum("svacate");
+        $lateSum=$Attend->where($map)->sum("late");
+        if(!($truantSum||$tvacateSum||$svacateSum||$lateSum)){$info="无考勤记录";}
+        else{$info="从".$_POST['sbdate']."至".$_POST['sedate']."期间，".$classname."学生共计旷课".$truantSum."次，事假".$tvacateSum."次，病假".$svacateSum."次，迟到".$lateSum."次";}
+        $this->ajaxReturn($info);
+    }
     public function summaryUpdate() {
         $classname = $_POST['classname'];
         $tusername = session('username');
         $ttruename = session('truename');
+        $title = $_POST['title'];
         $content = $_POST['content'];
         $type = $_POST['type'];
         $sbdate = $_POST['sbdate'];
         $sedate = $_POST['sedate'];
         $date = date("Y-m-d");
-        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)) {
+        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)|| empty($title)) {
             $this -> error('必填项不能为空');
         } 
         $dao = D('summary');

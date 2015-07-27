@@ -3488,6 +3488,7 @@ class EduDirAction extends CommonAction {
             $f=$_GET['datefrom'];$t=$_GET['dateto'];
             $map['_string']='NOT((sbdate<='.'"'.$f.'"'.' AND sedate<='.'"'.$f.'"'.')OR('.'"'.$t.'"'.'<=sbdate AND '.'"'.$t.'"'.'<=sedate))';
         }
+        if($_GET['type']){$map['type']=$_GET['type'];}
         $dao = D('summary');//dump($map);
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
@@ -3531,6 +3532,7 @@ class EduDirAction extends CommonAction {
     $data['classname'] = $_POST['classname'];
     $data['tusername'] = session('username');
     $data['ttruename'] = session('truename');
+    $data['title'] = $_POST['title'];
     $data['content'] = $_POST['content'];
     $data['type'] = $_POST['type'];
     $data['sbdate'] = $_POST['sbdate'];
@@ -3577,12 +3579,13 @@ class EduDirAction extends CommonAction {
         $classname = $_POST['classname'];
         $tusername = session('username');
         $ttruename = session('truename');
+        $title = $_POST['title'];
         $content = $_POST['content'];
         $type = $_POST['type'];
         $sbdate = $_POST['sbdate'];
         $sedate = $_POST['sedate'];
         $date = date("Y-m-d");
-        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)) {
+        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)|| empty($title)) {
             $this -> error('必填项不能为空');
         } 
         $dao = D('summary');

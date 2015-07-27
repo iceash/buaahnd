@@ -6,6 +6,8 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
 <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
@@ -23,6 +25,7 @@ jQuery(window).load(function(){
 });
 jQuery(function(){ 
 	jQuery('#btn_save').click(function(){
+    jQuery('#content').val(editor.html());
 		jQuery.ajax({
 			type:'POST',
 			url:'__URL__/summaryInsert',
@@ -38,6 +41,13 @@ jQuery(function(){
 			}
 		});
 	});
+var editor;
+      KindEditor.ready(function(K) {
+        editor = K.create('textarea[name="content"]', {
+          uploadJson : '__APP__/Upload/uploadForHomework',
+          allowFileManager : false
+        });
+      });
 });
 function copy(){
   document.getElementById("attendInfo").select();

@@ -138,11 +138,12 @@ function searchkeydown(e){
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
   	<th>班级</th>
-	<th width="100">起始日期</th>
-	<th width="100">截止日期</th>
-	<th>内容</th>
-	<th width="80">上传时间</th>
-	<th width="60">操作</th>
+  	<th>类型</th>
+	<th>起始日期</th>
+	<th>截止日期</th>
+	<th>标题</th>
+	<th>上传时间</th>
+	<th>操作</th>
   </tr>
 </thead>
 <tbody>
@@ -150,9 +151,10 @@ function searchkeydown(e){
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
   	<td>{$my.classname}</td>
+  	<td>{$my.type}</td>
     <td>{$my.sbdate}</td>
     <td>{$my.sedate}</td>
-	<td>{$my.content}</td>
+    <td>{$my.title}</td>
 	<td>{$my.date}</td>
 	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
 	</td>
