@@ -109,6 +109,7 @@ class FinAdmAction extends CommonAction{
             }
         }
         $map["name"] = array("like",$feename."%");
+        $map["period"] = 0;
         $count = M("fee")->where($map)->count();
         if ($count > 0) {
             $this->ajaxReturn(0,"检测到收费项重名",0);
