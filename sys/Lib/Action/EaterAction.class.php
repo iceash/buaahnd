@@ -201,6 +201,20 @@ class EaterAction extends CommonAction {
                 $errors[]='F'.$i;
                 $errors[]='G'.$i;
             }
+            $thisLive=$sheetData[$i]['B'].$sheetData[$i]['C'].$sheetData[$i]['D'].$sheetData[$i]['E'];
+            for($k=$i+1;$k <=$count;$k++){
+                $thatLive=$sheetData[$k]['B'].$sheetData[$k]['C'].$sheetData[$k]['D'].$sheetData[$k]['E'];
+                if($thatLive==$thisLive){
+                    $errors[]='B'.$i;
+                    $errors[]='C'.$i;
+                    $errors[]='D'.$i;
+                    $errors[]='E'.$i;
+                    $errors[]='B'.$k;
+                    $errors[]='C'.$k;
+                    $errors[]='D'.$k;
+                    $errors[]='E'.$k;
+                }
+            }
         }
         if(count($errors) > 0){
             excelwarning($inputFileName,$errors);
