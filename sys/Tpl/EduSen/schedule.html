@@ -30,6 +30,11 @@ jQuery(window).load(function(){
             });
         };
     });
+    $("#downloadschedule").click(function(){
+        var id = $(this).attr("scheduleid");
+        if (!id) {alert("请选择课表");return;};
+        window.location = "__URL__/downloadSchedule/id/"+id;
+    });
 });
 jQuery(function(){ 
 	
@@ -88,6 +93,7 @@ function searchkeydown(e){
 </table>
 <div class="main">
     <input type="button" id="delschedule" scheduleid="{$id}" value="删除本课程表" style="float:left"/>
+    <input type="button" id="downloadschedule" scheduleid="{$id}" value="下载本课程表" style="margin-left:10px;float:left"/>
 <div class="search">
     <html:select first="请选择班级" options="class_fortag" name="classid" selected="class_current" id="searchkey"/>&nbsp;<html:select first="请选择学期" options="term_fortag" name="term" id="term" selected="term_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
 </div>

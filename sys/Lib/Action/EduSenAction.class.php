@@ -299,6 +299,8 @@ class EduSenAction extends CommonAction {
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function uclass() {
+        $dao = D('Class');
+        $dao2 = D('Classstudent');
         $this -> assign('category_fortag', $this->getYear());
         if (isset($_GET['searchkey'])) {
             $map['name'] = array('like', '%' . $_GET['searchkey'] . '%');
@@ -308,8 +310,16 @@ class EduSenAction extends CommonAction {
             $map['year'] = $_GET['category'];
             $this -> assign('category_current', $_GET['category']);
         } 
-        $dao = D('Class');
-        $dao2 = D('Classstudent');
+        $major = $dao->group("major")->field("major")->select();//专业列表
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $this->assign('major_fortag',$majors);
+
+        if (isset($_GET['major'])) {
+            $map['major'] = $_GET['major'];
+            $this -> assign('major_current', $_GET['major']);
+        } 
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -902,14 +912,11 @@ class EduSenAction extends CommonAction {
         $studentname=$_POST['studentname'];
         if ($dao -> create()) {
             $map["idcard"] = $_POST["idcard"];
+            $map["truename"] = $_POST["studentname"];
             if (M("enroll")->where($map)->count() == 0) {
                 $this -> error('无此学生基本信息');
             }
             M("enroll")->where($map)->setField("username",$_POST["student"]);
-            //$dao->student = $student;
-            // $pinyin=$this->getPinyin($studentname);
-            // $dao->ename=$pinyin;
-            // $dao->enamesimple=$this->getPinyinSimple($pinyin);
             $insertID = $dao -> add();
             if ($insertID) {
                 $this -> ajaxReturn($insertID, '已成功保存！', 1);
@@ -3288,10 +3295,15 @@ class EduSenAction extends CommonAction {
                     $b = false;
                 }
             }
-            for ($k=$i+1; $k < $count; $k++) { 
+            for ($k=$i+1; $k <= $count; $k++) { 
                 if(strtr($sheetData[$i]['G'], $arr) == strtr($sheetData[$k]['G'], $arr)){
                     $conflicts[] = 'G'.$i;
                     $conflicts[] = 'G'.$k;
+                    $b = false;
+                }
+                if (strtr($sheetData[$i]['A'], $arr) == strtr($sheetData[$k]['A'], $arr) && strtr($sheetData[$i]['B'], $arr) == strtr($sheetData[$k]['B'], $arr) && strtr($sheetData[$i]['C'], $arr) != strtr($sheetData[$k]['C'], $arr)) {
+                    $errors[] = 'C'.$i;
+                    $errors[] = 'C'.$k;
                     $b = false;
                 }
             }
@@ -3305,12 +3317,15 @@ class EduSenAction extends CommonAction {
                 $classdata[$i]["year"] = strtr($sheetData[$i]['A'], $arr);
                 $classdata[$i]["major"] = strtr($sheetData[$i]['C'], $arr);
                 if (!M("major")->where($classdata[$i])->find()) {
+                    $errors[] = 'A'.$i;
+                    $errors[] = 'B'.$i;
                     $errors[] = 'C'.$i;
                     continue;
                 }
                 $classdata[$i]["name"] = strtr($sheetData[$i]['B'], $arr);
                 $classdata[$i]["ctime"] = date('y-m-d h:i:s',time());
                 $data_a[$i-3]["classid"] = $class->add($classdata[$i]);
+                $justadd[] = $data_a[$i-3]["classid"];
             }else{
                 if ($classinfo["major"] != strtr($sheetData[$i]['C'], $arr)) {
                     $errors[] = 'C'.$i;
@@ -3347,6 +3362,7 @@ class EduSenAction extends CommonAction {
             excelwarning($inputFileName,$errors);
         }
         if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
+            M("class")->where(array("id" => array("in",$justadd)))->delete();
             $this->ajaxReturn($titlepic, "信息不正确", 0);
             // $this->ajaxReturn(array($errors,$emptys,$conflicts),'测试',0);
         }
@@ -3416,13 +3432,21 @@ class EduSenAction extends CommonAction {
             }
             $con1 = strtr($sheetData[$i]['A'], $arr).strtr($sheetData[$i]['B'], $arr).strtr($sheetData[$i]['C'], $arr);
             $con2 = strtr($sheetData[$i]['A'], $arr).strtr($sheetData[$i]['B'], $arr).strtr($sheetData[$i]['D'], $arr);
-            for ($k=$i+1; $k < $count; $k++) { 
+            for ($k=$i+1; $k <= $count; $k++) { 
                 if ($con1 == strtr($sheetData[$k]['A'], $arr).strtr($sheetData[$k]['B'], $arr).strtr($sheetData[$k]['C'], $arr)) {
+                    $conflicts[] = "A".$i;
+                    $conflicts[] = "A".$k;
+                    $conflicts[] = "B".$i;
+                    $conflicts[] = "B".$k;
                     $conflicts[] = "C".$i;
                     $conflicts[] = "C".$k;
                     $b = false;
                 }
                 if ($con2 == strtr($sheetData[$k]['A'], $arr).strtr($sheetData[$k]['B'], $arr).strtr($sheetData[$k]['D'], $arr)) {
+                    $conflicts[] = "A".$i;
+                    $conflicts[] = "A".$k;
+                    $conflicts[] = "B".$i;
+                    $conflicts[] = "B".$k;
                     $conflicts[] = "D".$i;
                     $conflicts[] = "D".$k;
                     $b = false;
@@ -3497,6 +3521,29 @@ class EduSenAction extends CommonAction {
         $this->menuCourse();
         $this->display();
     }
+    public function downloadSchedule(){
+        $id = $_GET["id"];
+        if (!$id) {
+            $this->error("未选择课表");
+        }
+        Vendor('PHPExcel'); 
+        $info = M("schedule")->where(array("id"=>$id))->find();
+        $info["classname"] = M("class")->where(array("id"=>$info["classid"]))->getField("name");
+        $titlepic = $info["savepath"];
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$info["term"].' '.$info["classname"].'课程表.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+    }
     public function scheduleInsert(){
         $titlepic = $_POST['titlepic'];
         if (empty($titlepic)) {
@@ -3535,6 +3582,7 @@ class EduSenAction extends CommonAction {
             if (!$map["name"]) {
                 $errors[$sheetnum][] = "A2";
             }
+            $data[$sheetnum]["savepath"] = $titlepic;
             $data[$sheetnum]["term"] = $term;
             $data[$sheetnum]["classid"] = M("class")->where($map)->getField("id");
             $b = M("schedule")->where($data[$sheetnum])->count();
@@ -3552,6 +3600,8 @@ class EduSenAction extends CommonAction {
                 excelwarning($inputFileName,$emptys[$sheetnum],'FF00B0F0',$sheetnum);
             }
             if (count($errors[$sheetnum]) == 0 && count($conflicts[$sheetnum]) == 0 && count($emptys[$sheetnum]) == 0) {
+                $notice[$sheetnum]["title"] = '通知：新增课程表——'.$sheetData[2]["A"];
+                $notice[$sheetnum]["content"] = '新增课程表，'.$sheetData[2]["A"].'，'.$sheetData[2]["C"].'，来自'.session('username').'['.session('truename').']，';
                 $data[$sheetnum]["table"] = '';
                 $data[$sheetnum]["table"] .= '
           <tr height="25">
@@ -3690,7 +3740,16 @@ class EduSenAction extends CommonAction {
             // excelwarning($inputFileName,$errors,'FFFF7F50');
             $this->ajaxReturn($titlepic,"信息不正确",0);
         }else{
-            M("schedule")->addAll($data);
+            $schedule = M("schedule");
+            foreach ($data as $sheetnum => $va) {
+                $id = $schedule->add($va);
+                $notice[$sheetnum]["content"] .= "下载地址：<a href='".U("downloadSchedule/id/".$id)."'>".U("downloadSchedule/id/".$id)."</a>";
+                $notice[$sheetnum]["tusername"]=session('username');
+                $notice[$sheetnum]["ttruename"]=session('truename');
+                $notice[$sheetnum]["ctime"]=date('Y-m-d H:i:s');
+            }
+            M('Noticecreate')->addAll($notice);
+            // M("schedule")->addAll($data);
             $this->success("保存成功");
         }
     }
@@ -3860,6 +3919,12 @@ class EduSenAction extends CommonAction {
             $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
         $result = M("examlist")->addAll($data);
+        $notice["title"] = '通知：新增考试安排';
+        $notice["content"] = strtr($sheetData[3]['A'], $arr).'考试安排，下载地址：<a href:"'.$titlepic.'">'.$titlepic.'</a>';
+        $notice["tusername"]=session('username');
+        $notice["ttruename"]=session('truename');
+        $notice["ctime"]=date('Y-m-d H:i:s');
+        M('Noticecreate')->add($notice);
         $this -> success("已成功保存");
     }
     public function examDel(){
@@ -3937,17 +4002,21 @@ class EduSenAction extends CommonAction {
                     $b = false;
                 }
                 if ($j > 2) {
-                    $sheetData[$i][chr(64+$j)] = (float)$sheetData[$i][chr(64+$j)];//分数转成数字
+                    if (!is_numeric($sheetData[$i][chr(64+$j)])) {
+                        $errors[] = chr(64+$j).$i;
+                        $b = false;
+                    }
                 }
-            }
-            if (!$b) {
-                continue;
             }
             $map["studentname"] = strtr($sheetData[$i]['A'], $arr);
             $map["student"] = strtr($sheetData[$i]['B'], $arr);
             if ($cs->where($map)->count() == 0) {
                 $errors[] = "A".$i;
                 $errors[] = "B".$i;
+                $b = false;
+            }
+            if (!$b) {
+                continue;
             }
             $grade[$i-3]["examname"] = $exam;
             $grade[$i-3]["stuname"] = $map["studentname"];

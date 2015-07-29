@@ -58,6 +58,10 @@ class EduAdmAction extends CommonAction {
         if (!$id) {
             $this->ajaxReturn($id,"未选择专业",0);
         }
+        $info = M("major")->where(array("id"=>$id))->find();
+        if (M("class")->where(array("major"=>$info["major"]))->count() > 0) {
+            $this->ajaxReturn($id,"此专业下已有班级，禁止删除",0);
+        }
         if (M("major")->where(array("id" => $id))->delete()) {
             $this->ajaxReturn($id,"删除成功",1);
         }else{

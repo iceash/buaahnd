@@ -74,10 +74,14 @@ function k4(key){
 function mysearch(){
 	var searchkey=jQuery('#searchkey').val();
 	var category=jQuery('#category').val();
+    var major=jQuery("#major").val();
 	var url="__URL__/uclass";
 	if(searchkey!==''){
 		url=url+"/searchkey/"+searchkey;
 	}
+    if(major!==''){
+        url=url+"/major/"+major;
+    }
 	if(category!==''){
 		url=url+"/category/"+category;
 	}
@@ -102,12 +106,17 @@ function searchkeydown(e){
   </tr>
 </table>
 <div class="main">
-<div class="search">输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<html:select first="入学年份" options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<div class="search">
+	输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;
+    <html:select first="所有专业" options="major_fortag" name="major" id="major" selected="major_current"/>&nbsp;
+	<html:select first="入学年份" options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;
+	<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
+</div>
 <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
 <thead>
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
- 	 <th width="80">班级ID</th>
+ 	 <!-- <th width="80">班级ID</th> -->
 	<th>班级名称</th>
 	<th>专业名称</th>
     <th width="100">入学年份</th>
@@ -121,7 +130,7 @@ function searchkeydown(e){
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
-  <td>{$my.id}</td>
+  <!-- <td>{$my.id}</td> -->
 	<td>{$my.name}</td>
 	<td>{$my.major}</td>
     <td>{$my.year}</td>
