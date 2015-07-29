@@ -94,12 +94,16 @@ function searchkeydown(e){
 </table>
 <div class="main">
 <div class="search">
-    <html:select first="请选择班级" options="class_fortag" name="classid" selected="class_current" id="searchkey"/>&nbsp;<html:select first="请选择学期" options="term_fortag" name="term" id="term" selected="term_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
+    <html:select first="所有班级" options="class_fortag" name="classid" selected="class_current" id="searchkey"/>&nbsp;
+    <html:select first="所有学期" options="term_fortag" name="term" id="term" selected="term_current"/>&nbsp;
+    <img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
 </div>
 <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
 <thead>
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
+    <th>学期</th>
+    <th>班级</th>
 	<th>课程名</th>
     <th>考试时间</th>
     <th>老师</th>
@@ -110,6 +114,8 @@ function searchkeydown(e){
   <volist name="examlist" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
+    <td>{$my.term}</td>
+    <td>{$my.classname}</td>
 	<td>{$my.course}</td>
     <td>{$my.time}</td>
     <td>{$my.teacher}</td>

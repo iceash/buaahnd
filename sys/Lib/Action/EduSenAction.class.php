@@ -1075,17 +1075,44 @@ class EduSenAction extends CommonAction {
         $this -> display();
     } 
     public function grade() {
-        $this -> assign('category_fortag', $this->getTerm());
+        $dao = D('ProgradeView');
+        $this -> assign('category_fortag', $this->getTerm());//学期列表
+        $class = D('ProgradeView')->group("classid")->field("classid,classname")->select();
+        foreach ($class as $vc) {
+            $classes[$vc["classid"]]=$vc["classname"];
+        }
+        $this->assign('class_fortag',$classes);//班级列表
+        $major = D('ProgradeView')->group("major")->field("major")->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $this->assign('major_fortag',$majors);//专业列表
+        $course = D('ProgradeView')->group("coursename")->field("coursename,courseename")->select();
+        foreach ($course as $va) {
+            $courses[$va["coursename"]]=$va["coursename"].$va["courseename"];
+        }
+        $this->assign('course_fortag',$courses);//课程列表
         if (isset($_GET['searchkey'])) {
-            $map['coursename|courseename|stuname|stunum|examname'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $map['stuname|stunum'] = array('like', '%' . $_GET['searchkey'] . '%');
             $this -> assign('searchkey', $_GET['searchkey']);
+        } 
+        if (isset($_GET['major'])) {
+            $map['major'] = $_GET['major'];
+            $this -> assign('major_current', $_GET['major']);
+        } 
+        if (isset($_GET['classid'])) {
+            $map['classid'] = $_GET['classid'];
+            $this -> assign('class_current', $_GET['classid']);
         } 
         if (isset($_GET['category'])) {
             $map['term'] = $_GET['category'];
             $this -> assign('category_current', $_GET['category']);
         } 
-        //以上
-        $dao = D('ProgradeView');
+        if (isset($_GET['course'])) {
+            $map['course'] = $_GET['course'];
+            $this -> assign('course_current', $_GET['course']);
+        } 
+        //以上为检索条件
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -1702,11 +1729,25 @@ class EduSenAction extends CommonAction {
     } 
     public function course() {
         if (isset($_GET['searchkey'])) {
-            $map['name|number'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $condition["course.name"] = array('like', '%' . $_GET['searchkey'] . '%');
+            $condition["course.ename"] = array('like', '%' . $_GET['searchkey'] . '%');
+            $condition["course.category2"] = array('like', '%' . $_GET['searchkey'] . '%');
+            $condition["_logic"] = "OR";
+            $map["_complex"] = $condition;
             $this -> assign('searchkey', $_GET['searchkey']);
         } 
+        if (isset($_GET["classid"])) {
+            $map["classid"] = $_GET["classid"];
+            $this->assign("class_current",$_GET["classid"]);
+        }
+        $all_class=D('Class')->order('year desc,name asc')->select();
+        $class_fortag=array();
+        foreach($all_class as $key=>$value){
+            $class_fortag[$value['id']]='['.$value['year'].']'.$value['name'];
+        }
+        $this->assign("class_fortag",$class_fortag);//显示班级列表
         $dao = D('CourseView');
-        $count = $dao -> where($map) -> count();
+        $count = $dao ->where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
             $listRows = 20;
@@ -1721,16 +1762,38 @@ class EduSenAction extends CommonAction {
         $this -> display();
     }
     public function usualGrade(){
-        $all_exam = M("pregrade")->group("examname")->select();
+        $dao = D('PregradeView');
+        $all_exam = $dao->group("examname")->select();
         foreach ($all_exam as $va) {
             $exams[$va["examname"]] = $va["examname"];
         }
-        $this->assign("exam_fortag",$exams);
+        $this->assign("exam_fortag",$exams);//考试列表
+        $class = $dao->group("classid")->field("classid,classname")->select();
+        foreach ($class as $vc) {
+            $classes[$vc["classid"]]=$vc["classname"];
+        }
+        $this->assign('class_fortag',$classes);//班级列表
+        $major = $dao->group("major")->field("major")->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $this->assign('major_fortag',$majors);//专业列表
+        if (isset($_GET['searchkey'])) {
+            $map['stuname|stunum'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $this -> assign('searchkey', $_GET['searchkey']);
+        } 
         if (isset($_GET["exam"])) {
+            $map['examname']=$_GET["exam"];
             $this->assign("exam_current",$_GET["exam"]);
         }
-        $map['examname']=$_GET["exam"];
-        $dao = M('pregrade');
+        if (isset($_GET['major'])) {
+            $map['major'] = $_GET['major'];
+            $this -> assign('major_current', $_GET['major']);
+        } 
+        if (isset($_GET['classid'])) {
+            $map['classid'] = $_GET['classid'];
+            $this -> assign('class_current', $_GET['classid']);
+        } 
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -3163,7 +3226,7 @@ class EduSenAction extends CommonAction {
           header("Pragma: no-cache");
           header("Content-Type:application/octet-stream");
           header('content-Type:application/vnd.ms-excel;charset=utf-8');
-          header('Content-Disposition:attachment;filename=所有未分班学生.xls');//设置文件的名称
+          header('Content-Disposition:attachment;filename=所有未分班学生(可用作模板).xls');//设置文件的名称
           header("Content-Transfer-Encoding:binary");
           $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
           $objWriter->save('php://output');
@@ -3208,7 +3271,7 @@ class EduSenAction extends CommonAction {
 '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
         if ($count < 3) {
-            $this->ajaxReturn($count, "请填写信息", 0);
+            $this->ajaxReturn($titlepic, "请填写信息", 0);
         }
         //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
         $class = M("class");
@@ -3221,15 +3284,19 @@ class EduSenAction extends CommonAction {
             $b = true;
             for($j = 1; $j <= 7; $j++){
                 if(strlen($sheetData[$i][chr(64+$j)]) == 0){
-                    $errors[] = chr(64+$j).$i;
+                    $emptys[] = chr(64+$j).$i;
                     $b = false;
                 }
             }
             for ($k=$i+1; $k < $count; $k++) { 
                 if(strtr($sheetData[$i]['G'], $arr) == strtr($sheetData[$k]['G'], $arr)){
-                    $errors[] = 'G'.$i;
-                    $errors[] = 'G'.$k;
+                    $conflicts[] = 'G'.$i;
+                    $conflicts[] = 'G'.$k;
+                    $b = false;
                 }
+            }
+            if (!$b) {
+                continue;
             }
             $map["year"] = $sheetData[$i]['A'];
             $map["name"] = $sheetData[$i]['B'];
@@ -3270,9 +3337,18 @@ class EduSenAction extends CommonAction {
                 M("enroll")->where($search)->setField("username",$data_a[$i-3]['student']);
             }
         }//for循环结束
+        if (count($emptys) > 0) {
+            excelwarning($inputFileName,$emptys,'FF00B0F0');
+        }
+        if (count($conflicts) > 0) {
+            excelwarning($inputFileName,$conflicts,'FFFFC000');
+        }
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
+        }
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
             $this->ajaxReturn($titlepic, "信息不正确", 0);
+            // $this->ajaxReturn(array($errors,$emptys,$conflicts),'测试',0);
         }
         $classstudent = M('classstudent');//连接数据库
         $classstudent -> addAll($data_a);
@@ -3320,25 +3396,43 @@ class EduSenAction extends CommonAction {
 '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
         if ($count < 3) {
-            $this->ajaxReturn($count, "请填写信息", 0);
+            $this->ajaxReturn($titlepic, "请填写信息", 0);
         }
         //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
         for ($i = 3; $i <= $count; $i++) { 
             $b = true;
             for ($j = 1; $j <= 6; $j++){
                 if(strlen($sheetData[$i][chr(64+$j)]) == 0){
-                    $errors[] = chr(64+$j).$i;
+                    $emptys[] = chr(64+$j).$i;
                     $b = false;
                 }
-            }
-            if (!$b) {
-                continue;
             }
             $map["year"] = strtr($sheetData[$i]['A'], $arr);
             $map["name"] = strtr($sheetData[$i]['B'], $arr);
             $classid = M("class")->where($map)->getField("id");
             if (!$classid) {
                 $errors[] = 'B'.$i;
+                $b = false;
+            }
+            $con1 = strtr($sheetData[$i]['A'], $arr).strtr($sheetData[$i]['B'], $arr).strtr($sheetData[$i]['C'], $arr);
+            $con2 = strtr($sheetData[$i]['A'], $arr).strtr($sheetData[$i]['B'], $arr).strtr($sheetData[$i]['D'], $arr);
+            for ($k=$i+1; $k < $count; $k++) { 
+                if ($con1 == strtr($sheetData[$k]['A'], $arr).strtr($sheetData[$k]['B'], $arr).strtr($sheetData[$k]['C'], $arr)) {
+                    $conflicts[] = "C".$i;
+                    $conflicts[] = "C".$k;
+                    $b = false;
+                }
+                if ($con2 == strtr($sheetData[$k]['A'], $arr).strtr($sheetData[$k]['B'], $arr).strtr($sheetData[$k]['D'], $arr)) {
+                    $conflicts[] = "D".$i;
+                    $conflicts[] = "D".$k;
+                    $b = false;
+                }
+            }
+            if (!is_numeric(strtr($sheetData[$i]['F'], $arr))) {
+                $errors[] = "F".$i;
+                $b = false;
+            }
+            if (!$b) {
                 continue;
             }
             $data_a[$i-3]['classid'] = $classid;
@@ -3361,6 +3455,14 @@ class EduSenAction extends CommonAction {
         }
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
+        }
+        if (count($conflicts) > 0) {
+            excelwarning($inputFileName,$conflicts,'FFFFC000');
+        }
+        if (count($emptys) > 0) {
+            excelwarning($inputFileName,$emptys,'FF00B0F0');
+        }
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
             $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
         $result = M("course")->addAll($data_a);
@@ -3414,11 +3516,17 @@ class EduSenAction extends CommonAction {
             $arr = array(); 
             $count = count($sheetData);//一共有多少行
             if ($count < 3) {
-                $this->ajaxReturn($count, "请填写信息", 0);
+                $this->ajaxReturn($titlepic, "请填写信息", 0);
             }
             //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
             $reg='/^[0-9]{4}-[0-9]{4}学年第[1-2]{1}学期$/';
             $term = $sheetData[2]["C"];
+            if (strlen($sheetData[2]["A"]) == 0) {
+                $emptys[$sheetnum][] = "A2";
+            }
+            if (strlen($sheetData[2]["C"]) == 0) {
+                $emptys[$sheetnum][] = "C2";
+            }
             if(!preg_match($reg,  strtr($term, $arr))){
                 $errors[$sheetnum][] = "C2";
             }
@@ -3436,7 +3544,14 @@ class EduSenAction extends CommonAction {
             }
             if (count($errors[$sheetnum]) > 0) {
                 excelwarning($inputFileName,$errors[$sheetnum],'FFFF7F50',$sheetnum);
-            }else{
+            }
+            if (count($conflicts[$sheetnum]) > 0) {
+                excelwarning($inputFileName,$conflicts[$sheetnum],'FFFFC000',$sheetnum);
+            }
+            if (count($emptys[$sheetnum]) > 0) {
+                excelwarning($inputFileName,$emptys[$sheetnum],'FF00B0F0',$sheetnum);
+            }
+            if (count($errors[$sheetnum]) == 0 && count($conflicts[$sheetnum]) == 0 && count($emptys[$sheetnum]) == 0) {
                 $data[$sheetnum]["table"] = '';
                 $data[$sheetnum]["table"] .= '
           <tr height="25">
@@ -3571,7 +3686,7 @@ class EduSenAction extends CommonAction {
 
             }
         }
-        if (count($errors) > 0) {
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
             // excelwarning($inputFileName,$errors,'FFFF7F50');
             $this->ajaxReturn($titlepic,"信息不正确",0);
         }else{
@@ -3601,6 +3716,7 @@ class EduSenAction extends CommonAction {
             $this -> assign('term_current', $_GET['term']);
         } 
         if (isset($_GET["classid"])) {
+            $map["classid"] = $_GET["classid"];
             $this->assign('class_current',$_GET['classid']);
         }
         $all_class=D('Class')->order('year desc,name asc')->select();
@@ -3608,12 +3724,20 @@ class EduSenAction extends CommonAction {
         foreach($all_class as $key=>$value){
             $class_fortag[$value['id']]='['.$value['year'].']'.$value['name'];
         }
-        if (isset($_GET["term"]) && isset($_GET["classid"])) {
-            $map["term"] = $_GET["term"];
-            $map["classid"] = $_GET["classid"];
-            $examlist = M("examlist")->where($map)->select();
-            $this->assign("examlist",$examlist);
+        // if (isset($_GET["term"]) && isset($_GET["classid"])) {
+        //     $map["term"] = $_GET["term"];
+        //     $map["classid"] = $_GET["classid"];
+        // }
+        $examlist = M("examlist")->where($map)->select();
+        foreach ($examlist as $num => $ve) {
+            foreach ($all_class as $vc) {
+                if ($ve["classid"] == $vc["id"]) {
+                    $examlist[$num]["classname"] = $vc["name"];
+                    break;
+                }
+            }
         }
+        $this->assign("examlist",$examlist);
         //此处还需要查询考试列表
         $this -> assign('class_fortag', $class_fortag); 
         $this->menuExam();
@@ -3661,14 +3785,29 @@ class EduSenAction extends CommonAction {
 '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
         if ($count < 3) {
-            $this->ajaxReturn($count, "请填写信息", 0);
+            $this->ajaxReturn($titlepic, "请填写信息", 0);
         }
         //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
         for($i = 3; $i <= $count; $i++){
             $b = true;
             for($j = 1; $j <= 4; $j++){
                 if(strlen($sheetData[$i][chr(64+$j)]) == 0){
-                    $errors[] = chr(64+$j).$i;
+                    $emptys[] = chr(64+$j).$i;
+                    $b = false;
+                }
+            }
+            $tmp = strtr($sheetData[$i]['A'], $arr).strtr($sheetData[$i]['B'], $arr).strtr($sheetData[$i]['C'], $arr).strtr($sheetData[$i]['D'], $arr);
+            for ($k=$i+1; $k <=$count ; $k++) { 
+                $tmp1 = strtr($sheetData[$k]['A'], $arr).strtr($sheetData[$k]['B'], $arr).strtr($sheetData[$k]['C'], $arr).strtr($sheetData[$k]['D'], $arr);
+                if ($tmp == $tmp1) {
+                    $conflicts[] = "A".$i;
+                    $conflicts[] = "B".$i;
+                    $conflicts[] = "C".$i;
+                    $conflicts[] = "D".$i;
+                    $conflicts[] = "A".$k;
+                    $conflicts[] = "B".$k;
+                    $conflicts[] = "C".$k;
+                    $conflicts[] = "D".$k;
                     $b = false;
                 }
             }
@@ -3693,17 +3832,31 @@ class EduSenAction extends CommonAction {
             }else{
                 $data[$i-3]["course"] = strtr($sheetData[$i]['C'], $arr);
                 $data[$i-3]["time"] = strtr($sheetData[$i]['D'], $arr);
-                $data[$i-3]["teacher"] = strtr($sheetData[$i]['E'], $arr);
                 $mbp["classid"] = $data[$i-3]["classid"];
                 $mbp["name|ename"] = $data[$i-3]["course"];
                 if (M("course")->where($mbp)->count() == 0) {
                     $errors[] = "B".$i;
                     $errors[] = "C".$i;
                 }
+                if (M("examlist")->where($data[$i-3])->count() > 0) {
+                    $errors[] = "A".$i;
+                    $errors[] = "B".$i;
+                    $errors[] = "C".$i;
+                    $errors[] = "D".$i;
+                }
+                $data[$i-3]["teacher"] = strtr($sheetData[$i]['E'], $arr);
             }
         }
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
+        }
+        if (count($conflicts) > 0) {
+            excelwarning($inputFileName,$conflicts,'FFFFC000');
+        }
+        if (count($emptys) > 0) {
+            excelwarning($inputFileName,$emptys,'FF00B0F0');
+        }
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
             $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
         $result = M("examlist")->addAll($data);

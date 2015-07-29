@@ -63,11 +63,23 @@ function getSelectCheckboxValues(){
 }
 
 function mysearch(){
-	var searchkey=jQuery('#exam').val();
+	var searchkey=jQuery('#searchkey').val();
+    var exam=jQuery('#exam').val();
+    var major=jQuery("#major").val();
+    var classid=jQuery("#class").val();
 	var url="__URL__/usualGrade";
 	if(searchkey!==''){
-		url=url+"/exam/"+searchkey;
+		url=url+"/searchkey/"+searchkey;
 	}
+    if (exam!=='') {
+        url=url+"/exam/"+exam;
+    };
+    if(major!==''){
+        url=url+"/major/"+major;
+    }
+    if(classid!==''){
+        url=url+"/classid/"+classid;
+    }
 	window.location=url;
 }
 function searchkeydown(e){
@@ -89,11 +101,20 @@ function searchkeydown(e){
   </tr>
 </table>
 <div class="main">
-<div class="search"><html:select first="请选择考试" options="exam_fortag" name="exam" id="exam" selected="exam_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<div class="search">
+    学生信息：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;
+    <html:select first="所有考试" options="exam_fortag" name="exam" id="exam" selected="exam_current"/>&nbsp;
+    <html:select first="所有专业" options="major_fortag" name="major" id="major" selected="major_current"/>&nbsp;
+    <html:select first="所有班级" options="class_fortag" name="class" id="class" selected="class_current"/>&nbsp;
+    <img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
+</div>
 <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
 <thead>
   <tr id='t'>
-  <th width="5" height="30" ><input type="checkbox" id="check"/></th>
+    <th width="5" height="30" ><input type="checkbox" id="check"/></th>
+    <th>班级</th>
+    <th>专业</th>
+    <th>考试名称</th>
     <th>学生</th>
     <th>学号</th>
 	<th>听力</th>
@@ -106,8 +127,11 @@ function searchkeydown(e){
 <tbody>
   <volist name="my" id="my">
   <tr>
-  <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
-  <td>{$my.stuname}</td>
+    <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
+    <td>{$my.classname}</td>
+    <td>{$my.major}</td>
+    <td>{$my.examname}</td>
+    <td>{$my.stuname}</td>
     <td>{$my.stunum}</td>
     <td>{$my.listening}</td>
 	<td>{$my.reading}</td>
