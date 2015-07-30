@@ -24,6 +24,7 @@ jQuery(window).load(function(){
   }
   a();b();
 $('#classS').val("{$_GET['classname']}");
+$('#typeS').val("{$_GET['type']}");
 });
 jQuery(function(){ 
 	$('tr:has(:checked)').addClass('tr_selected');
@@ -83,6 +84,7 @@ function mysearch(){
 	var datefrom=$('#datefrom').val();
 	var dateto=$('#dateto').val();
 	var classname=$('#classS').val();
+	var type=$('#typeS').val();
 	// var category=jQuery('#category').val();
 	var url="__URL__/summary";
 	if(searchkey!==''){
@@ -96,6 +98,9 @@ function mysearch(){
 	}
 	if(classname!==''){
 		url=url+"/classname/"+classname;
+	}
+	if(type!==''){
+		url=url+"/type/"+type;
 	}
 	// if(category!==''){
 	// 	url=url+"/category/"+category;
@@ -126,6 +131,12 @@ function searchkeydown(e){
 	<select name="class" id="classS">
 		<option value="">请选择班级</option>
 		<volist name="classList" id="co"><option value="{$co.name}">{$co.name}</option></volist>
+	</select>
+	类型：
+	<select name="type"  id="typeS">
+		<option value="">请选择</option><option value="周">周</option>
+		<option value="月">月</option>
+		<option value="期">期</option>
 	</select>
 	<label>总结日期：</label>
 	<input type="text" name="datefrom" id="datefrom" class="calendar" value="{$_GET['datefrom']}" />

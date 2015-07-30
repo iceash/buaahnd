@@ -40,6 +40,7 @@ class EaterAction extends CommonAction {
             $f=$_GET['datefrom'];$t=$_GET['dateto'];
             $map['_string']='NOT((sbdate<='.'"'.$f.'"'.' AND sedate<='.'"'.$f.'"'.')OR('.'"'.$t.'"'.'<=sbdate AND '.'"'.$t.'"'.'<=sedate))';
         }
+        if($_GET['type']){$map['type']=$_GET['type'];}
         $dao = D('summary');
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
