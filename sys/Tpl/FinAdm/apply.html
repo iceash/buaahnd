@@ -15,8 +15,8 @@
     <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
     <td width="80%" align="right">
         <div id="nav">
-            <a href="__URL__/intercalate" class="on">收费项信息设置</a> |
-            <a href="__URL__/apply">报名费设置</a>  |
+            <a href="__URL__/intercalate">收费项信息设置</a> |
+            <a href="__URL__/apply" class="on">报名费设置</a>  |
             <a href="__URL__/bound">专业收费项设置</a>
         </div>
     </td>
@@ -26,15 +26,11 @@
     <div class="search">
         <!-- <input type="button" id="btn_del" value="删除收费项"  />&nbsp;收费项名称：<input type="text"/>&nbsp;<input type="button" value="搜索"/> -->
     </div>
-    <?php foreach ($items as $item) { 
-        $fee = $fees[$item];
-        ?>
     <div class="item" value="{$item}">
         <div class="item_title">
             <span>
-            项目：{$item}
+            报名费
             </span>
-            <input type="button" value="新增收费项" class="btn_add" />
          </div>
         <table class="mytable" width="100%" border="0" cellpadding="0" cellspacing="0">
         <thead>
@@ -47,7 +43,6 @@
           </tr>
         </thead>
         <tbody>
-          <volist name="fee" id="vo">
           <tr name="{$vo.name}" value="{$vo.id}">
             <td class="td_name">{$vo.name}</td>
             <td class="td_type">{$vo.type}</td>
@@ -56,16 +51,13 @@
             <td>
                 <button class="a_update">编辑</button>
                 <button class="a_patdeit">合作方设置</button>
-                <button class="a_delete">删除</button>
             </td>
           </tr>
-          </volist>
             
          </tbody>
          </table>
          
     </div>
-     <?php } ?>
 </div><!--end of main-->
 
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
@@ -120,7 +112,7 @@ $(document).ready(function(){
         if (!feeinfo) {return};
         $.ajax({
             type:'POST',
-            url:"__URL__/updatefee",
+            url:"__URL__/updateapply",
             dataType:"JSON",
             data:{"fee":feeinfo},
             success:function(back){
@@ -317,12 +309,9 @@ $(document).ready(function(){
                 <tr class="addfee">
                     <td  colspan="6">
                         <input type="hidden" name="id">
-                        <label>名称：<input type="text" name="name" /></label>
+                        <label>名称：<input type="text" name="name" value="报名费" readonly="readonly" /></label>
                         <label>类别：<select class="feetype" name="type">
-                                <option value="">请选择...</option>
-                            <volist name="paytype" id="onetype">
-                                <option value="{$onetype}">{$onetype}</option>
-                            </volist>
+                                <option value="报名费">报名费</option>
                         </select>
                         <label>收费标准：<input type="text" name="standard" /></label>
                         <label>分隔值：<input type="text" value="0" class="separate" /><span class="add_separate">+</span> </label>
@@ -337,10 +326,8 @@ $(document).ready(function(){
                 <label class="pat_other">
                     <select name="otherfee">
                         <option value="0">选择其他收费项</option>
-                        <volist name="fees" id="vf">
-                            <volist name="vf" id="ve">
-                                <option value="{$ve.id}">{$ve.name}</option>
-                            </volist>
+                        <volist name="fees" id="ve">
+                            <option value="{$ve.id}">{$ve.name}</option>
                         </volist>
                     </select>
                 </label>
@@ -384,7 +371,7 @@ $(document).ready(function(){
                 </label>
                 
                 <label class="pat_value">
-                    <span class="span_value">比例 %：</span>
+                    <span class="span_value">比例%：</span>
                     <input type="text" name="value" />
                 </label>
                 <button class="pat_del">删除</button>

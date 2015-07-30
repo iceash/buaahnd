@@ -60,7 +60,6 @@ function addcheck(_this){
     var name = addfee.find("input[name='name']")[0].value;
     var type = addfee.find("select.feetype")[0].value;
     var standard = addfee.find("input[name='standard']")[0].value;
-    console.log(type);
     if (name.length <= 0) {
         alert("请输入收费项名称");
         return false;

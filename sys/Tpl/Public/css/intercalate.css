@@ -6,7 +6,10 @@ button{
     cursor: pointer;
 }
 .item{
-    margin-bottom: 20px;
+    margin-bottom: 20px;padding-top: 30px;
+}
+.item .item_title{
+    margin-bottom: 10px;
 }
 input[type="button"]{cursor: pointer;}
 .main{margin-bottom: 50px;}

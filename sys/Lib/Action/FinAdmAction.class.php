@@ -95,6 +95,16 @@ class FinAdmAction extends CommonAction{
         $this->assign("partner",$partner);
         $this->display();
     }
+    public function apply(){
+        $tmppartners = M("system")->where("name='partners'")->find();
+        $partner = explode(",", $tmppartners["content"]);
+        $this->assign("partner",$partner);//合作方
+        $fees = M("fee")->where("id > 0")->select();
+        $this->assign("fees",$fees);//其他收费项
+        $vo = M("fee")->where("name='报名费'")->find();
+        $this->assign("vo",$vo);
+        $this->display();
+    }
     public function addfee(){
         $fee = $_POST["fee"];
         if (count($fee) == 1) {
@@ -157,6 +167,9 @@ class FinAdmAction extends CommonAction{
             $this->ajaxReturn($b,"删除旧收费项失败",0);
         }
         M("reback")->where(array('feeid'=>array('in',$ids)))->delete();
+        if (count($fee) > 1) {
+            $fee[0]["haschildren"] = 1;
+        }
         $b = M("fee")->add($fee[0]);
         if (count($fee) > 1) {
             for ($i = 1; $i < count($fee); $i++) { 
@@ -169,6 +182,26 @@ class FinAdmAction extends CommonAction{
             $this->ajaxReturn($fee,"success",1);
         }else{
            $this->ajaxReturn($fee,"新增新收费项失败",0); 
+        }
+    }
+    public function updateapply(){
+        $fee = $_POST["fee"];
+        M("fee")->where("name='报名费'")->delete();
+        foreach ($fee as $num => $va) {
+            $fee[$num]["item"] = "报名";
+            $fee[$num]["name"] = "报名费";
+            $fee[$num]["type"] = "报名费";
+        }
+        if (count($fee) > 1) {
+            $fee[0]["haschildren"] = 1;
+        }
+        $b = M("fee")->add($fee[0]);
+        if (count($fee) > 1) {
+            for ($i=1; $i < count($fee); $i++) { 
+                $childfee[$i-1] = $fee[$i];
+                $childfee[$i-1]["parent"] = $b;
+            }
+            M("fee")->addAll($childfee);
         }
     }
     public function delfee(){
@@ -302,11 +335,39 @@ class FinAdmAction extends CommonAction{
                 }
             }
         }
+        $feeinfo = M("fee")->where('id='.$id)->find();
         $this->assign("feeid",$id);
+        $this->assign("feename",$feeinfo["name"]);
         $this->assign("theyear",$year);
         $this->assign("all",$all);
         $this->display();
         // dump($allstudent);
+    }
+    public function boundApply(){
+        // $year = $_GET["year"] ? $_GET["year"] : date("Y");//年份
+        // $this->assign("theyear",$year);
+        $info = M("fee")->where("name='报名费' and parent=0")->find();//报名费信息
+        $this->assign("feeid",$info["id"]);
+        $map["year"] = $year;
+        $enroll = M("enroll")->select();
+        $classstudent = M("classstudent")->select();
+        foreach ($classstudent as $vc) {
+            $idcards[] = $vc["idcard"];
+        }
+        foreach ($enroll as $ve) {
+            if (!in_array($ve["idcard"], $idcards)) {
+                $mbp["feename"] = "报名费";
+                $mbp["idcard"] = $ve["idcard"];
+                if (M("payment")->where($mbp)->count() > 0) {
+                    $ve["bound"] = true;
+                }else{
+                    $ve["bound"] = false;
+                }
+                $all[] = $ve;
+            }
+        }
+        $this->assign("all",$all);
+        $this->display();
     }
     public function boundsave(){
         $addlist = $_POST["addlist"];
@@ -317,7 +378,9 @@ class FinAdmAction extends CommonAction{
             foreach ($delstu as $delone) {
                 $dels[] = $delone["idcard"];
             }
-            $a = M("payment")->where(array("idcard"=>array("in",$dels)))->delete();
+            $map["idcard"] = array("in",$dels);
+            $map["feeid"] = $feeid;
+            $a = M("payment")->where($map)->delete();
         }
         if (count($addlist) > 0) {
             $addstu = D("ClassstudentView")->where(array("name"=>array("in",$addlist)))->select();
@@ -328,6 +391,33 @@ class FinAdmAction extends CommonAction{
                 $willadd[$num]["name"] = $addone["studentname"];
                 $willadd[$num]["stunum"] = $addone["student"];
                 $willadd[$num]["idcard"] = $addone["idcard"];
+                $willadd[$num]["standard"] = $feeinfo["standard"];
+            }
+            $b = M("payment")->addAll($willadd);
+        }
+        if (!$a && !$b) {
+            $this->ajaxReturn(1,"无修改项",0);
+            
+        }
+        $this->ajaxReturn(1,"成功",1);
+    }
+    public function applySave(){
+        $addlist = $_POST["addlist"];
+        $dellist = $_POST["dellist"];
+        $feeinfo = M("fee")->where("name='报名费'")->find();
+        if (count($dellist) > 0) {
+            $map["idcard"] = array("in",$dellist);
+            $map["feename"] = "报名费";
+            $a = M("payment")->where($map)->delete();
+        }
+        if (count($addlist) > 0) {
+            $mbp["idcard"] = array("in",$addlist);
+            $enroll = M("enroll")->where($mbp)->select();
+            foreach ($enroll as $num => $ve) {
+                $willadd[$num]["feeid"] = $feeinfo["id"];
+                $willadd[$num]["feename"] = $feeinfo["name"];
+                $willadd[$num]["name"] = $ve["truename"];
+                $willadd[$num]["idcard"] = $ve["idcard"];
                 $willadd[$num]["standard"] = $feeinfo["standard"];
             }
             $b = M("payment")->addAll($willadd);

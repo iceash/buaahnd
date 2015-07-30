@@ -23,36 +23,36 @@
   </tr>
 </table>
 <div class="main">
-    <div class="search">
+    <!-- <div class="search">
         <label>年份：
             <select name="year" id="year">
             </select>
         </label>
-    </div>
+    </div> -->
     <form id='form1'>
         <input type='hidden' value='{$class}' id='classname' />
         <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
-            <tr>绑定&nbsp;&nbsp;{$feename}</tr>
-            <tr><td style="border-bottom:0px solid #B2B2B2">&nbsp;&nbsp;<input type="checkbox" id="check" value="<?php echo($feeid); ?>"/>&nbsp;<label>全选</label></td></tr>
-            <?php foreach ($all as $majorname => $major) {
-               ?>
+            <tr><td style="border-bottom:0px solid #B2B2B2">&nbsp;&nbsp;<input type="checkbox" id="check" value="<?php echo($feeid); ?>"/>&nbsp;<label>选择全部未分班学生</label></td></tr>
                 <tr>
+                        <?php foreach ($all as $num => $va) { ?>
                     <td style="border-bottom:0px solid #B2B2B2">
-                        <label style="vertical-align:middle">&nbsp;&nbsp;<input style="vertical-align:middle" type="checkbox" class="majorcheck" value='{$key}'/><?php echo($majorname) ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <div>
-                        <?php foreach ($major as $classname => $class) {
-                            ?>
-                            <label style="vertical-align:middle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="vertical-align:middle" type="checkbox" class="classcheck" name="key" value='{$classname}' <?php
-        if ($class["bound"]) {
+                        <div style="float:left;">
+                            <label style="vertical-align:middle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="vertical-align:middle" type="checkbox" class="classcheck" name="key" value='{$va.idcard}' <?php
+        if ($va["bound"]) {
             echo 'bound="true" checked="true"';
         }else{
             echo 'bound="false"';
-        }?> /><?php echo($classname) ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <?php } ?>
+        }?> />{$va.truename}[{$va.idcard}]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                         </div>
+
                     </td>
+                        <?php 
+                        if (($num+1) % 3 == 0) {
+                            echo "</tr><tr>";
+                        }
+                    }
+                         ?>
                 </tr>
-            <?php } ?>
         </table>
     </form>
 
@@ -104,7 +104,7 @@
         });
         $.ajax({
             type:'POST',
-            url:"__URL__/boundsave",
+            url:"__URL__/applySave",
             dataType:"JSON",
             data:{"addlist":addlist,"dellist":dellist,"feeid":feeid},
             success:function(back){

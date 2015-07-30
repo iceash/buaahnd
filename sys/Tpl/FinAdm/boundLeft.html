@@ -21,6 +21,7 @@
 		<!--
 		d = new dTree('d','../Public/js/dtree_original/');
 		d.add('0','-1','收费项与学生绑定');
+    
       <?php 
       $j = 1;
       foreach ($all as $item => $fee) {
@@ -34,7 +35,9 @@
           <?php
         }
         $j++;
-      } ?>
+      } 
+      echo("d.add('".$j."','0','报名费','__URL__/boundApply');");
+      ?>
         // d.add('1','0','留学档案库');
         // d.add('2','0','未确定');
 
