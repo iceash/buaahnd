@@ -16,8 +16,8 @@
     <td width="80%" align="right">
         <div id="nav">
             <a href="__URL__/intercalate">收费项信息设置</a> |
-            <a href="__URL__/apply" class="on">报名费设置</a>  |
-            <a href="__URL__/rebuilt">重修费设置</a>  |
+            <a href="__URL__/apply">报名费设置</a>  |
+            <a href="__URL__/rebuilt" class="on">重修费设置</a>  |
             <a href="__URL__/bound">专业收费项设置</a>
         </div>
     </td>
@@ -44,10 +44,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr name="{$vo.name}" value="{$vo.id}">
-            <td class="td_name">{$vo.name}</td>
-            <td class="td_type">{$vo.type}</td>
-            <td class="td_standard">{$vo.standard}</td>
+          <tr name="重修费" value="1">
+            <td class="td_name">重修费</td>
+            <td class="td_type">重修费</td>
+            <td class="td_standard">每学分{$tuition}</td>
             <td class="td_rate">{$vo.rate}</td>
             <td>
                 <button class="a_update">编辑</button>
@@ -107,15 +107,14 @@ $(document).ready(function(){
     });
     $(document).on("click",".btn_update",function(){
         //更新收费项
-        var b = confirm("更新收费项信息将导致与此项相关的合作方返款比例失效，您确定要更改吗？");
+        var b = confirm("确定要修改单个学分费用吗？");
         if (!b) {return false};
-        var feeinfo = addcheck(this);
-        if (!feeinfo) {return};
+        var tuition = $(this).parents(".addfee").find("input[name='standard']")[0].value;
         $.ajax({
             type:'POST',
-            url:"__URL__/updateapply",
+            url:"__URL__/updaterebuilt",
             dataType:"JSON",
-            data:{"fee":feeinfo},
+            data:{"tuition":tuition},
             success:function(back){
                 if (back.status == 1) {
                     location.reload();
@@ -135,9 +134,9 @@ $(document).ready(function(){
         var that = $(this).parent("td");
         $.ajax({
             type:'POST',
-            url:"__URL__/rebacklist",
+            url:"__URL__/rebuiltlist",
             dataType:"JSON",
-            data:{"id":id,"name":name},
+            data:{"name":"重修费"},
             success:function(back){
                 var thenew = that.parent("tr").next(".div_partner");
                 if (back.status == 0) {
@@ -201,10 +200,10 @@ $(document).ready(function(){
     $(document).on("click",".pat_save",function(){
         //在出现的合作方中保存
         var reinfo = [], i = 0, b = true, numreg = /^\d+(\.\d+)?$/;
-        var feename = $(this).parents(".onefee").children(".div_feename").text();
+        // var feename = $(this).parents(".onefee").children(".div_feename").text();
         $(this).parent(".onepartner").each(function(){
             reinfo[i] = {};
-            reinfo[i]["feename"] = feename;
+            reinfo[i]["feename"] = "重修费";
             reinfo[i]["status"] = $(this).attr("status");
             reinfo[i]["partner"] = $(this).find(".pat_name select").val();
             reinfo[i]["type"] = $(this).find(".pat_type select").val();
@@ -227,11 +226,10 @@ $(document).ready(function(){
             alert("信息格式不正确！");
             return false;
         };
-        console.log(reinfo);
         var that = this;
         $.ajax({
             type:'POST',
-            url:"__URL__/rebacksave",
+            url:"__URL__/rebuiltreback",
             dataType:"JSON",
             data:{"reinfo":reinfo[0]},
             success:function(back){
@@ -246,58 +244,9 @@ $(document).ready(function(){
         });
     });
     $(document).on("click",".a_update",function(){
-        var id = $(this).parents("tr").attr("value");
-        var that = this;
-        $.ajax({
-            type:'POST',
-            url:"__URL__/feeinfo",
-            dataType:"JSON",
-            data:{"id":id},
-            success:function(back){
-                console.log(back);
-                $(that).parents(".item").find(".addfee").remove();
-                $(that).parents(".item").find(".div_partner").remove();
-                $(that).parents("tr").after($("#div_addfee").html());
-                $(that).parents(".item").find(".btn_add").show();
-                $(that).parents(".item").find(".btn_save").hide();
-                var addfee = $(that).parents(".item").find(".addfee");
-                var thetr = $(that).parents("tr");
-                var id = thetr.find("input[name='key']").val();
-                $(that).parents(".item").find(".addfee input[name='id']").val(id);
-                var name = back.data.name;
-                var type = back.data.type;
-                if (back.data.separte) {
-                    var separate = back.data.separte;
-                }else{
-                    var separate = [];
-                    separate[0] = back.data.standard;
-                };
-                name = name.split("-")[0];
-                var fees = [];
-                thetr.parent("tbody").children("tr").each(function(){
-                    if ($(that).children(".td_name").text().split("-")[0] == name) {
-                        var tmp = $(that).children(".td_standard").text();
-                        tmp = parseInt(tmp);
-                        for (var i = 0; i < separate.length; i++) {
-                            tmp += separate[i];
-                        };
-                        separate.push(tmp);
-                    };
-                });
-                // console.log(name,type,separate);
-                addfee.find("input[name='name']").attr("value",name);
-                addfee.find("select.feetype").attr("value",type);
-                addfee.find("input[name='standard']").attr("value",separate[separate.length - 1]);
-                separate.pop();
-                if (separate.length > 0) {
-                    addfee.find(".separate").remove();
-                    for (var i = 0; i < separate.length; i++) {
-                        addfee.find(".add_separate").before('<input type="text" value="'+separate[i]+'" class="separate" />');
-                    };
-                };
-            }
-        });
-        return;
+        $(this).parents(".item").find(".addfee").remove();
+        $(this).parents(".item").find(".div_partner").remove();
+        $(this).parents("tr").after($("#div_addfee").html());
     });
     /*$(document).on("click","",function(){
 
@@ -310,14 +259,13 @@ $(document).ready(function(){
                 <tr class="addfee">
                     <td  colspan="6">
                         <input type="hidden" name="id">
-                        <label>名称：<input type="text" name="name" value="报名费" readonly="readonly" /></label>
+                        <label>名称：<input type="text" name="name" value="重修费" readonly="readonly" /></label>
                         <label>类别：<select class="feetype" name="type">
-                                <option value="报名费">报名费</option>
+                                <option value="重修费">重修费</option>
                         </select>
-                        <label>收费标准：<input type="text" name="standard" /></label>
-                        <label>分隔值：<input type="text" value="0" class="separate" /><span class="add_separate">+</span> </label>
+                        <label>收费标准（单个学分价格）：<input type="text" name="standard" value="{$tuition}" /></label>
+                        <label style='visibility:hidden;'>分隔值：<input type="text" value="0" class="separate" /><span class="add_separate">+</span> </label>
                         <input type="button" value="更新" class="btn_update"/>
-                        <input type="button" value="保存" class="btn_save"/>
                         <input type="button" value="撤销" class="btn_cancel"/>
                     </td>
                 </tr>

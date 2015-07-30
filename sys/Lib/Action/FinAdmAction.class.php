@@ -75,7 +75,6 @@ class FinAdmAction extends CommonAction{
         }
         $project = M("system")->where("name='items'")->find();
         $items = explode(",", $project["content"]);
-        // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
 
         $paytypes = M("system")->where("name='paytype'")->find();
         $paytype = explode(",", $paytypes["content"]);
@@ -91,7 +90,6 @@ class FinAdmAction extends CommonAction{
         $this->assign("fees",$fees);
         $tmppartners = M("system")->where("name='partners'")->find();
         $partner = explode(",", $tmppartners["content"]);
-        // $partner = ["南邮","百度推广","青梦家","东方航空","阿里去啊"];//合作方列表，这里定死；
         $this->assign("partner",$partner);
         $this->display();
     }
@@ -101,9 +99,30 @@ class FinAdmAction extends CommonAction{
         $this->assign("partner",$partner);//合作方
         $fees = M("fee")->where("id > 0")->select();
         $this->assign("fees",$fees);//其他收费项
-        $vo = M("fee")->where("name='报名费'")->find();
+        $vo = M("fee")->where("name='报名费' and period=0")->find();
         $this->assign("vo",$vo);
         $this->display();
+    }
+    public function rebuilt(){
+        $tmppartners = M("system")->where("name='partners'")->find();
+        $partner = explode(",", $tmppartners["content"]);
+        $this->assign("partner",$partner);//合作方
+        $fees = M("fee")->where("id > 0")->select();
+        $this->assign("fees",$fees);//其他收费项
+        $tuition = M("system")->where("name='tuition'")->getField("content");
+        $this->assign("tuition",$tuition);
+        $this->display();
+    }
+    public function updaterebuilt(){
+        $tuition = $_POST["tuition"];
+        if (!is_numeric($tuition)) {
+            $this->error("请输入学分价格");
+        }
+        if (M("system")->where("name='tuition'")->setField("content",$tuition)) {
+            $this->success("成功");
+        }else{
+            $this->error("失败");
+        }
     }
     public function addfee(){
         $fee = $_POST["fee"];
@@ -161,6 +180,9 @@ class FinAdmAction extends CommonAction{
         foreach ($willsave as $num => $ws) {
             $ids[] = $ws["id"];
         }
+        if (M("payment")->where(array('feeid'=>array('in',$ids)))->count() > 0) {
+            $this->error("已绑定学生，禁止修改");
+        }
         $b = 0;
         $b = M("fee")->where(array('id'=>array('in',$ids)))->delete();
         if (!$b) {
@@ -185,6 +207,11 @@ class FinAdmAction extends CommonAction{
         }
     }
     public function updateapply(){
+        $map["period"] = 0;
+        $map["feename"] = "报名费";
+        if (M("payment")->where($map)->count() >0) {
+            $this->error("报名费已绑定学生，禁止修改");
+        }
         $fee = $_POST["fee"];
         M("fee")->where("name='报名费'")->delete();
         foreach ($fee as $num => $va) {
@@ -199,13 +226,22 @@ class FinAdmAction extends CommonAction{
         if (count($fee) > 1) {
             for ($i=1; $i < count($fee); $i++) { 
                 $childfee[$i-1] = $fee[$i];
+                $childfee[$i-1]["name"] .= "-$i";
                 $childfee[$i-1]["parent"] = $b;
             }
-            M("fee")->addAll($childfee);
+            $b = M("fee")->addAll($childfee);
+        }
+        if ($b) {
+            $this->success("成功");
+        }else{
+            $this->error("失败");
         }
     }
     public function delfee(){
         $feename = $_POST["name"];
+        if (M("payment")->where(array('feename'=>$feename))->count() > 0) {
+            $this->error("此消费项已绑定学生，禁止删除");
+        }
         $count = M("deal")->where(array('feename'=>array('like',$feename."%")))->count();
         if ($count > 0) {
             $this->ajaxReturn($count,"已有".$count."条交易记录，禁止删除",0);
@@ -258,6 +294,17 @@ class FinAdmAction extends CommonAction{
         
         
     }
+    public function rebuiltlist(){
+        $map["feename"] = '重修费';
+        $map["period"] = 0;
+        $list = M("reback")->where($map)->select();
+        $newlist["重修费"][] = [];
+        foreach ($list as $key => $value) {
+            $newlist["重修费"][] = $value;
+        }
+        $newlist["count"] = 1;
+        $this->ajaxReturn($newlist,"reback list",1);
+    }
     public function rebackdel(){
         $id = $_POST["id"];
         if (M("reback")->where("id=".$id)->delete()) {
@@ -269,7 +316,6 @@ class FinAdmAction extends CommonAction{
     public function rebacksave(){
         $fo = $_POST["reinfo"];
         $b = 1; $count = 0;
-        // foreach ($info as $num => $fo) {
             if ($fo["status"] == "new") {
                 unset($fo["status"]);
                 $newlist = $fo;
@@ -283,7 +329,28 @@ class FinAdmAction extends CommonAction{
                     $count++;
                 }
             }
-        // }
+        $tmp = M("reback")->add($newlist);
+        if (!$tmp && $count == 0) {
+            $this->ajaxReturn($newlist,"无更新",0);
+        }
+        $this->ajaxReturn($tmp,"更新成功",1);
+    }
+    public function rebuiltreback(){
+        $fo = $_POST["reinfo"];
+        $b = 1; $count = 0;
+            if ($fo["status"] == "new") {
+                unset($fo["status"]);
+                $newlist = $fo;
+                $map["name"] = $fo["feename"];
+                $newlist["feeid"] = 0;
+            }elseif ($fo["status"] == "update") {
+                unset($fo["status"]);
+                $updatelist = $fo;
+                $tmp = M("reback")->where("id=".$fo["id"])->save($fo);
+                if ($tmp) {
+                    $count++;
+                }
+            }
         $tmp = M("reback")->add($newlist);
         if (!$tmp && $count == 0) {
             $this->ajaxReturn($newlist,"无更新",0);
@@ -296,7 +363,6 @@ class FinAdmAction extends CommonAction{
     public function boundLeft(){
         $project = M("system")->where("name='items'")->find();
         $items = explode(",", $project["content"]);
-        // $items = ["美帝一周游","英伦自由行","欧盟一日行"];//项目列表，这里定死;
         $fees = M("fee")->where("period=0 and parent=0")->order("id")->select();
         foreach ($fees as $fee) {
             foreach ($items as $itemname) {
@@ -316,9 +382,6 @@ class FinAdmAction extends CommonAction{
             $allstudent = D("ClassstudentView")->where('year='.$year)->select();
         }
         foreach ($allstudent as $one) {
-            // $stu["stunum"] = $one["student"];
-            // $stu["name"] = $one["studentname"];
-            // $stu["idcard"] = $one["idcard"];
             $all[$one["major"]][$one["name"]]["has"]++;
             $map["feeid"] = $id;
             $map["idcard"] = $one["idcard"];
@@ -341,7 +404,6 @@ class FinAdmAction extends CommonAction{
         $this->assign("theyear",$year);
         $this->assign("all",$all);
         $this->display();
-        // dump($allstudent);
     }
     public function boundApply(){
         // $year = $_GET["year"] ? $_GET["year"] : date("Y");//年份

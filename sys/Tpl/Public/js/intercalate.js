@@ -30,10 +30,10 @@ $(document).ready(function(){
             $(this).parent(".pat_type").siblings(".pat_value").children("span").text("返款值：");
             $(this).parent(".pat_type").siblings(".pat_other").remove();
         }else if(va == 0){
-            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("比例：");
+            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("比例%：");
             $(this).parent(".pat_type").siblings(".pat_other").remove();
         }else if(va == 2){
-            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("比例：");
+            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("比例%：");
             $(this).parent(".pat_type").after($("#label_allfee").html());
         };
     });
