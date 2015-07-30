@@ -983,14 +983,14 @@ class EduDirAction extends CommonAction {
         '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
         '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
-        if ($count < 2) {
+        if ($count < 3) {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
-        for ($i=2; $i <=$count; $i++) { 
+        for ($i=3; $i <=$count; $i++) { 
             for ($j=1; $j <= 9; $j++) {
                 if($j==5){continue;}else{
                    if(strlen($sheetData[$i][chr(64+$j)])==0){
-                    $errors[]=chr(64+$j).$i;
+                    $emptys[]=chr(64+$j).$i;
                     } 
                 }    
             }//检查非空项（第5列非必填）
@@ -1002,33 +1002,45 @@ class EduDirAction extends CommonAction {
             $mapClassNtoI['name']=$sheetData[$i]['A'];
             $thisId=M('class')->where($mapClassNtoI)->getField('id');
             if(in_array($thisId,$cia)){
-                $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
+                $data_a[$i-3]['classname'] = $sheetData[$i]['A'];
             }else{$errors[]='A'.$i;}
             $mapB['student']=$sheetData[$i]['B'];
             $bClassId=M('classstudent')->where($mapB)->getField('classid');
             if($bClassId==$thisId){
-                $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
+                $data_a[$i-3]['susername'] = $sheetData[$i]['B'];
             }else{$errors[]='B'.$i;}
             $mapC['studentname']=$sheetData[$i]['C'];
             $cClassId=M('classstudent')->where($mapC)->getField('classid');
             if($cClassId==$thisId){
-                $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
+                $data_a[$i-3]['struename'] = $sheetData[$i]['C'];
             }else{$errors[]='C'.$i;}
             if(isDate($sheetData[$i]['D'])){
-                $data_a[$i-2]['timezone'] = $sheetData[$i]['D'];
-            }else{$errors[]='D'.$i;}
-            $data_a[$i-2]['content'] = $sheetData[$i]['E'];
-            $data_a[$i-2]['truant'] = (int)$sheetData[$i]['F'];
-            $data_a[$i-2]['tvacate'] = (int)$sheetData[$i]['G'];
-            $data_a[$i-2]['svacate'] = (int)$sheetData[$i]['H'];
-            $data_a[$i-2]['late'] = (int)$sheetData[$i]['I'];
-            $data_a[$i-2]['tusername'] = session('username');
-            $data_a[$i-2]['ttruename'] = session('truename');
-            $data_a[$i-2]['ctime'] = date("Y-m-d");
+                $data_a[$i-3]['timezone'] = $sheetData[$i]['D'];
+            }else{
+                if(strlen($sheetData[$i]['D'])==0){
+                    $emptys[]='D'.$i;
+                }else{$errors[]='D'.$i;}         
+            }
+            $data_a[$i-3]['content'] = $sheetData[$i]['E'];
+            $data_a[$i-3]['truant'] = (int)$sheetData[$i]['F'];
+            $data_a[$i-3]['tvacate'] = (int)$sheetData[$i]['G'];
+            $data_a[$i-3]['svacate'] = (int)$sheetData[$i]['H'];
+            $data_a[$i-3]['late'] = (int)$sheetData[$i]['I'];
+            $data_a[$i-3]['tusername'] = session('username');
+            $data_a[$i-3]['ttruename'] = session('truename');
+            $data_a[$i-3]['ctime'] = date("Y-m-d");
         }
-        if(count($errors) > 0){
+        if (count($emptys) > 0) {
+            excelwarning($inputFileName,$emptys,'FF00B0F0');
+        }
+        if (count($conflicts) > 0) {
+            excelwarning($inputFileName,$conflicts,'FFFFC000');
+        }
+        if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
-            $this->ajaxReturn($titlepic,"信息不正确",0);
+        }
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
         $dao=D('Attend');
         $dao -> addAll($data_a);
@@ -3334,6 +3346,37 @@ class EduDirAction extends CommonAction {
         $this -> menujudge();
         $this -> display();
     }
+    public function downloadJudgeStu(){
+        Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/judge.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $p = PHPExcel_IOFactory::load($excelurl);
+        $p -> setActiveSheetIndex(0);
+        $map['teacher']=session('username');
+        $stuinfo = D("ClassTeacherStudentView")->where($map)->select();
+        $p->getActiveSheet()->getStyle('H')->getNumberFormat()
+            ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+        foreach ($stuinfo as $i => $vs) {
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue('A'.($i+3), $vs["name"])
+                ->setCellValue('C'.($i+3), $vs["studentname"])
+                ->setCellValueExplicit('B'.($i+3), $vs["student"],PHPExcel_Cell_DataType::TYPE_STRING);
+
+        }
+          header("Pragma: public");
+          header("Expires: 0");
+          header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+          header("Pragma: no-cache");
+          header("Content-Type:application/octet-stream");
+          header('content-Type:application/vnd.ms-excel;charset=utf-8');
+          header('Content-Disposition:attachment;filename=所有学生(可用作模板).xls');//设置文件的名称
+          header("Content-Transfer-Encoding:binary");
+          $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+          $objWriter->save('php://output');
+          return true;
+          exit;
+    }
     public function judgeInsert() {
     $titlepic = $_POST['titlepic'];
     if (empty($titlepic) ) {
@@ -3374,13 +3417,13 @@ class EduDirAction extends CommonAction {
 '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
 '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
-        if ($count < 2) {
+        if ($count < 3) {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
-        for ($i=2; $i <=$count; $i++) { 
+        for ($i=3; $i <=$count; $i++) { 
             for ($j=1; $j <= 5; $j++) {
                if(strlen($sheetData[$i][chr(64+$j)])==0){
-                    $errors[]=chr(64+$j).$i;
+                    $emptys[]=chr(64+$j).$i;
                 }    
             }//检查非空项（第5列非必填）
             $mapForClassid['teacher']=session('username');
@@ -3391,29 +3434,41 @@ class EduDirAction extends CommonAction {
             $mapClassNtoI['name']=$sheetData[$i]['A'];
             $thisId=M('class')->where($mapClassNtoI)->getField('id');
             if(in_array($thisId,$cia)){
-                $data_a[$i-2]['classname'] = $sheetData[$i]['A'];
+                $data_a[$i-3]['classname'] = $sheetData[$i]['A'];
             }else{$errors[]='A'.$i;}
             $mapB['student']=$sheetData[$i]['B'];
             $mapB['studentname']=$sheetData[$i]['C'];
             $bClassId=M('classstudent')->where($mapB)->getField('classid');
             if($bClassId==$thisId){
-                $data_a[$i-2]['susername'] = $sheetData[$i]['B'];
-                $data_a[$i-2]['struename'] = $sheetData[$i]['C'];
+                $data_a[$i-3]['susername'] = $sheetData[$i]['B'];
+                $data_a[$i-3]['struename'] = $sheetData[$i]['C'];
             }else{
                 $errors[]='B'.$i;
                 $errors[]='C'.$i;
             }
             if(isDate($sheetData[$i]['D'])){
-                $data_a[$i-2]['jdate'] = $sheetData[$i]['D'];
-            }else{$errors[]='D'.$i;}
-            $data_a[$i-2]['content'] = $sheetData[$i]['E'];
-            $data_a[$i-2]['tusername'] = session('username');
-            $data_a[$i-2]['ttruename'] = session('truename');
-            $data_a[$i-2]['date'] = date("Y-m-d");
+                $data_a[$i-3]['jdate'] = $sheetData[$i]['D'];
+            }else{
+                if(strlen($sheetData[$i]['D'])==0){
+                $emptys[]='D'.$i;
+                }else{$errors[]='D'.$i;}
+            }
+            $data_a[$i-3]['content'] = $sheetData[$i]['E'];
+            $data_a[$i-3]['tusername'] = session('username');
+            $data_a[$i-3]['ttruename'] = session('truename');
+            $data_a[$i-3]['date'] = date("Y-m-d");
         }
-        if(count($errors) > 0){
+        if (count($emptys) > 0) {
+            excelwarning($inputFileName,$emptys,'FF00B0F0');
+        }
+        if (count($conflicts) > 0) {
+            excelwarning($inputFileName,$conflicts,'FFFFC000');
+        }
+        if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
-            $this->ajaxReturn($titlepic,"信息不正确",0);
+        }
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
         $dao=D('judge');
         $dao -> addAll($data_a);

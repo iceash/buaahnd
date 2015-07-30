@@ -149,7 +149,7 @@ class EaterAction extends CommonAction {
             $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('student') -> select();
             $page = $p -> show();
             $this -> assign("page", $page);
-            for ($i=0; $i < $count; $i++) {
+            for ($i=0; $i < count($my); $i++) {
                 $mapC['id']=$my[$i]['classid'];
                 $my[$i]['classname']=M('class')->where($mapC)->getField('name');
             }
@@ -161,6 +161,40 @@ class EaterAction extends CommonAction {
     public function distributeAdd() {
         $this -> menudistribute();
         $this -> display();
+    }
+    public function downloadRoomStu(){
+        Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/distribute.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $p = PHPExcel_IOFactory::load($excelurl);
+        $p -> setActiveSheetIndex(0);
+        $map['house']=array('EXP','IS NULL');
+        $map['room']=array('EXP','IS NULL');
+        $map['cell']=array('EXP','IS NULL');
+        $map['bed']=array('EXP','IS NULL');
+        $stuinfo = D("ClassstudentView")->where($map)->select();
+        $p->getActiveSheet()->getStyle('H')->getNumberFormat()
+            ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+        foreach ($stuinfo as $i => $vs) {
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue('A'.($i+3), $vs["name"])
+                ->setCellValue('F'.($i+3), $vs["studentname"])
+                ->setCellValueExplicit('G'.($i+3), $vs["student"],PHPExcel_Cell_DataType::TYPE_STRING);
+
+        }
+          header("Pragma: public");
+          header("Expires: 0");
+          header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+          header("Pragma: no-cache");
+          header("Content-Type:application/octet-stream");
+          header('content-Type:application/vnd.ms-excel;charset=utf-8');
+          header('Content-Disposition:attachment;filename=所有未分配学生(可用作模板).xls');//设置文件的名称
+          header("Content-Transfer-Encoding:binary");
+          $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+          $objWriter->save('php://output');
+          return true;
+          exit;
     }
     public function distributeInsert() {
         $titlepic = $_POST['titlepic'];
@@ -200,14 +234,14 @@ class EaterAction extends CommonAction {
         '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
         '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
-        if ($count < 2) {
+        if ($count < 3) {
             $this->ajaxReturn($count, "请填写信息", 0);
         }
-        for ($i=2; $i <=$count; $i++) { 
+        for ($i=3; $i <=$count; $i++) { 
             for ($j=1; $j <= 7; $j++) {             
                if(strlen($sheetData[$i][chr(64+$j)])==0){
-                    $errors[]=chr(64+$j).$i;
-                }    
+                    $emptys[]=chr(64+$j).$i;
+                }   
             }//检查非空项
             $map1['studentname']=$sheetData[$i]['F'];
             $map1['student']=$sheetData[$i]['G'];
@@ -216,26 +250,45 @@ class EaterAction extends CommonAction {
                 $errors[]='F'.$i;
                 $errors[]='G'.$i;
             }
+            $mapR['house']=$sheetData[$i]['B'];
+            $mapR['room']=$sheetData[$i]['C'];
+            $mapR['cell']=$sheetData[$i]['D'];
+            $mapR['bed']=$sheetData[$i]['E'];
+            $theSameOne=M('classstudent')->where($mapR)->select();
+            if($theSameOne>0){
+                $errors[]='B'.$i;
+                $errors[]='C'.$i;
+                $errors[]='D'.$i;
+                $errors[]='E'.$i;
+            }
             $thisLive=$sheetData[$i]['B'].$sheetData[$i]['C'].$sheetData[$i]['D'].$sheetData[$i]['E'];
             for($k=$i+1;$k <=$count;$k++){
                 $thatLive=$sheetData[$k]['B'].$sheetData[$k]['C'].$sheetData[$k]['D'].$sheetData[$k]['E'];
-                if($thatLive==$thisLive){
-                    $errors[]='B'.$i;
-                    $errors[]='C'.$i;
-                    $errors[]='D'.$i;
-                    $errors[]='E'.$i;
-                    $errors[]='B'.$k;
-                    $errors[]='C'.$k;
-                    $errors[]='D'.$k;
-                    $errors[]='E'.$k;
+                if($thatLive==$thisLive&&strlen($thisLive)!=0){
+                    $conflicts[]='B'.$i;
+                    $conflicts[]='C'.$i;
+                    $conflicts[]='D'.$i;
+                    $conflicts[]='E'.$i;
+                    $conflicts[]='B'.$k;
+                    $conflicts[]='C'.$k;
+                    $conflicts[]='D'.$k;
+                    $conflicts[]='E'.$k;
                 }
             }
         }
-        if(count($errors) > 0){
-            excelwarning($inputFileName,$errors);
-            $this->ajaxReturn($titlepic,"信息不正确",0);
+        if (count($emptys) > 0) {
+            excelwarning($inputFileName,$emptys,'FF00B0F0');
         }
-        for ($j=0; $j <=$count; $j++) {
+        if (count($conflicts) > 0) {
+            excelwarning($inputFileName,$conflicts,'FFFFC000');
+        }
+        if (count($errors) > 0) {
+            excelwarning($inputFileName,$errors);
+        }
+        if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
+        }
+        for ($j=3; $j <=$count; $j++) {
            $map['studentname']=$sheetData[$j]['F'];
            $map['student']=$sheetData[$j]['G'];
            $data_a['house']=$sheetData[$j]['B'];
@@ -345,10 +398,10 @@ class EaterAction extends CommonAction {
     }
     public function out(){
         $map['id']=$_POST['id'];
-        $data['house']='';
-        $data['room']='';
-        $data['cell']='';
-        $data['bed']='';
+        $data['house']=NULL;
+        $data['room']=NULL;
+        $data['cell']=NULL;
+        $data['bed']=NULL;
         $check=M('classstudent')->where($map)->save($data);
         if($check){$this->success('退宿成功');}else{$this->error('退宿失败');}
     }
