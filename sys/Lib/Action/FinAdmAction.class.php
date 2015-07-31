@@ -636,7 +636,7 @@ class FinAdmAction extends CommonAction{
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
-        $list=$paymentV->where($map)->order('name')->select();
+        $list=$paymentV->where($map)->order('status')->select();
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {
@@ -667,6 +667,35 @@ class FinAdmAction extends CommonAction{
         $this->assign('project',$projectArr);
         $this->display();
 
+    }
+    public function viewentry(){
+        $payment=M('payment');
+        $map['feename']='报名费';
+        if($_GET['status']){$map['status']=$_GET['status']-1;}
+        if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
+        if($_GET['name']){$map['name']=$_GET['name'];}
+        if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
+        $list=$payment->where($map)->order('name')->select();
+        for ($i=0; $i <count($list);$i++) {
+            $status=$list[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+            }
+            $list[$i]['statusname']=$statusname;
+         }
+        $this->assign('list',$list);
+        $this->display();  
     }
     public function getClass(){
         $map['major']=$_POST['major'];
