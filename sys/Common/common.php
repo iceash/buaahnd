@@ -153,7 +153,14 @@ function downloads(){
           $where['truename'] = array('in',$mapi1);
 
         }
-      if($majorname){$where['majorname']  = array('like','%'.$majorname.'%');}
+        if($majorname){
+        $mapcce['major']=$majorname;
+         $mapin3=  $D ->where($mapcce) ->Field('idcard')->select();
+         for ($ll1=0; $ll1 <count($mapin3); $ll1++) { 
+             $mapi3[]=$mapin3[$ll1]['idcard'];
+         }
+         $where['idcard'] = array('in',$mapi3);
+     }
       if($_GET['datefrom']&&$_GET['dateto']){$where['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
       if($_GET['sbfrom']&&$_GET['sbto']){$where['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
       $where['period']=0;
@@ -190,6 +197,7 @@ function downloads(){
         $stugrade= $D ->where($mapa)->select();
         $Model[$i]['grade']=$stugrade[0]['year'];
         $Model[$i]['class']=$stugrade[0]['name'];
+        $Model[$i]['majorname']=$stugrade[0]['major'];
         $Model[$i]['statusname']=$statusname;
 
        }
@@ -241,6 +249,7 @@ function downloads(){
         $stugrade= $D ->where($mapa)->select();
         $Model[$i]['grade']=$stugrade[0]['year'];
         $Model[$i]['class']=$stugrade[0]['name'];
+        $Model[$i]['majorname']=$stugrade[0]['major'];
         $Model[$i]['statusname']=$statusname;
 
        }

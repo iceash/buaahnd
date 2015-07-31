@@ -736,6 +736,14 @@ class FinAdmAction extends CommonAction{
          }
          $where['idcard'] = array('in',$mapi2);
      }
+     if($majorname){
+        $mapcce['major']=$majorname;
+         $mapin3=  $D ->where($mapcce) ->Field('idcard')->select();
+         for ($ll1=0; $ll1 <count($mapin3); $ll1++) { 
+             $mapi3[]=$mapin3[$ll1]['idcard'];
+         }
+         $where['idcard'] = array('in',$mapi3);
+     }
       if($classes){
         $mapcc['name']=$classes;
          $mapin1 =  $D ->where($mapcc) ->Field('studentname')->select();
@@ -745,7 +753,6 @@ class FinAdmAction extends CommonAction{
           $where['truename'] = array('in',$mapi1);
 
         }
-      if($majorname){$where['majorname']  = array('like','%'.$majorname.'%');}
       if($_GET['datefrom']&&$_GET['dateto']){$where['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
       if($_GET['sbfrom']&&$_GET['sbto']){$where['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
       $where['period']=0;
@@ -782,6 +789,7 @@ class FinAdmAction extends CommonAction{
         $stugrade= $D ->where($mapa)->select();
         $Model[$i]['grade']=$stugrade[0]['year'];
         $Model[$i]['class']=$stugrade[0]['name'];
+        $Model[$i]['majorname']=$stugrade[0]['major'];
         $Model[$i]['statusname']=$statusname;
        }
         $this->assign('grade',$grade);
@@ -837,6 +845,7 @@ class FinAdmAction extends CommonAction{
         $stugrade= $D ->where($mapa)->select();
         $Model[$i]['grade']=$stugrade[0]['year'];
         $Model[$i]['class']=$stugrade[0]['name'];
+        $Model[$i]['majorname']=$stugrade[0]['major'];
         $Model[$i]['statusname']=$statusname;
        }
       foreach ($Model as $mo => $va) {
@@ -1056,14 +1065,14 @@ class FinAdmAction extends CommonAction{
             $type = $middle[0]['type'];
              switch ($type) {
                   case '0':
-                    $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value'];
+                    $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
                  break;
                   case '1':
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
                     break;
                   default:
                     $otherid =intval($middle[0]['otherid'])-1;
-                   $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets'];
+                   $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets']*0.01;
                  break;
             }
           }
@@ -1094,14 +1103,14 @@ class FinAdmAction extends CommonAction{
             $type = $middle[0]['type'];
              switch ($type) {
                   case '0':
-                    $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value'];
+                    $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value']*0.01;
                  break;
                   case '1':
                     $data2[$a]['part'.($bc+1).'']=0;
                     break;
                   default:
                     $otherid =intval($middle[0]['otherid'])-1;
-                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$data2[$otherid]['give'];
+                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$data2[$otherid]['give']*0.01;
                  break;
             }
           }        
@@ -1163,14 +1172,14 @@ class FinAdmAction extends CommonAction{
             $type = $middle[0]['type'];
              switch ($type) {
                   case '0':
-                    $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value'];
+                    $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
                  break;
                   case '1':
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
                     break;
                   default:
                     $otherid =intval($middle[0]['otherid'])-1;
-                   $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets'];
+                   $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets']*0.01;
                  break;
             }
           }
@@ -1201,14 +1210,14 @@ class FinAdmAction extends CommonAction{
             $type = $middle[0]['type'];
              switch ($type) {
                   case '0':
-                    $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value'];
+                    $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value']*0.01;
                  break;
                   case '1':
                     $data2[$a]['part'.($bc+1).'']=0;
                     break;
                   default:
                     $otherid =intval($middle[0]['otherid'])-1;
-                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$data2[$otherid]['give'];
+                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$data2[$otherid]['give']*0.01;
                  break;
             }
           }        
