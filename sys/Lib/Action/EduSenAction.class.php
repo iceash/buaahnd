@@ -1116,7 +1116,7 @@ class EduSenAction extends CommonAction {
             $this -> assign('category_current', $_GET['category']);
         } 
         if (isset($_GET['course'])) {
-            $map['course'] = $_GET['course'];
+            $map['course.name|course.ename'] = $_GET['course'];
             $this -> assign('course_current', $_GET['course']);
         } 
         //以上为检索条件
@@ -4141,6 +4141,7 @@ class EduSenAction extends CommonAction {
                 continue;
             }
             //对这一行的所有分数遍历
+            $renum = 0;
             for ($m = 1; $m <= $row; $m++) { 
                 $grade[$num]["stuname"] = $map["studentname"];
                 $grade[$num]["stunum"] =  $map["student"];
@@ -4149,39 +4150,59 @@ class EduSenAction extends CommonAction {
                 $grade[$num]["term"] = $term;
                 $grade[$num]["isrepair"] = $isrepair;
                 $tmp = strtr($sheetData[$i][chr(66+$m)], $arr);
-                switch ($tmp) {//处理不同分数的表达方式
-                    case 'S':
-                    case 's':
-                        $grade[$num]["letter"] = "S";
-                        $grade[$num]["hundred"] = 90;
-                        break;
-                    case 'RD':
-                    case 'Rd':
-                    case 'rD':
-                    case 'rd':
-                        $grade[$num]["letter"] = "RD";
-                        $grade[$num]["hundred"] = 80;
-                        break;
-                    case 'RA':
-                    case 'Ra':
-                    case 'rA':
-                    case 'ra':
-                        $grade[$num]["letter"] = "RA";
-                        $grade[$num]["hundred"] = 70;
-                        break;
-                    case 'U':
-                    case 'u':
+                if (is_numeric($tmp)) {
+                    if ($tmp<=100 && $tmp>=60) {
+                        $grade[$num]["letter"] = "P";
+                        $grade[$num]["hundred"] = $tmp;
+                    }elseif ($tmp<=59 && $tmp>=1) {
+                        $grade[$num]["letter"] = "F";
+                        $grade[$num]["hundred"] = $tmp;
+                    }elseif ($tmp == 0) {
                         $grade[$num]["letter"] = "U";
-                        $grade[$num]["hundred"] = 0;
-                        // repair();//这里进行重修的处理
-                        break;
-                    default:
+                        $grade[$num]["hundred"] = $tmp;
+                        $repairs[$renum]["stunum"] = $grade[$num]["stunum"];
+                        $repairs[$renum]["course"] = $grade[$num]["course"];
+                        $renum++;
+                    }else{
                         $errors[] = chr(66+$m).$i;
-                        break;
-                }
-                //若此次考试为重修考试且该考生通过，则分数减10分
-                if ($isrepair && $grade[$num]["hundred"]) {
-                    $grade[$num]["hundred"] -= 10;
+                    }
+                }else{
+                    switch ($tmp) {//处理不同分数的表达方式
+                        case 'S':
+                        case 's':
+                            $grade[$num]["letter"] = "S";
+                            $grade[$num]["hundred"] = 90;
+                            break;
+                        case 'RD':
+                        case 'Rd':
+                        case 'rD':
+                        case 'rd':
+                            $grade[$num]["letter"] = "RD";
+                            $grade[$num]["hundred"] = 80;
+                            break;
+                        case 'RA':
+                        case 'Ra':
+                        case 'rA':
+                        case 'ra':
+                            $grade[$num]["letter"] = "RA";
+                            $grade[$num]["hundred"] = 70;
+                            break;
+                        case 'U':
+                        case 'u':
+                            $grade[$num]["letter"] = "U";
+                            $grade[$num]["hundred"] = 0;
+                            $repairs[$renum]["stunum"] = $grade[$num]["stunum"];
+                            $repairs[$renum]["course"] = $grade[$num]["course"];
+                            $renum++;
+                            break;
+                        default:
+                            $errors[] = chr(66+$m).$i;
+                            break;
+                    }
+                    //若此次考试为重修考试且该考生通过，则分数减10分
+                    if ($isrepair && $grade[$num]["hundred"]) {
+                        $grade[$num]["hundred"] -= 10;
+                    }
                 }
                 $num++;
             }
@@ -4190,6 +4211,9 @@ class EduSenAction extends CommonAction {
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
             $this->ajaxReturn($titlepic, "信息不正确", 0);
+        }
+        if (count($repairs) > 0) {
+            $this->repair($repairs);
         }
         $result = M("prograde")->addAll($grade);
         $this -> success("已成功保存");
@@ -4273,7 +4297,8 @@ class EduSenAction extends CommonAction {
         $objWriter->save('php://output');
         exit;
     }
-    public function downProScore(){//留待修改
+    public function downProScoreA(){
+        //导出字母制成绩
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
@@ -4288,23 +4313,197 @@ class EduSenAction extends CommonAction {
         }
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('B3', $stuinfo["studentname"]) 
-            ->setCellValue('B4', $stuinfo["ename"]) ;//写上学生姓名
-        $scores = M("pregrade")->where(array("stunum"=>$id))->select();
+            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+        foreach ($scores as $vs) {//对数据进行初步处理
+            if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
+                continue;
+            }
+            $willwrite[$vs["term"]][$vs["course"]]["count"]++;
+            $willwrite[$vs["term"]][$vs["course"]]["hundred"] += $vs["hundred"];
+            if ($vs["letter"] == "U" || $vs["hundred"] == 0) {//接下来判断这是重修或是导入时输入字母还是数字
+                $willwrite[$vs["term"]][$vs["course"]]["isrepair"] = "repair";
+                $willwrite[$vs["term"]][$vs["course"]]["hundred"] = 0;
+            }else{
+                if ($vs["letter"] == "P" || $vs["letter"] == "F") {
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "hundred";
+                }else{
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "letter";
+                }
+            }
+        }
+        $line = 6;//从第7行开始写，每门课加1
+        $row = 64;//从B列开始写，每学期加2
+        $course = M("course");
+        foreach ($willwrite as $termname => $vw) {
+            $row = $row + 2;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue(chr($row)."5",$termname)
+                ->mergeCells(chr($row)."5:".chr($row+1)."5")
+                ->setCellValue(chr($row)."6","Marks")
+                ->setCellValue(chr($row+1)."6","Credits");
+            foreach ($vw as $coursename => $vs) {
+                $line++;
+                $map["classid"] = $stuinfo["classid"];
+                $map["name|ename"] = $coursename;
+                $credit = $course->where($map)->getField("credit");//获取学分
+                if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
+                    $hundred = 0;
+                    $letter = "U";
+                }else{
+                    $hundred = $vs["hundred"]/$vs["count"];
+                    if ($vs["standard"] == "letter") {
+                        switch (true) {
+                            case $hundred > 70:
+                                $letter = "A";
+                                break;
+                            case $hundred >60:
+                                $letter = "B";
+                                break;
+                            case $hundred > 50:
+                                $letter = "C";
+                                break;
+                            case $hundred > 1:
+                                $letter = "D";
+                                break;
+                        }
+                    }else{
+                        if ($hundred >= 60) {
+                            $letter = "P";
+                        }else{
+                            $letter = "F";
+                        }
+                    }
+                }
+                $p  ->setActiveSheetIndex(0)
+                    ->setCellValue("A".$line,$coursename)
+                    ->setCellValue(chr($row).$line,$letter)
+                    ->setCellValue(chr($row+1).$line,$credit);
+            }
+        }
+        $styleThinBlackBorderOutline = array( 
+            'borders' => array ( 
+                'allborders' => array ( 
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
+                ), 
+            ),
+        );
+        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
         header("Pragma: no-cache");
         header("Content-Type:application/octet-stream");
         header('content-Type:application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-预科成绩单.xls');//设置文件的名称
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls');//设置文件的名称
         header("Content-Transfer-Encoding:binary");
         $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
         $objWriter->save('php://output');
         exit;
     }
-    public function repair(){
+
+    public function downProScoreB(){
+        //导出百分制成绩
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+        foreach ($scores as $vs) {//对数据进行初步处理
+            if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
+                continue;
+            }
+            $willwrite[$vs["term"]][$vs["course"]]["count"]++;
+            $willwrite[$vs["term"]][$vs["course"]]["hundred"] += $vs["hundred"];
+            if ($vs["letter"] == "U" || $vs["hundred"] == 0) {//接下来判断这是重修或是导入时输入字母还是数字
+                $willwrite[$vs["term"]][$vs["course"]]["isrepair"] = "repair";
+                $willwrite[$vs["term"]][$vs["course"]]["hundred"] = 0;
+            }else{
+                if ($vs["letter"] == "P" || $vs["letter"] == "F") {
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "hundred";
+                }else{
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "letter";
+                }
+            }
+        }
+        $line = 6;//从第7行开始写，每门课加1
+        $row = 64;//从B列开始写，每学期加2
+        $course = M("course");
+        foreach ($willwrite as $termname => $vw) {
+            $row = $row + 2;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue(chr($row)."5",$termname)
+                ->mergeCells(chr($row)."5:".chr($row+1)."5")
+                ->setCellValue(chr($row)."6","Marks")
+                ->setCellValue(chr($row+1)."6","Credits");
+            foreach ($vw as $coursename => $vs) {
+                $line++;
+                $map["classid"] = $stuinfo["classid"];
+                $map["name|ename"] = $coursename;
+                $credit = $course->where($map)->getField("credit");//获取学分
+                if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
+                    $hundred = 0;
+                    $letter = "U";
+                }else{
+                    $hundred = $vs["hundred"]/$vs["count"];
+                    $hundred = round($hundred,2);
+                }
+                $p  ->setActiveSheetIndex(0)
+                    ->setCellValue("A".$line,$coursename)
+                    ->setCellValue(chr($row).$line,$hundred)
+                    ->setCellValue(chr($row+1).$line,$credit);
+            }
+        }
+        $styleThinBlackBorderOutline = array( 
+            'borders' => array ( 
+                'allborders' => array ( 
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
+                ), 
+            ),
+        );
+        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（百分制）.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function repair($all){
         //这里专门处理重修
+        $tuition = (int)M("system")->where("name='tuition'")->getField("content");
+        $classstudent = D("ClassstudentView");
+        $course = M("course");
+        foreach ($all as $num => $va) {
+            $stuinfo = $classstudent->where("student=".$va["stunum"])->find();
+            $map["classid"] = $stuinfo["classid"];
+            $map["name|ename"] = $va["course"];
+            $courseinfo = $course->where($map)->find();
+            $willpay[$num]["feename"] = $courseinfo["name"].'重修费';
+            $willpay[$num]["name"] = $stuinfo["studentname"];
+            $willpay[$num]["stunum"] = $stuinfo["student"];
+            $willpay[$num]["idcard"] = $stuinfo["idcard"];
+            $willpay[$num]["standard"] = $courseinfo["credit"]*$tuition;
+        }
+        M("payment")->addAll($willpay);
     }
 } 
 
