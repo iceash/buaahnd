@@ -632,7 +632,7 @@ class FinAdmAction extends CommonAction{
         }
         if($_GET['fee']){$map['feename']=$_GET['fee'];}
         if($_GET['status']){$map['status']=$_GET['status']-1;}
-        if($_GET['period']){$map['period']=$_GET['period'];}
+        if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
