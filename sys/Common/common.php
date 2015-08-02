@@ -86,13 +86,13 @@ function stuToParent($s) {//入口参数：学生学号，返回值：家长帐�
 }
 /**********
 *将该学生在该收费项目的所有收费记录相加覆盖已交金额和判断付费状态
-**需要传入参数isRefund,feeid和idcard
+**需要传入参数isRefund,feename和idcard
 ***$isRefund为1时状态固定为“退费”
 ****函数返回值为$checkU
 *********/
-function updatePaymentStatus($isRefund,$feeid,$idcard){
+function updatePaymentStatus($isRefund,$feename,$idcard){
     $payment=M('payment');$deal=M('deal');
-    $mapU['feeid']=$feeid;
+    $mapU['feename']=$feename;
     $mapU['idcard']=$idcard;
     $mapU['period']=0;
     $allPay=$deal->where($mapU)->field('money')->select();

@@ -85,8 +85,8 @@ class FinTeaAction extends CommonAction{
         $dataD['check']="审核中";
         $checkD=$deal->add($dataD);
         /**以上是对deal表新增一条收费记录，以下是对payment表修改**/
-        $isRefund=0;$feeid=$_POST['feeid'];$idcard=$_POST['idcard'];
-        $checkU=updatePaymentStatus($isRefund,$feeid,$idcard);
+        $isRefund=0;$feename=$_POST['feename'];$idcard=$_POST['idcard'];
+        $checkU=updatePaymentStatus($isRefund,$feename,$idcard);
         if ($checkD&&$checkU) {
             $this->success("收费成功","json");
         }else{$this->error("收费出错");}
@@ -106,8 +106,8 @@ class FinTeaAction extends CommonAction{
         }else{$dataD['date']=date('Y-m-d');}
         $dataD['check']="审核中";
         $checkD=$deal->add($dataD);
-        $isRefund=1;$feeid=$_POST['feeid'];$idcard=$_POST['idcard'];
-        $checkU=updatePaymentStatus($isRefund,$feeid,$idcard);
+        $isRefund=1;$feename=$_POST['feename'];$idcard=$_POST['idcard'];
+        $checkU=updatePaymentStatus($isRefund,$feename,$idcard);
         if ($checkD&&$checkU) {
             $this->success("退费成功","json");
         }else{$this->error("退费出错");}
@@ -138,7 +138,7 @@ class FinTeaAction extends CommonAction{
             import("@.ORG.Page");
             $listRows = 20;
             $p = new Page($count, $listRows);
-            $list = $paymentV -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> select();
+            $list = $paymentV -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) ->order('stunum')-> select();
             $page = $p -> show();
             $this -> assign("page", $page);
         }
@@ -339,7 +339,11 @@ class FinTeaAction extends CommonAction{
                 }    
             }//检查非空项
             $map['name']=$sheetData[$i]['A'];
-            $feeid=M('fee')->where($map)->getField('id');
+            if(strstr($sheetData[$i]['A'], '重修费')){
+                $feeid='0';
+            }else{
+                $feeid=M('fee')->where($map)->getField('id');
+            }
             if(isset($feeid)){
                 $data_a[$i-3]['feeid']=$feeid;
                 $data_a[$i-3]['feename']=$sheetData[$i]['A'];
@@ -393,14 +397,13 @@ class FinTeaAction extends CommonAction{
         if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
             $this->ajaxReturn($titlepic, "信息不正确", 0);
         }
-        $dao=D('deal');
+        $dao=M('deal');
         $dao -> addAll($data_a);
-        for ($k=0; $k <=$count; $k++) { 
+        for ($k=3; $k <=$count; $k++) { 
             if($sheetData[$k]['C']=='收费'){$isRefund=0;}else{$isRefund=1;}
-            $mapf['name']=$sheetData[$k]['A'];
-            $feeid=M('fee')->where($mapf)->getField('id');
+            $feename=$sheetData[$k]['A'];
             $idcard=$sheetData[$k]['G'];
-            updatePaymentStatus($isRefund,$feeid,$idcard);
+            updatePaymentStatus($isRefund,$feename,$idcard);
         }
         $this -> success("已成功保存");
 

@@ -84,7 +84,7 @@
 			<td>{$vo.name}</td>
 			<td>{$vo.feename}</td>
 			<td>{$vo.item}</td>
-			<input type="hidden" id="feeid" value="{$vo.feeid}">
+			<input type="hidden" id="feename" value="{$vo.feename}">
 			<input type="hidden" id="idcard" value="{$vo.idcard}" />
 			<td>
 				<select id="way">
@@ -165,7 +165,7 @@
 				lockok=0;
 				var id=$(this).siblings('input').val();
 				var idcard=$('#idcard').val();
-				var feeid=$('#feeid').val();
+				var feename=$('#feename').val();
 				var way=$('#way').val();
 				var money=$('#money').val();
 				var invoice=$('#invoice').val();
@@ -176,7 +176,7 @@
 				var tmpstorage=$('#tmpstorage').val();
 				var tmpindex=$('#tmpindex').val();
 				var singlemoney=$('#singlemoney').val();
-				$.post('__URL__/change',{id:id,idcard:idcard,feeid:feeid,way:way,money:money,invoice:invoice,operator:operator,date:date,submitdate:submitdate,Voucher:Voucher,tmpstorage:tmpstorage,tmpindex:tmpindex,singlemoney:singlemoney},function(a){
+				$.post('__URL__/change',{id:id,idcard:idcard,feename:feename,way:way,money:money,invoice:invoice,operator:operator,date:date,submitdate:submitdate,Voucher:Voucher,tmpstorage:tmpstorage,tmpindex:tmpindex,singlemoney:singlemoney},function(a){
 					var data=eval('(' + a + ')');
 					alert(data.info);lockok=1;lock=1;
 				 	if(data.status==1){location.reload();}

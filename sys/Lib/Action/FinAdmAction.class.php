@@ -537,9 +537,9 @@ class FinAdmAction extends CommonAction{
         /**以上将修改后的数据更新deal表并更改审核状态**/
         /**以下重新计算该生在此收费项的总交费**/
         if ($_POST['money']<0) {$isRefund=1;}else{$isRefund=0;}
-        $feeid=$deal->where($mapDe)->getField('feeid');
+        $feename=$deal->where($mapDe)->getField('feename');
         $idcard=$deal->where($mapDe)->getField('idcard');
-        updatePaymentStatus($isRefund,$feeid,$idcard);
+        updatePaymentStatus($isRefund,$feename,$idcard);
         if ($check) {$this->success("已通过审核");}else{$this->error("发生错误");}
     }
     public function submit(){
@@ -611,7 +611,7 @@ class FinAdmAction extends CommonAction{
         $deal=M('deal');
         $map['id']=$_POST['id'];
         $idcard=$_POST['idcard'];
-        $feeid=$_POST['feeid'];
+        $feename=$_POST['feename'];
         $money=$_POST['money'];
         $dataC['way']=$_POST['way'];
         $dataC['money']=$_POST['money'];
@@ -625,7 +625,7 @@ class FinAdmAction extends CommonAction{
         $dataC['singlemoney']=$_POST['singlemoney'];
         $checkD=$deal->where($map)->save($dataC);
         if ($_POST['money']<0) {$isRefund=1;}else{$isRefund=0;}
-        updatePaymentStatus($isRefund,$feeid,$idcard);
+        updatePaymentStatus($isRefund,$feename,$idcard);
         if ($checkD) {$this->success("修改成功");}else{$this->error("数据没有变化");}
     }
     public function view(){
