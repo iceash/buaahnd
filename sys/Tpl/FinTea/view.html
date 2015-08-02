@@ -106,7 +106,7 @@
 				$.post('__URL__/getFee',{item:item},function(a){
 					var data=eval('(' + a + ')');
 					lock=1;
-					var feehtml="<option value=''>请选择班级</option>";
+					var feehtml="<option value=''>请选择收费项</option>";
 					for(i in data.data){
 						feehtml=feehtml+"<option value='"+data.data[i]['name']+"'>"+data.data[i]['name']+"</option>";
 					};
