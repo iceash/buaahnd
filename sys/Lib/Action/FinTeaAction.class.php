@@ -126,7 +126,7 @@ class FinTeaAction extends CommonAction{
             $mapfe['parent']=0;
             $feeList=M('fee')->where($mapfe)->select();
         }
-        if($_GET['fee']){$map['feename']=$_GET['fee'];}
+        if($_GET['fee']){$map['feename']=array('like','%'.$_GET['fee'].'%');}
         if($_GET['type']){$map['type']=$_GET['type'];}
         if($_GET['status']){$map['status']=$_GET['status']-1;}
         if($_GET['period']){$map['period']=$_GET['period'];}
