@@ -1110,21 +1110,22 @@ class FinAdmAction extends CommonAction{
     }  
     $mapU['period']=0;
     $mapU['haschildren']=0;
-    $data=$fee->where($mapU)->Field('id,name')->select();
+    $data=$fee->where($mapU)->Field('id,name,parent')->select();
     $data2=$data;
     for ($i=0; $i < count($data); $i++) { 
       $mapV['period']=0;
       $mapV['money']=array('gt',0);
-      $mapV['feename']=$data[$i]['name'];
+      $mapV['feeid']=$data[$i]['parent'];
       $allPay=$deal->where($mapV)->field('money')->select();
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
       }
       $data[$i]['feename']=$data[$i]['name'];
-      $data[$i]['gets']=$sum;
+      $data0[$i]['gets']=$sum;
+      $data0[$i]['id']=$data[$i]['parent'];
       $data[$i]['give']=0;
-    }
+    }dump($data0);
     for ($a=0; $a < count($data); $a++) { 
         for ($bb=0; $bb <count($partner) ; $bb++) { 
             $mapP['feename']=$data[$a]['name'];
@@ -1139,7 +1140,11 @@ class FinAdmAction extends CommonAction{
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
                     break;
                   default:
-                    $otherid =intval($middle[0]['otherid'])-1;
+                    $otherid =intval($middle[0]['otherid']);
+                    dump($otherid);
+                    $mapmoney['id']=$otherid;
+                    $moneyvalue = $data0 ->where($mapmoney)->find();
+                    dump($otherid);
                    $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets']*0.01;
                  break;
             }
