@@ -37,12 +37,18 @@
 				项目：
 				<select name="item" id="itemS">
 					<option value="">请选择项目</option>
+					<option value="重修">重修</option>
 					<volist name="project" id="po"><option value="{$po}">{$po}</option></volist>
 				</select>
 				收费项：
 				<select name="fee" id="feeS">
 					<option value="">请选择收费项</option>
 					<volist name="feeList" id="fo"><option value="{$fo.name}">{$fo.name}</option></volist>
+				</select>
+				收费类别：
+				<select name="type" id="typeS">
+					<option value="">请选择收费类别</option>
+					<volist name="type" id="to"><option value="{$to}">{$to}</option></volist>
 				</select>
 				交费状态：
 				<select name="status" id="statusS">
@@ -82,6 +88,7 @@
 		$('#feeS').val("{$_GET['fee']}");
 		$('#statusS').val("{$_GET['status']}");
 		$('#periodS').val("{$_GET['period']}");
+		$('#typeS').val("{$_GET['type']}");
 		$('#majorS').change(function(){
 			var major=$('#majorS').val();
 			lock=1;

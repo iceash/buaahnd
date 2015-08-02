@@ -22,7 +22,7 @@ class FinTeaAction extends CommonAction{
     $menu['exceladd']='收费导入';
     $menu['view']='查看交费情况';
     $menu['viewentry']='查看报名费情况';
-    $menu['viewre']='查看重修费情况';
+    //$menu['viewre']='查看重修费情况';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function paylist(){
@@ -127,6 +127,7 @@ class FinTeaAction extends CommonAction{
             $feeList=M('fee')->where($mapfe)->select();
         }
         if($_GET['fee']){$map['feename']=$_GET['fee'];}
+        if($_GET['type']){$map['type']=$_GET['type'];}
         if($_GET['status']){$map['status']=$_GET['status']-1;}
         if($_GET['period']){$map['period']=$_GET['period'];}
         if($_GET['name']){$map['name']=$_GET['name'];}
@@ -166,8 +167,11 @@ class FinTeaAction extends CommonAction{
         $this->assign('major',$major);
         $project=$system->where('name="items"')->getField('content');
         $projectArr=explode(',',$project);
+        $type=$system->where('name="paytype"')->getField('content');
+        $typeArr=explode(',',$type);
         $periodArr=M('period')->field('id')->select();
         $this->assign('periodList',$periodArr);
+        $this->assign('type',$typeArr);
         $this->assign('project',$projectArr);
         $this->menupay();
         $this->display();
@@ -336,7 +340,7 @@ class FinTeaAction extends CommonAction{
             }//检查非空项
             $map['name']=$sheetData[$i]['A'];
             $feeid=M('fee')->where($map)->getField('id');
-            if($feeid){
+            if(isset($feeid)){
                 $data_a[$i-3]['feeid']=$feeid;
                 $data_a[$i-3]['feename']=$sheetData[$i]['A'];
             }

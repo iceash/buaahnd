@@ -496,7 +496,7 @@ class FinAdmAction extends CommonAction{
     $menu['audit']='查看交易';
     $menu['view']='查看交费情况';
     $menu['viewentry']='查看报名费情况';
-    $menu['viewre']='查看重修费情况';
+    //$menu['viewre']='查看重修费情况';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function verify(){
@@ -643,6 +643,7 @@ class FinAdmAction extends CommonAction{
             $feeList=M('fee')->where($mapfe)->select();
         }
         if($_GET['fee']){$map['feename']=$_GET['fee'];}
+        if($_GET['type']){$map['type']=$_GET['type'];}
         if($_GET['status']){$map['status']=$_GET['status']-1;}
         if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
         if($_GET['name']){$map['name']=$_GET['name'];}
@@ -681,6 +682,9 @@ class FinAdmAction extends CommonAction{
         $project=$system->where('name="items"')->getField('content');
         $projectArr=explode(',',$project);
         $periodArr=M('period')->field('id')->select();
+        $type=$system->where('name="paytype"')->getField('content');
+        $typeArr=explode(',',$type);
+        $this->assign('type',$typeArr);
         $this->assign('periodList',$periodArr);
         $this->assign('project',$projectArr);
         $this->menupay();
