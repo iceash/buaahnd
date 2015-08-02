@@ -496,6 +496,7 @@ class FinAdmAction extends CommonAction{
     $menu['audit']='查看交易';
     $menu['view']='查看交费情况';
     $menu['viewentry']='查看报名费情况';
+    $menu['viewre']='查看重修费情况';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function verify(){
@@ -700,6 +701,44 @@ class FinAdmAction extends CommonAction{
         $show= $Page->show();
         $list = $payment->where($map)->order('name')->limit($Page->firstRow.','.$Page->listRows)->select(); 
         $this->assign('page',$show);
+        for ($i=0; $i <count($list);$i++) {
+            $status=$list[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    break;
+                case '3':
+                    $statusname='退费';
+                    break;
+            }
+            $list[$i]['statusname']=$statusname;
+         }
+        $this->assign('list',$list);
+        $this->menupay();
+        $this->display();  
+    }
+    public function viewre(){
+        $payment=M('payment');
+        $map['feename']='重修费';
+        if($_GET['status']){$map['status']=$_GET['status']-1;}
+        if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
+        if($_GET['name']){$map['name']=$_GET['name'];}
+        if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
+        $count = $payment-> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 20;
+            $p = new Page($count, $listRows);
+            $list = $payment -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) ->order('status')-> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+        }
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {
