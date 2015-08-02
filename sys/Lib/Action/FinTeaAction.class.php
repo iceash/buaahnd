@@ -372,7 +372,7 @@ class FinTeaAction extends CommonAction{
                 if($name1==$sheetData[$i]['E']){
                     $data_a[$i-3]['stunum'] = $sheetData[$i]['F'];
                 }else{$errors[]='F'.$i;$errors[]='E'.$i;}
-            }
+            }else{$data_a[$i-3]['stunum'] = '0';}
             $map2['idcard']=$sheetData[$i]['G'];
             $name2=M('enroll')->where($map2)->getField('truename');
             if($name2==$sheetData[$i]['E']){
