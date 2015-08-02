@@ -131,7 +131,15 @@ class FinTeaAction extends CommonAction{
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
-        $list=$paymentV->where($map)->order('name')->select();
+        $count = $paymentV -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 20;
+            $p = new Page($count, $listRows);
+            $list = $paymentV -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+        }
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {
@@ -171,7 +179,15 @@ class FinTeaAction extends CommonAction{
         if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
-        $list=$payment->where($map)->order('status')->select();
+        $count = $payment-> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 20;
+            $p = new Page($count, $listRows);
+            $list = $payment -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) ->order('status')-> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+        }
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {

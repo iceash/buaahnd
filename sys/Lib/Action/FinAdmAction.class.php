@@ -647,7 +647,13 @@ class FinAdmAction extends CommonAction{
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
-        $list=$paymentV->where($map)->order('status')->select();
+        import("ORG.Util.Page");
+        $count= $paymentV->where($map)->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $paymentV->where($map)->order('status')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('page',$show);
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {
@@ -687,7 +693,13 @@ class FinAdmAction extends CommonAction{
         if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
-        $list=$payment->where($map)->order('name')->select();
+        import("ORG.Util.Page");
+        $count= $payment->where($map)->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $payment->where($map)->order('name')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('page',$show);
         for ($i=0; $i <count($list);$i++) {
             $status=$list[$i]['status'];
             switch ($status) {
