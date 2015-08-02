@@ -17,6 +17,13 @@ class FinTeaAction extends CommonAction{
         }
         $this -> display();
     }
+    public function menupay() {
+    $menu['paylist']='收费退费登记';
+    $menu['exceladd']='收费导入';
+    $menu['view']='查看交费情况';
+    $menu['viewentry']='查看报名费情况';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function paylist(){
         if(isset($_GET['num'])){
         $mapEn['username|idcard']=$_GET['num']; 
@@ -57,6 +64,7 @@ class FinTeaAction extends CommonAction{
         $this->assign('way',$wayArr);
         $this->assign('list',$list);
         }
+        $this->menupay();
         $this->display();
     }
     public function pay(){
@@ -152,6 +160,7 @@ class FinTeaAction extends CommonAction{
         $periodArr=M('period')->field('id')->select();
         $this->assign('periodList',$periodArr);
         $this->assign('project',$projectArr);
+        $this->menupay();
         $this->display();
 
     }
@@ -182,9 +191,11 @@ class FinTeaAction extends CommonAction{
             $list[$i]['statusname']=$statusname;
          }
         $this->assign('list',$list);
+        $this->menupay();
         $this->display();  
     }
     public function exceladd(){
+        $this->menupay();
         $this->display();
     }
     public function downloadPayment(){

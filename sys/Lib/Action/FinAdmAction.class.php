@@ -490,6 +490,14 @@ class FinAdmAction extends CommonAction{
         }
         $this->ajaxReturn(1,"成功",1);
     }
+    public function menupay() {
+    $menu['verify']='审核交易';
+    $menu['submit']='提交交易';
+    $menu['audit']='查看交易';
+    $menu['view']='查看交费情况';
+    $menu['viewentry']='查看报名费情况';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function verify(){
         $way=M('system')->where('name="paymode"')->getField('content');
         $wayArr=explode(',',$way);
@@ -505,6 +513,7 @@ class FinAdmAction extends CommonAction{
         $list = $deal->where($mapDe)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
         $this->assign('list',$list);
         $this->assign('page',$show);
+        $this->menupay();
         $this->display();
     }
     public function pass(){
@@ -544,6 +553,7 @@ class FinAdmAction extends CommonAction{
         $list = $deal->where($mapDe)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
         $this->assign('list',$list);
         $this->assign('page',$show);
+        $this->menupay();
         $this->display();
     }
     public function subGo(){
@@ -593,6 +603,7 @@ class FinAdmAction extends CommonAction{
         $this->assign('periodList',$periodArr);
         $this->assign('way',$wayArr);
         $this->assign('project',$projectArr);
+        $this->menupay();
         $this->display();
     }
     public function change(){
@@ -665,6 +676,7 @@ class FinAdmAction extends CommonAction{
         $periodArr=M('period')->field('id')->select();
         $this->assign('periodList',$periodArr);
         $this->assign('project',$projectArr);
+        $this->menupay();
         $this->display();
 
     }
@@ -695,6 +707,7 @@ class FinAdmAction extends CommonAction{
             $list[$i]['statusname']=$statusname;
          }
         $this->assign('list',$list);
+        $this->menupay();
         $this->display();  
     }
     public function getClass(){
