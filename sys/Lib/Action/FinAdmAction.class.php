@@ -213,7 +213,7 @@ class FinAdmAction extends CommonAction{
             $this->error("报名费已绑定学生，禁止修改");
         }
         $fee = $_POST["fee"];
-        M("fee")->where("name='报名费'")->delete();
+        M("fee")->where("name like '报名费%'")->delete();
         foreach ($fee as $num => $va) {
             $fee[$num]["item"] = "报名";
             $fee[$num]["name"] = "报名费";
