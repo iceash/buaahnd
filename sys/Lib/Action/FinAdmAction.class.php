@@ -1111,21 +1111,57 @@ class FinAdmAction extends CommonAction{
     $mapU['period']=0;
     $mapU['haschildren']=0;
     $data=$fee->where($mapU)->Field('id,name,parent')->select();
+    $datall=$fee->where('period=0')->select();
     $data2=$data;
+    foreach ($datall as $dataarray ) {
+        $dataarr[$dataarray["id"]]=$dataarray;
+    }
+      $mapV1['period']=0;
+      $mapV1['money']=array('gt',0);
+      $deals=$deal->where($mapV1)->select();
     for ($i=0; $i < count($data); $i++) { 
       $mapV['period']=0;
       $mapV['money']=array('gt',0);
       $mapV['feeid']=$data[$i]['parent'];
       $allPay=$deal->where($mapV)->field('money')->select();
+      $dealsdetail=$deal->where($mapV)->select();
+      $paymentnum=count($dealsdetail);
+      dump($paymentnum);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
       }
+      $id=$data[$i]['parent'];
+
+      // dump($id);
+      if($dataarr[$id]['haschildren']==0){
+        for ($ja=0; $ja < count($allPay); $ja++) { 
+        $sumd[$i]+=$allPay[$ja]['money'];
+        }
+      }
+     if($dataarr[$id]['haschildren']==1){
+        $son=$fee->where('parent='.$id)->select();
+         dump($son);
+        for ($deals1=0; $deals1 <count($son) ; $deals1++) { 
+            for ($iii=0; $iii < $paymentnum; $iii++) { 
+                    if($dealsdetail[$iii]['money']<$son[$deals1]['standard']){
+                        $sumd[$i]+=$dealsdetail[$iii]['money'];
+                    }
+                    
+                 }    
+        }
+     }
+      $data[$i]['gets']=$sumd[$i];
       $data[$i]['feename']=$data[$i]['name'];
       $data0[$i]['gets']=$sum;
       $data0[$i]['id']=$data[$i]['parent'];
       $data[$i]['give']=0;
-    }dump($data0);
+      $othersum[$data[$i]["id"]]=$data['gets'];
+    }
+    
+    foreach ($data0 as $datasum ) {
+        $othersum[$datasum["id"]]=$datasum['gets'];
+    }
     for ($a=0; $a < count($data); $a++) { 
         for ($bb=0; $bb <count($partner) ; $bb++) { 
             $mapP['feename']=$data[$a]['name'];
@@ -1141,15 +1177,12 @@ class FinAdmAction extends CommonAction{
                     break;
                   default:
                     $otherid =intval($middle[0]['otherid']);
-                    dump($otherid);
-                    $mapmoney['id']=$otherid;
-                    $moneyvalue = $data0 ->where($mapmoney)->find();
-                    dump($otherid);
-                   $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$data[$otherid]['gets']*0.01;
+                    $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$othersum[$otherid]['gets']*0.01;
                  break;
             }
           }
     }
+    // dump($othersum);
     foreach ($data as $mo => $va) {
             $data[$mo]["give"] = doubleval($data[$mo]["give"]);
             $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
