@@ -1126,7 +1126,8 @@ class FinAdmAction extends CommonAction{
       $allPay=$deal->where($mapV)->field('money')->select();
       $dealsdetail=$deal->where($mapV)->select();
       $paymentnum=count($dealsdetail);
-      dump($paymentnum);
+      
+       // dump($paymentnum);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
@@ -1140,17 +1141,25 @@ class FinAdmAction extends CommonAction{
         }
       }
      if($dataarr[$id]['haschildren']==1){
-        $son=$fee->where('parent='.$id)->select();
-         dump($son);
-        for ($deals1=0; $deals1 <count($son) ; $deals1++) { 
-            for ($iii=0; $iii < $paymentnum; $iii++) { 
-                    if($dealsdetail[$iii]['money']<$son[$deals1]['standard']){
-                        $sumd[$i]+=$dealsdetail[$iii]['money'];
-                    }
-                    
-                 }    
+        $son=$fee->where('parent='.$id)->select(); 
+        for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
+            if($deals1==0){
+                $pie[$i][0]=$son[0]['standard'];
+            }else{
+            $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
         }
-     }
+
+            for ($iii=0; $iii < $paymentnum; $iii++) { 
+                    for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
+                        if($allPay[$iii]['money']>$pie[$i][$iiii]){
+                            $fengenum[$i][$iii]=$iiii+1;
+                        }
+                    }dump($fengenum);
+                //这里需要写一个赋值的for循环。
+                }   
+        }    
+      }
+    
       $data[$i]['gets']=$sumd[$i];
       $data[$i]['feename']=$data[$i]['name'];
       $data0[$i]['gets']=$sum;
