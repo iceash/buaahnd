@@ -1126,8 +1126,6 @@ class FinAdmAction extends CommonAction{
       $allPay=$deal->where($mapV)->field('money')->select();
       $dealsdetail=$deal->where($mapV)->select();
       $paymentnum=count($dealsdetail);
-      
-       // dump($paymentnum);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
@@ -1139,6 +1137,7 @@ class FinAdmAction extends CommonAction{
         for ($ja=0; $ja < count($allPay); $ja++) { 
         $sumd[$i]+=$allPay[$ja]['money'];
         }
+        $data[$i]['gets']=$sumd[$i];
       }
      if($dataarr[$id]['haschildren']==1){
         $son=$fee->where('parent='.$id)->select(); 
@@ -1147,20 +1146,30 @@ class FinAdmAction extends CommonAction{
                 $pie[$i][0]=$son[0]['standard'];
             }else{
             $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
-        }
-
+        }}
             for ($iii=0; $iii < $paymentnum; $iii++) { 
                     for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
                         if($allPay[$iii]['money']>$pie[$i][$iiii]){
                             $fengenum[$i][$iii]=$iiii+1;
-                        }
-                    }dump($fengenum);
-                //这里需要写一个赋值的for循环。
+                        }else{
+                            $fengenum[$i][$iii]=0;
+                        }}
+                   if($fengenum[$i][$iii]==0){
+                      $money[$id][$i][0]+=$allPay[$iii]['money'];
+                   }else{
+                   for ($ls=0; $ls <$fengenum[$i][$iii] ; $ls++) { 
+                       $money[$id][$i][$ls]+=$son[$ls]['standard'];
+                   }
+                     $piemax=count($pie[$i])-1;
+                     $money[$id][$i][$fengenum[$i][$iii]]+=$allPay[$iii]['money']-$pie[$i][$piemax];
+                 }
                 }   
-        }    
+                // dump($money);
+               $whichid = $data[$i]['id']-$id-1;
+            $data[$i]['gets']=$money[$id][$i][$whichid];
       }
     
-      $data[$i]['gets']=$sumd[$i];
+      
       $data[$i]['feename']=$data[$i]['name'];
       $data0[$i]['gets']=$sum;
       $data0[$i]['id']=$data[$i]['parent'];
