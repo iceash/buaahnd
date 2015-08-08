@@ -352,8 +352,10 @@ class OfficeAction extends CommonAction {
         $map['role'] = array('not in','EduStu,EduPar');
         $my=$dao->where($map)->find();
         if($my){
+            $roles = R('Index/getRole');
+            unset($roles["Zero"]);
             $this ->assign('my',$my);
-            $this->assign('role',R('Index/getRole'));
+            $this->assign('role',$roles);
             $this->assign('role_hava',explode(',',$my['role']));
             $this -> display();
         }
