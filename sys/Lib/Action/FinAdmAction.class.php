@@ -1163,7 +1163,8 @@ class FinAdmAction extends CommonAction{
                     for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
                         if($allPay[$iii]['money']>$pie[$i][$iiii]){
                             $fengenum[$i][$iii]=$iiii+1;
-                        }else{
+                        }
+                        if($allPay[$iii]['money']<$pie[$i][0]){
                             $fengenum[$i][$iii]=0;
                         }}
                    if($fengenum[$i][$iii]==0){
@@ -1186,7 +1187,7 @@ class FinAdmAction extends CommonAction{
       $data0[$i]['gets']=$sum;
       $data0[$i]['id']=$data[$i]['parent'];
       $data[$i]['give']=0;
-      $othersum[$data[$i]["id"]]=$data['gets'];
+      $othersum[$data[$i]["id"]]=$data[$i]['gets'];
     }
     
     foreach ($data0 as $datasum ) {
@@ -1221,15 +1222,67 @@ class FinAdmAction extends CommonAction{
     for ($i=0; $i < count($data2); $i++) { 
       $mapV['period']=0;
       $mapV['money']=array('lt',0);
-      $mapV['feename']=$data2[$i]['name'];
+      $mapV['feeid']=$data2[$i]['parent'];
+      $mapV['feeid']=array('gt',0);
       $allPay=$deal->where($mapV)->field('money')->select();
+      $dealsdetail2=$deal->where($mapV)->select();
+      $paymentnum2=count($dealsdetail2);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
       }
+      $id2=$data2[$i]['parent'];
+       if($dataarr[$id2]['haschildren']==0&&$dataarr[$id2]['id']!=0){
+        for ($ja=0; $ja < count($allPay); $ja++) { 
+        $sumd[$i]+=$allPay[$ja]['money'];
+        }
+        $data2[$i]['give']=$sumd[$i];
+
+      }
+           if($dataarr[$id2]['haschildren']==1){
+        $son=$fee->where('parent='.$id2)->select(); 
+        for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
+            if($deals1==0){
+                $pie[$i][0]=$son[0]['standard'];
+            }else{
+            $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
+        }}
+            for ($iii=0; $iii < $paymentnum2; $iii++) { 
+                    for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
+                        $pievalue=(-$pie[$i][$iiii]);
+                        $pievalue0=(-$pie[$i][0]);
+                        if($allPay[$iii]['money']<$pievalue){
+                            $fengenum[$i][$iii]=$iiii+1;
+                        }
+                        if($allPay[$iii]['money']<$pievalue0){
+                            $fengenum[$i][$iii]=0;
+                        }}
+                        
+                   if($fengenum[$i][$iii]==0){
+                      $money2[$id2][$i][0]+=$allPay[$iii]['money'];
+
+                   }else{
+                   for ($ls=0; $ls <$fengenum[$i][$iii] ; $ls++) { 
+                       $money2[$id2][$i][$ls]+=(-$son[$ls]['standard']);
+                       
+                   }
+                     $piemax=count($pie[$i])-1;
+                     $money2[$id2][$i][$fengenum[$i][$iii]]+=($allPay[$iii]['money']-$pie[$i][$piemax]);
+                 }
+                }   
+                // dump($money2);
+            $whichid = $data2[$i]['id']-$id2-1;
+            $data2[$i]['give']=$money2[$id2][$i][$whichid];
+      }
+
       $data2[$i]['feename']=$data2[$i]['name'];
-      $data2[$i]['give']=$sum;
+      $data02[$i]['give']=$sum;
+      $data02[$i]['id']=$data2[$i]['parent'];      
       $data2[$i]['gets']=0;
+      $othersum[$data2[$i]["id"]]=$data2[$i]['give'];
+    }
+        foreach ($data02 as $datasum ) {
+        $othersum[$datasum["id"]]=$datasum['give'];
     }
     for ($a=0; $a < count($data2); $a++) { 
         for ($bc=0; $bc <count($partner) ; $bc++) { 
@@ -1245,8 +1298,8 @@ class FinAdmAction extends CommonAction{
                     $data2[$a]['part'.($bc+1).'']=0;
                     break;
                   default:
-                    $otherid =intval($middle[0]['otherid'])-1;
-                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$data2[$otherid]['give']*0.01;
+                    $otherid =intval($middle[0]['otherid']);
+                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
                  break;
             }
           }        
