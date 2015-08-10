@@ -3577,7 +3577,9 @@ class EduSenAction extends CommonAction {
             if(!preg_match($reg,  strtr($term, $arr))){
                 $errors[$sheetnum][] = "C2";
             }
-            $map["year"] = explode("-", $term)[0];
+            // $map["year"] = explode("-", $term)[0];
+            $tmp = explode("-", $term);
+            $map["year"] = $tmp[0];
             $map["name"] = $sheetData[2]["A"];
             if (!$map["name"]) {
                 $errors[$sheetnum][] = "A2";
@@ -3878,7 +3880,9 @@ class EduSenAction extends CommonAction {
             if(!preg_match($reg,  strtr($term, $arr))){
                 $errors[] = "A".$i;
             }
-            $map["year"] = explode("-", $term)[0];
+            // $map["year"] = explode("-", $term)[0];
+            $tmpmap = explode("-", $term);
+            $map["year"] = $tmpmap[0];
             $map["name"] = strtr($sheetData[$i]['B'], $arr);
             if (!$map["name"]) {
                 $errors[] = "B".$i;

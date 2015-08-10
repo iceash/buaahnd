@@ -129,9 +129,13 @@ class FinAdmAction extends CommonAction{
         if (count($fee) == 1) {
             $feename = $fee[0]["name"];
         }else{
-            $feename = explode("-",$fee[0]["name"])[0];
+            // $feename = explode("-",$fee[0]["name"])[0];
+            $tmpfee = explode("-",$fee[0]["name"]);
+            $feename = $tmpfee[0];
             for ($i = 0, $le = count($fee); $i < $le; $i++) { 
-                $thename = explode("-",$fee[$i]["name"])[0];
+                // $thename = explode("-",$fee[$i]["name"])[0];
+                $tmpthe = explode("-",$fee[$i]["name"]);
+                $thename = $tmpthe[0];
                 if ($thename != $feename) {
                     $this->ajaxReturn(0,"收费项名称不一致",0);
                 }
@@ -163,9 +167,13 @@ class FinAdmAction extends CommonAction{
         if (count($fee) == 1) {
             $feename = $fee[0]["name"];
         }else{
-            $feename = explode("-",$fee[0]["name"])[0];
+            // $feename = explode("-",$fee[0]["name"])[0];
+            $tmpfee = explode("-",$fee[0]["name"]);
+            $feename = $tmpfee[0];
             for ($i = 0, $le = count($fee); $i < $le; $i++) { 
-                $thename = explode("-",$fee[$i]["name"])[0];
+                // $thename = explode("-",$fee[$i]["name"])[0];
+                $tmpthe = explode("-",$fee[$i]["name"]);
+                $thename = $tmpthe[0];
                 if ($thename != $feename) {
                     $this->ajaxReturn(0,"收费项名称不一致",0);
                 }
@@ -279,7 +287,8 @@ class FinAdmAction extends CommonAction{
             }
         }
         foreach ($fees as $f) {
-            $newlist[$f["name"]][] = [];
+            // $newlist[$f["name"]][] = [];
+            $newlist[$f["name"]][] = array();
             foreach ($list as $value) {
                 if ($f["name"] == $value["feename"]) {
                     $newlist[$f["name"]][] = $value;
@@ -298,7 +307,8 @@ class FinAdmAction extends CommonAction{
         $map["feename"] = '重修费';
         $map["period"] = 0;
         $list = M("reback")->where($map)->select();
-        $newlist["重修费"][] = [];
+        // $newlist["重修费"][] = [];
+        $newlist["重修费"][] = array();
         foreach ($list as $key => $value) {
             $newlist["重修费"][] = $value;
         }
