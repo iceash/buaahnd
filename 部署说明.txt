@@ -1,0 +1,6 @@
+部署说明
+
+假设网站根目录为E:/www/
+在E:/www/目录下需要有index.php以及buaahnd文件夹，buaahnd文件夹下有sys文件夹，sys文件夹下是各种代码的文件夹
+也就是说，用户访问时所访问的是E:/www/index.php，然后执行的东西是E:/www/buaahnd/sys
+请务必保证有/buaahnd/sys这两层文件夹
