@@ -262,6 +262,7 @@ class FinTeaAction extends CommonAction{
         $titlepic = '/buaahnd/sys/Tpl/Public/download/pay.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
+        Vendor('PHPExcel/IOFactory');
         $p = PHPExcel_IOFactory::load($excelurl);
         $p -> setActiveSheetIndex(0);
         $map['status']=array('neq','2');
