@@ -3207,10 +3207,11 @@ class EduSenAction extends CommonAction {
         $this->display();
     }
     public function downloadallstudent(){
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/classstudent.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);
         $p -> setActiveSheetIndex(0);
         /*for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
@@ -3526,12 +3527,13 @@ class EduSenAction extends CommonAction {
         if (!$id) {
             $this->error("未选择课表");
         }
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $info = M("schedule")->where(array("id"=>$id))->find();
         $info["classname"] = M("class")->where(array("id"=>$info["classid"]))->getField("name");
         $titlepic = $info["savepath"];
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         header("Pragma: public");
         header("Expires: 0");
@@ -4228,7 +4230,7 @@ class EduSenAction extends CommonAction {
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/prescore.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
@@ -4236,6 +4238,7 @@ class EduSenAction extends CommonAction {
         if (!$stuinfo) {
             $this -> error('无此学生'.$id);
         }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
             ->setCellValue('B3', $stuinfo["studentname"]) 
@@ -4307,7 +4310,7 @@ class EduSenAction extends CommonAction {
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
@@ -4315,6 +4318,7 @@ class EduSenAction extends CommonAction {
         if (!$stuinfo) {
             $this -> error('无此学生'.$id);
         }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
             ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
@@ -4413,7 +4417,7 @@ class EduSenAction extends CommonAction {
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
@@ -4421,6 +4425,7 @@ class EduSenAction extends CommonAction {
         if (!$stuinfo) {
             $this -> error('无此学生'.$id);
         }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
             ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字

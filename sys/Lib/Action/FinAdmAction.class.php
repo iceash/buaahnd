@@ -950,7 +950,9 @@ class FinAdmAction extends CommonAction{
     }
     public function download()
     {
-    Vendor('PHPExcel');
+    // Vendor('PHPExcel');
+    $php_path = dirname(__FILE__) . '/';
+    include $php_path .'../../Lib/ORG/PHPExcel.class.php';
     $objPHPExcel = new PHPExcel();
     $objPHPExcel->getActiveSheet()->mergeCells('A1:P1'); 
     $objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
@@ -1596,7 +1598,9 @@ class FinAdmAction extends CommonAction{
     $shourunum2 = $data2num + 1;
 
 
-    Vendor('PHPExcel');
+    // Vendor('PHPExcel');
+    $php_path = dirname(__FILE__) . '/';
+    include $php_path .'../../Lib/ORG/PHPExcel.class.php';
     $objPHPExcel = new PHPExcel();
     $objPHPExcel->getActiveSheet()->mergeCells('A1:J1'); 
     $objPHPExcel->getActiveSheet()->mergeCells('A2:J2'); 

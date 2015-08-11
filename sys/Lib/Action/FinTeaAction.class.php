@@ -258,11 +258,12 @@ class FinTeaAction extends CommonAction{
         $this->display();
     }
     public function downloadPayment(){
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/pay.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
-        Vendor('PHPExcel/IOFactory');
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        // Vendor('PHPExcel/IOFactory');
         $p = PHPExcel_IOFactory::load($excelurl);
         $p -> setActiveSheetIndex(0);
         $map['status']=array('neq','2');

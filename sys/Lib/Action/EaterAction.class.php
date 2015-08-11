@@ -163,10 +163,11 @@ class EaterAction extends CommonAction {
         $this -> display();
     }
     public function downloadRoomStu(){
-        Vendor('PHPExcel'); 
+        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/distribute.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);
         $p -> setActiveSheetIndex(0);
         $map['house']=array('EXP','IS NULL');
