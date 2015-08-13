@@ -3302,6 +3302,11 @@ class EduSenAction extends CommonAction {
                     $conflicts[] = 'G'.$k;
                     $b = false;
                 }
+                if(strtr($sheetData[$i]['D'], $arr) == strtr($sheetData[$k]['D'], $arr)){
+                    $conflicts[] = 'D'.$i;
+                    $conflicts[] = 'D'.$k;
+                    $b = false;
+                }
                 if (strtr($sheetData[$i]['A'], $arr) == strtr($sheetData[$k]['A'], $arr) && strtr($sheetData[$i]['B'], $arr) == strtr($sheetData[$k]['B'], $arr) && strtr($sheetData[$i]['C'], $arr) != strtr($sheetData[$k]['C'], $arr)) {
                     $errors[] = 'C'.$i;
                     $errors[] = 'C'.$k;

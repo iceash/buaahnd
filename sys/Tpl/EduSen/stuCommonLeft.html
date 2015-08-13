@@ -28,7 +28,7 @@ function search(){
     <table cellspacing="0" cellpadding="0" class="TreeTable">
       <tr>
         <td style="width:expression(document.body.clientWidth-WrapButtonTdWidth);" valign="middle" align="center" height="50">
-         <input type="text" name="searchkey" id="searchkey" value="{$searchkey|default='输入姓名搜索（支持拼音首字母）'}" onFocus="if(this.value=='输入姓名搜索（支持拼音首字母）') this.value='';" onBlur="if(this.value=='') this.value='输入姓名搜索（支持拼音首字母）';" onKeyDown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="search()" alt="搜索" style="cursor:pointer"/>
+         <input type="text" name="searchkey" id="searchkey" value="{$searchkey|default='输入姓名搜索（支持拼音首字母）'}" onFocus="if(this.value=='输入姓名搜索（支持拼音首字母）') this.value='';" onBlur="if(this.value=='') this.value='输入姓名搜索（支持拼音首字母）';" onKeyDown="searchkeydown(event)" style="width: 200px;"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="search()" alt="搜索" style="cursor:pointer"/>
         </td>
       </tr>
 <empty name="searchkey">
