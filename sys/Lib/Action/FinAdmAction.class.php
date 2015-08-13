@@ -317,8 +317,41 @@ class FinAdmAction extends CommonAction{
     }
     public function rebackdel(){
         $id = $_POST["id"];
-        if (M("reback")->where("id=".$id)->delete()) {
-            $this->ajaxReturn(0,"删除成功",1);
+        $feeid = M("reback")->where("id=".$id)->getField("feeid");
+        $feeinfo = M("fee")->where("id=".$feeid)->find();
+        if ($feeinfo["parent"] == 0) {
+            $theid = $feeinfo["id"];
+        }else{
+            $theid = $feeinfo["parent"];
+        }
+        $tmp = M("reback")->where("id=".$id)->delete();
+
+        //下面处理框上面的预览
+        $oldall = M("fee")->where("period=0")->order("id")->select();
+        $rebacks = M("reback")->where("period=0")->select();
+        foreach ($oldall as $one) {
+            $all[$one["id"]] = $one;
+        }
+        foreach ($rebacks as $reback) {
+            if ($reback["type"] == 1) {
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"];
+            }else{
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"]."%";
+            }
+        }
+        foreach ($all as $num => $vn) {
+            if ($vn["parent"] != 0) {
+                if ($vn["name"] == $fo["feename"]) {
+                    $theid = $vn["parent"];
+                }
+                if ($vn["rate"]) {
+                    $all[$vn["parent"]]["rate"] .= $vn["rate"].";";
+                }
+                unset($all[$num]);
+            }
+        }
+        if ($tmp) {
+            $this->ajaxReturn(0,$all[$theid]["rate"],1);
         }else{
             $this->ajaxReturn(0,"删除失败",0);
         }
@@ -331,6 +364,7 @@ class FinAdmAction extends CommonAction{
                 $newlist = $fo;
                 $map["name"] = $fo["feename"];
                 $newlist["feeid"] = M("fee")->where($map)->getfield("id");
+                $tmp = M("reback")->add($newlist);
             }elseif ($fo["status"] == "update") {
                 unset($fo["status"]);
                 $updatelist = $fo;
@@ -339,11 +373,35 @@ class FinAdmAction extends CommonAction{
                     $count++;
                 }
             }
-        $tmp = M("reback")->add($newlist);
         if (!$tmp && $count == 0) {
             $this->ajaxReturn($newlist,"无更新",0);
         }
-        $this->ajaxReturn($tmp,"更新成功",1);
+
+        //下面处理框上面的预览
+        $oldall = M("fee")->where("period=0")->order("id")->select();
+        $rebacks = M("reback")->where("period=0")->select();
+        foreach ($oldall as $one) {
+            $all[$one["id"]] = $one;
+        }
+        foreach ($rebacks as $reback) {
+            if ($reback["type"] == 1) {
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"];
+            }else{
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"]."%";
+            }
+        }
+        foreach ($all as $num => $vn) {
+            if ($vn["parent"] != 0) {
+                if ($vn["name"] == $fo["feename"]) {
+                    $theid = $vn["parent"];
+                }
+                if ($vn["rate"]) {
+                    $all[$vn["parent"]]["rate"] .= $vn["rate"].";";
+                }
+                unset($all[$num]);
+            }
+        }
+        $this->ajaxReturn($tmp,$all[$theid]["rate"],1);
     }
     public function rebuiltreback(){
         $fo = $_POST["reinfo"];
@@ -1434,7 +1492,7 @@ class FinAdmAction extends CommonAction{
             $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
             $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
     };
-    reach ($data as $mo => $va) {
+    foreach ($data as $mo => $va) {
             $data[$mo]["give"] = doubleval($data[$mo]["give"]);
             $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
             $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];

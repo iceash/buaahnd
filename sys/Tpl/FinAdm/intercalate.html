@@ -189,6 +189,7 @@ $(document).ready(function(){
         }else if(status == "update"){
             var willdel = $(this).parent(".onepartner");
             var id = willdel.attr("value");
+            var that = this;
             $.ajax({
                 type:'POST',
                 url:"__URL__/rebackdel",
@@ -196,7 +197,8 @@ $(document).ready(function(){
                 data:{"id":id},
                 success:function(back){
                     if (back.status == 1) {
-                        alert(back.info);
+                        alert("删除成功");
+                        $(that).parents(".div_partner").prev("tr").children(".td_rate").text(back.info);
                         willdel.remove();
                     }else{
                         alert(back.info);
@@ -235,7 +237,6 @@ $(document).ready(function(){
             alert("信息格式不正确！");
             return false;
         };
-        console.log(reinfo);
         var that = this;
         $.ajax({
             type:'POST',
@@ -248,7 +249,8 @@ $(document).ready(function(){
                 }else{
                     $(that).parent(".onepartner").attr("status","update");
                     $(that).parent(".onepartner").attr("value",back.data);
-                    alert(back.info);
+                    $(that).parents(".div_partner").prev("tr").children(".td_rate").text(back.info);
+                    alert("更新成功");
                 };
             }
         });
@@ -353,7 +355,7 @@ $(document).ready(function(){
             <div class="feeoutter">
                 
             </div>
-                <button class="pat_cancel pat_btn">取消</button>
+                <button class="pat_cancel pat_btn">收起</button>
           </td>
         </tr>
 </script>

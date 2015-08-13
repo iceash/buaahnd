@@ -39,7 +39,20 @@ $(document).ready(function(){
     });
     $(document).on("click",".pat_cancel",function(){
         //撤销出现的合作方
-        $(this).parents("tr").remove();
+        var tr = $(this).parents("tr");
+        var count = 0;
+        tr.find(".onepartner").each(function(){
+            if ($(this).attr("status") == "new") {
+                count++;
+            };
+        });
+        if (count > 0) {
+            if (confirm("还有"+count+"个新增项未保存，收起后将会失去，是否确定要收起？")) {
+                tr.remove();
+            };
+        }else{
+            tr.remove();
+        };
     });
     $(document).on("click",".pat_add",function(){
         //在出现的合作方中新出现一行
