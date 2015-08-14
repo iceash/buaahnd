@@ -755,7 +755,6 @@ class EduDirAction extends CommonAction {
     }
     public function menuattend() {
         $menu['attend']='所有考勤记录';
-        $menu['attendToday']='今日新增记录';
         $menu['attendAdd']='新建考勤记录';
         $this->assign('menu',$this ->autoMenu($menu));  
 	}
@@ -780,7 +779,7 @@ class EduDirAction extends CommonAction {
             $page = $p -> show();
             $this -> assign("page", $page);
             $this -> assign('my', $my);
-        } 
+        }
         $this -> menuattend();
         $this -> display();
     }
@@ -789,7 +788,7 @@ class EduDirAction extends CommonAction {
     $classname=M('class')->where($map)->Field('name')->select();
     $this->ajaxReturn($classname);   
 }
-    public function attendToday() {        
+   /* public function attendToday() {        
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
             $this -> assign('searchkey', $_GET['searchkey']);
@@ -810,7 +809,7 @@ class EduDirAction extends CommonAction {
         } 
         $this -> menuattend();
         $this -> display();
-    } 
+    } */
     public function downClass(){
         $dao=D('StudentDirView');
         $map['teacher']=session('username');
@@ -3319,7 +3318,7 @@ class EduDirAction extends CommonAction {
         $classList=M('judge')->where($map)->Field('classname')->group('classname')->select();
         $this->assign('classList',$classList);       
         if (isset($_GET['searchkey'])) {
-            $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $map['content|struename'] = array('like', '%' . $_GET['searchkey'] . '%');
             $this -> assign('searchkey', $_GET['searchkey']);
         }
         if($_GET['classname']){$map['classname']=$_GET['classname'];}
@@ -3595,6 +3594,9 @@ class EduDirAction extends CommonAction {
     $data['sedate'] = $_POST['sedate'];
     $data['date'] = date("Y-m-d");
     $dao=D('summary');
+    if (empty($data['classname']) || empty($data['content'])|| empty($data['type'])|| empty($data['sbdate'])|| empty($data['sedate'])|| empty($data['title'])) {
+    $this -> error('必填项不能为空');
+    } 
     $check = $dao -> add($data);
     if($check){$this -> success("已成功保存");}else{$this->error("保存失败");}  
     }
