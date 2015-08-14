@@ -1358,6 +1358,12 @@ class FinAdmAction extends CommonAction{
     $data=$fee->where($mapU)->Field('id,name,parent')->select();
     $datall=$fee->where('period=0')->select();
     $data2=$data;
+    $mappp['period']=0;
+    $mappp['check']=array(array('eq','审核中'),array('eq','已审核'),'or');
+    $checkarr=$deal->where($mappp)->select();
+    if($checkarr){
+         $this->ajaxReturn(0,"还有未提交的交易记录，结算失败！",0);
+    }else{
     foreach ($datall as $dataarray ) {
         $dataarr[$dataarray["id"]]=$dataarray;
     }
@@ -1644,6 +1650,7 @@ class FinAdmAction extends CommonAction{
            $this->ajaxReturn($result,"结算成功！",1);
         }else{
            $this->ajaxReturn(0,"结算失败！",0);
+        }
         }
       }
 
