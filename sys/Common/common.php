@@ -267,8 +267,7 @@ function downloads(){
         $p = PHPExcel_IOFactory::load($excelurl);
         $p -> setActiveSheetIndex($sheetnum);
         for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
-        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->getStartColor()->setARGB($color); 
+        $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFont()->getColor()->setARGB($color);
         }
         
           header("Pragma: public");

@@ -317,41 +317,8 @@ class FinAdmAction extends CommonAction{
     }
     public function rebackdel(){
         $id = $_POST["id"];
-        $feeid = M("reback")->where("id=".$id)->getField("feeid");
-        $feeinfo = M("fee")->where("id=".$feeid)->find();
-        if ($feeinfo["parent"] == 0) {
-            $theid = $feeinfo["id"];
-        }else{
-            $theid = $feeinfo["parent"];
-        }
-        $tmp = M("reback")->where("id=".$id)->delete();
-
-        //下面处理框上面的预览
-        $oldall = M("fee")->where("period=0")->order("id")->select();
-        $rebacks = M("reback")->where("period=0")->select();
-        foreach ($oldall as $one) {
-            $all[$one["id"]] = $one;
-        }
-        foreach ($rebacks as $reback) {
-            if ($reback["type"] == 1) {
-                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"];
-            }else{
-                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"]."%";
-            }
-        }
-        foreach ($all as $num => $vn) {
-            if ($vn["parent"] != 0) {
-                if ($vn["name"] == $fo["feename"]) {
-                    $theid = $vn["parent"];
-                }
-                if ($vn["rate"]) {
-                    $all[$vn["parent"]]["rate"] .= $vn["rate"].";";
-                }
-                unset($all[$num]);
-            }
-        }
-        if ($tmp) {
-            $this->ajaxReturn(0,$all[$theid]["rate"],1);
+        if (M("reback")->where("id=".$id)->delete()) {
+            $this->ajaxReturn(0,"删除成功",1);
         }else{
             $this->ajaxReturn(0,"删除失败",0);
         }
@@ -364,7 +331,6 @@ class FinAdmAction extends CommonAction{
                 $newlist = $fo;
                 $map["name"] = $fo["feename"];
                 $newlist["feeid"] = M("fee")->where($map)->getfield("id");
-                $tmp = M("reback")->add($newlist);
             }elseif ($fo["status"] == "update") {
                 unset($fo["status"]);
                 $updatelist = $fo;
@@ -373,35 +339,11 @@ class FinAdmAction extends CommonAction{
                     $count++;
                 }
             }
+        $tmp = M("reback")->add($newlist);
         if (!$tmp && $count == 0) {
             $this->ajaxReturn($newlist,"无更新",0);
         }
-
-        //下面处理框上面的预览
-        $oldall = M("fee")->where("period=0")->order("id")->select();
-        $rebacks = M("reback")->where("period=0")->select();
-        foreach ($oldall as $one) {
-            $all[$one["id"]] = $one;
-        }
-        foreach ($rebacks as $reback) {
-            if ($reback["type"] == 1) {
-                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"];
-            }else{
-                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"]."%";
-            }
-        }
-        foreach ($all as $num => $vn) {
-            if ($vn["parent"] != 0) {
-                if ($vn["name"] == $fo["feename"]) {
-                    $theid = $vn["parent"];
-                }
-                if ($vn["rate"]) {
-                    $all[$vn["parent"]]["rate"] .= $vn["rate"].";";
-                }
-                unset($all[$num]);
-            }
-        }
-        $this->ajaxReturn($tmp,$all[$theid]["rate"],1);
+        $this->ajaxReturn($tmp,"更新成功",1);
     }
     public function rebuiltreback(){
         $fo = $_POST["reinfo"];
@@ -1166,7 +1108,6 @@ class FinAdmAction extends CommonAction{
       $this->data =  $dato;
     }
     else{
-
     $tmppartners = M("system")->where("name='partners'")->find();
     $partner = explode(",", $tmppartners["content"]);  
     $reback=M('reback');
@@ -1188,13 +1129,23 @@ class FinAdmAction extends CommonAction{
     }
       $mapV1['period']=0;
       $mapV1['money']=array('gt',0);
+      $mapV1['check']='已提交';
       $deals=$deal->where($mapV1)->select();
     for ($i=0; $i < count($data); $i++) { 
       $mapV['period']=0;
       $mapV['money']=array('gt',0);
       $mapV['feeid']=$data[$i]['parent'];
+      $mapV['check']='已提交';
       $allPay=$deal->where($mapV)->field('money')->select();
       $dealsdetail=$deal->where($mapV)->select();
+      if(!$allPay){
+      $mapVv['period']=0;
+      $mapVv['money']=array('gt',0);
+      $mapVv['feename']=$data[$i]['name'];
+      $mapVv['check']='已提交';
+      $allPay=$deal->where($mapVv)->field('money')->select();
+      $dealsdetail=$deal->where($mapVv)->select();
+      }
       $paymentnum=count($dealsdetail);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
@@ -1278,23 +1229,31 @@ class FinAdmAction extends CommonAction{
             $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
     };
     for ($i=0; $i < count($data2); $i++) { 
-      $mapV['period']=0;
-      $mapV['money']=array('lt',0);
-      $mapV['feeid']=$data2[$i]['parent'];
-      $mapV['feeid']=array('gt',0);
-      $allPay=$deal->where($mapV)->field('money')->select();
-      $dealsdetail2=$deal->where($mapV)->select();
+      $mapV1['period']=0;
+      $mapV1['money']=array('lt',0);
+      $mapV1['feeid']=$data2[$i]['parent'];
+      $mapV1['check']='已提交';
+      $allPay=$deal->where($mapV1)->field('money')->select();
+      $dealsdetail2=$deal->where($mapV1)->select();
+      if(!$allPay){
+      $mapVv['period']=0;
+      $mapVv['money']=array('lt',0);
+      $mapVv['feename']=$data2[$i]['name'];
+      $mapVv['check']='已提交';
+      $allPay=$deal->where($mapVv)->field('money')->select();
+      $dealsdetail2=$deal->where($mapVv)->select();
+      }
       $paymentnum2=count($dealsdetail2);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
       }
       $id2=$data2[$i]['parent'];
-       if($dataarr[$id2]['haschildren']==0&&$dataarr[$id2]['id']!=0){
+       if($dataarr[$id2]['haschildren']==0){
         for ($ja=0; $ja < count($allPay); $ja++) { 
-        $sumd[$i]+=$allPay[$ja]['money'];
+        $sumd2[$i]+=$allPay[$ja]['money'];
         }
-        $data2[$i]['give']=$sumd[$i];
+        $data2[$i]['give']=$sumd2[$i];
 
       }
            if($dataarr[$id2]['haschildren']==1){
@@ -1404,13 +1363,23 @@ class FinAdmAction extends CommonAction{
     }
       $mapV1['period']=0;
       $mapV1['money']=array('gt',0);
+      $mapV1['check']='已提交';
       $deals=$deal->where($mapV1)->select();
-     for ($i=0; $i < count($data); $i++) { 
+    for ($i=0; $i < count($data); $i++) { 
       $mapV['period']=0;
       $mapV['money']=array('gt',0);
       $mapV['feeid']=$data[$i]['parent'];
+      $mapV['check']='已提交';
       $allPay=$deal->where($mapV)->field('money')->select();
       $dealsdetail=$deal->where($mapV)->select();
+      if(!$allPay){
+      $mapVv['period']=0;
+      $mapVv['money']=array('gt',0);
+      $mapVv['feename']=$data[$i]['name'];
+      $mapVv['check']='已提交';
+      $allPay=$deal->where($mapVv)->field('money')->select();
+      $dealsdetail=$deal->where($mapVv)->select();
+      }
       $paymentnum=count($dealsdetail);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
@@ -1487,36 +1456,41 @@ class FinAdmAction extends CommonAction{
             }
           }
     }
-    foreach ($data as $mo => $va) {
-            $data[$mo]["give"] = doubleval($data[$mo]["give"]);
-            $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
-            $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
-    };
+    // dump($othersum);
     foreach ($data as $mo => $va) {
             $data[$mo]["give"] = doubleval($data[$mo]["give"]);
             $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
             $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
     };
     for ($i=0; $i < count($data2); $i++) { 
-      $mapV['period']=0;
-      $mapV['money']=array('lt',0);
-      $mapV['feeid']=$data2[$i]['parent'];
-      $mapV['feeid']=array('gt',0);
-      $allPay=$deal->where($mapV)->field('money')->select();
-      $dealsdetail2=$deal->where($mapV)->select();
+      $mapV1['period']=0;
+      $mapV1['money']=array('lt',0);
+      $mapV1['feeid']=$data2[$i]['parent'];
+      $mapV1['check']='已提交';
+      $allPay=$deal->where($mapV1)->field('money')->select();
+      $dealsdetail2=$deal->where($mapV1)->select();
+      if(!$allPay){
+      $mapVv['period']=0;
+      $mapVv['money']=array('lt',0);
+      $mapVv['feename']=$data2[$i]['name'];
+      $mapVv['check']='已提交';
+      $allPay=$deal->where($mapVv)->field('money')->select();
+      $dealsdetail2=$deal->where($mapVv)->select();
+      }
       $paymentnum2=count($dealsdetail2);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
       }
       $id2=$data2[$i]['parent'];
-       if($dataarr[$id2]['haschildren']==0&&$dataarr[$id2]['id']!=0){
+       if($dataarr[$id2]['haschildren']==0){
         for ($ja=0; $ja < count($allPay); $ja++) { 
-        $sumd[$i]+=$allPay[$ja]['money'];
+        $sumd2[$i]+=$allPay[$ja]['money'];
         }
-        $data2[$i]['give']=$sumd[$i];
+        $data2[$i]['give']=$sumd2[$i];
 
       }
+
            if($dataarr[$id2]['haschildren']==1){
         $son=$fee->where('parent='.$id2)->select(); 
         for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
@@ -1739,13 +1713,23 @@ class FinAdmAction extends CommonAction{
     }
       $mapV1['period']=0;
       $mapV1['money']=array('gt',0);
+      $mapV1['check']='已提交';
       $deals=$deal->where($mapV1)->select();
-     for ($i=0; $i < count($data); $i++) { 
+    for ($i=0; $i < count($data); $i++) { 
       $mapV['period']=0;
       $mapV['money']=array('gt',0);
       $mapV['feeid']=$data[$i]['parent'];
+      $mapV['check']='已提交';
       $allPay=$deal->where($mapV)->field('money')->select();
       $dealsdetail=$deal->where($mapV)->select();
+      if(!$allPay){
+      $mapVv['period']=0;
+      $mapVv['money']=array('gt',0);
+      $mapVv['feename']=$data[$i]['name'];
+      $mapVv['check']='已提交';
+      $allPay=$deal->where($mapVv)->field('money')->select();
+      $dealsdetail=$deal->where($mapVv)->select();
+      }
       $paymentnum=count($dealsdetail);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
@@ -1798,6 +1782,7 @@ class FinAdmAction extends CommonAction{
       $data[$i]['give']=0;
       $othersum[$data[$i]["id"]]=$data[$i]['gets'];
     }
+    
     foreach ($data0 as $datasum ) {
         $othersum[$datasum["id"]]=$datasum['gets'];
     }
@@ -1821,29 +1806,38 @@ class FinAdmAction extends CommonAction{
             }
           }
     }
+    // dump($othersum);
     foreach ($data as $mo => $va) {
             $data[$mo]["give"] = doubleval($data[$mo]["give"]);
             $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
             $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
     };
     for ($i=0; $i < count($data2); $i++) { 
-      $mapV['period']=0;
-      $mapV['money']=array('lt',0);
-      $mapV['feeid']=$data2[$i]['parent'];
-      $mapV['feeid']=array('gt',0);
-      $allPay=$deal->where($mapV)->field('money')->select();
-      $dealsdetail2=$deal->where($mapV)->select();
+      $mapV1['period']=0;
+      $mapV1['money']=array('lt',0);
+      $mapV1['feeid']=$data2[$i]['parent'];
+      $mapV1['check']='已提交';
+      $allPay=$deal->where($mapV1)->field('money')->select();
+      $dealsdetail2=$deal->where($mapV1)->select();
+      if(!$allPay){
+      $mapVv['period']=0;
+      $mapVv['money']=array('lt',0);
+      $mapVv['feename']=$data2[$i]['name'];
+      $mapVv['check']='已提交';
+      $allPay=$deal->where($mapVv)->field('money')->select();
+      $dealsdetail2=$deal->where($mapVv)->select();
+      }
       $paymentnum2=count($dealsdetail2);
       $sum=0;
       for ($j=0; $j < count($allPay); $j++) { 
         $sum+=$allPay[$j]['money'];
       }
       $id2=$data2[$i]['parent'];
-       if($dataarr[$id2]['haschildren']==0&&$dataarr[$id2]['id']!=0){
+       if($dataarr[$id2]['haschildren']==0){
         for ($ja=0; $ja < count($allPay); $ja++) { 
-        $sumd[$i]+=$allPay[$ja]['money'];
+        $sumd2[$i]+=$allPay[$ja]['money'];
         }
-        $data2[$i]['give']=$sumd[$i];
+        $data2[$i]['give']=$sumd2[$i];
 
       }
            if($dataarr[$id2]['haschildren']==1){
