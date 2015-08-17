@@ -408,7 +408,7 @@ class EaterAction extends CommonAction {
     }
 /*****************************学生信息*******************************************/
     public function students(){
-        $a = array('zhname'=>'名','FamilyName'=>'FamilyName','surname'=>'姓','FirstName'=>'FirstName','birthday'=>'出生日期','sex'=>'性别','gender'=>'Gender','address'=>'家庭住址','HomeAddress'=>'HomeAddress','postaladdress'=>'通信地址','CorrespondenceAddress'=>'CorrespondenceAddress','phone'=>'固定电话','mobile'=>'手机','email'=>'Email1','Email2'=>'Email2','MSN'=>'MSN','qq'=>'OICQ','nativeprovince'=>'省份','Province'=>'Province','nativecity'=>'城市','City'=>'City','idcardpassport'=>'身份证护照号码','project'=>'就读国内项目名称','HNDCenter'=>'HNDCenter','year'=>'入学时间','grade'=>'所属年级','entrancescore'=>'高考成绩总分','englishscore'=>'英语单科成绩','entrancefull'=>'高考分数标准','major'=>'HND专业','drop'=>'是否退学','repeat'=>'是否留级','SCN'=>'SCN号','listeningscore'=>'听力得分','readingscore'=>'阅读得分','writingscore'=>'写作得分','speakingscore'=>'口语得分','testscore'=>'进入专业课英语成绩总分','score1'=>'最优有效雅思成绩','score1id'=>'雅思考试号','plus'=>'其他','HNDtime'=>'获得HND证书时间','quit'=>'是否留学','country'=>'留学国家','Country'=>'Country','school'=>'国外院校名称','ForeignUniversityApplied'=>'ForeignUniversityApplied','fmajor'=>'留学所学专业','together'=>'出国所经过中介名称','employ'=>'是否就业','enterprise'=>'就业企业名称','workaddress'=>'就业企业所在省市','enterprisenature'=>'就业企业性质','individualorientationandspecialty'=>'个人情况介绍及特长','professionalcertificate'=>'所获得职业资格证书','xuben'=>'续本','xubensch'=>'续本国内院校名称','degreesch'=>'将获得哪所院校颁发学位','xubenmajor'=>'续本专业');
+        $a = array('name'=>'姓名','ename'=>'ename','birthday'=>'出生日期','sex'=>'性别','gender'=>'Gender','address'=>'家庭住址','HomeAddress'=>'HomeAddress','postaladdress'=>'通信地址','CorrespondenceAddress'=>'CorrespondenceAddress','phone'=>'固定电话','mobile'=>'手机','email'=>'Email1','Email2'=>'Email2','MSN'=>'MSN','qq'=>'OICQ','nativeprovince'=>'省份','Province'=>'Province','nativecity'=>'城市','City'=>'City','idcardpassport'=>'身份证护照号码','project'=>'就读国内项目名称','HNDCenter'=>'HNDCenter','year'=>'入学时间','grade'=>'所属年级','entrancescore'=>'高考成绩总分','englishscore'=>'英语单科成绩','entrancefull'=>'高考分数标准','major'=>'HND专业','drop'=>'是否退学','repeat'=>'是否留级','SCN'=>'SCN号','listeningscore'=>'听力得分','readingscore'=>'阅读得分','writingscore'=>'写作得分','speakingscore'=>'口语得分','testscore'=>'进入专业课英语成绩总分','score1'=>'最优有效雅思成绩','score1id'=>'雅思考试号','plus'=>'其他','HNDtime'=>'获得HND证书时间','quit'=>'是否留学','country'=>'留学国家','Country'=>'Country','school'=>'国外院校名称','ForeignUniversityApplied'=>'ForeignUniversityApplied','fmajor'=>'留学所学专业','together'=>'出国所经过中介名称','employ'=>'是否就业','enterprise'=>'就业企业名称','workaddress'=>'就业企业所在省市','enterprisenature'=>'就业企业性质','individualorientationandspecialty'=>'个人情况介绍及特长','professionalcertificate'=>'所获得职业资格证书','xuben'=>'续本','xubensch'=>'续本国内院校名称','degreesch'=>'将获得哪所院校颁发学位','xubenmajor'=>'续本专业');
         return $a;
     }
     public function getClassStudent($classid){
@@ -417,25 +417,8 @@ class EaterAction extends CommonAction {
         $dao = D('StudentView');
         $my = $dao->where($map)->order('student asc')->group('student')->select();
         foreach($my as $key=>$value){
-            $my[$key]['enamearr'] = preg_split('/(?<=[a-z])(?=[A-Z])/',$value['ename']);
-            if(strlen(trim($value['studentname'])) > 6 ){
-                if(in_array(substr(trim($value['studentname']),0,6),$this->getCompoundSurname())){
-                    $my[$key]['surname'] = substr(trim($value['studentname']),0,6);
-                    $my[$key]['zhname'] = substr(trim($value['studentname']),6);
-                    $my[$key]['FamilyName'] = $my[$key]['enamearr'][0].$my[$key]['enamearr'][1];
-                    $my[$key]['FirstName'] = implode('',array_slice($my[$key]['enamearr'],2));
-                }else{
-                    $my[$key]['surname'] = substr(trim($value['studentname']),0,3);
-                    $my[$key]['zhname'] = substr(trim($value['studentname']),3);
-                    $my[$key]['FamilyName'] = $my[$key]['enamearr'][0];
-                    $my[$key]['FirstName'] = implode('',array_slice($my[$key]['enamearr'],1));  
-                }
-            }else{
-                    $my[$key]['surname'] = substr(trim($value['studentname']),0,3);
-                    $my[$key]['zhname'] = substr(trim($value['studentname']),3);
-                    $my[$key]['FamilyName'] = $my[$key]['enamearr'][0];
-                    $my[$key]['FirstName'] = implode('',array_slice($my[$key]['enamearr'],1));  
-            }
+            $my[$key]['name'] = $value['studentname'];
+            $my[$key]['ename'] = $value['ename'];
             if($value['sex'] == '男'){
                 $my[$key]['gender'] = 'male';
             }
@@ -452,7 +435,6 @@ class EaterAction extends CommonAction {
     }
     public function getGradeStudent($year){
         $map['year'] = $year;
-        $map['teacher'] = session('username');
         $map['isbiye'] = 0;
         $dao = D('StudentView');
         $list = $dao->where($map)->group('student')->order('year desc,name asc,student asc')->select();
@@ -461,25 +443,8 @@ class EaterAction extends CommonAction {
         }
         foreach($my as $k1=>$v1){
             foreach($v1 as $k2=>$v2){
-               $my[$k1][$k2]['enamearr'] = preg_split('/(?<=[a-z])(?=[A-Z])/',$v2['ename']);
-            if(strlen(trim($v2['studentname'])) > 6 ){
-                if(in_array(substr(trim($v2['studentname']),0,6),$this->getCompoundSurname())){
-                    $my[$k1][$k2]['surname'] = substr(trim($v2['studentname']),0,6);
-                    $my[$k1][$k2]['zhname'] = substr(trim($v2['studentname']),6);
-                    $my[$k1][$k2]['FamilyName'] = $my[$k1][$k2]['enamearr'][0].$my[$k1][$k2]['enamearr'][1];
-                    $my[$k1][$k2]['FirstName'] = implode('',array_slice($my[$k1][$k2]['enamearr'],2));
-                }else{
-                    $my[$k1][$k2]['surname'] = substr(trim($v2['studentname']),0,3);
-                    $my[$k1][$k2]['zhname'] = substr(trim($v2['studentname']),3);
-                    $my[$k1][$k2]['FamilyName'] = $my[$k1][$k2]['enamearr'][0];
-                    $my[$k1][$k2]['FirstName'] = implode('',array_slice($my[$k1][$k2]['enamearr'],1));  
-                }
-            }else{
-                    $my[$k1][$k2]['surname'] = substr(trim($v2['studentname']),0,3);
-                    $my[$k1][$k2]['zhname'] = substr(trim($v2['studentname']),3);
-                    $my[$k1][$k2]['FamilyName'] = $my[$k1][$k2]['enamearr'][0];
-                    $my[$k1][$k2]['FirstName'] = implode('',array_slice($my[$k1][$k2]['enamearr'],1));  
-            }
+            $my[$k1][$k2]['name']=$v2['studentname'];
+            $my[$k1][$k2]['ename']=$v2['ename'];
             if($v2['sex'] == '男'){
                 $my[$k1][$k2]['gender'] = 'male';
             }
