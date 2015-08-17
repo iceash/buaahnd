@@ -1047,7 +1047,7 @@ class EduDirAction extends CommonAction {
                                                                                                                                                                                                                                                                                        
         $term=$Score -> where($map) ->field('term')->group('term')->order('term asc')-> select();
 		$term_num=count($term);
-        if($term_num>0){
+        // if($term_num>0){
             foreach($term as $key=>$value){
                 $map['term']=$value['term'];
                 $my[$key]=$Score -> where($map) -> select();
@@ -1058,10 +1058,281 @@ class EduDirAction extends CommonAction {
             $this->assign('sterm',$sterm);
             $this->assign('id',$id);
             $this->assign('my',$my);
-        } 
+        // } 
         $this->stuCommonMenu($id);
         $this -> display();
 	}
+    public function downPreScore(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        // Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/prescore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('B3', $stuinfo["studentname"]) 
+            ->setCellValue('B4', $stuinfo["ename"]) ;//写上学生姓名
+        $scores = M("pregrade")->where(array("stunum"=>$id))->select();
+        $styleArray = array(  
+            'borders' => array(  
+                'allborders' => array(  
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,//细边框  
+                    'color' => array('argb' => '000'),  
+                ),  
+            ),  
+        );  
+        $line = 6;
+        for ($i=0; $i < count($scores); $i++) { 
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue('A'.$line, $scores[$i]["examname"]) 
+                ->setCellValue('A'.($line+1), ' 听 力 :') 
+                ->setCellValue('B'.($line+1), $scores[$i]["listening"]."分")
+                ->setCellValue('A'.($line+2), ' Listening:') 
+                ->setCellValue('B'.($line+2), $scores[$i]["listening"])
+                ->setCellValue('A'.($line+3), ' 口 语 :') 
+                ->setCellValue('B'.($line+3), $scores[$i]["speaking"]."分")
+                ->setCellValue('A'.($line+4), 'Speaking:') 
+                ->setCellValue('B'.($line+4), $scores[$i]["speaking"])
+                ->setCellValue('D'.($line+1), ' 阅 读 :') 
+                ->setCellValue('E'.($line+1), $scores[$i]["reading"]."分") 
+                ->setCellValue('D'.($line+2), 'Reading:') 
+                ->setCellValue('E'.($line+2), $scores[$i]["reading"]) 
+                ->setCellValue('D'.($line+3), ' 总 分 :') 
+                ->setCellValue('E'.($line+3), $scores[$i]["total"]."分") 
+                ->setCellValue('D'.($line+4), 'Total:') 
+                ->setCellValue('E'.($line+4), $scores[$i]["total"]) 
+                ->setCellValue('G'.($line+1), ' 写 作 :') 
+                ->setCellValue('H'.($line+1), $scores[$i]["writing"]."分") 
+                ->setCellValue('G'.($line+2), 'Writing:')
+                ->setCellValue('H'.($line+2), $scores[$i]["writing"])
+                ->setCellValue('A'.($line+5), 'Remark:Listening 9,Reading 9,Writing 9,Speaking 9,Total 9')
+                ->getStyle('A'.($line+5).':I'.($line+5))->applyFromArray($styleArray);
+            $p  ->getActiveSheet()->mergeCells( 'A'.$line.':I'.$line);
+            $p  ->getActiveSheet()->mergeCells( 'A'.($line+5).':I'.($line+5));
+            $p  ->getActiveSheet()->getStyle('A'.$line)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+            for ($j=1; $j <= 4; $j++) { 
+                $p  ->getActiveSheet()->getStyle('A'.($line+$j).':C'.($line+$j))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->getStyle('D'.($line+$j).':F'.($line+$j))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->getStyle('G'.($line+$j).':I'.($line+$j))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->mergeCells( 'B'.($line+$j).':C'.($line+$j));
+                $p  ->getActiveSheet()->mergeCells( 'E'.($line+$j).':F'.($line+$j));
+                $p  ->getActiveSheet()->mergeCells( 'H'.($line+$j).':I'.($line+$j));
+            }
+            $line += 7;
+        }
+        
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-预科成绩单.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function downProScoreA(){
+        //导出字母制成绩
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        // Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+        foreach ($scores as $vs) {//对数据进行初步处理
+            if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
+                continue;
+            }
+            $willwrite[$vs["term"]][$vs["course"]]["count"]++;
+            $willwrite[$vs["term"]][$vs["course"]]["hundred"] += $vs["hundred"];
+            if ($vs["letter"] == "U" || $vs["hundred"] == 0) {//接下来判断这是重修或是导入时输入字母还是数字
+                $willwrite[$vs["term"]][$vs["course"]]["isrepair"] = "repair";
+                $willwrite[$vs["term"]][$vs["course"]]["hundred"] = 0;
+            }else{
+                if ($vs["letter"] == "P" || $vs["letter"] == "F") {
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "hundred";
+                }else{
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "letter";
+                }
+            }
+        }
+        $line = 6;//从第7行开始写，每门课加1
+        $row = 64;//从B列开始写，每学期加2
+        $course = M("course");
+        foreach ($willwrite as $termname => $vw) {
+            $row = $row + 2;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue(chr($row)."5",$termname)
+                ->mergeCells(chr($row)."5:".chr($row+1)."5")
+                ->setCellValue(chr($row)."6","Marks")
+                ->setCellValue(chr($row+1)."6","Credits");
+            foreach ($vw as $coursename => $vs) {
+                $line++;
+                $map["classid"] = $stuinfo["classid"];
+                $map["name|ename"] = $coursename;
+                $credit = $course->where($map)->getField("credit");//获取学分
+                if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
+                    $hundred = 0;
+                    $letter = "U";
+                }else{
+                    $hundred = $vs["hundred"]/$vs["count"];
+                    if ($vs["standard"] == "letter") {
+                        switch (true) {
+                            case $hundred > 70:
+                                $letter = "A";
+                                break;
+                            case $hundred >60:
+                                $letter = "B";
+                                break;
+                            case $hundred > 50:
+                                $letter = "C";
+                                break;
+                            case $hundred > 1:
+                                $letter = "D";
+                                break;
+                        }
+                    }else{
+                        if ($hundred >= 60) {
+                            $letter = "P";
+                        }else{
+                            $letter = "F";
+                        }
+                    }
+                }
+                $p  ->setActiveSheetIndex(0)
+                    ->setCellValue("A".$line,$coursename)
+                    ->setCellValue(chr($row).$line,$letter)
+                    ->setCellValue(chr($row+1).$line,$credit);
+            }
+        }
+        $styleThinBlackBorderOutline = array( 
+            'borders' => array ( 
+                'allborders' => array ( 
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
+                ), 
+            ),
+        );
+        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function downProScoreB(){
+        //导出百分制成绩
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        // Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+        foreach ($scores as $vs) {//对数据进行初步处理
+            if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
+                continue;
+            }
+            $willwrite[$vs["term"]][$vs["course"]]["count"]++;
+            $willwrite[$vs["term"]][$vs["course"]]["hundred"] += $vs["hundred"];
+            if ($vs["letter"] == "U" || $vs["hundred"] == 0) {//接下来判断这是重修或是导入时输入字母还是数字
+                $willwrite[$vs["term"]][$vs["course"]]["isrepair"] = "repair";
+                $willwrite[$vs["term"]][$vs["course"]]["hundred"] = 0;
+            }else{
+                if ($vs["letter"] == "P" || $vs["letter"] == "F") {
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "hundred";
+                }else{
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "letter";
+                }
+            }
+        }
+        $line = 6;//从第7行开始写，每门课加1
+        $row = 64;//从B列开始写，每学期加2
+        $course = M("course");
+        foreach ($willwrite as $termname => $vw) {
+            $row = $row + 2;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue(chr($row)."5",$termname)
+                ->mergeCells(chr($row)."5:".chr($row+1)."5")
+                ->setCellValue(chr($row)."6","Marks")
+                ->setCellValue(chr($row+1)."6","Credits");
+            foreach ($vw as $coursename => $vs) {
+                $line++;
+                $map["classid"] = $stuinfo["classid"];
+                $map["name|ename"] = $coursename;
+                $credit = $course->where($map)->getField("credit");//获取学分
+                if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
+                    $hundred = 0;
+                    $letter = "U";
+                }else{
+                    $hundred = $vs["hundred"]/$vs["count"];
+                    $hundred = round($hundred,2);
+                }
+                $p  ->setActiveSheetIndex(0)
+                    ->setCellValue("A".$line,$coursename)
+                    ->setCellValue(chr($row).$line,$hundred)
+                    ->setCellValue(chr($row+1).$line,$credit);
+            }
+        }
+        $styleThinBlackBorderOutline = array( 
+            'borders' => array ( 
+                'allborders' => array ( 
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
+                ), 
+            ),
+        );
+        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（百分制）.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
     public function stuCommonCertification(){
         $id = $_GET['id'];
         if (!isset($id)) {
