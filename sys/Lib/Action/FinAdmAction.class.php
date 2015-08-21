@@ -164,6 +164,8 @@ class FinAdmAction extends CommonAction{
     }
     public function updatefee(){
         $fee = $_POST["fee"];
+        $id = $fee[0]["id"];
+        unset($fee[0]["id"]);
         if (count($fee) == 1) {
             $feename = $fee[0]["name"];
         }else{
@@ -179,7 +181,8 @@ class FinAdmAction extends CommonAction{
                 }
             }
         }
-        $map["name"] = array("like",$feename."%");
+        // $map["name"] = array("like",$feename."%");
+        $map["id|parent"] = $id;
         $map["period"] = 0;
         $willsave = M("fee")->where($map)->select();
         if (count($willsave)  == 0) {
@@ -213,6 +216,23 @@ class FinAdmAction extends CommonAction{
         }else{
            $this->ajaxReturn($fee,"新增新收费项失败",0); 
         }
+    }
+    public function updatefeename(){
+        $fee = $_POST["fee"];
+        $id = $fee[0]["id"];
+        $newname = $fee[0]["name"];
+        $newtype = $fee[0]["type"];
+        $map["period"] = 0;
+        $map["id|parent"] = $id;
+        $allfee = M("fee")->where($map)->select();
+        foreach ($allfee as $va) {
+            $name = explode($va["name"], "-");
+            $name[0] = $newname;
+            $va["name"] = implode("", $name);
+            $va["type"] = $newtype;
+            M("fee")->save($va);
+        }
+        $this->ajaxReturn($fee,"success",1);
     }
     public function updateapply(){
         $map["period"] = 0;
@@ -269,7 +289,7 @@ class FinAdmAction extends CommonAction{
         foreach ($childfee as $num => $vf) {
             $info["separte"][$num] = $info["separte"][$num - 1] ? $info["separte"][$num - 1] + $vf["standard"] : $vf["standard"] + 0;
         }
-        $this->ajaxReturn($info,"success",0);
+        $this->ajaxReturn($info,"success",1);
     }
     public function rebacklist(){
         $id = $_POST["id"];

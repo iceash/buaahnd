@@ -115,23 +115,42 @@ $(document).ready(function(){
     });
     $(document).on("click",".btn_update",function(){
         //更新收费项
-        var b = confirm("更新收费项信息将导致与此项相关的合作方返款比例失效，您确定要更改吗？");
-        if (!b) {return false};
+        var changed = getchanged(this);
         var feeinfo = addcheck(this);
+        // console.log(feeinfo);
+        // return;
         if (!feeinfo) {return};
-        $.ajax({
-            type:'POST',
-            url:"__URL__/updatefee",
-            dataType:"JSON",
-            data:{"fee":feeinfo},
-            success:function(back){
-                if (back.status == 1) {
-                    location.reload();
-                }else{
-                    alert(back.info);
-                };
-            },
-        });
+        if (changed) {
+            var b = confirm("更新收费项信息将导致与此项相关的合作方返款比例失效，您确定要更改吗？");
+            if (!b) {return false};
+            $.ajax({
+                type:'POST',
+                url:"__URL__/updatefee",
+                dataType:"JSON",
+                data:{"fee":feeinfo},
+                success:function(back){
+                    if (back.status == 1) {
+                        location.reload();
+                    }else{
+                        alert(back.info);
+                    };
+                },
+            });
+        }else{
+            $.ajax({
+                type:'POST',
+                url:"__URL__/updatefeename",
+                dataType:"JSON",
+                data:{"fee":feeinfo},
+                success:function(back){
+                    if (back.status == 1) {
+                        location.reload();
+                    }else{
+                        alert(back.info);
+                    };
+                },
+            });
+        };
     });
     $(document).on("click",".item .a_patdeit",function(){
         //点击出现合作方
@@ -264,7 +283,6 @@ $(document).ready(function(){
             dataType:"JSON",
             data:{"id":id},
             success:function(back){
-                console.log(back);
                 $(that).parents(".item").find(".addfee").remove();
                 $(that).parents(".item").find(".div_partner").remove();
                 $(that).parents("tr").after($("#div_addfee").html());
@@ -272,7 +290,7 @@ $(document).ready(function(){
                 $(that).parents(".item").find(".btn_save").hide();
                 var addfee = $(that).parents(".item").find(".addfee");
                 var thetr = $(that).parents("tr");
-                var id = thetr.find("input[name='key']").val();
+                var id = thetr.attr("value");
                 $(that).parents(".item").find(".addfee input[name='id']").val(id);
                 var name = back.data.name;
                 var type = back.data.type;
@@ -295,14 +313,14 @@ $(document).ready(function(){
                     };
                 });
                 // console.log(name,type,separate);
-                addfee.find("input[name='name']").attr("value",name);
-                addfee.find("select.feetype").attr("value",type);
-                addfee.find("input[name='standard']").attr("value",separate[separate.length - 1]);
+                addfee.find("input[name='name']").attr("value",name).attr("old",name);
+                addfee.find("select.feetype").attr("value",type).attr("old",type);
+                addfee.find("input[name='standard']").attr("value",separate[separate.length - 1]).attr("old",separate[separate.length - 1]);
                 separate.pop();
                 if (separate.length > 0) {
                     addfee.find(".separate").remove();
-                    for (var i = 0; i < separate.length; i++) {
-                        addfee.find(".add_separate").before('<input type="text" value="'+separate[i]+'" class="separate" />');
+                    for (var i = 0, len = separate.length; i < len; i++) {
+                        addfee.find(".add_separate").before('<input type="text" value="'+separate[i]+'" class="separate" len="'+len+'" old="'+separate[i]+'" />');
                     };
                 };
             }
@@ -321,12 +339,14 @@ $(document).ready(function(){
                     <td  colspan="6">
                         <input type="hidden" name="id">
                         <label>名称：<input type="text" name="name" /></label>
-                        <label>类别：<select class="feetype" name="type">
-                                <option value="">请选择...</option>
-                            <volist name="paytype" id="onetype">
-                                <option value="{$onetype}">{$onetype}</option>
-                            </volist>
-                        </select>
+                        <label>类别：
+                            <select class="feetype" name="type">
+                                    <option value="">请选择...</option>
+                                <volist name="paytype" id="onetype">
+                                    <option value="{$onetype}">{$onetype}</option>
+                                </volist>
+                            </select>
+                        </label>
                         <label>收费标准：<input type="text" name="standard" /></label>
                         <label>分隔值：<input type="text" value="0" class="separate" /><span class="add_separate">+</span> </label>
                         <input type="button" value="更新" class="btn_update"/>

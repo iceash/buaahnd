@@ -70,6 +70,7 @@ function addcheck(_this){
     //新增和更新时的检测
     var item = $(_this).parents(".item").attr("value");
     var addfee = $(_this).parents(".addfee");
+    var id = addfee.find("input[name='id']").attr("value");
     var name = addfee.find("input[name='name']")[0].value;
     var type = addfee.find("select.feetype")[0].value;
     var standard = addfee.find("input[name='standard']")[0].value;
@@ -96,6 +97,7 @@ function addcheck(_this){
     });
     var feeinfo = [];
     feeinfo[0] = {};
+    feeinfo[0]["id"] = id;
     feeinfo[0]["item"] = item;
     feeinfo[0]["name"] = name;
     feeinfo[0]["type"] = type;
@@ -120,3 +122,30 @@ function addcheck(_this){
     return feeinfo;
 }
 
+function getchanged(that){
+    var changeed = false;
+    var item = $(that).parents(".item").attr("value");
+    var addfee = $(that).parents(".addfee");
+    if (addfee.find("input[name='standard']").attr("value") != addfee.find("input[name='standard']").attr("old")){
+        changeed = true;
+        return true;
+    };
+    var count = 0,len = 0;
+    addfee.find(".separate").each(function(){
+        len = $(this).attr("len");
+        if (!len) {
+            changeed = true;
+            return true;
+        }else{
+            if ($(this).attr("value") != $(this).attr("old")) {
+                changeed = true;
+                return true;
+            };
+            count++;
+        };
+    });
+    if (count != len) {
+        changeed = true;
+    };
+    return changeed;
+}
