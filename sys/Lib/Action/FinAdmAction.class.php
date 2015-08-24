@@ -129,12 +129,12 @@ class FinAdmAction extends CommonAction{
         if (count($fee) == 1) {
             $feename = $fee[0]["name"];
         }else{
-            // $feename = explode("-",$fee[0]["name"])[0];
-            $tmpfee = explode("-",$fee[0]["name"]);
+            // $feename = explode("|",$fee[0]["name"])[0];
+            $tmpfee = explode("|",$fee[0]["name"]);
             $feename = $tmpfee[0];
             for ($i = 0, $le = count($fee); $i < $le; $i++) { 
-                // $thename = explode("-",$fee[$i]["name"])[0];
-                $tmpthe = explode("-",$fee[$i]["name"]);
+                // $thename = explode("|",$fee[$i]["name"])[0];
+                $tmpthe = explode("|",$fee[$i]["name"]);
                 $thename = $tmpthe[0];
                 if ($thename != $feename) {
                     $this->ajaxReturn(0,"收费项名称不一致",0);
@@ -169,12 +169,12 @@ class FinAdmAction extends CommonAction{
         if (count($fee) == 1) {
             $feename = $fee[0]["name"];
         }else{
-            // $feename = explode("-",$fee[0]["name"])[0];
-            $tmpfee = explode("-",$fee[0]["name"]);
+            // $feename = explode("|",$fee[0]["name"])[0];
+            $tmpfee = explode("|",$fee[0]["name"]);
             $feename = $tmpfee[0];
             for ($i = 0, $le = count($fee); $i < $le; $i++) { 
-                // $thename = explode("-",$fee[$i]["name"])[0];
-                $tmpthe = explode("-",$fee[$i]["name"]);
+                // $thename = explode("|",$fee[$i]["name"])[0];
+                $tmpthe = explode("|",$fee[$i]["name"]);
                 $thename = $tmpthe[0];
                 if ($thename != $feename) {
                     $this->ajaxReturn(0,"收费项名称不一致",0);
@@ -226,7 +226,7 @@ class FinAdmAction extends CommonAction{
         $map["id|parent"] = $id;
         $allfee = M("fee")->where($map)->select();
         foreach ($allfee as $va) {
-            $name = explode($va["name"], "-");
+            $name = explode($va["name"], "|");
             $name[0] = $newname;
             $va["name"] = implode("", $name);
             $va["type"] = $newtype;
@@ -254,7 +254,7 @@ class FinAdmAction extends CommonAction{
         if (count($fee) > 1) {
             for ($i=1; $i < count($fee); $i++) { 
                 $childfee[$i-1] = $fee[$i];
-                $childfee[$i-1]["name"] .= "-$i";
+                $childfee[$i-1]["name"] .= "|$i";
                 $childfee[$i-1]["parent"] = $b;
             }
             $b = M("fee")->addAll($childfee);

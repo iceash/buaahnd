@@ -114,7 +114,7 @@ function addcheck(_this){
         for (var i = 1,le = separate.length; i < le; i++) {
             feeinfo[i] = {};
             feeinfo[i]["item"] = item;
-            feeinfo[i]["name"] = name + "-" + i;
+            feeinfo[i]["name"] = name + "|" + i;
             feeinfo[i]["type"] = type;
             feeinfo[i]["standard"] = separate[i] - separate[i - 1];
         };
