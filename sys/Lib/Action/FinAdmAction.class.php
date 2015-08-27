@@ -441,7 +441,7 @@ class FinAdmAction extends CommonAction{
         $info = M("fee")->where("name='报名费' and parent=0")->find();//报名费信息
         $this->assign("feeid",$info["id"]);
         $map["year"] = $year;
-        $enroll = M("enroll")->select();
+        $enroll = M("enroll")->where("enrollstatus=1")->select();
         $classstudent = M("classstudent")->select();
         foreach ($classstudent as $vc) {
             $idcards[] = $vc["idcard"];
