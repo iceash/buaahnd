@@ -2479,12 +2479,13 @@ class EnrollAdmAction extends CommonAction {
     }
 
     public function modAgent(){
-        if(empty($_POST['username'])||empty($_POST['truename'])||empty($_POST['idcard'])){
+        if(empty($_POST['username'])||empty($_POST['truename'])||empty($_POST['identitycard'])){
             $this->error('必填项不能为空');
         }
-        //$username=$_POST['username'];
+        $username=$_POST['username'];
         $truename=$_POST['truename'];
-        $idcard=$_POST['idcard'];
+		$idcard=$_POST['idcardno'];
+        $idcard_new=$_POST['identitycard'];
         $applymax=$_POST['applymax'];
 
         $Agent=D('Agent');
@@ -2492,6 +2493,8 @@ class EnrollAdmAction extends CommonAction {
         //$this->error($ag);
         $data['truename'] = $truename;
         $data['applymax'] = $applymax;
+		$data['idcard'] = $idcard_new;
+		$data['username'] = $username;
         //$result=$Agent->where("idcard = '".$idcard."'")->setField(array('truename','applymax'),array($truename,$applymax));
         $result=$Agent->where("idcard = '".$idcard."'")->save($data);
         if($result!==false){
@@ -2606,6 +2609,23 @@ class EnrollAdmAction extends CommonAction {
     }
 
     public function setEnrollStatus() {
+        $idcard=$_GET['idcard'];
+        $status=$_GET['status'];
+        if(!isset($idcard)){
+            $this->error('参数缺失');
+        }
+        $Enroll=D('Enroll');
+        $data["enrollstatus"] = $status;
+        $data["enrolltime"] = @date("Y-m-d",time());
+        $result=$Enroll->where("idcard = '".$idcard."'")->save($data);
+        if($result!==false){
+            $this->success('设置成功');
+        }else {
+            $this->error('设置失败');
+        }
+    }
+
+    public function setPayStatus() {
         $idcard=$_GET['idcard'];
         $status=$_GET['status'];
         if(!isset($idcard)){

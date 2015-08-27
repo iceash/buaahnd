@@ -43,6 +43,17 @@
             window.open('http://zhaosheng.buaa-hnd.cn/index.php?s=/Agent/studentinfo/idcard/' + idcard);
         }
 
+        function setPayStatus(idcard, status) {
+            jQuery.getJSON('__URL__/setPayStatus/',{idcard:idcard, status:status},function(data){
+                if(data.status==1){
+                    alert(data.info);
+                    window.location.reload();
+                }else{
+                    alert(data.info);
+                }
+            });
+        }
+
         function setEnrollStatus(idcard, status) {
             jQuery.getJSON('__URL__/setEnrollStatus/',{idcard:idcard, status:status},function(data){
                 if(data.status==1){
@@ -116,10 +127,11 @@
                 <td>{$er.agentname}</td>
                 <td>
                     <input type="button" value="详情" onclick="showStudentList('{$er.idcard}');" />
-                    <input type="button" value="交报名费" onclick="setEnrollStatus('{$er.idcard}', '已交报名费');" />
-                    <input type="button" value="交预定金" onclick="setEnrollStatus('{$er.idcard}', '已交预定金');" />
-                    <input type="button" value="交学费" onclick="setEnrollStatus('{$er.idcard}', '已交学费');" />
-                    <input type="button" value="删除" onclick="delEnroll('{$er.idcard}', '已交学费');" />
+                    <input type="button" value="交报名费" onclick="setPayStatus('{$er.idcard}', '已交报名费');" />
+                    <input type="button" value="交预定金" onclick="setPayStatus('{$er.idcard}', '已交预定金');" />
+                    <input type="button" value="交学费" onclick="setPayStatus('{$er.idcard}', '已交学费');" />
+                    <input type="button" value="录取" onclick="setEnrollStatus('{$er.idcard}', '1');" />
+                    <input type="button" value="删除" onclick="delEnroll('{$er.idcard}');" />
                 </td>
             </tr>
         </volist>
