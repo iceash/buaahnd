@@ -60,9 +60,11 @@ class FinAdmAction extends CommonAction{
         }
         foreach ($rebacks as $reback) {
             if ($reback["type"] == 1) {
-                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"];
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(".$reback["value"].")";
+            }elseif($reback["type"] == 3){
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(剩余)";
             }else{
-                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"].$reback["value"]."%";
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(".$reback["value"]."%)";
             }
         }
         foreach ($all as $num => $vn) {
@@ -337,8 +339,35 @@ class FinAdmAction extends CommonAction{
     }
     public function rebackdel(){
         $id = $_POST["id"];
+        $info = M("reback")->where("id=".$id)->find();
         if (M("reback")->where("id=".$id)->delete()) {
-            $this->ajaxReturn(0,"删除成功",1);
+            //输出比例
+            $feeid = $info["feeid"];
+            $parent = M("fee")->where("id=".$feeid)->getfield("parent");
+            $oldall = M("fee")->where("period=0")->order("id")->select();
+            $rebacks = M("reback")->where("period=0")->select();
+            foreach ($oldall as $one) {
+                $all[$one["id"]] = $one;
+            }
+            foreach ($rebacks as $reback) {
+                if ($reback["type"] == 1) {
+                    $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(".$reback["value"].")";
+                }elseif($reback["type"] == 3){
+                    $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(剩余)";
+                }else{
+                    $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(".$reback["value"]."%)";
+                }
+            }
+            foreach ($all as $num => $vn) {
+                if ($vn["parent"] != 0) {
+                    if ($vn["rate"]) {
+                        $all[$vn["parent"]]["rate"] .= $vn["rate"].";";
+                    }
+                    unset($all[$num]);
+                }
+            }
+            $tmp1 = $parent == 0 ? $feeid : $parent;
+            $this->ajaxReturn($tmp,$all[$tmp1]["rate"],1);
         }else{
             $this->ajaxReturn(0,"删除失败",0);
         }
@@ -346,24 +375,51 @@ class FinAdmAction extends CommonAction{
     public function rebacksave(){
         $fo = $_POST["reinfo"];
         $b = 1; $count = 0;
+        $map["name"] = $fo["feename"];
+        $feeid = M("fee")->where($map)->getfield("id");
+        $parent = M("fee")->where($map)->getfield("parent");
             if ($fo["status"] == "new") {
                 unset($fo["status"]);
                 $newlist = $fo;
-                $map["name"] = $fo["feename"];
-                $newlist["feeid"] = M("fee")->where($map)->getfield("id");
+                $newlist["feeid"] = $feeid;
+                $tmp = M("reback")->add($newlist);
             }elseif ($fo["status"] == "update") {
                 unset($fo["status"]);
                 $updatelist = $fo;
-                $tmp = M("reback")->where("id=".$fo["id"])->save($fo);
+                M("reback")->where("id=".$fo["id"])->save($fo);
+                $tmp = $fo["id"];
                 if ($tmp) {
                     $count++;
                 }
             }
-        $tmp = M("reback")->add($newlist);
         if (!$tmp && $count == 0) {
             $this->ajaxReturn($newlist,"无更新",0);
         }
-        $this->ajaxReturn($tmp,"更新成功",1);
+        //输出比例
+        $oldall = M("fee")->where("period=0")->order("id")->select();
+        $rebacks = M("reback")->where("period=0")->select();
+        foreach ($oldall as $one) {
+            $all[$one["id"]] = $one;
+        }
+        foreach ($rebacks as $reback) {
+            if ($reback["type"] == 1) {
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(".$reback["value"].")";
+            }elseif($reback["type"] == 3){
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(剩余)";
+            }else{
+                $all[$reback["feeid"]]["rate"] .= " ".$reback["partner"]."(".$reback["value"]."%)";
+            }
+        }
+        foreach ($all as $num => $vn) {
+            if ($vn["parent"] != 0) {
+                if ($vn["rate"]) {
+                    $all[$vn["parent"]]["rate"] .= $vn["rate"].";";
+                }
+                unset($all[$num]);
+            }
+        }
+        $tmp1 = $parent == 0 ? $feeid : $parent;
+        $this->ajaxReturn($tmp,$all[$tmp1]["rate"],1);
     }
     public function rebuiltreback(){
         $fo = $_POST["reinfo"];

@@ -27,14 +27,17 @@ $(document).ready(function(){
         $(this).parent(".pat_type").siblings(".pat_value").children("input").val("");
         var va = $(this).val();
         if (va == 1) {
-            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("返款值：");
+            $(this).parent(".pat_type").siblings(".pat_value").show().children("span").text("返款值：");
             $(this).parent(".pat_type").siblings(".pat_other").remove();
         }else if(va == 0){
-            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("比例%：");
+            $(this).parent(".pat_type").siblings(".pat_value").show().children("span").text("比例%：");
             $(this).parent(".pat_type").siblings(".pat_other").remove();
         }else if(va == 2){
-            $(this).parent(".pat_type").siblings(".pat_value").children("span").text("比例%：");
+            $(this).parent(".pat_type").siblings(".pat_value").show().children("span").text("比例%：");
             $(this).parent(".pat_type").after($("#label_allfee").html());
+        }else if(va == 3){
+            $(this).parent(".pat_type").siblings(".pat_value").hide();
+            $(this).parent(".pat_type").siblings(".pat_other").remove();
         };
     });
     $(document).on("click",".pat_cancel",function(){

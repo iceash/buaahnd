@@ -192,6 +192,8 @@ $(document).ready(function(){
                             }else if(reback.type == 2){
                                 justadd.find(".pat_type").after($("#label_allfee").html());
                                 justadd.find(".pat_other select option[value='"+reback.otherid+"']").attr("selected",true);
+                            }else if(reback.type == 3){
+                                justadd.find(".pat_value").hide();
                             };
                         };
                     }
@@ -217,7 +219,11 @@ $(document).ready(function(){
                 success:function(back){
                     if (back.status == 1) {
                         alert("删除成功");
-                        $(that).parents(".div_partner").prev("tr").children(".td_rate").text(back.info);
+                        if (back.info) {
+                            $(that).parents(".div_partner").prev("tr").children(".td_rate").text(back.info);
+                        }else{
+                            $(that).parents(".div_partner").prev("tr").children(".td_rate").text("");
+                        };
                         willdel.remove();
                     }else{
                         alert(back.info);
@@ -241,6 +247,8 @@ $(document).ready(function(){
             if (reinfo[i]["type"] == 2) {
                 reinfo[i]["otherid"] = $(this).find(".pat_other select").val();
                 if (reinfo[i]["otherid"] == 0) {b = false;return false};
+            }else if(reinfo[i]["type"] == 3){
+                reinfo[i]["value"] = 0;
             };
             if (reinfo[i]["partner"] == 0) {b = false;return false};
             if (reinfo[i]["value"].length <= 0 || !numreg.test(reinfo[i]["value"])) {
@@ -403,6 +411,7 @@ $(document).ready(function(){
                         <option value="0">自身比例</option>
                         <option value="1">固定值</option>
                         <option value="2">其他项目</option>
+                        <option value="3">剩余</option>
                     </select>
                 </label>
                 
