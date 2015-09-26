@@ -1285,18 +1285,29 @@ class FinAdmAction extends CommonAction{
             $middle=$reback->where($mapP)->select();
             $type = $middle[0]['type'];
              switch ($type) {
-                  case '0':
+                case '0':
                     $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
-                 break;
-                  case '1':
+                    break;
+                case '1':
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
                     break;
-                  default:
+                case '2':
                     $otherid =intval($middle[0]['otherid']);
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$othersum[$otherid]['gets']*0.01;
-                 break;
+                    break;
+                case '3':
+
+                        $reid = $bb + 1 ;
+                    break;
+                default:
+                   $data[$a]['part'.($bb+1).'']= 0;
+                   break;
             }
           }
+           for($partid=0;$partid<count($partner);$partid++){
+               $sumthisitem[$a] +=$data[$a]['part'.($partid+1).''];
+            }
+            $data[$a]['part'.($reid).''] = $data[$a]['gets'] - $sumthisitem[$a];
     }
     // dump($othersum);
     foreach ($data as $mo => $va) {
@@ -1390,12 +1401,22 @@ class FinAdmAction extends CommonAction{
                   case '1':
                     $data2[$a]['part'.($bc+1).'']=0;
                     break;
-                  default:
+                  case '2':
                     $otherid =intval($middle[0]['otherid']);
-                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                    $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                      break;
+                  case '3':
+                      $reid = $bc + 1;
+                      break;
+                   default:
+                    $data2[$a]['part'.($bc+1).'']=0;
                  break;
             }
-          }        
+          }    
+          for($partid=0;$partid<count($partner);$partid++){
+               $sumthisitem2[$a] +=$data2[$a]['part'.($partid+1).''];
+            }
+            $data2[$a]['part'.($reid).''] = $data2[$a]['give'] - $sumthisitem2[$a];    
     }
     foreach ($data2 as $mo => $va) {
         $data2[$mo]["give"] = doubleval($data2[$mo]["give"]);
@@ -1525,18 +1546,29 @@ class FinAdmAction extends CommonAction{
             $middle=$reback->where($mapP)->select();
             $type = $middle[0]['type'];
              switch ($type) {
-                  case '0':
+                case '0':
                     $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
-                 break;
-                  case '1':
+                    break;
+                case '1':
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
                     break;
-                  default:
+                case '2':
                     $otherid =intval($middle[0]['otherid']);
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$othersum[$otherid]['gets']*0.01;
-                 break;
+                    break;
+                case '3':
+
+                        $reid = $bb + 1 ;
+                    break;
+                default:
+                   $data[$a]['part'.($bb+1).'']= 0;
+                   break;
             }
           }
+           for($partid=0;$partid<count($partner);$partid++){
+               $sumthisitem[$a] +=$data[$a]['part'.($partid+1).''];
+            }
+            $data[$a]['part'.($reid).''] = $data[$a]['gets'] - $sumthisitem[$a];
     }
     // dump($othersum);
     foreach ($data as $mo => $va) {
@@ -1631,12 +1663,22 @@ class FinAdmAction extends CommonAction{
                   case '1':
                     $data2[$a]['part'.($bc+1).'']=0;
                     break;
-                  default:
+                  case '2':
                     $otherid =intval($middle[0]['otherid']);
-                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                    $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                      break;
+                  case '3':
+                      $reid = $bc + 1;
+                      break;
+                   default:
+                    $data2[$a]['part'.($bc+1).'']=0;
                  break;
             }
-          }        
+          }    
+          for($partid=0;$partid<count($partner);$partid++){
+               $sumthisitem2[$a] +=$data2[$a]['part'.($partid+1).''];
+            }
+            $data2[$a]['part'.($reid).''] = $data2[$a]['give'] - $sumthisitem2[$a];    
     }
     foreach ($data2 as $mo => $va) {
         $data2[$mo]["give"] = doubleval($data2[$mo]["give"]);
@@ -1876,18 +1918,29 @@ class FinAdmAction extends CommonAction{
             $middle=$reback->where($mapP)->select();
             $type = $middle[0]['type'];
              switch ($type) {
-                  case '0':
+                case '0':
                     $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
-                 break;
-                  case '1':
+                    break;
+                case '1':
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
                     break;
-                  default:
+                case '2':
                     $otherid =intval($middle[0]['otherid']);
                     $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$othersum[$otherid]['gets']*0.01;
-                 break;
+                    break;
+                case '3':
+
+                        $reid = $bb + 1 ;
+                    break;
+                default:
+                   $data[$a]['part'.($bb+1).'']= 0;
+                   break;
             }
           }
+           for($partid=0;$partid<count($partner);$partid++){
+               $sumthisitem[$a] +=$data[$a]['part'.($partid+1).''];
+            }
+            $data[$a]['part'.($reid).''] = $data[$a]['gets'] - $sumthisitem[$a];
     }
     // dump($othersum);
     foreach ($data as $mo => $va) {
@@ -1981,12 +2034,22 @@ class FinAdmAction extends CommonAction{
                   case '1':
                     $data2[$a]['part'.($bc+1).'']=0;
                     break;
-                  default:
+                  case '2':
                     $otherid =intval($middle[0]['otherid']);
-                   $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                    $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                      break;
+                  case '3':
+                      $reid = $bc + 1;
+                      break;
+                   default:
+                    $data2[$a]['part'.($bc+1).'']=0;
                  break;
             }
-          }        
+          }    
+          for($partid=0;$partid<count($partner);$partid++){
+               $sumthisitem2[$a] +=$data2[$a]['part'.($partid+1).''];
+            }
+            $data2[$a]['part'.($reid).''] = $data2[$a]['give'] - $sumthisitem2[$a];    
     }
     foreach ($data2 as $mo => $va) {
         $data2[$mo]["give"] = doubleval($data2[$mo]["give"]);
