@@ -26,11 +26,11 @@ input[type="button"]:hover {
 }
 
 .headTitle {
-    width: 100%;
-    height: 100px;
+    width: 1000px;
+    height: 135px;
     vertical-align: middle;
     background-color: #025098;
-    margin-bottom: 20px;
+    margin:0 auto 20px auto;
     font-size:14px;
     color:#ffffff;
 }
@@ -42,6 +42,7 @@ input[type="button"]:hover {
 .headTitle a:link,a:visited{ color:#e3e3e3; text-decoration:underline;}
 .headTitle a:hover{color:#ffffff; text-decoration:underline;}
 .headTitle a.on:link,a.on:visited,a.on:hover{color:#ffffff;font-weight:bold; text-decoration:none;}
+
 
 .main{ width:1000px; margin:0 auto;}
 
@@ -108,7 +109,7 @@ input[type="button"]:hover {
 .alert_table td input[type="button"]:hover{
     background-color: #5eb68c;
 }
-
+.calendar{ background:#FFFFFF url(../images/iconDate.gif) center right no-repeat; cursor:pointer;}
 .page{ text-align:right; margin:20px 0;}
 .page span{color:#ef0017;}
 .page a:link,.page a:visited{height:20px;text-decoration:none;color:#737478;padding:5px;}

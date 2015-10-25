@@ -1,46 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <include file="Index:title"/>
-    <link rel="stylesheet" type="text/css" href="../Public/css/style.css">
-    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-    <script language="javascript">
-        function showStudentList(agent) {
-            window.location = "__URL__/agentStuList/agent/" + agent;
-        }
-
-        function searchkeydown(e){
-            var e = e || event;
-            if (e.keyCode==13){
-                search();
-            }
-        }
-        function search(){
-            var searchkey=document.getElementById('searchkey').value;
-
-            window.location='__URL__/agentStudent/searchkey/'+searchkey;
-        }
-    </script>
-</head>
-<body>
-<tagLib name="html" />
-<div class="headTitle">
-    <table width="95%" border="0" align="center" cellspacing="10">
-        <tr>
-            <td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>
-            <td align="right" valign="bottom">
-                <div id="nav">
-                    <a href="__URL__/agent">所有代理人</a> |
-                    <a href="__URL__/addAgent">新增代理人</a> |
-                    <a href="__URL__/agentStudent" class="on">按代理人查询</a> |
-                    <a href="__URL__/enrollStuList">报名学员查询</a> |
-                    <a href="__URL__" title="返回控制中心">返回</a>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
+<include file="Index:pageheader"/>
 <div class="main">
     <table class="search" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
@@ -81,5 +39,22 @@
         </tr>
     </table>
 </div>
+    <script language="javascript">
+        function showStudentList(agent) {
+            window.location = "__URL__/agentStuList/agent/" + agent;
+        }
+
+        function searchkeydown(e){
+            var e = e || event;
+            if (e.keyCode==13){
+                search();
+            }
+        }
+        function search(){
+            var searchkey=document.getElementById('searchkey').value;
+
+            window.location='__URL__/agentStudent/searchkey/'+searchkey;
+        }
+    </script>
 </body>
 </html>

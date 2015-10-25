@@ -1,51 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<include file="Index:title"/>
-<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
-<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
-<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript"> 
-jQuery(window).load(function(){
-});
-jQuery(function(){ 
-});
-function k(key){
-	jQuery.getJSON('__URL__/delNotice/',{id:key},function(data){
-		if(data.status==1){
-			alert(data.info);
-			window.location.reload();
-		}else{
-			alert(data.info);
-		}	
-	});
-}
-function mysearch(){
-	var searchkey=jQuery('#searchkey').val();
-	window.location="__URL__/notice/searchkey/"+searchkey;
-}
-function searchkeydown(e){
-	var e = e || event;
-	if (e.keyCode==13){
-		mysearch();
-	}
-}
-</script> 
-</head>
-
-<body>
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav"><a href="__URL__/notice" class="on">所有通知</a> | 
-	<a href="__URL__/noticeMy">我发的通知</a> | 
-	<a href="__URL__/addNotice">新建通知</a></div></td>
-  </tr>
-</table>
+<include file="Index:pageheader"/>
 <div class="main">
 <div class="search">输入标题或内容的关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
-<table width="100%" border="0" class="mytable">
+<table width="100%" border="0" class="alert_table">
 <thead>
   <tr>
     <th width="180">标题</th>
@@ -73,5 +29,31 @@ function searchkeydown(e){
  </table>
 
 </div><!--end of main-->
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+});
+function k(key){
+	jQuery.getJSON('__URL__/delNotice/',{id:key},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}	
+	});
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	window.location="__URL__/notice/searchkey/"+searchkey;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+</script> 
 </body>
 </html>

@@ -1,95 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <include file="Index:title"/>
-    <link rel="stylesheet" type="text/css" href="../Public/css/style.css">
-    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-    <script language="javascript">
-        jQuery(window).load(function(){
-        });
-
-        function searchkeydown(e){
-            var e = e || event;
-            if (e.keyCode==13){
-                search();
-            }
-        }
-        function search(){
-            var searchkey=document.getElementById('searchkey').value;
-
-            window.location='__URL__/agent/searchkey/'+searchkey;
-        }
-
-        function disableAgent(username){
-            jQuery.getJSON('__URL__/setAgentStatus/',{username:username, status:0},function(data){
-                if(data.status==1){
-                    alert(data.info);
-                    window.location.reload();
-                }else{
-                    alert(data.info);
-                }
-            });
-        }
-
-        function enableAgent(username){
-            jQuery.getJSON('__URL__/setAgentStatus/',{username:username, status:1},function(data){
-                if(data.status==1){
-                    alert(data.info);
-                    window.location.reload();
-                }else{
-                    alert(data.info);
-                }
-            });
-        }
-
-        function resetPwd(idcard){
-            jQuery.getJSON('__URL__/resetAgentPwd/',{idcard:idcard},function(data){
-                if(data.status==1){
-                    alert(data.info);
-                    window.location.reload();
-                }else{
-                    alert(data.info);
-                }
-            });
-        }
-
-        function updateAgent(idcard){
-            window.location = '__URL__/updateAgent/idcard/' + idcard;
-        }
-
-        function delAgent(username){
-            jQuery.getJSON('__URL__/delAgent/',{username:username},function(data){
-                if(data.status==1){
-                    alert(data.info);
-                    window.location.reload();
-                }else{
-                    alert(data.info);
-                }
-            });
-        }
-
-    </script>
-
-</head>
-<body>
-<tagLib name="html" />
-<div class="headTitle">
-    <table width="95%" border="0" align="center" cellspacing="10">
-        <tr>
-            <td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>
-            <td align="right" valign="bottom">
-                <div id="nav">
-                    <a href="__URL__/agent" class="on">所有代理人</a> |
-                    <a href="__URL__/addAgent">新增代理人</a> |
-                    <a href="__URL__/agentStudent">按代理人查询</a> |
-                    <a href="__URL__/enrollStuList">报名学员查询</a> |
-                    <a href="__URL__" title="返回控制中心">返回</a>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
+<include file="Index:pageheader"/>
 <div class="main">
     <table class="search" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
@@ -101,32 +10,32 @@
     </table>
     <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
         <thead>
-        <tr>
-            <th>帐号</th>
-            <th>姓名</th>
-            <th width="200">身份证号</th>
-            <th width="65">日申请数</th>
-            <th width="65">状态</th>
-            <th width="350">操作</th>
-        </tr>
+            <tr>
+                <th>帐号</th>
+                <th>姓名</th>
+                <th width="200">身份证号</th>
+                <th width="65">日申请数</th>
+                <th width="65">状态</th>
+                <th width="350">操作</th>
+            </tr>
         </thead>
         <tbody>
-        <volist name="ag" id="ag">
-            <tr>
-                <td>{$ag.username}</td>
-                <td>{$ag.truename}</td>
-                <td>{$ag.idcard}</a></td>
-                <td>{$ag.applymax}</a></td>
-                <td>{$ag.statusname}</a></td>
-                <td>
-                    <empty name="ag.status"><input type="button" value="启用" onclick="enableAgent('{$ag.username}');" />
-                        <else /><input type="button" value="暂停" onclick="disableAgent('{$ag.username}');" /></empty>
-                    <input type="button" value="修改" onclick="updateAgent('{$ag.idcard}');" />&nbsp;
-                    <input type="button" value="重置密码" onclick="resetPwd('{$ag.idcard}');" />&nbsp;
-                    <input type="button" value="删除" onclick="delAgent('{$ag.username}');" />&nbsp;
-                </td>
-            </tr>
-        </volist>
+            <volist name="ag" id="ag">
+                <tr>
+                    <td>{$ag.username}</td>
+                    <td>{$ag.truename}</td>
+                    <td>{$ag.idcard}</a></td>
+                    <td>{$ag.applymax}</a></td>
+                    <td>{$ag.statusname}</a></td>
+                    <td>
+                        <empty name="ag.status"><input type="button" value="启用" onclick="enableAgent('{$ag.username}');" />
+                            <else /><input type="button" value="暂停" onclick="disableAgent('{$ag.username}');" /></empty>
+                            <input type="button" value="修改" onclick="updateAgent('{$ag.idcard}');" />&nbsp;
+                            <input type="button" value="重置密码" onclick="resetPwd('{$ag.idcard}');" />&nbsp;
+                            <input type="button" value="删除" onclick="delAgent('{$ag.username}');" />&nbsp;
+                    </td>
+                </tr>
+            </volist>
         <tbody>
     </table>
     <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -136,5 +45,70 @@
         </tr>
     </table>
 </div><!--end of main-->
+<script language="javascript">
+    jQuery(window).load(function(){
+    });
+
+    function searchkeydown(e){
+        var e = e || event;
+        if (e.keyCode==13){
+            search();
+        }
+    }
+    function search(){
+        var searchkey=document.getElementById('searchkey').value;
+
+        window.location='__URL__/agent/searchkey/'+searchkey;
+    }
+
+    function disableAgent(username){
+        jQuery.getJSON('__URL__/setAgentStatus/',{username:username, status:0},function(data){
+            if(data.status==1){
+                alert(data.info);
+                window.location.reload();
+            }else{
+                alert(data.info);
+            }
+        });
+    }
+
+    function enableAgent(username){
+        jQuery.getJSON('__URL__/setAgentStatus/',{username:username, status:1},function(data){
+            if(data.status==1){
+                alert(data.info);
+                window.location.reload();
+            }else{
+                alert(data.info);
+            }
+        });
+    }
+
+    function resetPwd(idcard){
+        jQuery.getJSON('__URL__/resetAgentPwd/',{idcard:idcard},function(data){
+            if(data.status==1){
+                alert(data.info);
+                window.location.reload();
+            }else{
+                alert(data.info);
+            }
+        });
+    }
+
+    function updateAgent(idcard){
+        window.location = '__URL__/updateAgent/idcard/' + idcard;
+    }
+
+    function delAgent(username){
+        jQuery.getJSON('__URL__/delAgent/',{username:username},function(data){
+            if(data.status==1){
+                alert(data.info);
+                window.location.reload();
+            }else{
+                alert(data.info);
+            }
+        });
+    }
+
+</script>
 </body>
 </html>

@@ -1,10 +1,59 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <include file="Index:title"/>
-    <link rel="stylesheet" type="text/css" href="../Public/css/style.css">
-    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<include file="Index:pageheader"/>
+<div class="main">
+    <table class="search" width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="6" align="right">
+                <input type="text" name="searchkey" id="searchkey" style="width: 200px;" placeholder="关键字" onKeyDown="searchkeydown(event)"/>&nbsp;
+                录入时间：&nbsp;&nbsp;<input type="text" name="ctime_start" id="ctime_start" class="inputshort  calendar"/>-
+                <input type="text" name="ctime_end" id="ctime_end" class="inputshort  calendar"/>&nbsp;
+                <img src="../Public/images/search.gif" align="absmiddle" onclick="search()" alt="搜索" style="cursor:pointer"/>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+        <thead>
+        <tr>
+            <th width="60">姓名</th>
+            <th width="60">性别</th>
+            <th width="60">项目</th>
+            <th width="80">专业</th>
+            <th width="130">身份证号</th>
+            <th width="130">填写时间</th>
+            <th width="80">状态</th>
+            <th width="60">填写人</th>
+            <th width="350">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <volist name="er" id="er">
+            <tr>
+                <td>{$er.truename}</td>
+                <td>{$er.sex}</td>
+                <td>{$er.projectname}</td>
+                <td>{$er.majorname}</td>
+                <td>{$er.idcard}</a></td>
+                <td>{$er.ctime}</td>
+                <td>{$er.paystatus}</td>
+                <td>{$er.agentname}</td>
+                <td>
+                    <input type="button" value="详情" onclick="showStudentList('{$er.idcard}');" />
+                    <input type="button" value="交报名费" onclick="setPayStatus('{$er.idcard}', '已交报名费');" />
+                    <input type="button" value="交预定金" onclick="setPayStatus('{$er.idcard}', '已交预定金');" />
+                    <input type="button" value="交学费" onclick="setPayStatus('{$er.idcard}', '已交学费');" />
+                    <input type="button" value="录取" onclick="setEnrollStatus('{$er.idcard}', '1');" />
+                    <input type="button" value="删除" onclick="delEnroll('{$er.idcard}');" />
+                </td>
+            </tr>
+        </volist>
+        <tbody>
+    </table>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td></td>
+            <td><div class="page">{$page}</div></td>
+        </tr>
+    </table>
+</div>
     <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
     <script language="javascript">
         jQuery(function(){
@@ -75,79 +124,5 @@
             });
         }
     </script>
-</head>
-<body>
-<tagLib name="html" />
-<div class="headTitle">
-    <table width="95%" border="0" align="center" cellspacing="10">
-        <tr>
-            <td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>
-            <td align="right" valign="bottom">
-                <div id="nav">
-                    <a href="__URL__/agent">所有代理人</a> |
-                    <a href="__URL__/addAgent">新增代理人</a> |
-                    <a href="__URL__/agentStudent">按代理人查询</a> |
-                    <a href="__URL__/enrollStuList" class="on">报名学员查询</a> |
-                    <a href="__URL__" title="返回控制中心">返回</a>
-                </div>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class="main">
-    <table class="search" width="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-            <td colspan="6" align="right">
-                <input type="text" name="searchkey" id="searchkey" style="width: 200px;" placeholder="关键字" onKeyDown="searchkeydown(event)"/>&nbsp;
-                录入时间：&nbsp;&nbsp;<input type="text" name="ctime_start" id="ctime_start" class="inputshort  calendar"/>-
-                <input type="text" name="ctime_end" id="ctime_end" class="inputshort  calendar"/>&nbsp;
-                <img src="../Public/images/search.gif" align="absmiddle" onclick="search()" alt="搜索" style="cursor:pointer"/>
-            </td>
-        </tr>
-    </table>
-    <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
-        <thead>
-        <tr>
-            <th width="60">姓名</th>
-            <th width="60">性别</th>
-            <th width="60">项目</th>
-            <th width="80">专业</th>
-            <th width="130">身份证号</th>
-            <th width="130">填写时间</th>
-            <th width="80">状态</th>
-            <th width="60">填写人</th>
-            <th width="350">操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <volist name="er" id="er">
-            <tr>
-                <td>{$er.truename}</td>
-                <td>{$er.sex}</td>
-                <td>{$er.projectname}</td>
-                <td>{$er.majorname}</td>
-                <td>{$er.idcard}</a></td>
-                <td>{$er.ctime}</td>
-                <td>{$er.paystatus}</td>
-                <td>{$er.agentname}</td>
-                <td>
-                    <input type="button" value="详情" onclick="showStudentList('{$er.idcard}');" />
-                    <input type="button" value="交报名费" onclick="setPayStatus('{$er.idcard}', '已交报名费');" />
-                    <input type="button" value="交预定金" onclick="setPayStatus('{$er.idcard}', '已交预定金');" />
-                    <input type="button" value="交学费" onclick="setPayStatus('{$er.idcard}', '已交学费');" />
-                    <input type="button" value="录取" onclick="setEnrollStatus('{$er.idcard}', '1');" />
-                    <input type="button" value="删除" onclick="delEnroll('{$er.idcard}');" />
-                </td>
-            </tr>
-        </volist>
-        <tbody>
-    </table>
-    <table width="100%" border="0" cellpadding="0" cellspacing="0">
-        <tr>
-            <td></td>
-            <td><div class="page">{$page}</div></td>
-        </tr>
-    </table>
-</div>
 </body>
 </html>

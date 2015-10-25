@@ -37,7 +37,21 @@ class EnrollAdmAction extends CommonAction {
 		$this -> assign('a', $a);
 		$this -> display();
 	} 
+    public function menustatus() {
+    $menu['status']='招生进程图';
+    $menu['category/statusid/5']='尚未分配';
+    $menu['category/statusid/0']='新分配';
+    $menu['category/statusid/1']='正在咨询';
+    $menu['category/statusid/2']='已交报名费';
+    $menu['category/statusid/3']='已录取';
+    $menu['category/statusid/4']='不录取';
+    $menu['search']='搜索';
+    $menu['toExcel']='导出数据';
+    $menu['']='返回';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
 	public function status() {
+		$this -> menustatus();
 		$this -> display();
 	} 
 	public function setTeacher() {
@@ -236,6 +250,7 @@ class EnrollAdmAction extends CommonAction {
                 $this -> assign("page", $page);
                 $this -> assign('my', $my);
             }
+            $this->menustatus();
         $this -> display();
 	}
 	public function changeTeacher() {
@@ -505,7 +520,14 @@ class EnrollAdmAction extends CommonAction {
 			$a[$value['region_name']] = $value['region_name'];
 		} 
 		return $a;
-	} 
+	}
+    public function menuteacher() {
+    $menu['teacher']='咨询老师';
+    $menu['fill']='填表人';
+    $menu['school']='高中所在地区';
+    $menu['']='返回';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
 	public function teacher() {
 		$User = D('User');
 		$map['role'] = array('like','%EnrollTea%');
@@ -557,6 +579,7 @@ class EnrollAdmAction extends CommonAction {
                 $b[$i] = $Enroll -> field('id') -> where($map_s) -> count();
             } 
             $this -> assign('b', $b);
+            $this->menuteacher();
 			$this -> display();
 		} 
 	} 
@@ -594,6 +617,7 @@ class EnrollAdmAction extends CommonAction {
 			} 
 		} 
 		$this -> assign('a', $a);
+            $this->menuteacher();
 		$this -> display();
 	} 
     public function school() {
@@ -652,6 +676,7 @@ class EnrollAdmAction extends CommonAction {
 			} 
 		} 
 		$this -> assign('a', $a);
+            $this->menuteacher();
 		$this -> display();
 	} 
 	public function category() {
@@ -697,6 +722,7 @@ class EnrollAdmAction extends CommonAction {
         $this -> assign("page", $page);
         $this -> assign('my', $my);
 		$this -> assign('statusid', $statusid);
+		$this -> menustatus();
 		$this -> display();
 	} 
 	public function categoryForTeacher() {
@@ -1048,6 +1074,7 @@ class EnrollAdmAction extends CommonAction {
 		} 
 		$this -> assign('a', $a);
 		$this -> assign('b', $b);
+		$this->menunotice();
 		$this -> display();
 	} 
 	public function insertNotice() {
@@ -1079,6 +1106,13 @@ class EnrollAdmAction extends CommonAction {
 			$this -> error('数据库写入出错');
 		} 
 	} 
+	 public function menunotice() {
+    $menu['notice']='所有通知';
+    $menu['noticeMy']='我发的通知';
+    $menu['addNotice']='新建通知';
+    $menu['']='返回';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
 	public function notice() {
 		if (isset($_GET['searchkey'])) {
 			$searchkey = $_GET['searchkey'];
@@ -1111,6 +1145,7 @@ class EnrollAdmAction extends CommonAction {
 			$this -> assign("page", $page);
 			$this -> assign('my', $my);
 		} 
+		$this->menunotice();
 		$this -> display();
 	} 
 	public function noticeMy() {
@@ -1138,6 +1173,7 @@ class EnrollAdmAction extends CommonAction {
 			$this -> assign("page", $page);
 			$this -> assign('my', $my);
 		} 
+		$this->menunotice();
 		$this -> display();
 	} 
 	public function noticeReaded() {
@@ -1168,6 +1204,7 @@ class EnrollAdmAction extends CommonAction {
 		$this -> display();
 	} 
     public function toExcel(){
+    	$this->menustatus();
         $this -> display();
     }
     public function pastCommon() {
@@ -2358,7 +2395,14 @@ class EnrollAdmAction extends CommonAction {
 		$objWriter->save('php://output');
 		exit;
     }
-
+    public function menuagent() {
+    $menu['agent']='所有代理人';
+    $menu['addAgent']='新增代理人';
+    $menu['agentStudent']='按代理人查询';
+    $menu['enrollStuList']='报名学员查询';
+    $menu['']='返回';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function agent(){
         if(isset($_GET['searchkey'])) {
             $searchkey = $_GET['searchkey'];
@@ -2380,6 +2424,7 @@ class EnrollAdmAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('ag', $ag);
         }
+        $this->menuagent();
         $this->display();
     }
 
@@ -2436,6 +2481,7 @@ class EnrollAdmAction extends CommonAction {
     }
 
     public function addAgent(){
+    	$this->menuagent();
         $this->display();
     }
 
@@ -2525,6 +2571,7 @@ class EnrollAdmAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('ag', $ag);
         }
+        $this->menuagent();
         $this->display();
     }
 
@@ -2605,6 +2652,7 @@ class EnrollAdmAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('er', $er);
         }
+        $this->menuagent();
         $this->display();
     }
 
