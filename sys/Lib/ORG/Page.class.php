@@ -110,7 +110,7 @@ class Page {
             $nextPage = "";
             $theEnd="";
         }else{
-            $nextRow = $this->nowPage+$this->rollPage;
+            $nextRow = "<span>".$this->nowPage+$this->rollPage."</span>";
             $theEndRow = $this->totalPages;
             $nextPage = "<a href='".$url."&".$p."=$nextRow' >下".$this->rollPage."页</a>";
             $theEnd = "<a href='".$url."&".$p."=$theEndRow' >".$this->config['last']."</a>";

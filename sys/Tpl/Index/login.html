@@ -3,39 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>登录</title>
-<link rel="stylesheet" type="text/css" href="../Public/css/ii.css" media="all">
-<link rel="stylesheet" href="../Public/css/boxy.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="../Public/css/login.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="../Public/js/jquery.boxy.js"></script>
 <script type="text/javascript"> 
 jQuery(window).load(function(){
 	jQuery("#user").val("");
 	jQuery("#password").val("");
-});
-jQuery(function(){ 
-	jQuery("#login_user").click(function(){
-		jQuery("#user").focus();
-	});
-	jQuery("#user").keydown(function(){
-		jQuery("#user_label").hide();
-	});
-	jQuery("#user").blur(function(){
-		var txt_value=jQuery("#user").val();
-		if(txt_value==""){jQuery("#user_label").show();}
-	});
-	jQuery("#login_password").click(function(){
-		jQuery("#password").focus();
-	});
-	jQuery("#password").keydown(function(){
-		jQuery("#password_label").hide();
-	});
-	jQuery("#password").blur(function(){
-		var txt_value=jQuery("#password").val();
-		if(txt_value==""){jQuery("#password_label").show();}
-	});
-	
-	
-	
 });
 
 function login(){
@@ -75,19 +49,30 @@ function getRndStr(le){
 </head>
 
 <body>
-
-
-<div id="footer" style="display:none;"><a href="__APP__/Enroll">招生信息录入</a>   |  <a href="__APP__/Exam/login" target="_blank">入学测试</a>  |  <a href="__APP__/driver/nju-ukey-setup.exe">U-Key驱动下载</a>  |  <a href="__APP__/driver/idcard/index.html">身份证阅读器驱动安装</a>  | <a href="http://optimize.njuhnd.com/help" target="_blank">帮助中心(?)</a>  |  <a href="http://optimize.njuhnd.com/html/Index/s/id/1196">优化进程</a>   |  Copyright &copy; <a href="/">南京大学HND中心</a> 保留一切权利</div><!--end of footer-->
-<div  id="login">
-	<div id="focus"><img src="../Public/images/focus.jpg" /></div>
+<div id="header">
+    <table width="95%" border="0" align="center" cellspacing="10">
+        <tr>
+            <td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>
+        </tr>
+    </table>
+</div>
+<div id="login">
 	<form id="form1">
-		<div id="login_user"><label id="user_label" class="login_label" style="cursor: text;">帐号</label> <input id="user" name="user" type="text" maxlength="17" tabindex="1" style="cursor: text;"/></div>
-		<div id="inputzone"> 
-			<div id="login_password"><label id="password_label" class="login_label" style="cursor: text;">密码</label><input id="password" name="password" type="password" maxlength="23" tabindex="2" onKeyDown="keydown(event)"  /><input type="hidden" name="sn" id="sn" /><input type="hidden" name="md" id="md" /> <input type="hidden" name="rnd" id="rnd" /></div>
-			<div id="loginbtn"><a class="loginbtn_a" id="loginbtn_a" href="javascript:login()" title="登录" onfocus="this.blur()"></a></div>
-		</div><!--end of inputzone-->
+		<div id="login_user">
+            <div id="user_label" class="login_label">账　号：</div>
+            <div><input id="user" name="user" type="text" maxlength="17" tabindex="1"/></div>
+        </div>
+        <div id="login_password">
+            <div><label id="password_label" class="login_label" style="cursor: text;">密　码：</label></div>
+            <div>
+                <input id="password" name="password" type="password" maxlength="23" tabindex="2" onKeyDown="keydown(event)"  /><input type="hidden" name="sn" id="sn" /><input type="hidden" name="md" id="md" /> <input type="hidden" name="rnd" id="rnd" /></div>
+            </div>
+        <div id="loginbtn">
+            <input type="button" class="loginbtn_a" id="loginbtn_a" onclick="javascript:login()" title="登录" onfocus="this.blur()" />
+        </div>
 	</form>
 	<div id="logintips"><div id="message" style="display:none;"></div></div>
 </div><!--end of login-->
+<div id="footer">Copyright &copy; 北京航空航天大学创业管理培训学院 保留一切权利</div><!--end of footer-->
 </body>
 </html>

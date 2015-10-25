@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>北航HND信息管理系统</title>
-<link rel="stylesheet" type="text/css" href="../Public/css/ii.css" media="all">
+<link rel="stylesheet" type="text/css" href="../Public/css/index.css" media="all">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
 <!--[if IE 6]>
 <script type="text/javascript" src="../Public/js/DD_belatedPNG_0.0.8a-min.js" ></script>
@@ -15,10 +15,36 @@
 
 <body>
 <tagLib name="html" />
-<div id="header"><a href="__APP__/Index/settingImage" title="设置头像" class="username">
-<empty name="photo"><img src="../Public/images/smile.png"  width="48" height="48" align="absmiddle" /><else /><img src="__APP__/upload_photo/s_{$photo|default='default_s.jpg'}" width="48" height="48" align="absmiddle" class="img_border" /></empty>
-</a>&nbsp; <a href="__APP__/Index/setting" title="设置帐户" class="username">{$Think.session.username}
- （{$Think.session.truename}）</a> &nbsp;&nbsp;
-<empty name="my_role"><else /><html:select  options="my_role" name="my_role" selected="select_role" change="location.href='__APP__/'+this.options[this.selectedIndex].value;"/> &nbsp;&nbsp;</empty>
-|  &nbsp;&nbsp;<a href="javascript:logout()" class="logout">注销</a></div>
+<div id="header">
+    <table width="95%" border="0" align="center" cellspacing="10">
+        <tr>
+            <td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>
+            <td align="right" valign="middle">
+                <table border="0" align="center">
+                    <tr>
+                        <td rowspan="2">
+                            <img src="../Public/images/title_split.png" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="__APP__/Index/settingImage" title="设置头像" class="username">
+                                <empty name="photo"><img src="../Public/images/smile.png"  width="60" height="60" align="absmiddle" /><else />
+                                    <img src="__APP__/upload_photo/s_{$photo|default='default_s.jpg'}" width="60" height="60" align="absmiddle" class="img_border" />
+                                </empty>
+                            </a>
+                        </td>
+                        <td>
+                            &nbsp; 欢迎您！&nbsp; {$Think.session.truename}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <empty name="my_role"><else /><html:select  options="my_role" name="my_role" selected="select_role" change="location.href='__APP__/'+this.options[this.selectedIndex].value;"/> &nbsp;&nbsp;</empty>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <a href="__APP__/Index/setting" title="设置帐户" class="username"><img src="../Public/images/setting.png" />&nbsp;&nbsp;设置
+                            </a> &nbsp;&nbsp;
+                            &nbsp;&nbsp;<a href="javascript:logout()" class="logout"><img src="../Public/images/logout.png" />&nbsp;&nbsp;注销</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
 <div class="juzhong">
