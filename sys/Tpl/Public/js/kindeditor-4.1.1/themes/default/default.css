@@ -788,14 +788,14 @@
 	opacity:0.5;
 }
 .ke-button-common {
-	background: url(background.png) no-repeat scroll 0 -25px transparent;
+	/*background: url(background.png) no-repeat scroll 0 -25px transparent;
 	cursor: pointer;
 	height: 23px;
 	line-height: 23px;
 	overflow: visible;
 	display: inline-block;
 	vertical-align: top;
-	cursor: pointer;
+	cursor: pointer;*/
 }
 .ke-button-outer {
 	background-position: 0 -25px;
@@ -808,7 +808,7 @@
 	*display: inline;
 }
 .ke-button {
-	background-position: right -25px;
+	/*background-position: right -25px;
 	padding: 0 12px;
 	margin: 0;
 	font-family: "sans serif",tahoma,verdana,helvetica;
@@ -816,7 +816,7 @@
 	color: #333;
 	font-size: 12px;
 	left: 2px;
-	text-decoration: none;
+	text-decoration: none;*/
 }
 /* inputbox */
 .ke-input-text {

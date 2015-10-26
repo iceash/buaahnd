@@ -1,30 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <include file="Index:title"/>
-    <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
-    <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
-    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
-    <script type="text/javascript">
-        jQuery(window).load(function(){
-        });
-        jQuery(function() {
-            jQuery('.calendar').calendar();
-        });
-    </script>
-</head>
-<body>
-<tagLib name="html" />
-<table width="95%" border="0" align="center" cellspacing="10">
-    <tr>
-        <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-        <td width="80%" align="right"><div id="nav"><a href="__URL__/projectList">所有收费项目</a> |
-            <a href="__URL__/project" class="on">新增收费项目</a>
-        </div></td>
-    </tr>
-</table>
+<include file="Index:pageheader"/>
 <div class="main">
     <div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 填写好“学生姓名”之后，点击旁边的“智能匹配”，并选上正确的匹配结果。</div>
     <form id="form1"><input type="hidden" value="" name="susername" id="susername"/>
@@ -56,5 +30,12 @@
             <td></td></tr>
     </table>
 </div><!--end of main-->
-</body>
+    <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+    <script type="text/javascript">
+        jQuery(window).load(function(){
+        });
+        jQuery(function() {
+            jQuery('.calendar').calendar();
+        });
+    </script></body>
 </html>

@@ -3,8 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <include file="Index:title" />
-<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
-<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/style.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript"> 
 
@@ -16,12 +15,20 @@ function k(){
 
 <body>
 <tagLib name="html" />
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
-  </tr>
-</table>
+  <div class="headTitle">
+    <table width="95%" border="0" align="center" cellspacing="10">
+      <tr>
+        <td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>  
+      </tr>
+      <tr>
+        <td align="right" valign="bottom">
+          <div id="nav">
+            {$menu} | <a href="__URL__">返回</a>
+          </div>
+        </td> 
+      </tr>
+    </table>
+  </div>
 <div class="main">
 <form id="form1"><input type="hidden" value="{$my.id}" name="id" />
 <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">

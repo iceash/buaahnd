@@ -1,26 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<include file="Index:title"/>
-<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
-<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
-<link rel="stylesheet" type="text/css" href="../Public/css/tongji.css">
-<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
-</head>
-
-<body>
-<tagLib name="html" />
-<table width="96%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right">
-      <div id="nav"><a  class="on" href="">交易记录</a> | <a href="./period">收入分配</a> </a></div>
-    </td>
-  </tr>
-</table>
-<div class="main" style="width: 96%;">
+<include file="Index:pageheader"/>
+<div class="main">
 <div class="searcha" style="text-align: left">
     <span >项目：</span>
     <?php
@@ -92,7 +71,7 @@
       <option value="3">身份证</option>
 </select>&nbsp;&nbsp;
 <input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;&nbsp;&nbsp;<input type="button" value="搜索"   onclick="mysearch()"/>&nbsp;&nbsp;<input type="button" value="显示全部"   onclick="allshow()"/><a id="excel" style="margin:3px;float:right;" href="./download">导出EXCEL文件</a><img style="  width: 20px;height: 20px;float:right;" src="../Public/images/excel.png"></div>
-  <table width="100%" border="0" class="mytable2" cellpadding="0" cellspacing="0">
+  <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
 
 <thead>
   <tr>
@@ -150,6 +129,7 @@
 
 
 </div><!--end of main-->
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
   $('#grade').val('{$grade}');

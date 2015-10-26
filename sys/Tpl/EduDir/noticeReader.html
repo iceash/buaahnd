@@ -1,12 +1,64 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<include file="Index:title" />
-<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
-<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
-<link rel="StyleSheet" href="../Public/js/dtree/dtree.css" type="text/css" />
-<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<include file="Index:pageheader"/>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 当前通知：{$my.title}</div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+  <th width="5" height="30"><input type="checkbox" id="check"/></th>
+   <th>帐号</th>
+	<th>姓名</th>
+ 	 <th width="80">已阅读</th>
+	<th width="160">阅读时间</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="who" id="whomy">
+  <tr>
+  <td class="td_forselect"><input type="checkbox" name="key" value="{$whomy.id}"  /></td>
+   <td>{$whomy.readusername}</td>
+	<td>{$whomy.readtruename}</td>
+  <td><notempty name="whomy.readtime"><img src="../Public/images/ok.gif"/></notempty></td>
+	<td>{$whomy.readtime}</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除"  />&nbsp;
+  </div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+<div class="dtree" style="border: 1px solid #cccccc; background-color: #f3f3f3; padding: 5px; ">
+
+	<p><a href="javascript: d.openAll();">全部展开</a> | <a href="javascript: d.closeAll();">全部关闭</a></p>
+	<script language="javascript">
+		d = new dTree('d','../Public/js/dtree/','testForm');
+		d.add('0','-1','所有人员');
+		d.add('1','0','学生');
+		d.add('2','0','家长');
+	<volist name="dtree_year" id="dtree_year">
+		d.add('years{$dtree_year.year}','1','{$dtree_year.year}级');
+		d.add('yearj{$dtree_year.year}','2','{$dtree_year.year}级');
+	</volist>
+	<volist name="dtree_class" id="dtree_class">
+		d.add('classs{$dtree_class.id}','years{$dtree_class.year}','{$dtree_class.name}');
+		d.add('classj{$dtree_class.id}','yearj{$dtree_class.year}','{$dtree_class.name}');
+	</volist>
+	<volist name="dtree_stu" id="dtree_stu">
+		d.add('{$dtree_stu.student}-{$dtree_stu.studentname}','classs{$dtree_stu.classid}','{$dtree_stu.student}{$dtree_stu.studentname}');
+		d.add('{$dtree_stu.student|stuToParent}-{$dtree_stu.studentname}的家长','classj{$dtree_stu.classid}','{$dtree_stu.student|stuToParent}{$dtree_stu.studentname}的家长');
+	</volist>
+		d.closeAll();
+		document.write(d);
+	</script>
+<form id="form1">
+<input type="hidden" name="noticeid" value="{$my.id}" />
+<input type="hidden" name="title" value="{$my.title}" />
+<input type="hidden" name="stu" id="stu" value="" />
+	<input type="button" id="btn_add" value="新增阅读者"  />&nbsp;
+</form>
+</div><!--end of dtree-->
+</div><!--end of main-->
 <script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
 <script type="text/javascript"> 
 jQuery(function(){ 
@@ -111,76 +163,5 @@ function getStu(){
 			ids=ids.substring(0, ids.length-1);
 			return ids;
 		}
-</script>
-</head>
-
-<body>
-<tagLib name="html" />
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
-  </tr>
-</table>
-<div class="main">
-<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 当前通知：{$my.title}</div>
-<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
-<thead>
-  <tr>
-  <th width="5" height="30"><input type="checkbox" id="check"/></th>
-   <th>帐号</th>
-	<th>姓名</th>
- 	 <th width="80">已阅读</th>
-	<th width="160">阅读时间</th>
-  </tr>
-</thead>
-<tbody>
-  <volist name="who" id="whomy">
-  <tr>
-  <td class="td_forselect"><input type="checkbox" name="key" value="{$whomy.id}"  /></td>
-   <td>{$whomy.readusername}</td>
-	<td>{$whomy.readtruename}</td>
-  <td><notempty name="whomy.readtime"><img src="../Public/images/ok.gif"/></notempty></td>
-	<td>{$whomy.readtime}</td>
-  </tr>
-  </volist>
- <tbody>
- </table>
- <table width="100%" border="0" cellpadding="0" cellspacing="0">
-  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除"  />&nbsp;
-  </div></td>
-  <td><div class="page">{$page}</div></td></tr>
- </table>
-<div class="dtree" style="border: 1px solid #cccccc; background-color: #f3f3f3; padding: 5px; ">
-
-	<p><a href="javascript: d.openAll();">全部展开</a> | <a href="javascript: d.closeAll();">全部关闭</a></p>
-	<script language="javascript">
-		d = new dTree('d','../Public/js/dtree/','testForm');
-		d.add('0','-1','所有人员');
-		d.add('1','0','学生');
-		d.add('2','0','家长');
-	<volist name="dtree_year" id="dtree_year">
-		d.add('years{$dtree_year.year}','1','{$dtree_year.year}级');
-		d.add('yearj{$dtree_year.year}','2','{$dtree_year.year}级');
-	</volist>
-	<volist name="dtree_class" id="dtree_class">
-		d.add('classs{$dtree_class.id}','years{$dtree_class.year}','{$dtree_class.name}');
-		d.add('classj{$dtree_class.id}','yearj{$dtree_class.year}','{$dtree_class.name}');
-	</volist>
-	<volist name="dtree_stu" id="dtree_stu">
-		d.add('{$dtree_stu.student}-{$dtree_stu.studentname}','classs{$dtree_stu.classid}','{$dtree_stu.student}{$dtree_stu.studentname}');
-		d.add('{$dtree_stu.student|stuToParent}-{$dtree_stu.studentname}的家长','classj{$dtree_stu.classid}','{$dtree_stu.student|stuToParent}{$dtree_stu.studentname}的家长');
-	</volist>
-		d.closeAll();
-		document.write(d);
-	</script>
-<form id="form1">
-<input type="hidden" name="noticeid" value="{$my.id}" />
-<input type="hidden" name="title" value="{$my.title}" />
-<input type="hidden" name="stu" id="stu" value="" />
-	<input type="button" id="btn_add" value="新增阅读者"  />&nbsp;
-</form>
-</div><!--end of dtree-->
-</div><!--end of main-->
-</body>
+</script></body>
 </html>

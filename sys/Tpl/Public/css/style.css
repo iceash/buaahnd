@@ -39,9 +39,9 @@ input[type="button"]:hover {
     vertical-align: middle;
 }
 
-.headTitle a:link,a:visited{ color:#e3e3e3; text-decoration:underline;}
+.headTitle a:link,.headTitle a:visited{ color:#e3e3e3; text-decoration:underline;}
 .headTitle a:hover{color:#ffffff; text-decoration:underline;}
-.headTitle a.on:link,a.on:visited,a.on:hover{color:#ffffff;font-weight:bold; text-decoration:none;}
+.headTitle a.on:link,.headTitle a.on:visited,.headTitle a.on:hover{color:#ffffff;font-weight:bold; text-decoration:none;}
 
 
 .main{ width:1000px; margin:0 auto;}
@@ -114,3 +114,5 @@ input[type="button"]:hover {
 .page span{color:#ef0017;}
 .page a:link,.page a:visited{height:20px;text-decoration:none;color:#737478;padding:5px;}
 .page a:hover{height:20px;text-decoration:none;color:#737478;padding:5px;}
+
+.searcha{ margin:10px;}

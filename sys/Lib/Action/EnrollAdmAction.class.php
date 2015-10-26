@@ -47,7 +47,6 @@ class EnrollAdmAction extends CommonAction {
     $menu['category/statusid/4']='不录取';
     $menu['search']='搜索';
     $menu['toExcel']='导出数据';
-    $menu['']='返回';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
 	public function status() {
@@ -322,6 +321,7 @@ class EnrollAdmAction extends CommonAction {
 		} else {
 			$this -> error('未找到该学生或对该学生没有操作权限');
 		} 
+		$this->menustatus();
 		$this -> display();
 	} 
 	public function del() {
@@ -525,7 +525,6 @@ class EnrollAdmAction extends CommonAction {
     $menu['teacher']='咨询老师';
     $menu['fill']='填表人';
     $menu['school']='高中所在地区';
-    $menu['']='返回';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
 	public function teacher() {
@@ -819,7 +818,7 @@ class EnrollAdmAction extends CommonAction {
                 $this -> assign('my', $my);
 			} 
 		} 
-		
+		$this->menustatus();
 		$this -> display();
 	} 
 	public function categoryForFill() {
@@ -1110,7 +1109,6 @@ class EnrollAdmAction extends CommonAction {
     $menu['notice']='所有通知';
     $menu['noticeMy']='我发的通知';
     $menu['addNotice']='新建通知';
-    $menu['']='返回';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
 	public function notice() {
@@ -1201,6 +1199,7 @@ class EnrollAdmAction extends CommonAction {
 		$this -> assign("my", $my);
 		$this -> assign("a", $a);
 		$this -> assign("b", $b);
+		$this -> menunotice();
 		$this -> display();
 	} 
     public function toExcel(){
@@ -2400,7 +2399,6 @@ class EnrollAdmAction extends CommonAction {
     $menu['addAgent']='新增代理人';
     $menu['agentStudent']='按代理人查询';
     $menu['enrollStuList']='报名学员查询';
-    $menu['']='返回';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function agent(){
@@ -2520,7 +2518,7 @@ class EnrollAdmAction extends CommonAction {
         $Agent = D("Agent");
         $ag = $Agent -> where($map) -> find();
         $this -> assign('ag', $ag);
-
+        $this->menuagent();
         $this->display();
     }
 
@@ -2618,6 +2616,7 @@ class EnrollAdmAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('er', $er);
         }
+        $this->menuagent();
         $this->display();
     }
 

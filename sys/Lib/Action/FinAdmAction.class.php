@@ -42,7 +42,13 @@ class FinAdmAction extends CommonAction{
             $this -> success('已成功保存');
         }
     }
-
+    public function menuintercalate() {
+    $menu['intercalate']='收费项信息设置';
+    $menu['apply']='报名费设置';
+    $menu['rebuilt']='重修费设置';
+    $menu['bound']='专业收费项设置';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function project() {
         $paytype=D('System')->where("category='fin' and name='paytype'")->getField("content");
         $types=explode(',',$paytype);
@@ -93,6 +99,7 @@ class FinAdmAction extends CommonAction{
         $tmppartners = M("system")->where("name='partners'")->find();
         $partner = explode(",", $tmppartners["content"]);
         $this->assign("partner",$partner);
+        $this->menuintercalate();
         $this->display();
     }
     public function apply(){
@@ -103,6 +110,7 @@ class FinAdmAction extends CommonAction{
         $this->assign("fees",$fees);//其他收费项
         $vo = M("fee")->where("name='报名费' and period=0")->find();
         $this->assign("vo",$vo);
+        $this->menuintercalate();
         $this->display();
     }
     public function rebuilt(){
@@ -113,6 +121,7 @@ class FinAdmAction extends CommonAction{
         $this->assign("fees",$fees);//其他收费项
         $tuition = M("system")->where("name='tuition'")->getField("content");
         $this->assign("tuition",$tuition);
+         $this->menuintercalate();
         $this->display();
     }
     public function updaterebuilt(){
@@ -489,6 +498,7 @@ class FinAdmAction extends CommonAction{
         $this->assign("feename",$feeinfo["name"]);
         $this->assign("theyear",$year);
         $this->assign("all",$all);
+        $this->menuintercalate();
         $this->display();
     }
     public function boundApply(){
@@ -863,7 +873,11 @@ class FinAdmAction extends CommonAction{
         $this->ajaxReturn($feename);
     }
         
-    
+    public function menustat() {
+    $menu['stat']='交易记录';
+    $menu['period']='收入分配';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function stat(){
       $mapEn=$_GET['searchkey'];
       $mapFn=$_GET['searchtype'];
@@ -1020,6 +1034,7 @@ class FinAdmAction extends CommonAction{
       $this->major =$major;
       $this->yearnum =$yearnum;
       $this->periodid =$periodid;
+      $this->menustat();
       $this->display();
 
 
@@ -1434,6 +1449,7 @@ class FinAdmAction extends CommonAction{
     }
       $this ->assign('choose',$Period);
       $this->periodid =$periodid;
+      $this->menustat();
       $this ->display(period);
     }    
     public function endperiod(){

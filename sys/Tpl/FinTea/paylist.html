@@ -3,13 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <include file="Index:title"/>
-<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
-<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/style.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 	<style type="text/css">
 	body{margin: 0;padding: 0;border: 0;}
-	.search{float: left;}
+	.search{float: left;margin: 10px 0;}
 	#info{float: left;margin: 10px 0;}
 	#info span{font-size: 17px;margin-right: 10px;}
 	#list{clear: both;}
@@ -26,17 +25,25 @@
 </head>
 <body>
 <tagLib name="html" />
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
-  </tr>
-</table>
+	<div class="headTitle">
+		<table width="95%" border="0" align="center" cellspacing="10">
+			<tr>
+				<td width="700px" align="left"><img src="../Public/images/logo.png"/><img src="../Public/images/title.png"/></td>  
+			</tr>
+			<tr>
+				<td align="right" valign="bottom">
+					<div id="nav">
+						{$menu} | <a href="__URL__">返回</a>
+					</div>
+				</td>	
+			</tr>
+		</table>
+	</div>
 	<div class="main">
 		<div class="search"><span>学生学号或身份证：</span><input type="text" name="id" placeholder="请输入学号或身份证" id="sch" value="{$_GET['num']}"><button id="btnSearch">搜索</button></div>
 		<div id="info">{$info}</div>		
 		<div id="list">
-			<table id="listTable" class="mytable">
+			<table id="listTable" class="alert_table">
 				<tr><th>收费项</th><th>收费标准</th><th>实交费用</th><th>状态</th><th>操作</th>
 				<volist name="list" id="vo">
 					<tr><td class="feename">{$vo.feename}</td><td>{$vo.standard}</td><td>{$vo.paid}</td><td>{$vo.statusname}</td><td><input type="hidden" value="{$vo.feeid}" class="feeidH"><input type="hidden" value="{$vo.id}" class="paymentIdH"><if condition="$vo.status eq 2"><button class="btnPay" disabled="disabled">交费</button><else /><button class="btnPay">交费</button></if><button class="btnRefund">退费</button></td></tr>

@@ -50,7 +50,20 @@ class EnrollTeaAction extends CommonAction {
 		$this -> assign('a', $a);
 		$this -> display();
 	} 
+    public function menustatus() {
+    $menu['status']='招生进程图';
+    $menu['category/statusid/0']='新分配';
+    $menu['category/statusid/1']='正在咨询';
+    $menu['category/statusid/2']='已交报名费';
+    $menu['category/statusid/3']='已录取';
+    $menu['category/statusid/4']='不录取';
+    $menu['category/statusid/5']='已转';
+    $menu['search']='搜索';
+    $menu['toExcel']='导出数据';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
 	public function status() {
+		$this->menustatus();
 		$this -> display();
 	} 
     public function notice() {
@@ -128,6 +141,7 @@ class EnrollTeaAction extends CommonAction {
 		$enroll_record = D('Enrollrecord') -> where($map2) -> order('id desc') -> select();
 		$this -> assign('my', $student_info);
 		$this -> assign('enroll_record', $enroll_record);
+		$this->menustatus();
 		$this -> display();
 	} 
 	public function insertRecord() {
@@ -342,10 +356,12 @@ class EnrollTeaAction extends CommonAction {
             $my = $enroll -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('id desc') -> select();
             $page = $p -> show();
             $this -> assign("page", $page);
-            $this -> assign('my', $my);        
+            $this -> assign('my', $my);  
+            $this->menustatus();      
         $this -> display();
 	} 
     public function toExcel(){
+    	$this->menustatus();
         $this -> display();
     }
 	public function category() {
@@ -372,6 +388,7 @@ class EnrollTeaAction extends CommonAction {
 			$page = $p -> show();
 			$this -> assign("page", $page);
 			$this -> assign('my', $my);
+			 $this->menustatus();
 			$this -> display('category' . $statusid);
 		} else {
 			$enroll = D('Enroll');
@@ -393,6 +410,7 @@ class EnrollTeaAction extends CommonAction {
             $page = $p -> show();
             $this -> assign("page", $page);
             $this -> assign('my', $my);
+            $this->menustatus();
 			$this -> display('category' . $statusid);
 		} 
 	} 
