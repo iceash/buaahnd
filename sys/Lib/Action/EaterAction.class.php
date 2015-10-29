@@ -28,6 +28,10 @@ class EaterAction extends CommonAction {
     $menu['summary']='总结记录';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
+    /*public function menusummary() {
+    $menu['summary']='总结记录';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }*/
     public function summary(){
         $classList=M('class')->Field('name')->select();
         $this->assign('classList',$classList);    

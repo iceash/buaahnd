@@ -225,7 +225,7 @@ class IndexAction extends Action {
         $a['FinAdm']='财务管理员';
         $a['FinTea']='财务人员';
         // $a['EduTea']='任课教师';
-        $a['TeaAdm']='教师管理员';
+        // $a['TeaAdm']='教师管理员';
         $a['EduDir']='班主任';
         $a['Eater']='学管人员';
         $a["EduSen"]='教务人员';
@@ -233,7 +233,7 @@ class IndexAction extends Action {
         // $a['TrainTea']='培训教师';
         // $a['TrainAdm']='培训管理员';
         $a['AbroadTea']='留学教师';
-        $a['AbroadAdm']='留学管理员';
+        // $a['AbroadAdm']='留学管理员';
         // $a['ExamTea']='题库管理员';
         // $a['SourceTea']='资源管理员';
         $a['Office']='办公室人员';

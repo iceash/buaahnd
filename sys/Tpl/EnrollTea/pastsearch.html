@@ -40,12 +40,7 @@ function searchkeydown(e){
 
 <body>
 <tagLib name="html" />
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
-  </tr>
-</table>
+<include file="Index:pageheader"/>
 <div class="main">
 <div style=" text-align:center">输入“学生姓名或学校名称”关键字：<input type="text" value="{$truename}" id="truename" name="truename" onkeydown="searchkeydown(event)"/>&nbsp;<html:select first="不限高中所在地区" options="city_fortag" name="school" id="school" selected="city_select"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
 <div class="page">{$page}</div>

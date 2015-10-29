@@ -30,12 +30,7 @@ function k(key,id){
 </head>
 
 <body>
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
-  </tr>
-</table>
+<include file="Index:pageheader"/>
 <div class="main">
 <div class="search">输入标题/课程/教师/的关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch('{$uid}')" alt="搜索" style="cursor:pointer"/></div>
 	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">

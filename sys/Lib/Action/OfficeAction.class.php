@@ -20,6 +20,11 @@ class OfficeAction extends CommonAction {
     public function tool() {
 		$this -> display();
 	}
+    public function menuteacher() {
+        $menu['teacher']='所有账号';
+        $menu['addTeacher']='新增账号';
+        $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function saveUkey(){
         $username=$_GET['username'];
         $ukeysn=$_GET['ukeysn'];
@@ -108,6 +113,7 @@ class OfficeAction extends CommonAction {
 			$this -> assign("page", $page);
 			$this -> assign('my', $my);			
 		} 
+        $this->menuteacher();
         $this -> display();
 	} 
     public function getRoleName($aaa){
@@ -155,6 +161,7 @@ class OfficeAction extends CommonAction {
         $role=array('Zero'=>'零权限');
         $this->assign('role',$role);
         $this->assign('my',$my);
+        $this->menuteacher();
 		$this -> display();
 	}
     public function delStudent() {
@@ -311,7 +318,10 @@ class OfficeAction extends CommonAction {
             $this->error('数据库影响行数为0');
         }
     }
-
+    public function menuright() {
+    $menu['right']='分配权限首页';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
     public function right() {
         if(isset($_GET['searchkey'])) {
             $searchkey = $_GET['searchkey'];
@@ -341,6 +351,7 @@ class OfficeAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('my', $my);
         }
+        $this -> menuright();
         $this -> display();
     }
     public function rightSet() {
@@ -357,6 +368,7 @@ class OfficeAction extends CommonAction {
             $this ->assign('my',$my);
             $this->assign('role',$roles);
             $this->assign('role_hava',explode(',',$my['role']));
+            $this -> menuright();
             $this -> display();
         }
     }

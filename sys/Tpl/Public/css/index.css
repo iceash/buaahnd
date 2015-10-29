@@ -13,11 +13,12 @@ body {
     height: 100px;
     vertical-align: middle;
     background-color: #025098;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     margin-bottom: 20px;
     font-size: 14px;
     color: #ffffff;
 }
+#header>table{width: 1100px;}
 
 #header img {
     vertical-align: middle;

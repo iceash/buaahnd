@@ -43,12 +43,7 @@ if (jQuery('input[name=key]:checked').length==0){
 </head>
 
 <body>
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心" target="_parent"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%"><div id="nav" style="margin-left:270px"><h3>导出{$class}学生信息</h3></div></td>
-  </tr>
-</table>
+<include file="Index:pageheader"/>
 <div class="main">
 <form id='form1'>
     <input type='hidden' value='{$class}' id='classname' />

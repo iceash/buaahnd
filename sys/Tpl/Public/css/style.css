@@ -73,6 +73,7 @@ input[type="button"]:hover {
     border-collapse:collapse;
     border-spacing:0;
     border-bottom:2px solid #015198;
+    clear: both;
 }
 
 .alert_table tr:hover{
