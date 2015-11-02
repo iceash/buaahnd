@@ -19,9 +19,9 @@ th{ text-align:left; font-weight:bold}
 .utable td{padding:5px 5px;border-bottom:1px solid #B2B2B2;vertical-align:middle;color:#000;line-height:22px}
 .utable_vtop{ border-collapse:collapse; border-spacing:0; border-top:1px solid #B2B2B2}
 .utable_vtop td{padding:5px 5px;border-bottom:1px solid #B2B2B2;vertical-align:top;color:#000;line-height:22px}
-.alert_table{ border-collapse:collapse; border-spacing:0; border-top:1px solid #B2B2B2}
-.alert_table th{border:1px solid #B2B2B2;background: url(../images/table_th.gif); height:28px; line-height:28px;padding:0px 5px; font-weight:bold; text-align:left; color:#000}
-.alert_table td{padding:5px 5px;border:1px solid #B2B2B2;vertical-align:middle;color:#000; line-height:22px}
+.mytable,.alert_table{ border-collapse:collapse; border-spacing:0; border-top:1px solid #B2B2B2}
+.mytable th,.alert_table th{border:1px solid #B2B2B2;background: url(../images/table_th.gif); height:28px; line-height:28px;padding:0px 5px; font-weight:bold; text-align:left; color:#000}
+.mytable td,.alert_table td{padding:5px 5px;border:1px solid #B2B2B2;vertical-align:middle;color:#000; line-height:22px}
 .t_item{ width:180px; background:#EBEBEB url(../images/table_th.gif) repeat-x bottom; text-align:right}
 .t_item_left{background:#EBEBEB url(../images/table_th.gif) repeat-x bottom; text-align:left}
 .t_item_center{background:#EBEBEB url(../images/table_th.gif) repeat-x bottom; text-align:center}

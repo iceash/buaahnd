@@ -69,19 +69,19 @@ input[type="button"]:hover {
     margin-bottom: 40px;
 }
 
-.alert_table{
+.mytable,.alert_table{
     border-collapse:collapse;
     border-spacing:0;
     border-bottom:2px solid #015198;
     clear: both;
 }
 
-.alert_table tr:hover{
+.mytable tr:hover,.alert_table tr:hover{
     color: #ffffff;
     background-color: #015198;
 }
 
-.alert_table th{
+.mytable th,.alert_table th{
     border-top:3px solid #015198;
     border-bottom:1px solid #015198;
     height:28px;
@@ -91,14 +91,14 @@ input[type="button"]:hover {
     text-align:left;
 }
 
-.alert_table td{
+.mytable td,.alert_table td{
     padding:5px 5px;
     border:0;
     vertical-align:middle;
     line-height:22px;
 }
 
-.alert_table td input[type="button"]{
+.mytable td input[type="button"],.alert_table td input[type="button"]{
     background-color: #8a8a8a;
     height: 20px;
     border: 0;
@@ -107,7 +107,7 @@ input[type="button"]:hover {
     cursor: pointer;
 }
 
-.alert_table td input[type="button"]:hover{
+.mytable td input[type="button"]:hover,.alert_table td input[type="button"]:hover{
     background-color: #5eb68c;
 }
 .calendar{ background:#FFFFFF url(../images/iconDate.gif) center right no-repeat; cursor:pointer;}
