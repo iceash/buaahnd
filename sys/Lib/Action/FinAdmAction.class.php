@@ -17,6 +17,44 @@ class FinAdmAction extends CommonAction{
         }
         $this -> display();
     }
+    public function notice() {
+        if(isset($_GET['searchkey'])) {
+            $searchkey = $_GET['searchkey'];
+            $map['title|content'] =array('like','%'.$searchkey.'%');
+            $this->assign('searchkey',$searchkey);
+        }
+        $Notice = D("NoticeView");
+        $map['readusername']=session('username');
+        $count = $Notice -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows=10;
+            $p = new Page($count, $listRows);
+            $my = $Notice -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
+        $this -> display();
+    }
+    public function setNoticeRead(){
+        if(!isset($_GET['id'])) {
+            $this->error('参数缺失');
+        }
+        $id=$_GET['id'];
+        $Notice = D("Notice");
+        $map['readusername']=session('username');
+        $map['id']=$id;
+        $my=$Notice->where($map)->select();
+        if($my){
+            $data['id']=$id;
+            $data['readtime']=date("Y-m-d H:i:s");
+            $result=$Notice->save($data); 
+            if($result>0){
+                $this->success('已成功标记');
+            }
+        }  
+    }
 
     public function sys() {
         $Sys = D("System");
