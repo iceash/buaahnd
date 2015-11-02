@@ -1,0 +1,51 @@
+
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 请认真填写各项内容，发布后将不可修改。</div>
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item">通知标题</td>
+    <td><input type="text" name="title" class="inputlong" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">通知内容</td>
+    <td><textarea name="content" class="textareanormal"></textarea></td>
+  </tr>
+   <tr>
+    <td class="t_item">阅读人员</td>
+    <td><html:checkbox checkboxes="a" checked="b" name="reader" /></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="发布"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+jQuery('#btn_save').click(function(){
+  jQuery.ajax({
+    type:'POST',
+    url:'__URL__/insertNotice',
+    dataType:'json',
+    data:jQuery("#form1").serialize(),
+    success: function(data){
+      if (data.status==1){
+        alert(data.info);
+        window.location="__URL__/notice"; 
+      }else{
+        alert(data.info);
+      }
+    }
+  });
+});
+});
+
+</script> 
+</body>
+</html>

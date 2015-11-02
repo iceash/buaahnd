@@ -326,7 +326,149 @@ class EduDirAction extends CommonAction {
         $Mail -> addAll($data_a);
         $this -> success('已成功发送');
     } 
-    public function menunotice() {
+    public function addNotice() {
+        $User = D('User');
+        $map['role'] = array('like','%EnrollTea%');
+        $my = $User -> Field('username,truename') -> where($map) -> order('username asc') -> select();
+        $a = array();
+        $b = array();
+        foreach($my as $key => $value) {
+            $temp = $value['username'] . '-' . $value['truename'];
+            $a[$temp] = $temp;
+            $b[] = $temp;
+        } 
+        $this -> assign('a', $a);
+        $this -> assign('b', $b);
+        $this->menunotice();
+        $this -> display();
+    } 
+    public function insertNotice() {
+        $title = $_POST['title'];
+        $content = $_POST['content'];
+        $reader = $_POST['reader'];
+        if (empty($title) || empty($content) || empty($reader)) {
+            $this -> error('必填项不能为空');
+        } 
+
+        $Noticecreate = D('Noticecreate');
+        $Notice = D('Notice');
+        $data['title'] = $title;
+        $data['content'] = $content;
+        $data['tusername'] = session('username');
+        $data['ttruename'] = D('User') -> where("username='" . session('username') . "'") -> getField('truename');
+        $data['ctime'] = date("Y-m-d H:i:s");
+        $insertID = $Noticecreate -> add($data);
+        if ($insertID) {
+            foreach($_POST['reader'] as $key => $value) {
+                $data_a[$key]['noticeid'] = $insertID;
+                $temp = explode('-', $value);
+                $data_a[$key]['readusername'] = $temp[0];
+                $data_a[$key]['readtruename'] = $temp[1];
+            } 
+            $Notice -> addAll($data_a);
+            $this -> success('已成功发布');
+        } else {
+            $this -> error('数据库写入出错');
+        } 
+    } 
+     public function menunotice() {
+    $menu['notice']='所有通知';
+    $menu['noticeMy']='我发的通知';
+    $menu['addNotice']='新建通知';
+    $this->assign('menu',$this ->autoMenu($menu));  
+    }
+    public function notice() {
+        if (isset($_GET['searchkey'])) {
+            $searchkey = $_GET['searchkey'];
+            $map['title|content'] = array('like', '%' . $searchkey . '%');
+            $this -> assign('searchkey', $searchkey);
+        } 
+        $Noticecreate = D("Noticecreate");
+        $Notice = D("Notice");
+        $User = D("User");
+        $map_b['role'] = array('like', '%EnrollAdm%');
+        $enrollAdm = $User -> field('username') -> where($map_b) -> select();
+        $a_enrollAdm = array();
+        foreach($enrollAdm as $key => $value) {
+            $a_enrollAdm[] = $value['username'];
+        } 
+        $map['tusername'] = array('in', $a_enrollAdm);
+        $count = $Noticecreate -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 10;
+            $p = new Page($count, $listRows);
+            $my = $Noticecreate -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc') -> select();
+            foreach($my as $key => $value) {
+                $my[$key]['ok'] = '';
+                $r_all = $Notice -> where("noticeid=" . $value['id']) -> count();
+                $r_readed = $Notice -> where("readtime is not null and noticeid=" . $value['id']) -> count();
+                $my[$key]['ok'] = $r_readed . '/' . $r_all;
+            } 
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);
+        } 
+        $this->menunotice();
+        $this -> display();
+    } 
+    public function noticeMy() {
+        if (isset($_GET['searchkey'])) {
+            $searchkey = $_GET['searchkey'];
+            $map['title|content'] = array('like', '%' . $searchkey . '%');
+            $this -> assign('searchkey', $searchkey);
+        } 
+        $Noticecreate = D("Noticecreate");
+        $Notice = D("Notice");
+        $map['tusername'] = session('username');
+        $count = $Noticecreate -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 10;
+            $p = new Page($count, $listRows);
+            $my = $Noticecreate -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc') -> select();
+            foreach($my as $key => $value) {
+                $my[$key]['ok'] = '';
+                $r_all = $Notice -> where("noticeid=" . $value['id']) -> count();
+                $r_readed = $Notice -> where("readtime is not null and noticeid=" . $value['id']) -> count();
+                $my[$key]['ok'] = $r_readed . '/' . $r_all;
+            } 
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);
+        } 
+        $this->menunotice();
+        $this -> display();
+    } 
+    public function noticeReaded() {
+        if (!isset($_GET['noticeid'])) {
+            $this -> error('参数缺失');
+        } 
+        $noticeid = $_GET['noticeid'];
+        $Noticecreate = D("Noticecreate");
+        $Notice = D("Notice");
+        $map['tusername'] = session('username');
+        $map['id'] = $noticeid;
+        $my = $Noticecreate -> where($map) -> find();
+        $r_all = $Notice -> where("noticeid=" . $noticeid) -> select();
+        $r_readed = $Notice -> where("readtime is not null and noticeid=" . $noticeid) -> select();
+        $a = array();
+        $b = array();
+        foreach($r_all as $key => $value) {
+            $temp = $value['readusername'] . '-' . $value['readtruename'];
+            $a[$temp] = $temp;
+        } 
+        foreach($r_readed as $key => $value) {
+            $temp = $value['readusername'] . '-' . $value['readtruename'];
+            $b[$temp] = $temp;
+        } 
+        $this -> assign("my", $my);
+        $this -> assign("a", $a);
+        $this -> assign("b", $b);
+        $this -> menunotice();
+        $this -> display();
+    } 
+    /*public function menunotice() {
         $menu['notice']='已发通知';
         $menu['noticeAdd']='新建通知';
         $menu['noticeOther']='抄送给我的通知';
@@ -718,7 +860,7 @@ class EduDirAction extends CommonAction {
         } else {
             $this -> error($dao->getError());
         } 
-    }
+    }*/
     public function menuattend() {
         $menu['attend']='所有考勤记录';
         $menu['attendAdd']='新建考勤记录';

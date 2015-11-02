@@ -5,6 +5,10 @@ class EduSenAction extends CommonAction {
         $map['username'] = session('username');
         $photo = $User->where($map)->getField('photo');
         $this->assign('photo',$photo);
+        $Notice = D("Notice");
+        $map="readusername='".session('username')."' and readtime is NULL";
+        $count = $Notice -> where($map) -> count();
+        $this->assign('count',$count);
         $roles=explode(',',session('role'));
         if(count($roles)>1){
             $all_role=R('Index/getRole');
@@ -169,6 +173,27 @@ class EduSenAction extends CommonAction {
         return $a;
     }
     public function notice() {
+        if(isset($_GET['searchkey'])) {
+            $searchkey = $_GET['searchkey'];
+            $map['title|content'] =array('like','%'.$searchkey.'%');
+            $this->assign('searchkey',$searchkey);
+        }
+        $Notice = D("NoticeView");
+        $map['readusername']=session('username');
+        $count = $Notice -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows=10;
+            $p = new Page($count, $listRows);
+            $my = $Notice -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
+        $this -> display();
+    }
+    /*
+    public function notice() {
         if (isset($_GET['searchkey'])) {
             $map['title|content'] = array('like', '%' . $_GET['searchkey'] . '%');
             $this -> assign('searchkey', $_GET['searchkey']);
@@ -192,7 +217,7 @@ class EduSenAction extends CommonAction {
         } 
         $this -> menunotice();
         $this -> display();
-    } 
+    } */
     public function noticeDetails() {
         $id = $_GET['id'];
         if (!isset($id)) {

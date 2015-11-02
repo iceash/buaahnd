@@ -1,0 +1,21 @@
+<include file="Index:pageheader"/>
+<div class="main">
+  <h3>通知阅读情况</h3>
+  <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+    <tr>
+      <td class="t_item">通知标题</td>
+      <td>{$my.title}</td>
+    </tr>
+    <tr>
+    <td class="t_item">通知内容</td>
+    <td>{$my.content|nl2br}</td>
+  </tr>
+   <tr>
+    <td class="t_item">阅读情况<br />
+(勾选表示已读)</td>
+    <td><html:checkbox checkboxes="a" checked="b" name="reader" /></td>
+  </tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

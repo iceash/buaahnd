@@ -5,6 +5,10 @@ class FinTeaAction extends CommonAction{
         $map['username'] = session('username');
         $photo = $User -> where($map) -> getField('photo');
         $this -> assign('photo', $photo);
+        $Notice = D("Notice");
+        $map="readusername='".session('username')."' and readtime is NULL";
+        $count = $Notice -> where($map) -> count();
+        $this->assign('count',$count);
         $roles=explode(',',session('role'));
         if(count($roles)>1){
             $all_role=R('Index/getRole');
