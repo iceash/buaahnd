@@ -3203,7 +3203,7 @@ class EduSenAction extends CommonAction {
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
-        $p = PHPExcel_IOFactory::load($excelurl);
+        $p = PHPExcel_IOFactory::load($excelurl);//dump($p);return;
         $p -> setActiveSheetIndex(0);
         /*for ($errornum=0; $errornum <count($errorarr) ; $errornum++) { 
         $p->getActiveSheet()->getStyle($errorarr[$errornum])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
@@ -3267,7 +3267,7 @@ class EduSenAction extends CommonAction {
 '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
 '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
 '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
-'＂'=>'"'); 
+'＂'=>'"','年'=>''); 
         $count = count($sheetData);//一共有多少行
         if ($count < 3) {
             $this->ajaxReturn($titlepic, "请填写信息", 0);
@@ -3307,8 +3307,8 @@ class EduSenAction extends CommonAction {
             if (!$b) {
                 continue;
             }
-            $map["year"] = $sheetData[$i]['A'];
-            $map["name"] = $sheetData[$i]['B'];
+            $map["year"] = strtr($sheetData[$i]['A'], $arr);
+            $map["name"] = strtr($sheetData[$i]['B'], $arr);
             $classinfo = M("class")->where($map)->find();
             if (!$classinfo) {
                 $classdata[$i]["year"] = strtr($sheetData[$i]['A'], $arr);
@@ -3406,7 +3406,7 @@ class EduSenAction extends CommonAction {
 '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
 '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
 '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
-'＂'=>'"'); 
+'＂'=>'"', '年' => ''); 
         $count = count($sheetData);//一共有多少行
         if ($count < 3) {
             $this->ajaxReturn($titlepic, "请填写信息", 0);

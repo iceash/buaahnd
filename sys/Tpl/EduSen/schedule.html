@@ -77,8 +77,8 @@ function searchkeydown(e){
 </script> 
 
 <style type="text/css">
-    .mytable td{
-        padding: 0;border: 1px solid black;text-align: center;
+    .mytable1 td{
+        padding: 0;text-align: center;border-width: 1px 0 0 1px;
     }
 </style>
 </head>
@@ -92,7 +92,7 @@ function searchkeydown(e){
 <div class="search">
     <html:select first="请选择班级" options="class_fortag" name="classid" selected="class_current" id="searchkey"/>&nbsp;<html:select first="请选择学期" options="term_fortag" name="term" id="term" selected="term_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
 </div>
-<table width="103%" height="694" border="0" cellpadding="0" cellspacing="0" class="mytable">
+<table width="103%" height="694" border="1" cellpadding="0" cellspacing="0" class="mytable1">
     <thead>
     </thead>
     <tbody>
