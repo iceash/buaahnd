@@ -537,7 +537,7 @@ class EaterAction extends CommonAction {
         if (!isset($id)) {
             $this -> error('参数缺失');
         } 
-        $dao = D('DirStudentClassView');
+        $dao = D('ClassstudentView');
         $map['isbiye']=0;
         $map['student']=$id;
         $my=$dao->where($map)->find();
@@ -1326,21 +1326,22 @@ class EaterAction extends CommonAction {
     public function stuCommonLeft(){
         $searchkey = $_GET['searchkey'];
         if (isset($searchkey)) {
-            $dao2 = D('DirStudentClassView');
+            $dao2 = D('ClassstudentView');
             $map2['studentname|ename|enamesimple']=array('like',"%$searchkey%");
-            $stu = $dao2->where($map2)->order('student asc')-> select();
+            //$stu = $dao2->where($map2)->order('student asc')-> select();
+            $stu = $dao2->query('SELECT u_classstudent.student, u_class.name, u_classstudent.studentname from u_classstudent, u_class where u_classstudent.classid=u_class.id and ( u_classstudent.enamesimple like "%'.$searchkey.'%" or u_classstudent.ename like "%'.$searchkey.'%" or  u_classstudent.studentname like "%'.$searchkey.'%" ) ORDER BY u_classstudent.student asc');
             $count=count($stu);
             $this -> assign('searchkey', $searchkey);
             $this -> assign('stu', $stu);
             $this -> assign('count', $count);
             $this->display();
         } else{
-            $dao_class = D('ClassTeacherView');
+            $dao_class = D('Class');
             $map_class['isbiye']=0;
             $dtree_class = $dao_class->where($map_class)->order('year desc,name asc')-> select();
             $dtree_year=$dao_class ->where($map_class)->field('year')-> group('year')->order('year desc')->select();
-            $dao2 = D('DirStudentClassView');
-            $dtree_stu = $dao2->where($map2)->order('student asc')-> select();
+            $dao2 = D('ClassstudentView');
+            $dtree_stu = $dao2->order('student asc')-> select();
             $this->assign('dtree_year',$dtree_year);
             $this -> assign('dtree_class', $dtree_class);
             $this -> assign('dtree_stu', $dtree_stu);
