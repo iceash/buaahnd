@@ -58,7 +58,7 @@ function getHND(){
 function auto1(){
 	var a=jQuery('input[name="HND"]:checked').val();
 	if (typeof (a) == "undefined") { 
-		alert('南大HND库中无匹配结果');
+		alert(' 库中无匹配结果');
 	}else{
 		jQuery.getJSON('__URL__/auto1/',{id:a},function(data){
 			if(data.status==1){
@@ -73,7 +73,7 @@ function auto1(){
 function auto2(){
 	var a=jQuery('input[name="HND"]:checked').val();
 	if (typeof (a) == "undefined") { 
-		alert('南大HND库中无匹配结果');
+		alert(' 库中无匹配结果');
 	}else{
 		jQuery.getJSON('__URL__/auto2/',{id:a},function(data){
 			if(data.status==1){
@@ -88,7 +88,7 @@ function auto2(){
  function auto3(){
     var a=jQuery('input[name="HND"]:checked').val();
     if (typeof (a) == "undefined") {
-        alert('南大HND库中无匹配结果');
+        alert(' 库中无匹配结果');
     }else{
         jQuery.getJSON('__URL__/auto3/',{id:a},function(data){
             if(data.status==1){
@@ -126,20 +126,20 @@ function auto2(){
     <td><input type="text" name="struename" id="struename" class="inputmid"/>&nbsp;<input type="button" value="智能匹配" onclick="getHND();"/></td>
   </tr>
    <tr>
-    <td class="t_item">南大HND库中匹配结果</td>
+    <td class="t_item"> 库中匹配结果</td>
     <td><div id="HND_info"></div></td>
   </tr>
    <tr>
     <td class="t_item">学生学号</td>
-    <td><input type="text" name="susername" id="susername" class="inputmid"/> &nbsp;<input type="button" value="自动填写" onclick="auto1();"/> （“自动填写”在南大HND库中有正确的匹配结果时有效）</td>
+    <td><input type="text" name="susername" id="susername" class="inputmid"/> &nbsp;<input type="button" value="自动填写" onclick="auto1();"/> （“自动填写”在 库中有正确的匹配结果时有效）</td>
   </tr>
   <tr>
     <td class="t_item">联系方式</td>
-    <td><textarea name="link" id="link" class="inputmid"></textarea> &nbsp;<input type="button" value="自动填写" onclick="auto3();"/> （“自动填写”在南大HND库中有正确的匹配结果时有效）</td>
+    <td><textarea name="link" id="link" class="inputmid"></textarea> &nbsp;<input type="button" value="自动填写" onclick="auto3();"/> （“自动填写”在 库中有正确的匹配结果时有效）</td>
   </tr>
    <tr>
     <td class="t_item">辅导员</td>
-    <td><input type="text" name="edudir" id="edudir" class="inputmid"/> &nbsp;<input type="button" value="自动填写" onclick="auto2();"/> （“自动填写”在南大HND库中有正确的匹配结果时有效）</td>
+    <td><input type="text" name="edudir" id="edudir" class="inputmid"/> &nbsp;<input type="button" value="自动填写" onclick="auto2();"/> （“自动填写”在 库中有正确的匹配结果时有效）</td>
   </tr>
    <tr>
     <td class="t_item"><span class="mustfill">*</span>培训部班主任</td>

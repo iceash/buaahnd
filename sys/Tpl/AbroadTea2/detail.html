@@ -1,0 +1,352 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript"> 
+jQuery(function(){ 
+	jQuery('.calendar').live('click',function(){jQuery('.calendar').calendar({
+		zIndex:99999
+		})});
+	jQuery('#btn_save').live('click',function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/detailUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+
+});
+jQuery(function(){
+	var link='总分： 听： 说： 读： 写： ';
+var n= new Array('{$my.score1}','{$my.score2}','{$my.score3}','{$my.score4}','{$my.score5}');
+ var s= new Array('score1','score2','score3','score4','score5');
+  for(var k=0;k<s.length;k++){
+	  if(n[k]==''){
+		jQuery("input[name='"+s[k]+"']").val(link);
+	  }
+	}
+	});
+//以下是关于弹出层操作学校的函数
+function change(){
+	var dialog = art.dialog({
+    content: document.getElementById('zf_school'),
+    id: 'D345'
+});
+}
+jQuery(function(){ 
+	jQuery('#btn_schoolsave').live('click',function(){
+        var enrollStatus=['不录取','录取但不是最终学校','录取且是最终学校'];
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/schoolInsert',
+			dataType:'json',
+			data:jQuery("#schoolform").serialize(),
+			success: function(data){
+				if (data.status==1){
+                    var str='<select id="isenroll'+data.data.id+'">'+(data.data.isenroll==0?('<option value=0 selected >'+enrollStatus[0]+'</option>'):('<option value=0 >'+enrollStatus[0]+'</option>'))+(data.data.isenroll==1?('<option value=1 selected >'+enrollStatus[1]+'</option>'):('<option value=1 >'+enrollStatus[1]+'</option>'))+(data.data.isenroll==2?('<option value=2 selected >'+enrollStatus[2]+'</option>'):('<option value=2 >'+enrollStatus[2]+'</option>'))+'</select>';
+					alert(data.info);
+					con1='<tr id="s'+data.data.id+'"><td><input type="text" id="school'+data.data.id+'" class="inputshort" value="'+data.data.school+'"/></td> <td><input type="text" id="jtime'+data.data.id+'" class="inputshort calendar" value="'+data.data.jtime+'"/></td> <td><input type="text" id="major'+data.data.id+'" class="inputshort" value="'+data.data.major+'"/></td><td><input type="text" id="method'+data.data.id+'" class="inputshort" value="'+data.data.method+'"/></td> <td>'+str+'</td><td><input type="text" id="enroll'+data.data.id+'" class="inputshort" value="'+data.data.enroll+'"/></td><td><input type="text" id="together'+data.data.id+'" class="inputshort" value="'+data.data.together+'"/></td> <td><input type="text" id="ktime'+data.data.id+'" class="inputshort calendar" value="'+data.data.ktime+'" /></td> <td ><input type="button" value="保存"  onclick="save('+data.data.id+');" /> <input type="button"  value="删除"  onclick="k('+data.data.id+');"/></td></tr>';
+					con2='<tr><td><input type="text" name="school" class="inputshort" /></td><td><input type="text" name="jtime" class="inputshort calendar" /></td><td><input type="text" name="major" class="inputshort" /></td><td><html:checkbox checkboxes="method" name="method" checked="method_selected" /></td><td><html:select options="enrollStatus" name="isenroll" /></td><td><input type="text" name="enroll" class="inputshort" /></td><td><input type="text" name="together" class="inputshort" /></td><td><input type="text" name="ktime" class="inputshort calendar" /></td><td><input type="button" id="btn_schoolsave" value="新建"  /></td></tr>';
+					con3='<tr id="y'+data.data.id+'"><td>'+data.data.school+'</td> <td>'+data.data.jtime+'</td> <td>'+data.data.major+'</td><td>'+data.data.method+'</td> <td>'+enrollStatus[data.data.isenroll]+'</td><td>'+data.data.enroll+'</td><td>'+data.data.together+'</td> <td>'+data.data.ktime+'</td></tr>';
+					jQuery('#zf_school table tr:last').remove();
+					jQuery('#zf_school table ').append(con1);
+					jQuery('#zf_school table ').append(con2);
+					jQuery('#zf_schoolinfo').append(con3);
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+function k(key){
+	if (window.confirm('确实要删除选择项吗？')){		
+		jQuery.getJSON('__URL__/schoolDel/',{id:key},function(data){
+			if(data.status==1){
+				alert(data.info);
+				jQuery('#y'+data.data+'').remove();
+				jQuery('#s'+data.data+'').remove();
+			}else{
+				alert(data.info);
+			}	
+		});		
+	}
+}
+function save(id){ 
+    var enrollStatus=['不录取','录取但不是最终学校','录取且是最终学校'];
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/schoolUpdate',
+		dataType:'json',
+		data:{id:id,
+		school:jQuery('#school'+id).val(),
+		jtime:jQuery('#jtime'+id).val(),
+		major:jQuery('#major'+id).val(),
+		isenroll:jQuery('#isenroll'+id).val(),
+        enroll:jQuery('#enroll'+id).val(),
+		together:jQuery('#together'+id).val(),
+		ktime:jQuery('#ktime'+id).val(),
+		method:jQuery('#method'+id).val()
+		},
+		success: function(data){
+			if (data.status==1){
+				alert(data.info);	
+				save1='<td>'+data.data.school+'</td> <td>'+data.data.jtime+'</td> <td>'+data.data.major+'</td><td>'+data.data.method+'</td> <td>'+enrollStatus[data.data.isenroll]+'</td> <td>'+data.data.enroll+'</td><td>'+data.data.together+'</td> <td>'+data.data.ktime+'</td>';
+				jQuery('#y'+data.data.id+'').html(save1);
+			}else{
+				alert(data.info);
+			}
+		}
+	});
+}
+function getScore(susername){
+    if(susername){
+			newWindow=window.open("__URL__/stuScore/susername/"+susername);
+    }else{
+    alert('请留学管理员或留学教师将该生学号补全');
+    }
+}
+
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> &nbsp;&nbsp;
+当前学生：<font size="4"><a onclick="getScore('{$my.susername}')" title='查看该生成绩' style='cursor:pointer'>{$my.struename}</a></font> 
+</div>
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+ <tr>
+    <td class="t_item">留学进程</td>
+    <td><img src="../Public/images/abroad{$my.status}.gif" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">修改留学进程</td>
+    <td><html:checkbox checkboxes="status" name="status" checked="status_selected" /></td>
+  </tr>
+    <tr>
+    <td class="t_item">设置为已退出</td>
+    <td ><html:select  options="leave" name="quit" selected="my['quit']"/><label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;原因&nbsp;&nbsp;&nbsp;&nbsp;</label><textarea name="quitreason" style=" vertical-align:middle; width:580px; height:46px;">{$my.quitreason}</textarea></td>
+  </tr>
+ <tr>
+    <td class="t_item">负责人</td>
+    <td>咨询负责人 <html:select first="请选择" options="AbroadTea" name="tusername1" selected="my['tusername1']"/>&nbsp;&nbsp;
+文案负责人 <html:select first="请选择" options="AbroadTea" name="tusername2" selected="my['tusername2']"/>&nbsp;&nbsp;
+签证负责人 <html:select first="请选择" options="AbroadTea" name="tusername3" selected="my['tusername3']"/></td>
+  </tr>
+  <tr>
+    <td class="t_item">学生姓名</td>
+    <td><input type="text" name="struename" class="inputshort" value="{$my.struename}" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">关联HND系统学生学号</td>
+    <td> <input type="text" name="susername" class="inputshort" value="{$my.susername}" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">学生来源</td>
+    <td><html:checkbox checkboxes="from" name="from" checked="from_selected" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">出生日期</td>
+    <td><input type="text" name="birth" class="inputshort  calendar" value="{$my.birth|toDate='Y-m-d'}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">家长联系方式</td>
+    <td><textarea name="link" class="textareasmall">{$my.link}</textarea></td>
+  </tr>
+    <tr>
+    <td class="t_item">申请国家</td>
+    <td><html:checkbox checkboxes="country" name="country" checked="country_selected" /></td>
+  </tr>
+    <tr>
+    <td class="t_item">学位</td>
+    <td><html:checkbox checkboxes="degree" name="degree" checked="degree_selected" /></td>
+  </tr>
+    <tr>
+    <td class="t_item">签约日期</td>
+    <td><input type="text" name="qtime" class="inputshort  calendar" value="{$my.qtime|toDate='Y-m-d'}"/></td>
+  </tr>
+    <tr>
+    <td class="t_item">语言成绩</td>
+    <td><span style="width:74px;display:-moz-inline-box; display:inline-block;">IELTS分数 </span><input type="text" name="score1" class="inputmid" value="{$my.score1}"/><br />
+	<span style="width:70px;display:-moz-inline-box; display:inline-block;">IBT分数</span> <input type="text" name="score2" class="inputmid" value="{$my.score2}"/><br />
+	<span style="width:70px;display:-moz-inline-box; display:inline-block;">PTE分数</span> <input type="text" name="score3" class="inputmid" value="{$my.score3}"/><br />
+	<span style="width:70px;display:-moz-inline-box; display:inline-block;">GRE分数</span> <input type="text" name="score4" class="inputmid" value="{$my.score4}"/><br />
+	<span style="width:70px;display:-moz-inline-box; display:inline-block;">GMAT分数</span> <input type="text" name="score5" class="inputmid" value="{$my.score5}"/>
+	</td>
+  </tr>
+    <tr>
+    <td class="t_item"><a href="javascript:void(0);" onclick="change();">[修改]</a> 申请学校
+
+</td>
+    <td>
+<!--start of school-->
+<table id="zf_schoolinfo" width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+  <tr>
+    <th>学校</th>
+	<th>申请截止时间</th>
+	<th>专业</th>
+	<th>申请方式</th>
+	<th>录取情况</th>
+    <th>备注</th>
+    <th>合作方</th>
+	<th>开学时间</th>
+</tr>
+<volist name="school" id="y">
+  <tr id="y{$y.id}">
+    <td>{$y.school}</td>
+	 <td>{$y.jtime|toDate='Y-m-d'}</td>
+	 <td>{$y.major}</td>
+	 <td>{$y.method}</td>
+	 <td>{$enrollStatus[$y['isenroll']]}</td>
+     <td>{$y.enroll}</td>
+     <td>{$y.together}</td>
+	 <td>{$y.ktime|toDate='Y-m-d'}</td>
+</tr>	
+</volist>
+</table>
+<!--end of school-->
+	</td>
+  </tr>
+    <tr>
+    <td class="t_item">费用支付情况</td>
+    <td><textarea name="fee" class="textareasmall">{$my.fee}</textarea></td>
+  </tr>
+   <tr>
+    <td class="t_item">签证时间</td>
+    <td><input type="text" name="visatime" class="inputshort  calendar" value="{$my.visatime|toDate='Y-m-d'}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">签证地点</td>
+    <td><input type="text" name="visaplace" class="inputlong" value="{$my.visaplace}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">签证通过情况</td>
+    <td><input type="text" name="visaresult" class="inputmid" value="{$my.visaresult}"/></td>
+  </tr>
+   <tr>
+    <td class="t_item">护照信息</td>
+    <td><span style="display:block; width:260px; float:left;"><span style=" display:inline-block; width:90px;">护照类型</span><input type="text" name="passporttype" value="{$my.passporttype}" /></span>
+    <span style="display:block; width:260px; float:left;"><span style=" display:inline-block; width:90px;">国家码</span><input type="text" name="countrynum" value="{$my.countrynum}" /></span>
+    <span style="display:block; width:260px; float:left;"><span style=" display:inline-block; width:90px;">护照号</span><input type="text" name="passport" value="{$my.passport}" /></span>
+    <span style="display:block; width:260px; float:left;"><span style=" display:inline-block; width:90px;">签发地点</span><input type="text" name="passportaddress" value="{$my.passportaddress}" /></span>
+    <span style="display:block; width:260px; float:left;"><span style=" display:inline-block; width:90px;">签发日期</span><input type="text" class="calendar" name="passporttime" value="{$my.passporttime|toDate='Y-m-d'}" /></span>
+    <span style="display:block; width:260px; float:left;"><span style=" display:inline-block; width:90px;">签发有效期至</span><input type="text" name="passportvalidity" class="calendar" value="{$my.passportvalidity|toDate='Y-m-d'}" /></span>
+    </td>
+  </tr>
+   <tr>
+    <td class="t_item">后续－体检情况</td>
+    <td><textarea name="follow1" class="textareasmall">{$my.follow1}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">后续－住宿安排</td>
+    <td><textarea name="follow2" class="textareasmall">{$my.follow2}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">后续－机票信息</td>
+    <td><textarea name="follow3" class="textareasmall">{$my.follow3}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">后续－接机安排</td>
+    <td><textarea name="follow4" class="textareasmall">{$my.follow4}</textarea></td>
+  </tr>
+  <tr>
+    <td class="t_item">学习信息</td>
+    <td><span style="display:block; width:240px; float:left;"><span style=" display:inline-block; width:78px;">本科就读院校</span><input type="text" name="benschool" value="{$my.benschool}" /></span>
+    <span style="display:block; width:195px; float:left;"><span style=" display:inline-block; width:78px;">本科毕业时间</span><input style="width:90px;" type="text" class="calendar" name="bentime" value="{$my.bentime|toDate='Y-m-d'}" /></span>
+    <span style="display:block; width:240px; float:left;"><span style=" display:inline-block; width:78px;">本科专业</span><input type="text" name="benmajor" value="{$my.benmajor}" /></span>
+    <span style="display:block; width:118px; float:left;"><span style=" display:inline-block; width:78px;">本科学位等级</span><input type="text" name="benrank" value="{$my.benrank}" style="width:36px" /></span>
+    <span style="display:block; width:240px; float:left;"><span style=" display:inline-block; width:78px;">硕士就读院校</span><input type="text" name="shuoschool" value="{$my.shuoschool}" /></span>
+    <span style="display:block; width:195px; float:left;"><span style=" display:inline-block; width:78px;">硕士毕业时间</span><input type="text" style="width:90px;" class="calendar" name="shuotime" value="{$my.shuotime|toDate='Y-m-d'}" /></span>
+    <span style="display:block; width:240px; float:left;"><span style=" display:inline-block; width:78px;">硕士专业</span><input type="text" name="shuomajor" value="{$my.shuomajor}" /></span>
+    <span style="display:block; width:240px; float:left;"><span style=" display:inline-block; width:78px;">博士就读院校</span><input type="text" name="boschool" value="{$my.boschool}" /></span>
+    <span style="display:block; width:195px; float:left;"><span style=" display:inline-block; width:78px;">博士毕业时间</span><input type="text" style="width:90px;" class="calendar" name="botime" value="{$my.botime|toDate='Y-m-d'}" /></span>
+    <span style="display:block; width:240px; float:left;"><span style=" display:inline-block; width:78px;">博士专业</span><input type="text" name="bomajor" value="{$my.bomajor}" /></span>
+    </td>
+  </tr>
+   <tr>
+    <td class="t_item">联系方式</td>
+    <td><input type="text" name="contact" class="inputshort" value="{$my.contact}" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">就业</td>
+    <td> <input type="text" name="job" class="inputshort" value="{$my.job}" /></td>
+  </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+
+<div id="zf_school" style="display:none;">
+<form id="schoolform"><input type="hidden" value="{$my.id}" name="abroadid" />
+<!--start of school-->
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+  <tr>
+    <th>学校</th>
+	<th>申请截止时间</th>
+	<th>专业</th>
+	<th>申请方式</th>
+	<th>录取情况</th>
+    <th>备注</th>
+    <th>合作方</th>
+	<th>开学时间</th>
+	<th>操作</th>
+</tr>
+<volist name="school" id="y">
+  <tr id="s{$y.id}">
+    <td><input type="text" id="school{$y.id}" class="inputshort" value="{$y.school}"/></td>
+	 <td><input type="text" id="jtime{$y.id}" class="inputshort calendar" value="{$y.jtime}"/></td>
+	 <td><input type="text" id="major{$y.id}" class="inputshort" value="{$y.major}"/></td>
+	 <td><input type="text" id="method{$y.id}" class="inputshort" value="{$y.method}"/></td>
+	 <td><html:select  options="enrollStatus" id="isenroll{$y.id}" selected="y['isenroll']"/></td>
+	 <td><input type="text" id="enroll{$y.id}" class="inputshort" value="{$y.enroll}"/></td>
+     <td><input type="text" id="together{$y.id}" class="inputshort" value="{$y.together}"/></td>
+	 <td><input type="text" id="ktime{$y.id}" class="inputshort calendar" value="{$y.ktime|toDate='Y-m-d'}" /></td>
+	 <td ><input type="button" value="保存"  onclick="save('{$y.id}');" /> <input type="button"  value="删除"  onclick="k('{$y.id}');"/></td>
+</tr>	
+</volist>
+  <tr>
+    <td><input type="text" name="school" class="inputshort" /></td>
+	 <td><input type="text" name="jtime" class="inputshort calendar" /></td>
+	 <td><input type="text" name="major" class="inputshort" /></td>
+	 <td><html:checkbox checkboxes="method" name="method" checked="method_selected" /></td>
+	 <td><html:select  options="enrollStatus" name="isenroll" /></td>
+     <td><input type="text" name="plus" class="inputshort" /></td>
+     <td><input type="text" name="together" class="inputshort" /></td>
+	 <td><input type="text" name="ktime" class="inputshort calendar" /></td>
+	 <td><input type="button" id="btn_schoolsave" value="新建"  /></td>
+</tr>	
+</table><!--end of school-->
+ </form>
+</div><!--end of zf_school-->
+
+</body>
+</html>

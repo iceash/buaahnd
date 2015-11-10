@@ -388,6 +388,7 @@ class OfficeAction extends CommonAction {
             $my = $User -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc') -> select();
             foreach($my as $key=>$value){
                 $my[$key]['roleName']=$this->getRoleName($value['role']);
+                $my[$key]['gradeName']=$value['grade'];
             }
             $page = $p -> show();
             $this -> assign("page", $page);
@@ -408,8 +409,14 @@ class OfficeAction extends CommonAction {
             $roles = R('Index/getRole');
             unset($roles["Zero"]);
             $this ->assign('my',$my);
-            $this->assign('role',$roles);
+            $this->assign('role',$roles);//角色权限
             $this->assign('role_hava',explode(',',$my['role']));
+            $year = date("Y");//年份权限
+            for ($i = $year-5; $i <= $year+5; $i++) { 
+                $grade[$i] = $i;
+            }
+            $this->assign('grade',$grade);
+            $this->assign('grade_hava',explode(',',$my['grade']));
             $this -> menuright();
             $this -> display();
         }
@@ -421,7 +428,8 @@ class OfficeAction extends CommonAction {
 
         $dao = D('user');
         if ($dao -> create()) {
-            $dao -> role = implode(',', $_POST['role']);
+            $dao ->role = implode(',', $_POST['role']);
+            $dao ->grade = implode(',', $_POST['grade']);
             $checked = $dao -> save();
             if ($checked > 0) {
 

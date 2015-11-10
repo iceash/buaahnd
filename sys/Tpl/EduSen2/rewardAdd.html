@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="StyleSheet" href="../Public/js/dtree/dtree.css" type="text/css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#form1').click(function(){
+		jQuery('#content').val(jQuery('#content_j').val());
+		jQuery('#ctime').val(jQuery('#ctime_j').val());
+		jQuery('#stu').val(getStu());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/rewardInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);	
+					window.location='__URL__/reward';
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+
+function getStu(){
+			var ids = "";
+			var form = document.getElementById("testForm");
+			for (var i=0; i<form.elements.length; i++) {
+				var element = form.elements[i];
+				if (element.name == "id" && element.type=='checkbox'){
+					if( element.checked == true ){
+						ids = ids + element.value + ",";
+					}
+				}
+			}
+			ids=ids.substring(0, ids.length-1);
+			return ids;
+		}
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="t_item">内容</td>
+    <td>
+	<textarea name="content_j" id="content_j" class="textareabig"></textarea></td>
+  </tr>
+   <tr>
+    <td class="t_item">学生</td>
+    <td><div class="dtree" style="border: 1px solid #cccccc; background-color: #f3f3f3; padding: 5px; width:693px;">
+
+	<p><a href="javascript: d.openAll();">全部展开</a> | <a href="javascript: d.closeAll();">全部关闭</a></p>
+	<script language="javascript">
+		d = new dTree('d','../Public/js/dtree/','testForm');
+		d.add('0','-1','所有班级');
+	<volist name="dtree_year" id="dtree_year">
+		d.add('year{$dtree_year.year}','0','{$dtree_year.year}级');
+	</volist>
+	<volist name="dtree_class" id="dtree_class">
+		d.add('class{$dtree_class.id}','year{$dtree_class.year}','{$dtree_class.name}');
+	</volist>
+	<volist name="dtree_stu" id="dtree_stu">
+		d.add('{$dtree_stu.student}-{$dtree_stu.studentname}','class{$dtree_stu.classid}','{$dtree_stu.student}{$dtree_stu.studentname}');
+	</volist>
+		d.closeAll();
+		document.write(d);
+	</script>
+
+</div><!--end of dtree--></td>
+  </tr>
+   <tr>
+    <td class="t_item">发布时间</td>
+    <td><input type="text" name="ctime_j" id="ctime_j" class="inputmid" value="{$ctime}"/></td>
+  </tr>
+ </table>
+<form id="form1">
+<input type="hidden" name="content" id="content"/>
+<input type="hidden" name="ctime" id="ctime"/>
+<input type="hidden" name="stu" id="stu" value="" /><br />
+
+	<input type="button" id="btn_save" value="保存"  />&nbsp;
+</form>
+
+
+</div><!--end of main-->
+</body>
+</html>

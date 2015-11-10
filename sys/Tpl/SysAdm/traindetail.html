@@ -39,7 +39,7 @@ function getHND(){
 function auto1(){
 	var a=jQuery('input[name="HND"]:checked').val();
 	if (typeof (a) == "undefined") { 
-		alert('南大HND库中无匹配结果');
+		alert(' 库中无匹配结果');
 	}else{
 		jQuery.getJSON('__URL__/auto1/',{id:a},function(data){
 			if(data.status==1){
@@ -54,7 +54,7 @@ function auto1(){
 function auto2(){
 	var a=jQuery('input[name="HND"]:checked').val();
 	if (typeof (a) == "undefined") { 
-		alert('南大HND库中无匹配结果');
+		alert(' 库中无匹配结果');
 	}else{
 		jQuery.getJSON('__URL__/auto2/',{id:a},function(data){
 			if(data.status==1){

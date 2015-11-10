@@ -301,7 +301,9 @@ class EduSenAction extends CommonAction {
             $map['year'] = $_GET['category'];
             $this -> assign('category_current', $_GET['category']);
         } 
-        $major = $dao->group("major")->field("major")->select();//专业列表
+        //$major = $dao->group("major")->field("major")->select();//专业列表
+        $m["item"] = 'HND';
+        $major = M("major")->where($m)->select();
         foreach ($major as $vm) {
             $majors[$vm["major"]]=$vm["major"];
         }
@@ -311,6 +313,7 @@ class EduSenAction extends CommonAction {
             $map['major'] = $_GET['major'];
             $this -> assign('major_current', $_GET['major']);
         } 
+        $map["major"] = array("in",$majors);
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
             import("@.ORG.Page");
@@ -688,6 +691,14 @@ class EduSenAction extends CommonAction {
             $this -> assign('count', $count);
             $this->display();
         } else{
+            $m["item"] = 'HND';//分项目的限制开始
+            $major = M("major")->where($m)->select();
+            foreach ($major as $vm) {
+                $majors[$vm["major"]]=$vm["major"];
+            }
+            $map_class["major"] = array("in",$majors);//分项目的限制结束
+            $grades = explode(",", $_SESSION["grade"]);
+            $map_class["year"] = array("in",$grades);
             $dao_class = D('Class');
             $map_class['isbiye']=0;
             $dtree_class = $dao_class->where($map_class)->order('year desc,name asc')-> select();
@@ -1738,7 +1749,14 @@ class EduSenAction extends CommonAction {
             $map["classid"] = $_GET["classid"];
             $this->assign("class_current",$_GET["classid"]);
         }
-        $all_class=D('Class')->order('year desc,name asc')->select();
+        $m["item"] = 'HND';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $map["major"] = array("in",$majors);
+        $mbp["major"] = array("in",$majors);//分项目的限制结束
+        $all_class=D('Class')->where($mbp)->order('year desc,name asc')->select();
         $class_fortag=array();
         foreach($all_class as $key=>$value){
             $class_fortag[$value['id']]='['.$value['year'].']'.$value['name'];
@@ -3498,7 +3516,13 @@ class EduSenAction extends CommonAction {
         if (isset($_GET["classid"])) {
             $this->assign('class_current',$_GET['classid']);
         }
-        $all_class=D('Class')->order('year desc,name asc')->select();
+        $m["item"] = 'HND';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $mbp["major"] = array("in",$majors);//分项目的限制结束
+        $all_class=D('Class')->where($mbp)->order('year desc,name asc')->select();
         $class_fortag=array();
         foreach($all_class as $key=>$value){
             $class_fortag[$value['id']]='['.$value['year'].']'.$value['name'];
@@ -3778,15 +3802,19 @@ class EduSenAction extends CommonAction {
             $map["classid"] = $_GET["classid"];
             $this->assign('class_current',$_GET['classid']);
         }
-        $all_class=D('Class')->order('year desc,name asc')->select();
+        $m["item"] = 'HND';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $mbp["major"] = array("in",$majors);//分项目的限制结束
+        $all_class=D('Class')->where($mbp)->order('year desc,name asc')->select();
         $class_fortag=array();
         foreach($all_class as $key=>$value){
             $class_fortag[$value['id']]='['.$value['year'].']'.$value['name'];
+            $class_forlist[$value['id']]=$value['id'];
         }
-        // if (isset($_GET["term"]) && isset($_GET["classid"])) {
-        //     $map["term"] = $_GET["term"];
-        //     $map["classid"] = $_GET["classid"];
-        // }
+        $map["classid"] = array("in",$class_forlist);
         $examlist = M("examlist")->where($map)->select();
         foreach ($examlist as $num => $ve) {
             foreach ($all_class as $vc) {

@@ -33,7 +33,17 @@ class EaterAction extends CommonAction {
     $this->assign('menu',$this ->autoMenu($menu));  
     }*/
     public function summary(){
-        $classList=M('class')->Field('name')->select();
+        $m["item"] = 'HND';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $mbp["major"] = array("in",$majors);//分项目的限制结束
+        $classList=M('class')->where($mbp)->Field('name')->select();
+        foreach ($classList as $k => $va) {
+            $class_forlist[$va["name"]] = $va["name"];
+        }
+        $map["classname"] = array("in",$class_forlist);
         $this->assign('classList',$classList);    
         if (isset($_GET['searchkey'])) {
             $map['content'] = array('like', '%' . $_GET['searchkey'] . '%');
@@ -64,7 +74,17 @@ class EaterAction extends CommonAction {
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        $classList=M('class')->Field('name')->select();
+        $m["item"] = 'HND';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $mbp["major"] = array("in",$majors);//分项目的限制结束
+        $classList=M('class')->where($mbp)->Field('name')->select();
+        foreach ($classList as $k => $va) {
+            $class_forlist[$va["name"]] = $va["name"];
+        }
+        $map["classname"] = array("in",$class_forlist);
         $this->assign('classList',$classList);
         $dao = D('summary');
         $map['id'] = $id;
@@ -100,7 +120,7 @@ class EaterAction extends CommonAction {
         $sbdate = $_POST['sbdate'];
         $sedate = $_POST['sedate'];
         $date = date("Y-m-d");
-        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)|| empty($title)) {
+        if (empty($classname) || empty($content)|| empty($type)|| empty($sbdate)|| empty($sedate)) {
             $this -> error('必填项不能为空');
         } 
         $dao = D('summary');
@@ -137,13 +157,24 @@ class EaterAction extends CommonAction {
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function distribute() {
-        $classList=M('class')->Field('name')->order('name')->select();
+        $m["item"] = 'HND';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $mbp["major"] = array("in",$majors);//分项目的限制结束
+        $classList=M('class')->where($mbp)->select();
         $this->assign('classList',$classList);
+        foreach ($classList as $k => $va) {
+            $class_forlist[$va["id"]] = $va["id"];
+        }
         $dao = D('classstudent');
         if(isset($_GET['searchkey'])){$map['student']=$_GET['searchkey'];}
         if($_GET['classname']){
             $mapCl['name']=$_GET['classname'];
             $map['classid']=M('class')->where($mapCl)->getField('id');
+        }else{
+            $map["classid"] = array("in",$class_forlist);
         }
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
@@ -178,6 +209,12 @@ class EaterAction extends CommonAction {
         $map['room']=array('EXP','IS NULL');
         $map['cell']=array('EXP','IS NULL');
         $map['bed']=array('EXP','IS NULL');
+        $m["item"] = '美国2+2';//分项目的限制开始
+        $major = M("major")->where($m)->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $map["major"] = array("in",$majors);//分项目的限制结束
         $stuinfo = D("ClassstudentView")->where($map)->select();
         $p->getActiveSheet()->getStyle('H')->getNumberFormat()
             ->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_TEXT);
@@ -1336,6 +1373,14 @@ class EaterAction extends CommonAction {
             $this -> assign('count', $count);
             $this->display();
         } else{
+            $m["item"] = 'HND';//分项目的限制开始
+            $major = M("major")->where($m)->select();
+            foreach ($major as $vm) {
+                $majors[$vm["major"]]=$vm["major"];
+            }
+            $map_class["major"] = array("in",$majors);//分项目的限制结束
+            $grades = explode(",", $_SESSION["grade"]);
+            $map_class["year"] = array("in",$grades);
             $dao_class = D('Class');
             $map_class['isbiye']=0;
             $dtree_class = $dao_class->where($map_class)->order('year desc,name asc')-> select();

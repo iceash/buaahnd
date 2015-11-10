@@ -41,7 +41,7 @@ function getEnroll(){
 function getStuInfo(){
 	var a=jQuery('input[name="enrollid"]:checked').val();
 	if (typeof (a) == "undefined") { 
-		alert('南大HND库中无匹配结果');
+		alert(' 库中无匹配结果');
 	}else{
 		jQuery.getJSON('__URL__/getStuInfo/',{id:a},function(data){
 			if(data.status==1){
@@ -75,7 +75,7 @@ function getStuInfo(){
     <td><input type="text" name="struename" id="struename" class="inputmid"/>&nbsp;<input type="button" value="智能匹配" onclick="getEnroll();"/></td>
   </tr>
    <tr>
-    <td class="t_item">南大HND库中匹配结果</td>
+    <td class="t_item"> 库中匹配结果</td>
     <td><div id="enroll_info"></div></td>
   </tr>
    <tr>
@@ -84,7 +84,7 @@ function getStuInfo(){
   </tr>
   <tr>
     <td class="t_item">出生日期</td>
-    <td><input type="text" name="birth" id="birth" class="inputshort calendar" />&nbsp;<input type="button" value="自动填写" onclick="getStuInfo();"/> （“自动填写”在南大HND库中有正确的匹配结果时有效）</td>
+    <td><input type="text" name="birth" id="birth" class="inputshort calendar" />&nbsp;<input type="button" value="自动填写" onclick="getStuInfo();"/> （“自动填写”在 库中有正确的匹配结果时有效）</td>
   </tr>
   <tr>
     <td class="t_item">家长联系方式</td>

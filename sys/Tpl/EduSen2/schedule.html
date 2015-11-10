@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+    $("#delschedule").click(function(){
+        var id = $(this).attr("scheduleid");
+        if (!id) {alert("无课表");return;};
+        if (confirm("是否确认删除这张课程表")) {
+            $.ajax({
+                type:'POST',
+                url:'__URL__/scheduleDel',
+                dataType:'json',
+                data:{"id":id},
+                success: function(data){
+                    if (data.status==1){
+                        alert(data.info);
+                        window.location='__URL__/schedule';
+                    }else{
+                        alert(data.info);
+                        // $("#warning").attr("href",data.data);
+                        // $("#warning").show();
+                    }
+                }
+            });
+        };
+    });
+    $("#downloadschedule").click(function(){
+        var id = $(this).attr("scheduleid");
+        if (!id) {alert("请选择课表");return;};
+        window.location = "__URL__/downloadSchedule/id/"+id;
+    });
+});
+jQuery(function(){ 
+	
+});
+
+function k(key){
+	window.location="__URL__/gradeEdit/id/"+key;
+}
+function k1(key){
+jQuery.getJSON('__URL__/gradeIssub/',{id:key},function(data){
+		if(data.status==1){
+            if(window.confirm('这门课离成绩录入时间在14天之内，确定开启可录成绩？')){
+                alert(data.info);
+                window.location.reload();
+            }
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	var term=jQuery('#term').val();
+	var url="__URL__/schedule";
+	if(searchkey!==''){
+		url=url+"/classid/"+searchkey;
+	}
+	if(term!==''){
+		url=url+"/term/"+term;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+
+</script> 
+
+<style type="text/css">
+    .mytable1 td{
+        padding: 0;text-align: center;border-width: 1px 0 0 1px;
+    }
+</style>
+</head>
+
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+    <input type="button" id="delschedule" scheduleid="{$id}" value="删除本课程表" style="float:left"/>
+    <input type="button" id="downloadschedule" scheduleid="{$id}" value="下载本课程表" style="margin-left:10px;float:left"/>
+<div class="search">
+    <html:select first="请选择班级" options="class_fortag" name="classid" selected="class_current" id="searchkey"/>&nbsp;<html:select first="请选择学期" options="term_fortag" name="term" id="term" selected="term_current"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
+</div>
+<table width="103%" height="694" border="1" cellpadding="0" cellspacing="0" class="mytable1">
+    <thead>
+    </thead>
+    <tbody>
+          {$table}
+     <tbody>
+</table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

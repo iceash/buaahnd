@@ -95,8 +95,10 @@ class AbroadTeaAction extends CommonAction {
         if(!isset($truename)){
             $this->error('参数缺失');
         }
-        $dao=D('User');
-        $map['truename']=$truename;
+        // $dao=D('User');
+        $dao=D("classstudent");
+        // $map['truename']=$truename;
+        $map["studentname"]=$truename;
         $my=$dao->where($map)->select();
         $this->assign('my',$my);
         $this->assign('count',count($my));

@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+$('input:radio:first').attr('checked','checked');
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/courseInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location='__URL__/course';
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+</script>
+</head>
+
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+<form id="form1">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>课程号</td>
+    <td><input type="text" name="number" class="inputlong" /></td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>课程中文名</td>
+    <td><input type="text" name="name" class="inputlong" /></td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>课程英文名</td>
+    <td><input type="text" name="ename" class="inputlong" /></td>
+   </tr>
+   <tr>
+    <td class="t_item">开课院校</td>
+    <td><input type="text" name="school" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">课程类别</td>
+    <td><input type="text" name="category1" class="inputlong" /> 
+    (普通课程/记分单元等) </td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>课程分类</td>
+    <td ><input type="text" name="category2" class="inputlong" />  
+    (专业课/基础课等) </td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>学分</td>
+    <td><input type="text" name="credit" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item"><span class="mustfill">*</span>学时</td>
+    <td><input type="text" name="coursetime" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">考核方式</td>
+    <td><input type="text" name="exammethod" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">所属大类</td>
+    <td><input type="text" name="category3" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">水平</td>
+    <td><input type="text" name="level" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">负责人</td>
+    <td><input type="text" name="master" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">师资队伍</td>
+    <td><textarea name="teachers" class="textareanormal"></textarea></td>
+   </tr>
+    <tr>
+    <td class="t_item">教材</td>
+    <td><textarea name="book" class="textareanormal"></textarea></td>
+   </tr>
+    <tr>
+    <td class="t_item">中文内容简介</td>
+    <td><textarea name="intro" class="textareanormal"></textarea></td>
+   </tr>
+    <tr>
+    <td class="t_item">英文内容简介</td>
+    <td><textarea name="eintro" class="textareanormal"></textarea></td>
+   </tr>
+    <tr>
+    <td class="t_item">暂停标志</td>
+    <td><input type="text" name="ispause" class="inputshort" /> 
+    （若暂停，请填写“暂停”二字） </td>
+   </tr>
+    <tr>
+    <td class="t_item">暂停时间</td>
+    <td><input type="text" name="pausetime" class="inputlong" /></td>
+   </tr>
+    <tr>
+    <td class="t_item">备注</td>
+    <td><textarea name="plus" class="textareanormal"></textarea></td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

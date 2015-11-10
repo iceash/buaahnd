@@ -14,6 +14,7 @@ class IndexAction extends Action {
 	public function logout() {
 		if (session('?role')) {
 			session('role', null);
+            session('grade',null);
 			session('username', null);
 			session('truename', null);
 			session('[destroy]');
@@ -46,6 +47,7 @@ class IndexAction extends Action {
 			$check = true;
 			$Admin -> where('id=' . $my['id']) -> setInc('logincount', 1);
 			session('role', $my['role']);
+            session('grade',$my['grade']);
 			session('username', $my['username']);
 			session('truename', $my['truename']);
            
@@ -227,12 +229,15 @@ class IndexAction extends Action {
         // $a['EduTea']='任课教师';
         // $a['TeaAdm']='教师管理员';
         $a['EduDir']='班主任';
-        $a['Eater']='学管人员';
-        $a["EduSen"]='教务人员';
+        $a['Eater']='学管人员(HND)';
+        $a['Eater2']='学管人员(2+2)';
+        $a["EduSen"]='教务人员(HND)';
+        $a["EduSen2"]='教务人员(2+2)';
         $a['EduAdm']='教务管理员';
         // $a['TrainTea']='培训教师';
         // $a['TrainAdm']='培训管理员';
-        $a['AbroadTea']='留学教师';
+        $a['AbroadTea']='外联教师(HND)';
+        $a['AbroadTea2']='外联教师(2+2)';
         // $a['AbroadAdm']='留学管理员';
         // $a['ExamTea']='题库管理员';
         // $a['SourceTea']='资源管理员';

@@ -102,6 +102,7 @@
             <th width="60">真实姓名</th>
             <th width="60">登录次数</th>
             <th width="60">帐号状态</th>
+            <th width="60">管理年级</th>
             <th>帐号类型</th>
             <th width="140">创建日期</th>
             <th width="100">操作</th>
@@ -115,6 +116,7 @@
                 <td>{$my.truename}</td>
                 <td>{$my.logincount}</td>
                 <td><empty name="my.ispermit"><img src="../Public/images/lock.gif" alt="冻结"/><else />正常</empty></td>
+                <td>{$my.gradeName}</td>
                 <td>{$my.roleName}</td>
                 <td>{$my.ctime}</td>
                 <td><input type="button" value="分配权限" onclick="k('{$my.username}');" />&nbsp;</td>

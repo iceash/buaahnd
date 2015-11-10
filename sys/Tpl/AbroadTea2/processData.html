@@ -1,0 +1,47 @@
+{
+  "title":{
+    "text":  "{$mytitle}",
+    "style": "{font-size: 14px; color:#0000ff; font-family: Verdana; text-align: center;}"
+  },
+
+  "y_legend":{
+    "text": "students",
+    "style": "{color: #736AFF; font-size: 12px;}"
+  },
+
+  "elements":[
+    {
+      "type":      "bar_3d",
+      "alpha":     0.5,
+      "colour":    "#9933CC",
+      "text--":      "Page views",
+      "font-size--": 10,
+      "values" :   [{$data}]
+    }
+  ],
+
+  "x_axis":{
+    "stroke":       1,
+    "tick_height":  10,
+    "colour":      "#d000d0",
+    "grid_colour": "#00ff00",
+    "labels": {
+      "labels": ["咨询中","已签约,选校中","已定校，制材中","已递材,等录取","已录取,备签证","已递交签证","已通过,等开学"]
+    },
+    "3d":         5
+   },
+
+  "y_axis":{
+    "stroke":      4,
+    "tick_length": 3,
+    "colour":      "#d000d0",
+    "grid_colour": "#00ff00",
+    "offset":      0,
+    "max":         {$max},
+    "steps":       {$y_steps}
+  }
+
+/* &x_axis_steps=2& */
+
+}
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/uclassTeacherUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+</script>
+</head>
+
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+<form id="form1" method="post" action="__URL__/uclassTeacherUpdate"><input type="hidden" value="{$classname.id}" name="id" />
+ <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item">班级名称</td>
+    <td>{$classname.name}</td>
+   </tr>
+    <tr>
+    <td class="t_item">班主任</td>
+    <td><!--<html:checkbox checkboxes="a" name="teacher" separator="br" checked="b"/>-->
+        <table>
+            <volist name="a" id="my" mod="7">
+            <td style="border-bottom:0px solid #B2B2B2"><input style="vertical-align:middle" type="checkbox" name="teacher[]" value='{$key}' <in name='key' value="$b">checked="checked"</in> /><label style="vertical-align:middle">{$my}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label></td>
+            <eq name="mod" value="6"><tr></tr></eq>
+            </volist>
+        </table>
+    
+    </td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

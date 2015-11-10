@@ -1,0 +1,65 @@
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>     
+    <script type="text/javascript"> 
+         jQuery.ajaxSetup ({cache:false}) 
+$(":text").focus(function () { $(this).css("background", "#FFFFCA"); })
+ .blur(function () { $(this).css("background", "#fff"); })    
+        $(function() {  
+            var baseIndex = 100;  
+            $("#tblGrid")  
+            .find("tr").each(function(r) {  
+                $(this).find("td").each(function(c) {  
+                    $(this).find("input")  
+                    .attr("tabindex", r * 100 + c + baseIndex)  
+                    .addClass("cGridInput");  
+                });  
+            });  
+            $("#tblGrid .cGridInput").live("keydown", function(evt) {  
+                var tabIndex = parseInt($(this).attr("tabindex"));  
+                switch (evt.which) {  
+                    case 38: //上  
+                        tabIndex -= 100;  
+                        break;  
+                    case 40: //下  
+                        tabIndex += 100;  
+                        break;  
+                    case 37: //左(會導致輸入時無法使用左右移)  
+                        tabIndex--;  
+                        break;  
+                    case 39: //右(會導致輸入時無法使用左右移)  
+                        tabIndex++;  
+                        break;  
+                    default:  
+                        return;  
+                }  
+                if (tabIndex > 0) {  
+                    $(".cGridInput[tabindex=" + tabIndex + "]").focus();  
+                    return false;  
+                }  
+                return true;  
+            });  
+        });  
+    </script>  
+<table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0" id="tblGrid">
+  <tr> 	
+    <th width="19%">学期</th>
+	<th width="9%" >课程名称</th>
+	<th width="29%" >课程英文名称</th>
+    <th width="5%" >学时</th>
+	<th width="5%">学分</th>
+	<th width="12%">任课教师工号</th>
+	<th width="12%">任课教师姓名</th>
+	<th width="9%">操作</th>
+  </tr>
+ 	 <volist name="my" id="my">
+  <tr>
+    <td>{$my.term}</td>
+	<td>{$my.coursename}</td>
+	<td><input type='text' name = 'courseename' value='{$my.courseename}'style="width:222px" id="courseename{$my.id}" /></td>
+	<td><input type='text' name='coursetime' value='{$my.coursetime}'style="width:30px" id="coursetime{$my.id}"/></td>
+	 <td><input type='text' name='credit' value='{$my.credit}' style="width:25px" id="credit{$my.id}" /></td>
+	 <td><input type='text' name='tusername' value='{$my.tusername}' style="width:60px" id="tusername{$my.id}" /></td>
+	 <td><input type='text' name='ttruename' value='{$my.ttruename}' style="width:70px" id="ttruename{$my.id}" /></td>
+     <td><input type="button" value="确认修改" onclick="k({$my.id});"/></td>
+  </tr>
+  </volist>
+</table>

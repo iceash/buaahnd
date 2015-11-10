@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/red.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/uclassStuUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+          window.location.href=document.referrer;
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+</script>
+</head>
+
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+ <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>SCN号</td>
+    <td><input type="text" name="student" class="inputmid" value="{$my.student}"/></td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>姓名</td>
+    <td><input type="text" name="studentname" class="inputmid" value="{$my.studentname}"/></td>
+   </tr>
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>身份证号码</td>
+    <td><input type="text" name="idcard" class="inputmid" value="{$my.idcard}"/></td>
+   </tr>
+    <tr>
+    <td class="t_item"><!-- <span class="mustfill">*</span> -->英文名</td>
+    <td><input type="text" name="ename" class="inputmid" value="{$my.ename}"/>（用于生成英文成绩单、在读证明等）</td>
+   </tr>
+    <!-- <tr>
+    <td class="t_item">姓名拼音首字母</td>
+    <td><input type="text" name="enamesimple" class="inputmid" value="{$my.enamesimple}"/>（用于快速检索）</td>
+   </tr> -->
+   <tr>
+    <td class="t_item"><span class="mustfill">*</span>班级</td>
+    <td><html:select first="请选择" options="category_fortag" name="classid" selected="my['classid']"/></td>
+   </tr>
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+  <td></td></tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

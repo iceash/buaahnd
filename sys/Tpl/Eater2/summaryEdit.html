@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+  $('#typeS').val("{$my.type}");
+  $('#classS').val("{$my.classname}");
+  function a(){
+    $('#sbdate').calendar({maxDate:'#sedate',onSetDate:function(){
+      b(this.getDate('date'));
+    }});
+  }
+  function b(){
+    $('#sedate').calendar({minDate:'#sbdate',onSetDate:function(){
+      a(this.getDate('date'));
+    }});
+  }
+  a();b();
+});
+jQuery(function(){
+	jQuery('#btn_save').click(function(){
+    jQuery('#content').val(editor.html());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/summaryUpdate',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+var editor;
+      KindEditor.ready(function(K) {
+        editor = K.create('textarea[name="content"]', {
+          uploadJson : '__APP__/Upload/uploadForHomework',
+          allowFileManager : false
+        });
+      });
+});
+function copy(){
+  document.getElementById("attendInfo").select();
+  document.execCommand("Copy");
+  alert("已复制，可粘贴至总结");
+  $('.ke-content').focus();
+}
+function getAttendInfo(){
+  var classname=$('#classS').val();
+  var sbdate=$('#sbdate').val();
+  var sedate=$('#sedate').val();
+  $.post('__URL__/getAttendInfo',{classname:classname,sbdate:sbdate,sedate:sedate},function(a){
+    var data=eval('(' + a + ')');
+    $('#attendInfo').val(data.data);
+  });
+}
+</script>
+</head>
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+<form id="form1"><input type="hidden" value="{$my.id}" name="id" />
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+<tr>
+<td class="t_item"><span class="mustfill">*</span>班级</td>
+<td><select name="classname" id="classS"><option value="">请选择</option><volist name="classList" id="co"><option value="{$co.name}">{$co.name}</option></volist></select></td><td></td>
+</tr>
+<tr>
+<td class="t_item"><span class="mustfill">*</span>类型</td>
+<td><select name="type"  id="typeS"><option value="">请选择</option><option value="周">周</option><option value="月">月</option><option value="期">期</option></select></td><td></td>
+</tr>       
+<tr>
+<td class="t_item"><span class="mustfill">*</span>起始时间</td>
+<td><input type="text" name="sbdate" id="sbdate" class="calendar" value="{$my.sbdate}" /></td><td></td>
+</tr> 
+<tr>
+<td class="t_item"><span class="mustfill">*</span>截止时间</td>
+<td><input type="text" name="sedate" id="sedate" class="calendar" value="{$my.sedate}" /></td><td></td>
+</tr>
+<tr>
+<td class="t_item"><span class="mustfill">*</span>标题</td>
+<td><input type="text" name="title" id="title" value="{$my.title}" /></td><td></td>
+</tr>     
+<tr>
+<td class="t_item"><span class="mustfill">*</span>总结内容</td>
+<td><textarea name="content" id="content" class="textareanormal" >{$my.content}</textarea></td><td></td>
+</tr> 
+ </table>
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+ <tr>
+   <td width="195px">
+     <div class="btn_zone"><input type="button" id="btn_save" value="保存"  /> <a href="javascript:getAttendInfo()">获取考勤情况</a>
+     </div>
+   </td>
+   <td>
+     <span><a href="javascript:copy()">点击复制考勤情况</a></span> 考勤情况: <input type="text" id="attendInfo" style="width:600px;border:0;background:transparent;">
+   </td>
+ </tr>
+ </table>
+</div><!--end of main-->
+</body>
+</html>

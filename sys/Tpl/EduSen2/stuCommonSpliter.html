@@ -1,0 +1,111 @@
+<HEAD>
+		<LINK href="../Public/css/spliter.css" type="text/css" rel="stylesheet">
+	</HEAD>
+<body onmousedown="buttonDown()" onmousemove="mouseMove()" onmouseup="buttonUp()" style="cursor:E-resize" RIGHTMARGIN=0 TopMargin=0 LeftMargin=0 bottomMargin=0>
+<table cellspacing=0 cellpadding="0" class="spliter_TreeTable">
+<tr>	
+	<td valign=middle align=center class="spliter_tdresizebutton">
+		<table cellspacing=0 cellpadding=0 border=0 width=100% height=45>
+			<tr>
+				<td style="cursor:pointer;" class="spliter_leftbutton" onclick="wrapLeftRight(this);">&nbsp;</td>		
+			</tr>
+		</table>
+	</td>
+</tr>
+</table>
+</body>
+<script language=javascript>
+var isDraging=false;
+var ox,oy;
+var SPLITER_WIDTH = 12;
+var LEFTFRAME_WIDTH = 260;
+function buttonDown(){
+	isDraging=true;
+	ox=getEvent().clientX;
+	if(navigator.appName.indexOf("Explorer") > -1){
+	document.body.setCapture();
+	}else{
+	document.addEventListener("mousemove",mouseMove,true);
+	}
+}
+function mouseMove(){
+	//if(getEvent().button!=1)
+	//	release();
+	if(isDraging){
+		var x= getEvent().clientX;
+		var dif = x - ox;
+		var fs = parent.document.getElementsByTagName("FRAMESET")[1];
+		if(!fs){
+			fs = parent.document.getElementsByTagName("FRAMESET")[0];
+		}
+		if(fs){
+			var cols = fs.cols;
+			var colsArray = cols.split(",");
+			var leftFrameWitdh = parseInt(colsArray[0]);
+			if( dif + leftFrameWitdh < 0){
+				leftFrameWitdh = 0;	
+			}
+			else{
+				leftFrameWitdh = dif + leftFrameWitdh;
+			}
+			fs.cols = leftFrameWitdh + "," + SPLITER_WIDTH + ",*";
+		}
+	}
+}
+function buttonUp(){
+	release();
+}
+function release(){
+    isDraging=false;
+	if(navigator.appName.indexOf("Explorer") > -1){
+    document.body.releaseCapture();
+	}else{
+	document.removeEventListener("mousemove",mouseMove,true);
+	}
+}
+function wrapLeftRight( obj )
+{
+	var attr = obj.attributes.getNamedItem( "class" );
+	var str = attr.value.toLowerCase();
+	var fs = parent.document.getElementsByTagName("FRAMESET")[1];
+	if(!fs){
+		fs = parent.document.getElementsByTagName("FRAMESET")[0];
+	}
+	
+	if( str == "spliter_leftbutton" )
+	{
+		attr.value = "spliter_rightbutton";
+		//obj.title = "恢复默认";
+		if(fs){
+			fs.cols = "0," + SPLITER_WIDTH + ",*";
+			
+		}
+	}
+	else
+	{
+		//obj.title = "向左收缩";
+		attr.value = "spliter_leftbutton";
+		if(fs){
+			fs.cols = LEFTFRAME_WIDTH+ "," + SPLITER_WIDTH + ",*";
+		}
+		
+	}
+	return false;
+}
+
+function getEvent(){     //同时兼容ie和ff的写法
+         if(document.all)    return window.event;        
+         func=getEvent.caller;            
+         while(func!=null){    
+             var arg0=func.arguments[0];
+             if(arg0){
+                 if((arg0.constructor==Event || arg0.constructor ==MouseEvent)
+                     || (typeof(arg0)=="object" && arg0.preventDefault && arg0.stopPropagation)){    
+                     return arg0;
+                 }
+             }
+             func=func.caller;
+         }
+         return null;
+ }
+</script>
