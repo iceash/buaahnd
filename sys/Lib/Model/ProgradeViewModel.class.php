@@ -4,6 +4,7 @@ class ProgradeViewModel extends ViewModel {
         'prograde' => array('id','term','stuname','stunum','examname','isrepair','letter','hundred'),
         'classstudent' =>array('classid','_on'=>'classstudent.student=prograde.stunum'),
         'class' => array('name'=>'classname','major','majore','year','_on'=>'class.id=classstudent.classid'),
+        'major' => array('item','_on'=>'class.major=major.major'),
         'course' => array('name'=>'coursename','ename'=>'courseename','credit','_on'=>'course.classid=class.id and (course.name=prograde.course or course.ename=prograde.course)'),
     );
 

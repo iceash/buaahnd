@@ -272,12 +272,12 @@ class EduSenAction extends CommonAction {
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function menuGrade() {
-        $menu['grade']='成绩首页';
-        // $menu['usualResultAdd']='导入往年成绩';
-        // $menu['resultComplemented']='补全成绩信息';
+        $menu['grade']='查看专业成绩';
         $menu['uploadProGrade']='导入专业成绩';
-        $menu['usualGrade']='查看预科成绩';
-        $menu['uploadPreGrade']='导入预科成绩';
+        $menu['usualGrade']='查看预科成绩(英语)';
+        $menu['uploadPreGrade']='导入预科成绩(英语)';
+        $menu['usualGrade2']='查看预科成绩(必修)';
+        $menu['uploadPreGrade2']='导入预科成绩(必修)';
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function menuReward() {
@@ -1085,18 +1085,19 @@ class EduSenAction extends CommonAction {
     } 
     public function grade() {
         $dao = D('ProgradeView');
+        $map["item"] = "HND";
         $this -> assign('category_fortag', $this->getTerm());//学期列表
-        $class = D('ProgradeView')->group("classid")->field("classid,classname")->select();
+        $class = D('ProgradeView')->where($map)->group("classid")->field("classid,classname")->select();
         foreach ($class as $vc) {
             $classes[$vc["classid"]]=$vc["classname"];
         }
         $this->assign('class_fortag',$classes);//班级列表
-        $major = D('ProgradeView')->group("major")->field("major")->select();
+        $major = D('ProgradeView')->where($map)->group("major")->field("major")->select();
         foreach ($major as $vm) {
             $majors[$vm["major"]]=$vm["major"];
         }
         $this->assign('major_fortag',$majors);//专业列表
-        $course = D('ProgradeView')->group("coursename")->field("coursename,courseename")->select();
+        $course = D('ProgradeView')->where($map)->group("coursename")->field("coursename,courseename")->select();
         foreach ($course as $va) {
             $courses[$va["coursename"]]=$va["coursename"].$va["courseename"];
         }
@@ -1777,9 +1778,24 @@ class EduSenAction extends CommonAction {
         $this -> menuCourse();
         $this -> display();
     }
+    public function usualGradeDel() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $map['id'] = array('in', $id);
+        $dao = M('pregrade');
+        $count = $dao -> where($map) -> delete();
+        if ($count > 0) {
+            $this -> success('已成功删除');
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    } 
     public function usualGrade(){
         $dao = D('PregradeView');
-        $all_exam = $dao->group("examname")->select();
+        $map["isrequired"] = 0;
+        $all_exam = $dao->where($map)->group("examname")->select();
         foreach ($all_exam as $va) {
             $exams[$va["examname"]] = $va["examname"];
         }
@@ -1823,20 +1839,6 @@ class EduSenAction extends CommonAction {
         $this -> menuGrade();
         $this -> display();
     } 
-       public function usualGradeDel() {
-        $id = $_GET['id'];
-        if (!isset($id)) {
-            $this -> error('参数缺失');
-        } 
-        $map['id'] = array('in', $id);
-        $dao = M('pregrade');
-        $count = $dao -> where($map) -> delete();
-        if ($count > 0) {
-            $this -> success('已成功删除');
-        } else {
-            $this -> error('该记录不存在');
-        } 
-    } 
     
     public function usualResultAdd() {
         $this -> menuGrade();
@@ -1859,38 +1861,32 @@ class EduSenAction extends CommonAction {
         $count=count($sheetData);
         $dao=D('Score');
         $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
-'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
-'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
-'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
-'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
-'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
-'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
-'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
-'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
-'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
-'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
-'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
-'ｙ' => 'y', 'ｚ' => 'z',    
-'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
-'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
-'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
-'》' => '>',    
-'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
-'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
-'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
-'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
-'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
-'＂'=>'"'); 
+            '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+            'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+            'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+            'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+            'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+            'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+            'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+            'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+            'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+            'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+            'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+            'ｙ' => 'y', 'ｚ' => 'z',    
+            '（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+            '】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+            '‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+            '》' => '>',    
+            '％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+            '：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+            '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+            '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+            '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+            '＂'=>'"'); 
         for($i=3;$i<=$count;$i++){
             if(!preg_match("/^GJ[0-9]{9}$/",strtr($sheetData[$i]['A'], $arr))){
                 $this->error("第".$i."行学号格式不正确");
             }
-           
-//             for($j=1;$j<12;$j++){
-//                 if(strlen($sheetData[$i][chr(65+$j)]) == 0){
-//                   $this->error("必填项未填全，请填全后提交");
-//                 }
-//             }
             $reg='/^[0-9]{4}-[0-9]{4}学年第[1-2]{1}学期$/';
             if(!preg_match($reg,  strtr($sheetData[$i]['J'], $arr))){
                 $this->error("第".$i."行学期格式不正确");
@@ -1923,6 +1919,53 @@ class EduSenAction extends CommonAction {
         $dao -> addAll($data_a);
         $this -> success("已成功保存");
     }  
+    public function usualGrade2(){
+        $dao = D('PregradeView');
+        $map["isrequired"] = 1;
+        $all_exam = $dao->where($map)->group("examname")->select();
+        foreach ($all_exam as $va) {
+            $exams[$va["examname"]] = $va["examname"];
+        }
+        $this->assign("exam_fortag",$exams);//考试列表
+        $class = $dao->group("classid")->field("classid,classname")->select();
+        foreach ($class as $vc) {
+            $classes[$vc["classid"]]=$vc["classname"];
+        }
+        $this->assign('class_fortag',$classes);//班级列表
+        $major = $dao->group("major")->field("major")->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $this->assign('major_fortag',$majors);//专业列表
+        if (isset($_GET['searchkey'])) {
+            $map['stuname|stunum'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $this -> assign('searchkey', $_GET['searchkey']);
+        } 
+        if (isset($_GET["exam"])) {
+            $map['examname']=$_GET["exam"];
+            $this->assign("exam_current",$_GET["exam"]);
+        }
+        if (isset($_GET['major'])) {
+            $map['major'] = $_GET['major'];
+            $this -> assign('major_current', $_GET['major']);
+        } 
+        if (isset($_GET['classid'])) {
+            $map['classid'] = $_GET['classid'];
+            $this -> assign('class_current', $_GET['classid']);
+        } 
+        $count = $dao -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 20;
+            $p = new Page($count, $listRows);
+            $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);
+        } 
+        $this -> menuGrade();
+        $this -> display();
+    } 
     public function resultComplemented(){
         $this -> menuGrade();
         $this -> display();
@@ -3991,28 +4034,28 @@ class EduSenAction extends CommonAction {
         $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
         $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
-'５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
-'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
-'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
-'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
-'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
-'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
-'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
-'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
-'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
-'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
-'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
-'ｙ' => 'y', 'ｚ' => 'z',    
-'（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
-'】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
-'‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
-'》' => '>',    
-'％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
-'：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
-'；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
-'”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
-'　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
-'＂'=>'"'); 
+        '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+        'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+        'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+        'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+        'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+        'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+        'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+        'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+        'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+        'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+        'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+        'ｙ' => 'y', 'ｚ' => 'z',    
+        '（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+        '】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+        '‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+        '》' => '>',    
+        '％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+        '：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+        '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+        '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+        '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+        '＂'=>'"'); 
         $count = count($sheetData);//一共有多少行
         if ($count < 3) {
             $this->ajaxReturn($titlepic, "请填写信息", 0);
@@ -4064,6 +4107,108 @@ class EduSenAction extends CommonAction {
         $result = M("pregrade")->addAll($grade);
         $this -> success("已成功保存");
     }
+    public function uploadPreGrade2(){
+        //显示预科成绩
+        $this->menuGrade();
+        $this->display();
+    }
+    public function PreGradeInsert2(){
+        //上传预科成绩
+        $titlepic = $_POST['titlepic'];
+        if (empty($titlepic)) {
+            $this -> error('未上传文件');
+        } 
+        if (substr($titlepic,-3,3) !=='xls') {
+            $this -> error('上传的不是xls文件');
+        } 
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $inputFileName = $php_path .'../../../..'.$titlepic;
+        $objPHPExcel = PHPExcel_IOFactory::load($inputFileName);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+        $arr = array('０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4',    
+        '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',    
+        'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E',    
+        'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',    
+        'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O',    
+        'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',    
+        'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y',    
+        'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',    
+        'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i',    
+        'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',    
+        'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's',    
+        'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',    
+        'ｙ' => 'y', 'ｚ' => 'z',    
+        '（' => '(', '）' => ')', '〔' => '[', '〕' => ']', '【' => '[',    
+        '】' => ']', '〖' => '[', '〗' => ']', '“' => '[', '”' => ']',    
+        '‘' => '[', '’' => ']', '｛' => '{', '｝' => '}', '《' => '<',    
+        '》' => '>',    
+        '％' => '%', '＋' => '+', '—' => '-', '－' => '-', '～' => '-',    
+        '：' => ':', '。' => '.', '、' => ',', '，' => '.', '、' => '.',    
+        '；' => ',', '？' => '?', '！' => '!', '…' => '-', '‖' => '|',    
+        '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
+        '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
+        '＂'=>'"'); 
+        $count = count($sheetData);//一共有多少行
+        if ($count < 3) {
+            $this->ajaxReturn($titlepic, "请填写信息", 0);
+        }
+        $exam = $sheetData[1]["C"];//考试名称
+        if (strlen($exam) == 0) {
+            $errors[] = "C1";
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic, "请在C1中填写课程名称", 0);
+        }
+        $cs = M("classstudent");//选出所有以及存有的课程
+        $allcourse = M("course")->select();
+        foreach ($allcourse as $vc) {
+            $course[] = $vc["name"];
+            $course[] = $vc["ename"];
+        }
+        if (!in_array(strtr($sheetData[1]['C'], $arr), $course)) {
+            $errors[] = 'C1';
+        }
+        for($i = 3; $i <= $count; $i++){
+            $b = true;
+            for($j = 1; $j <= 3; $j++){
+                if(strlen($sheetData[$i][chr(64+$j)]) == 0){
+                    $errors[] = chr(64+$j).$i;
+                    $b = false;
+                }
+                if ($j > 2) {
+                    if (!is_numeric($sheetData[$i][chr(64+$j)])) {
+                        $errors[] = chr(64+$j).$i;
+                        $b = false;
+                    }
+                }
+            }
+            $map["studentname"] = strtr($sheetData[$i]['A'], $arr);
+            $map["student"] = strtr($sheetData[$i]['B'], $arr);
+            if ($cs->where($map)->count() == 0) {
+                $errors[] = "A".$i;
+                $errors[] = "B".$i;
+                $b = false;
+            }
+            if (!$b) {
+                continue;
+            }
+            $grade[$i-3]["examname"] = $exam;
+            $grade[$i-3]["stuname"] = $map["studentname"];
+            $grade[$i-3]["stunum"] = $map["student"];
+            $grade[$i-3]["listening"] = 0;
+            $grade[$i-3]["reading"] = 0;
+            $grade[$i-3]["writing"] = 0;
+            $grade[$i-3]["speaking"] = 0;
+            $grade[$i-3]["total"] = strtr($sheetData[$i]['C'], $arr);
+            $grade[$i-3]["isrequired"] = 1;
+        }
+        if (count($errors) > 0) {
+            excelwarning($inputFileName,$errors);
+            $this->ajaxReturn($titlepic, "信息不正确", 0);
+        }
+        $result = M("pregrade")->addAll($grade);
+        $this -> success("已成功保存");
+    }
     public function uploadProGrade(){
         //显示专业成绩
         $this->menuGrade();
@@ -4106,12 +4251,15 @@ class EduSenAction extends CommonAction {
 '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"',    
 '　' => ' ','＄'=>'$','＠'=>'@','＃'=>'#','＾'=>'^','＆'=>'&','＊'=>'*', 
 '＂'=>'"'); 
+        $arr2 = array("a"=>"A","r"=>"R","d"=>"D","u"=>"U","c"=>"C");
         $count = count($sheetData);//一共有多少行
-        if ($count < 4) {
+        if ($count < 5) {
             $this->ajaxReturn($titlepic, "请填写信息", 0);
         }
-        if (!$sheetData[2]['C']) {//检测C2中必须有课程名
+        if (!$sheetData[2]['E']) {//检测E2中必须有课程名
             $this->ajaxReturn($titlepic, "请填写课程", 0);
+        }else{
+            $course = $sheetData[2]['E'];
         }
         //判断学期
         $reg='/^[0-9]{4}-[0-9]{4}学年第[1-2]{1}学期$/';
@@ -4131,37 +4279,23 @@ class EduSenAction extends CommonAction {
         //选出所有以及存有的课程
         $allcourse = M("course")->select();
         foreach ($allcourse as $vc) {
-            $course[] = $vc["name"];
-            $course[] = $vc["ename"];
+            $courses[] = $vc["name"];
+            $courses[] = $vc["ename"];
         }
-        $row = 0;//检查一共有多少考试列
+        if (!in_array(strtr($sheetData[2]["E"], $arr), $courses)) {
+            $errors[] = chr($i)."2";
+        }
+
+        $row = 0;//检查一共次考试
         $i = 67;//从第C列开始检查第四行的考试，非空则填充上第二行的课程名称
         while (strlen($sheetData[3][chr($i)]) != 0) {
-            if (strlen($sheetData[2][chr($i)]) == 0) {
-                $sheetData[2][chr($i)] = $sheetData[2][chr($i-1)];
-            }else{
-                if (!in_array(strtr($sheetData[2][chr($i)], $arr), $course)) {
-                    $errors[] = chr($i)."2";
-                }
-            }
-            $i++;
+            $i += 3;
             $row++;
         }
         $cs = M("classstudent");
         $num = 0;//用num来计数，表示将要写入数据库的数组的下标
-        for($i = 4; $i <= $count; $i++){
-            $b = true;
-            //检查每一行非空
-            for($j = 1; $j <= $row+2; $j++){
-                if(strlen($sheetData[$i][chr(64+$j)]) == 0){
-                    $errors[] = chr(64+$j).$i;
-                    $b = false;
-                }
-            }
-            //以上若有信息不正确则跳过本行剩余操作
-            if (!$b) {
-                continue;
-            }
+        for($i = 5; $i <= $count; $i++){
+            $b = false;
             //检查学生信息是否正确
             $map["studentname"] = strtr($sheetData[$i]['A'], $arr);
             $map["student"] = strtr($sheetData[$i]['B'], $arr);
@@ -4172,72 +4306,49 @@ class EduSenAction extends CommonAction {
             }
             //对这一行的所有分数遍历
             $renum = 0;
-            for ($m = 1; $m <= $row; $m++) { 
+            for ($m = 1; $m <= $row*3; $m+=3) { 
+                $grade[$num]["course"] = $course;//课程名称
+                $grade[$num]["examname"] = strtr($sheetData[3][chr(66+$m)], $arr);//考试名称
                 $grade[$num]["stuname"] = $map["studentname"];
                 $grade[$num]["stunum"] =  $map["student"];
-                $grade[$num]["course"] = strtr($sheetData[2][chr(66+$m)], $arr);//课程名称
-                $grade[$num]["examname"] = strtr($sheetData[3][chr(66+$m)], $arr);//考试名称
                 $grade[$num]["term"] = $term;
                 $grade[$num]["isrepair"] = $isrepair;
-                $tmp = strtr($sheetData[$i][chr(66+$m)], $arr);
-                if (is_numeric($tmp)) {
-                    if ($tmp<=100 && $tmp>=60) {
-                        $grade[$num]["letter"] = "P";
-                        $grade[$num]["hundred"] = $tmp;
-                    }elseif ($tmp<=59 && $tmp>=1) {
-                        $grade[$num]["letter"] = "F";
-                        $grade[$num]["hundred"] = $tmp;
-                    }elseif ($tmp == 0) {
-                        $grade[$num]["letter"] = "U";
-                        $grade[$num]["hundred"] = $tmp;
-                        $repairs[$renum]["stunum"] = $grade[$num]["stunum"];
-                        $repairs[$renum]["course"] = $grade[$num]["course"];
-                        $renum++;
-                    }else{
-                        $errors[] = chr(66+$m).$i;
+                $b = false;
+                for ($k = 0; $k < 3; $k++) {
+                    $the = strtr($sheetData[$i][chr(66+$m+$k)], $arr);
+                    $the = strtr($the, $arr2);
+                    if ($the == "S") {
+                        $b = true;
+                        switch ($k) {
+                            case 0:
+                                $grade[$num]["letter"] = "S";
+                                $grade[$num]["hundred"] = 90;
+                                break;
+                            case 1:
+                                $grade[$num]["letter"] = "RD";
+                                $grade[$num]["hundred"] = 80;
+                                break;
+                            case 2:
+                                $grade[$num]["letter"] = "RA";
+                                $grade[$num]["hundred"] = 70;
+                                break;
+                        }
+                        break;
+                    }else if ($the == "U" || $the == "U(C)" || $the == "U(A)") {
+                        $b = true;
+                        $grade[$num]["letter"] = $the;
+                        $grade[$num]["hundred"] = 0;
+                        break;
                     }
-                }else{
-                    switch ($tmp) {//处理不同分数的表达方式
-                        case 'S':
-                        case 's':
-                            $grade[$num]["letter"] = "S";
-                            $grade[$num]["hundred"] = 90;
-                            break;
-                        case 'RD':
-                        case 'Rd':
-                        case 'rD':
-                        case 'rd':
-                            $grade[$num]["letter"] = "RD";
-                            $grade[$num]["hundred"] = 80;
-                            break;
-                        case 'RA':
-                        case 'Ra':
-                        case 'rA':
-                        case 'ra':
-                            $grade[$num]["letter"] = "RA";
-                            $grade[$num]["hundred"] = 70;
-                            break;
-                        case 'U':
-                        case 'u':
-                            $grade[$num]["letter"] = "U";
-                            $grade[$num]["hundred"] = 0;
-                            $repairs[$renum]["stunum"] = $grade[$num]["stunum"];
-                            $repairs[$renum]["course"] = $grade[$num]["course"];
-                            $renum++;
-                            break;
-                        default:
-                            $errors[] = chr(66+$m).$i;
-                            break;
-                    }
-                    //若此次考试为重修考试且该考生通过，则分数减10分
-                    if ($isrepair && $grade[$num]["hundred"]) {
-                        $grade[$num]["hundred"] -= 10;
-                    }
+                }
+                if (!$b) {
+                    $errors[] = chr(66+$m).$i;
+                    $errors[] = chr(67+$m).$i;
+                    $errors[] = chr(68+$m).$i;
                 }
                 $num++;
             }
         }
-
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
             $this->ajaxReturn($titlepic, "信息不正确", 0);
@@ -4254,7 +4365,6 @@ class EduSenAction extends CommonAction {
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        // Vendor('PHPExcel'); 
         $titlepic = '/buaahnd/sys/Tpl/Public/download/prescore.xls';
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
@@ -4267,7 +4377,7 @@ class EduSenAction extends CommonAction {
         $p  ->setActiveSheetIndex(0)
             ->setCellValue('B3', $stuinfo["studentname"]) 
             ->setCellValue('B4', $stuinfo["ename"]) ;//写上学生姓名
-        $scores = M("pregrade")->where(array("stunum"=>$id))->select();
+        $scores = M("pregrade")->where(array("stunum"=>$id,"isrequired"=>0))->select();//英语成绩
         $styleArray = array(  
             'borders' => array(  
                 'allborders' => array(  
@@ -4315,6 +4425,25 @@ class EduSenAction extends CommonAction {
             }
             $line += 7;
         }
+        $scores = M("pregrade")->where(array("stunum"=>$id,"isrequired"=>1))->select();//必修课成绩
+        $course = M("course");
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('A'.$line, "必修课成绩") ;
+        $newline = $line+1;
+        foreach ($scores as $k => $va) {
+            $tmp = $course->where(array("name|ename"=>$va['examname']))->find();
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$newline,$tmp["name"]."：")
+                ->setCellValue("D".$newline,$va['total']."分")
+                ->setCellValue("E".$newline,$tmp["ename"].":")
+                ->setCellValue("H".$newline,$va['total'])
+                ->getStyle('A'.($newline).':H'.($newline))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->mergeCells( 'A'.$newline.':C'.$newline);
+                $p  ->getActiveSheet()->mergeCells( 'E'.$newline.':G'.$newline);
+            $newline++;
+        }
+
+
         
         header("Pragma: public");
         header("Expires: 0");
@@ -4345,7 +4474,7 @@ class EduSenAction extends CommonAction {
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+            ->setCellValue('A2', '学号：'.$stuinfo["student"].'        姓名：'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"]);//写上名字
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
@@ -4452,7 +4581,7 @@ class EduSenAction extends CommonAction {
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+            ->setCellValue('A2', '学号：'.$stuinfo["student"].'        姓名：'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"]);//写上名字
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
