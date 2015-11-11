@@ -26,7 +26,8 @@ input[type="button"]:hover {
 }
 
 .headTitle {
-    width: 1000px;
+    width: 100%;
+    /*min-width: 1150px;*/
     height: 135px;
     vertical-align: middle;
     background-color: #025098;
