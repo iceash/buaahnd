@@ -592,7 +592,7 @@ class EduSen2Action extends CommonAction {
         $this->stuCommonMenu($id);
         $this -> display();
     } 
-         public function checkEnrollPlus() {
+    public function checkEnrollPlus() {
         load("@.idcard");
         load("@.check");
         if (empty($_POST['truename'])) {
@@ -613,7 +613,12 @@ class EduSen2Action extends CommonAction {
         }elseif (!issex($_POST['sex'])) {
             $this -> error('Part1 学生性别校验失败');
         }
-        
+        if (empty($_POST['bankcard'])) {
+            $this->error("Part1 学生银行卡号不能为空");
+        }
+        if (empty($_POST["onecard"])) {
+            $this->error("Part1 学生一卡通号不能为空");
+        }
         if (empty($_POST['mobile'])) {
             $this -> error('Part1 学生手机号不能为空');
         } elseif (!ismobile($_POST['mobile'])) {

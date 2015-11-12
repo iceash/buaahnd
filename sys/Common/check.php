@@ -27,7 +27,8 @@ function isusername($username) {
 			$result = true;
 		} 
 	} 
-	return $result;
+	// return $result;
+	return true;
 } 
 function issex($sex) {
 	$result = false;

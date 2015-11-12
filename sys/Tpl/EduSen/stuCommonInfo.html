@@ -306,9 +306,9 @@ function getNationality(a){
 <table width="100%" border="0">
  <tr>
     <td></td>
-    <td><input type="button" name="auto" value="使用身份证阅读器便捷录入" onclick="byidcard();" />
+    <!-- <td><input type="button" name="auto" value="使用身份证阅读器便捷录入" onclick="byidcard();" />
 		
-	</td>
+	</td> -->
   </tr>
   <tr>
     <td class="ziduan"><span class="mustfill">*</span>姓名 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
@@ -319,6 +319,11 @@ function getNationality(a){
     <td class="ziduan"><span class="mustfill">*</span>学号 </td>
     <td><label for="textfield"></label>
       <input type="text" name="username" id="username" class="inputshort" value="{$my.username}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan">SCN号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="scnid" id="scnid" class="inputshort" value="{$my.scnid}"/></td>
   </tr>
   <tr>
     <td class="ziduan"><span class="mustfill">*</span>入学年份</td>
@@ -335,8 +340,18 @@ function getNationality(a){
     <td><html:select options="nationality" name="nationality" id="nationality" first="请选择" selected="my['nationality']" /></td>
   </tr>
   <tr>
-    <td  class="ziduan"><span class="mustfill">*</span>出生日期 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td  class="ziduan">出生日期 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
     <td><input type="text" name="birthday" id="birthday" class="inputshort calendar" value="{$my.birthday|toDate='Y-m-d'}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>银行卡号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="bankcard" id="bankcard" class="inputlong" value="{$my.bankcard}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>一卡通号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="onecard" id="onecard" class="inputlong" value="{$my.onecard}"/></td>
   </tr>
   <tr>
     <td  class="ziduan">身份证号码 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>

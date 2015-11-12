@@ -1276,7 +1276,7 @@ class EaterAction extends CommonAction {
             $this -> ajaxReturn(0, '获取信息失败', 0);
         } 
     } 
-     public function checkEnrollPlus() {
+    public function checkEnrollPlus() {
         load("@.idcard");
         load("@.check");
         if (empty($_POST['truename'])) {
@@ -1287,9 +1287,9 @@ class EaterAction extends CommonAction {
         }elseif(!isusername($_POST['username'])){
           $this -> error('Part1 学生学号校验失败');  
         }
-        if (empty($_POST['ctime'])) {
+        if (empty($_POST['cyear'])) {
             $this -> error('Part1 入学年份不能为空');
-        }elseif (!isctime($_POST['ctime'])) {
+        }elseif (!isctime($_POST['cyear'])) {
             $this -> error('Part1 入学年份校验失败');
         }
         if (empty($_POST['sex'])) {
@@ -1297,7 +1297,12 @@ class EaterAction extends CommonAction {
         }elseif (!issex($_POST['sex'])) {
             $this -> error('Part1 学生性别校验失败');
         }
-        
+        if (empty($_POST['bankcard'])) {
+            $this->error("Part1 学生银行卡号不能为空");
+        }
+        if (empty($_POST["onecard"])) {
+            $this->error("Part1 学生一卡通号不能为空");
+        }
         if (empty($_POST['mobile'])) {
             $this -> error('Part1 学生手机号不能为空');
         } elseif (!ismobile($_POST['mobile'])) {
