@@ -1710,12 +1710,12 @@ class EduSenAction extends CommonAction {
         if(empty($_POST['stu'])){
             $this -> error('请至少选择一个学生');
         }
-        $stu=explode(',',$_POST['stu']);
+        $stu=explode(',',$_POST['stu']);//dump($stu);return;
         $dao = D('Reward');
         $i=0;
         $j=0;
         foreach($stu as $key=>$value){
-            if(substr($value,0,2)=='GJ'){         
+            // if(substr($value,0,2)=='GJ'){         
                 $i++;
                 if ($dao -> create()) { 
                     $temp=array();
@@ -1733,15 +1733,51 @@ class EduSenAction extends CommonAction {
                 } else {
                     $this -> error($dao->getError());
                 } 
-            }
+            // }
         }
         if($i==$j){
+
+            $Noticecreate = D('Noticecreate');
+            $Notice = D('Notice');
+            $data['title'] = "奖惩通知";
+            $data['content'] = $_POST['content'];
+            $data['tusername'] = session('username');
+            $data['ttruename'] = D('User') -> where("username='" . session('username') . "'") -> getField('truename');
+            $data['ctime'] = date("Y-m-d H:i:s");
+            $insertID = $Noticecreate -> add($data);
+            if ($insertID) {
+                $reader = M("user")->select();
+                foreach($reader as $key => $value) {
+                    $data_a[$key]['noticeid'] = $insertID;
+                    $data_a[$key]['readusername'] = $value["username"];
+                    $data_a[$key]['readtruename'] = $value["truename"];
+                } 
+                $Notice -> addAll($data_a);
+            } 
             $this -> success('已成功保存'.$j.'个学生的奖惩记录');
         }else{
             $this -> error("勾选了$i个学生,只增加了$j个学生");
         }
         
     } 
+    public function setNoticeRead(){
+        if(!isset($_GET['id'])) {
+            $this->error('参数缺失');
+        }
+        $id=$_GET['id'];
+        $Notice = D("Notice");
+        $map['readusername']=session('username');
+        $map['id']=$id;
+        $my=$Notice->where($map)->select();
+        if($my){
+            $data['id']=$id;
+            $data['readtime']=date("Y-m-d H:i:s");
+            $result=$Notice->save($data); 
+            if($result>0){
+                $this->success('已成功标记');
+            }
+        }  
+    }
     public function course() {
         if (isset($_GET['searchkey'])) {
             $condition["course.name"] = array('like', '%' . $_GET['searchkey'] . '%');
@@ -3602,6 +3638,7 @@ class EduSenAction extends CommonAction {
         $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $info["name"] = $info["classname"]."_".$info["term"].'课程表.xls';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         header("Pragma: public");
         header("Expires: 0");
@@ -3609,7 +3646,7 @@ class EduSenAction extends CommonAction {
         header("Pragma: no-cache");
         header("Content-Type:application/octet-stream");
         header('content-Type:application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename='.$info["term"].' '.$info["classname"].'课程表.xls');//设置文件的名称
+        header('Content-Disposition:attachment;filename='.$info["name"]);//设置文件的名称
         header("Content-Transfer-Encoding:binary");
         $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
         $objWriter->save('php://output');
@@ -3637,15 +3674,15 @@ class EduSenAction extends CommonAction {
             }
             //到此为止都是可以复制的，$sheetdata里面存着所有信息，$inputFileName为文件完整路径
             $reg='/^[0-9]{4}-[0-9]{4}学年第[1-2]{1}学期$/';
-            $term = $sheetData[2]["C"];
+            $term = $sheetData[1]["A"];
+            if (strlen($sheetData[1]["A"]) == 0) {
+                $emptys[$sheetnum][] = "A1";
+            }
             if (strlen($sheetData[2]["A"]) == 0) {
                 $emptys[$sheetnum][] = "A2";
             }
-            if (strlen($sheetData[2]["C"]) == 0) {
-                $emptys[$sheetnum][] = "C2";
-            }
             if(!preg_match($reg,  strtr($term, $arr))){
-                $errors[$sheetnum][] = "C2";
+                $errors[$sheetnum][] = "A1";
             }
             // $map["year"] = explode("-", $term)[0];
             $tmp = explode("-", $term);
@@ -3654,14 +3691,14 @@ class EduSenAction extends CommonAction {
             if (!$map["name"]) {
                 $errors[$sheetnum][] = "A2";
             }
-            $data[$sheetnum]["savepath"] = $titlepic;
             $data[$sheetnum]["term"] = $term;
             $data[$sheetnum]["classid"] = M("class")->where($map)->getField("id");
             $b = M("schedule")->where($data[$sheetnum])->count();
             if (!$data[$sheetnum]["classid"] || $b > 0) {
+                $errors[$sheetnum][] = "A1";
                 $errors[$sheetnum][] = "A2";
-                $errors[$sheetnum][] = "C2";
-            }
+            }//dump($errors[0]);return;
+            $data[$sheetnum]["savepath"] = $titlepic;
             if (count($errors[$sheetnum]) > 0) {
                 excelwarning($inputFileName,$errors[$sheetnum],'FFFF7F50',$sheetnum);
             }
@@ -3673,139 +3710,91 @@ class EduSenAction extends CommonAction {
             }
             if (count($errors[$sheetnum]) == 0 && count($conflicts[$sheetnum]) == 0 && count($emptys[$sheetnum]) == 0) {
                 $notice[$sheetnum]["title"] = '通知：新增课程表——'.$sheetData[2]["A"];
-                $notice[$sheetnum]["content"] = '新增课程表，'.$sheetData[2]["A"].'，'.$sheetData[2]["C"].'，来自'.session('username').'['.session('truename').']，';
+                $notice[$sheetnum]["content"] = '新增课程表，'.$sheetData[2]["A"].'，'.$sheetData[1]["A"].'，来自'.session('username').'['.session('truename').']，';
                 $data[$sheetnum]["table"] = '';
-                $data[$sheetnum]["table"] .= '
-          <tr height="25">
-            <td rowspan="2" height="44" width="73">大节数</td>
-            <td rowspan="2" width="47">小节</td>
-            <td rowspan="2" width="73">时间</td>
-            <td colspan="4">星期一</td>
-            <td colspan="4">星期二</td>
-            <td colspan="4">星期三</td>
-            <td colspan="4">星期四</td>
-            <td colspan="4">星期五</td>
-          </tr>
-          <tr height="19">
-            <td width="40" height="19"><div align="center">课程</div></td>
-            <td width="40"><div align="center">教师</div></td>
-            <td width="40"><div align="center">教室</div></td>
-            <td width="40"><div align="center">周数</div></td>
-            <td width="40"><div align="center">课程</div></td>
-            <td width="40"><div align="center">教师</div></td>
-            <td width="40"><div align="center">教室</div></td>
-            <td width="40"><div align="center">周数</div></td>
-            <td width="40"><div align="center">课程</div></td>
-            <td width="40"><div align="center">教师</div></td>
-            <td width="40"><div align="center">教室</div></td>
-            <td width="40"><div align="center">周数</div></td>
-            <td width="40"><div align="center">课程</div></td>
-            <td width="40"><div align="center">教师</div></td>
-            <td width="40"><div align="center">教室</div></td>
-            <td width="40"><div align="center">周数</div></td>
-            <td width="40"><div align="center">课程</div></td>
-            <td width="40"><div align="center">教师</div></td>
-            <td width="40"><div align="center">教室</div></td>
-            <td width="40"><div align="center">周数</div></td>
-          </tr>';
-            for ($line = 5; $line  < 18; $line ++) { 
-                switch ($line) {
-                    //switch做13行的特判
-                    case 5:
-                        $data[$sheetnum]["table"] .= '
-           <tr height="26">
-            <td rowspan="2" height="52">第一节</td>
-            <td>1</td>
-            <td>8:00-8:50</td>';
-                        break;
-                    case 6:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td height="26">2</td>
-            <td>8:55-9:45</td>
-          </tr>';
-                        break;
-                    case 7:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td rowspan="2" height="52">第二节</td>
-            <td>3</td>
-            <td>10:00-10:50</td>';
-                        break;
-                    case 8:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td height="26">4</td>
-            <td>10:55-11:45</td>
-          </tr>';
-                        break;
-                    case 9:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="10">
-            <td height="24" colspan="23">午   休</td>
-          </tr>';
-                        break;
-                    case 10:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td rowspan="2" height="52">第三节</td>
-            <td>5</td>
-            <td>14:00-14:50</td>';
-                        break;
-                    case 11:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td height="26">6</td>
-            <td>14:55-15:45</td>
-          </tr>';
-                        break;
-                    case 12:
-                        $data[$sheetnum]["table"] .='
-          <tr height="26">
-            <td rowspan="2" height="52">第四节</td>
-            <td>7</td>
-            <td>16:00-16:50</td>';
-                        break;
-                    case 13:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td height="26">8</td>
-            <td>16:55-17:45</td>
-          </tr>';
-                        break;
-                    case 14:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td colspan="23" height="10">晚   上</td>
-          </tr>';
-                        break;
-                    case 15:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td rowspan="2" height="52" width="73">第五节</td>
-            <td>9</td>
-            <td>18:45-19:35</td>';
-                        break;
-                    case 16:
-                        $data[$sheetnum]["table"] .= '
-          <tr height="26">
-            <td height="26">10</td>
-            <td>19:40-20:30</td>
-          </tr>';
-                        break;
-                }//switch结束
-                if (in_array($line, array(5,7,10,12,15))) {
-                    for ($row = 0; $row < 5; $row++) { 
-                        $data[$sheetnum]["table"] .= '<td rowspan="2">'.$sheetData[$line][chr(68+4*$row)].'</td>';
-                        $data[$sheetnum]["table"] .= '<td rowspan="2">'.$sheetData[$line][chr(69+4*$row)].'</td>';
-                        $data[$sheetnum]["table"] .= '<td rowspan="2">'.$sheetData[$line][chr(70+4*$row)].'</td>';
-                        $data[$sheetnum]["table"] .= '<td rowspan="2">'.$sheetData[$line][chr(71+4*$row)].'</td>';
-                    }
-                    $data[$sheetnum]["table"] .= '
-          </tr>';
-                }
-            }
-
+                $data[$sheetnum]["table"] ='<tr height="29">
+                        <td height="29" width="87">节</td>
+                        <td width="81">时间/周</td>
+                        <td width="165">周一</td>
+                        <td width="165">周二</td>
+                        <td width="165">周三</td>
+                        <td width="165">周四</td>
+                        <td width="165">周五</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第一节</td>
+                        <td width="81">8：00—8：50</td>
+                        <td rowspan="2" width="165">'.$sheetData[4]["C"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[4]["D"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[4]["E"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[4]["F"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[4]["G"].'</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第二节</td>
+                        <td width="81">8：55—9：45</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第三节</td>
+                        <td width="81">10：00—10：50</td>
+                        <td rowspan="2" width="165">'.$sheetData[6]["C"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[6]["D"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[6]["E"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[6]["F"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[6]["G"].'</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第四节</td>
+                        <td width="81">10：55—11：45</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第五-六节</td>
+                        <td width="81">12：00—13：50</td>
+                        <td width="165">'.$sheetData[8]["C"].'</td>
+                        <td width="165">'.$sheetData[8]["D"].'</td>
+                        <td width="165">'.$sheetData[8]["E"].'</td>
+                        <td width="165">'.$sheetData[8]["F"].'</td>
+                        <td width="165">'.$sheetData[8]["G"].'</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第七节</td>
+                        <td width="81">14：00-14:50</td>
+                        <td rowspan="2" width="165">'.$sheetData[9]["C"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[9]["D"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[9]["E"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[9]["F"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[9]["G"].'</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第八节</td>
+                        <td width="81">14：55—15：45</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第九节</td>
+                        <td width="81">16：00—16：50</td>
+                        <td rowspan="2" width="165">'.$sheetData[11]["C"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[11]["D"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[11]["E"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[11]["F"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[11]["G"].'</td>
+                      </tr>
+                      <tr height="46">
+                        <td height="46" width="87">第十节</td>
+                        <td width="81">16：:55-17:45</td>
+                      </tr>
+                      <tr height="46">
+                        <td rowspan="2" height="92" width="87">晚上</td>
+                        <td rowspan="2" width="81">18：00-21：45</td>
+                        <td rowspan="2" width="165">'.$sheetData[13]["C"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[13]["D"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[13]["E"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[13]["F"].'</td>
+                        <td rowspan="2" width="165">'.$sheetData[13]["G"].'</td>
+                      </tr>
+                      <tr height="46"> </tr>
+                      <tr height="19">
+                        <td colspan="7" rowspan="2" height="38" width="993">'.$sheetData[15]["A"].'</td>
+                      </tr>';
             }
         }
         if (count($errors) > 0 || count($emptys) > 0 || count($conflicts) > 0) {
@@ -3982,6 +3971,8 @@ class EduSenAction extends CommonAction {
                     $errors[] = "D".$i;
                 }
                 $data[$i-3]["teacher"] = strtr($sheetData[$i]['E'], $arr);
+                $data[$i-3]["form"] = strtr($sheetData[$i]['F'], $arr);
+                $data[$i-3]["description"] = strtr($sheetData[$i]['G'], $arr);
             }
         }
         if (count($errors) > 0) {
