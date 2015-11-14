@@ -941,14 +941,26 @@ class Eater2Action extends CommonAction {
         }
         if($classinfo[0][major] == ''){
             $major='______________________________________';
+            $item = '_________________';
+            $iteme = '_________________';
         }else{
             $major=$classinfo[0][major];
+            $item = M("major")->where(array("major"=>$major))->find();
+            if ($item["item"] == "HND") {
+                $item = "英国高等教育文凭";
+                $iteme = "SQA HND programme";
+            }elseif ($item["item"] == "美国2+2") {
+                $item = "美国高等教育项目";
+                $iteme = "American Higher Education Project(AHEP)";
+            }
         }
         if($classinfo[0][majore] == ''){
             $majore='_____________________________________';
         }else{
             $majore=$classinfo[0][majore];
         }
+        $this->assign("item",$item);
+        $this->assign("iteme",$iteme);
         $this->assign('zsex',$zsex);
         $this->assign('year',$year);
         $this->assign('month',$month);
@@ -2837,8 +2849,12 @@ class Eater2Action extends CommonAction {
         exit;
     }
     public function downCertification(){
-        $truename = $_GET['name'];
+        /*$truename = $_GET['name'];
         if (!empty($truename)) {
+            $this -> error('参数缺失');
+        }*/
+        $id = $_GET['id'];
+        if (empty($id)) {
             $this -> error('参数缺失');
         }
         $student=D('classstudent');
@@ -2891,6 +2907,14 @@ class Eater2Action extends CommonAction {
             $major='________________________';
         }else{
             $major=$classinfo[0][major];
+            $item = M("major")->where(array("major"=>$major))->find();
+            if ($item["item"] == "HND") {
+                $item = "英国高等教育文凭";
+                $iteme = "SQA HND programme";
+            }elseif ($item["item"] == "美国2+2") {
+                $item = "美国高等教育项目";
+                $iteme = "American Higher Education Project(AHEP)";
+            }
         }
         if($classinfo[0][majore] == ''){
             $majore='__________________';
@@ -2916,34 +2940,28 @@ class Eater2Action extends CommonAction {
         $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>100));
         $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>100));
         $section->addTextBreak(3);
-        $section->addText('HND'.' '.'在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
+        $section->addText('在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
         $section->addTextBreak(2);
         $textrun = $section->createTextRun();
         $textrun->addText("　　"."兹证明",$zhongzhengwen);
         $textrun->addText($name,array('bold'=>true,'name'=>'Arial','size'=>'12'));
-        $textrun->addText("同学，".$zsex."，生于".$year."年".$month."月".$day."日，于".$enrollyear."年9月进入南京大学大学外语部英国高等教育文凭（Higher National Diploma 简称HND）项目学习。（该项目引进自苏格兰学历管理委员会）。",$zhongzhengwen);
-        $section->addTextBreak(1);
-        $section->addText("　　"."该学生目前为该项目".$major."专业".$current_grade."年级学生。",$zhongzhengwen);
+        $textrun->addText("同学，".$zsex."，".$year."年".$month."月".$day."日生，自".$enrollyear."年9月开始在我校学习“".$item."”课程就读专业为“".$major."”。",$zhongzhengwen);
         $section->addTextBreak(1);
         $section->addText('特此证明',$zhongzhengwen);
         $section->addTextBreak(2);
-        $section->addText('南京大学 大学外语部',$zhongzhengwen,'YStyle');
+        $section->addText('北京航空航天大学创业管理培训学院',$zhongzhengwen,'YStyle');
         $section->addText($nowyear."年".$nowmonth."月".$nowday."日",$zhongzhengwen,'YStyle');
         $section->addTextBreak(3);
-        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addText('HND Student Status Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
+        $section->addText('On-Studying Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
+        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'),'YStyle');
         $section->addTextBreak(3);
         $textrun = $section->createTextRun();
         $textrun->addText("This is to certify that student ",array('name'=>'Times New Roman','size'=>'12'));
         $textrun->addText($mystuename,array('bold'=>true,'name'=>'Times New Roman','size'=>'12'));
-        $textrun->addText("," .$sex.", born on"." ".$birthday.", was enrolled in Department of Applied Foreign Language Studies, Nanjing University in Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
+        $textrun->addText("," .$sex.", born on"." ".$birthday.", has been a student of ".$iteme." in the specialty of ".$majore." in the Entrepreneurship Management and Training School at our university since Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
         $section->addTextBreak(1);
-        $section->addText("The student above is now in the"." ".$current_egrade." "."year of Higher National Diploma, which is introduced from Scottish Qualifications Authority (SQA, UK), with the major of"." ".$majore.".",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText('Hereby Certify.',array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText('Department of Applied Foreign Language Studies',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
-        $section->addText('Nanjing University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $section->addText('Entrepreneurship Management and Training School',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $section->addText('Beihang University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
         $filename='HND'.''.'在读证明-'.$name;
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");

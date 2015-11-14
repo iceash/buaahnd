@@ -366,10 +366,10 @@ class EduSen2Action extends CommonAction {
         $this -> display();
     }
     public function stuCommonCertification(){
-         $id = $_GET['id'];
+        $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
-        } 
+        }
         $student=D('classstudent');
         $enroll=D('enroll');
         $class=D('class');
@@ -419,14 +419,26 @@ class EduSen2Action extends CommonAction {
         }
         if($classinfo[0][major] == ''){
             $major='______________________________________';
+            $item = '_________________';
+            $iteme = '_________________';
         }else{
             $major=$classinfo[0][major];
+            $item = M("major")->where(array("major"=>$major))->find();
+            if ($item["item"] == "HND") {
+                $item = "英国高等教育文凭";
+                $iteme = "SQA HND programme";
+            }elseif ($item["item"] == "美国2+2") {
+                $item = "美国高等教育项目";
+                $iteme = "American Higher Education Project(AHEP)";
+            }
         }
         if($classinfo[0][majore] == ''){
             $majore='_____________________________________';
         }else{
             $majore=$classinfo[0][majore];
         }
+        $this->assign("item",$item);
+        $this->assign("iteme",$iteme);
         $this->assign('zsex',$zsex);
         $this->assign('year',$year);
         $this->assign('month',$month);
@@ -449,7 +461,7 @@ class EduSen2Action extends CommonAction {
             $tips='下划线处信息不全，请下载后补全!';
         }
         $this->assign('tips',$tips);
-         $this -> display();
+        $this -> display();
     }
     public function stuCommonAttend() {
         $id = $_GET['id'];
@@ -1089,8 +1101,8 @@ class EduSen2Action extends CommonAction {
         $this -> display();
     } 
     public function grade() {
-        $map["item"] = "美国2+2";
         $dao = D('ProgradeView');
+        $map["item"] = "美国2+2";
         $this -> assign('category_fortag', $this->getTerm());//学期列表
         $class = D('ProgradeView')->where($map)->group("classid")->field("classid,classname")->select();
         foreach ($class as $vc) {
@@ -1127,33 +1139,176 @@ class EduSen2Action extends CommonAction {
             $map['course.name|course.ename'] = $_GET['course'];
             $this -> assign('course_current', $_GET['course']);
         } 
+        $letters = array("4"=>"4","3"=>"3","2"=>"2","1"=>"1","0"=>"0");
+        $this->assign("grade_fortag",$letters);
+        if (isset($_GET['grade'])) {
+            // $map['letter'] = $_GET['grade'];
+            $this -> assign('grade_current', $_GET['grade']);
+        } 
+        $final = array(0=>"0",1=>"1",2=>"2",3=>"3",4=>"4");
+        if (isset($_GET["final"])) {
+            //最终成绩，待定
+            for ($i=0; $i < count($final); $i++) { 
+                $finalarr[$i] = explode("-",$final[$i]);
+            }
+            $this->assign("final_current",$_GET["final"]);
+        }
+        $this->assign("final_fortag",$final);
         //以上为检索条件
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
-            import("@.ORG.Page");
-            $listRows = 20;
-            $p = new Page($count, $listRows);
-            $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
-            $page = $p -> show();
-            $this -> assign("page", $page);
+            // import("@.ORG.Page");
+            // $listRows = 20;
+            // $p = new Page($count, $listRows);
+            // $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
+            // $page = $p -> show();
+            // $this -> assign("page", $page);
+            $my = $dao -> where($map)-> select();
+            foreach ($my as $vmy) {
+                $willfinal[$vmy["coursename"]][] = $vmy["hundred"];
+            }
+            foreach ($willfinal as $key => $va) {
+                $num = count($va);
+                $truefinal[$key] = 0;
+                for ($i=0; $i < $num; $i++) { 
+                    if ($va[$i] == 0) {
+                        $truefinal[$key] = 0;
+                        break;
+                    }
+                    $truefinal[$key] += $va[$i];
+                }
+                $truefinal[$key] = round($truefinal[$key] / $num);
+            }
+            $tmp = count($my);
+            for ($i=0; $i < $tmp; $i++) { 
+                $my[$i]["hundred"] = $truefinal[$my[$i]["coursename"]];
+                if (isset($_GET["final"])) {
+                    if ((int)$truefinal[$my[$i]["coursename"]] != (int)$finalarr[$_GET["final"]][0]) {
+                        unset($my[$i]);continue;
+                    }
+                }
+                if (isset($_GET["grade"])) {
+                    if ($my[$i]["letter"] != $_GET["grade"]) {
+                        unset($my[$i]);continue;
+                    }
+                }
+            }
             $this -> assign('my', $my);
         } 
         $this -> menuGrade();
         $this -> display();
     } 
-    public function proGradeDel(){
-        $id = $_GET['id'];
-        if (!isset($id)) {
-            $this -> error('参数缺失');
+    public function downloadGradeList() {
+        $dao = D('ProgradeView');
+        $map["item"] = "美国2+2";
+        $class = D('ProgradeView')->where($map)->group("classid")->field("classid,classname")->select();
+        foreach ($class as $vc) {
+            $classes[$vc["classid"]]=$vc["classname"];
+        }
+        $major = D('ProgradeView')->where($map)->group("major")->field("major")->select();
+        foreach ($major as $vm) {
+            $majors[$vm["major"]]=$vm["major"];
+        }
+        $course = D('ProgradeView')->where($map)->group("coursename")->field("coursename,courseename")->select();
+        foreach ($course as $va) {
+            $courses[$va["coursename"]]=$va["coursename"].$va["courseename"];
+        }
+        if (isset($_GET['searchkey'])) {
+            $map['stuname|stunum'] = array('like', '%' . $_GET['searchkey'] . '%');
         } 
-        $map['id'] = array('in', $id);
-        $dao = M('prograde');
-        $count = $dao -> where($map) -> delete();
-        if ($count > 0) {
-            $this -> success('已成功删除');
-        } else {
-            $this -> error('该记录不存在');
+        if (isset($_GET['major'])) {
+            $map['major'] = $_GET['major'];
         } 
+        if (isset($_GET['classid'])) {
+            $map['classid'] = $_GET['classid'];
+        } 
+        if (isset($_GET['category'])) {
+            $map['term'] = $_GET['category'];
+        } 
+        if (isset($_GET['course'])) {
+            $map['course.name|course.ename'] = $_GET['course'];
+        } 
+        $letters = array("S"=>"S","RA"=>"RA","RD"=>"RD","U"=>"U","U(A)"=>"U(A)","U(D)"=>"U(D)");
+        /*if (isset($_GET['grade'])) {
+            $map['letter'] = $_GET['grade'];
+        } */
+        $final = array(0=>"0-59",1=>"60-69",2=>"70-79",3=>"80-89",4=>"90-100");
+        if (isset($_GET["final"])) {
+            //最终成绩，待定
+            for ($i=0; $i < count($final); $i++) { 
+                $finalarr[$i] = explode("-",$final[$i]);
+            }
+        }
+        //以上为检索条件
+        $count = $dao -> where($map) -> count();
+        $my = $dao -> where($map)-> select();
+        foreach ($my as $vmy) {
+            $willfinal[$vmy["coursename"]][] = $vmy["hundred"];
+        }
+        foreach ($willfinal as $key => $va) {
+            $num = count($va);
+            $truefinal[$key] = 0;
+            for ($i=0; $i < $num; $i++) { 
+                if ($va[$i] == 0) {
+                    $truefinal[$key] = 0;
+                    break;
+                }
+                $truefinal[$key] += $va[$i];
+            }
+            $truefinal[$key] = round($truefinal[$key] / $num);
+        }
+        $tmp = count($my);
+        for ($i=0; $i < $tmp; $i++) { 
+           $my[$i]["hundred"] = $truefinal[$my[$i]["coursename"]];
+            if (isset($_GET["final"])) {
+                if ((int)$truefinal[$my[$i]["coursename"]] < (int)$finalarr[$_GET["final"]][0] || (int)$truefinal[$my[$i]["coursename"]] > (int)$finalarr[$_GET["final"]][1]) {
+                    unset($my[$i]);continue;
+                }
+            }
+            if (isset($_GET["grade"])) {
+                if ($my[$i]["letter"] != $_GET["grade"]) {
+                    unset($my[$i]);continue;
+                }
+            }
+        }
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/scorelist.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $i = 2;
+        foreach ($my as $va) {
+            if ($va["isrepair"] == 0) {
+                $va["isrepair1"] = "";
+            }else{
+                $va["isrepair1"] = "重修";
+            }
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$i,$va["classname"])
+                ->setCellValue("B".$i,$va["major"])
+                ->setCellValue("C".$i,$va["stuname"])
+                ->setCellValue("D".$i,$va["stunum"])
+                ->setCellValue("E".$i,$va["scnid"])
+                ->setCellValue("F".$i,$va["coursename"])
+                ->setCellValue("G".$i,$va["courseename"])
+                ->setCellValue("H".$i,$va["examname"])
+                ->setCellValue("I".$i,$va["credit"])
+                ->setCellValue("J".$i,$va["letter"])
+                ->setCellValue("K".$i,$va["isrepair1"])
+                ->setCellValue("L".$i,$va["hundred"]);
+            $i++;
+        }
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename=成绩列表.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
     }
     public function subjectStu() {
         $id = $_GET['id'];
@@ -2882,10 +3037,14 @@ class EduSen2Action extends CommonAction {
         exit;
     }
     public function downCertification(){
-        $id = $_GET['id'];
-        if (!isset($id)) {
+        /*$truename = $_GET['name'];
+        if (!empty($truename)) {
             $this -> error('参数缺失');
-        } 
+        }*/
+        $id = $_GET['id'];
+        if (empty($id)) {
+            $this -> error('参数缺失');
+        }
         $student=D('classstudent');
         $enroll=D('enroll');
         $class=D('class');
@@ -2912,7 +3071,7 @@ class EduSen2Action extends CommonAction {
         $stuinfo=$enroll->where($map1)->select();
         $name=$stu[0][studentname];
         $zsex='';
-         $year='';
+        $year='';
         $month='';
         $day='';
         $major='';
@@ -2936,6 +3095,14 @@ class EduSen2Action extends CommonAction {
             $major='________________________';
         }else{
             $major=$classinfo[0][major];
+            $item = M("major")->where(array("major"=>$major))->find();
+            if ($item["item"] == "HND") {
+                $item = "英国高等教育文凭";
+                $iteme = "SQA HND programme";
+            }elseif ($item["item"] == "美国2+2") {
+                $item = "美国高等教育项目";
+                $iteme = "American Higher Education Project(AHEP)";
+            }
         }
         if($classinfo[0][majore] == ''){
             $majore='__________________';
@@ -2961,34 +3128,28 @@ class EduSen2Action extends CommonAction {
         $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>100));
         $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>100));
         $section->addTextBreak(3);
-        $section->addText('HND'.' '.'在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
+        $section->addText('在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
         $section->addTextBreak(2);
         $textrun = $section->createTextRun();
         $textrun->addText("　　"."兹证明",$zhongzhengwen);
         $textrun->addText($name,array('bold'=>true,'name'=>'Arial','size'=>'12'));
-        $textrun->addText("同学，".$zsex."，生于".$year."年".$month."月".$day."日，于".$enrollyear."年9月进入南京大学大学外语部英国高等教育文凭（Higher National Diploma 简称HND）项目学习。（该项目引进自苏格兰学历管理委员会）。",$zhongzhengwen);
-        $section->addTextBreak(1);
-        $section->addText("　　"."该学生目前为该项目".$major."专业".$current_grade."年级学生。",$zhongzhengwen);
+        $textrun->addText("同学，".$zsex."，".$year."年".$month."月".$day."日生，自".$enrollyear."年9月开始在我校学习“".$item."”课程就读专业为“".$major."”。",$zhongzhengwen);
         $section->addTextBreak(1);
         $section->addText('特此证明',$zhongzhengwen);
         $section->addTextBreak(2);
-        $section->addText('南京大学 大学外语部',$zhongzhengwen,'YStyle');
+        $section->addText('北京航空航天大学创业管理培训学院',$zhongzhengwen,'YStyle');
         $section->addText($nowyear."年".$nowmonth."月".$nowday."日",$zhongzhengwen,'YStyle');
         $section->addTextBreak(3);
-        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addText('HND Student Status Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
+        $section->addText('On-Studying Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
+        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'),'YStyle');
         $section->addTextBreak(3);
         $textrun = $section->createTextRun();
         $textrun->addText("This is to certify that student ",array('name'=>'Times New Roman','size'=>'12'));
         $textrun->addText($mystuename,array('bold'=>true,'name'=>'Times New Roman','size'=>'12'));
-        $textrun->addText("," .$sex.", born on"." ".$birthday.", was enrolled in Department of Applied Foreign Language Studies, Nanjing University in Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
+        $textrun->addText("," .$sex.", born on"." ".$birthday.", has been a student of ".$iteme." in the specialty of ".$majore." in the Entrepreneurship Management and Training School at our university since Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
         $section->addTextBreak(1);
-        $section->addText("The student above is now in the"." ".$current_egrade." "."year of Higher National Diploma, which is introduced from Scottish Qualifications Authority (SQA, UK), with the major of"." ".$majore.".",array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText('Hereby Certify.',array('name'=>'Times New Roman','size'=>'12'));
-        $section->addTextBreak(1);
-        $section->addText('Department of Applied Foreign Language Studies',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
-        $section->addText('Nanjing University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $section->addText('Entrepreneurship Management and Training School',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $section->addText('Beihang University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
         $filename='HND'.''.'在读证明-'.$name;
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");

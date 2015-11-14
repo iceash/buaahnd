@@ -81,6 +81,8 @@ function mysearch(){
     var major=jQuery("#major").val();
     var classid=jQuery("#class").val();
     var course=jQuery("#course").val();
+    var grade=jQuery("#grade").val();
+    var final=jQuery("#final").val();
 	var url="__URL__/grade";
 	if(searchkey!==''){
 		url=url+"/searchkey/"+searchkey;
@@ -97,7 +99,46 @@ function mysearch(){
     if(course!==''){
         url=url+"/course/"+course;
     }
+    if(grade!==''){
+        url=url+"/grade/"+grade;
+    }
+    if(final!==''){
+        url=url+"/final/"+final;
+    }
 	window.location=url;
+}
+
+function download(){
+    var searchkey=jQuery('#searchkey').val();
+    var category=jQuery('#category').val();
+    var major=jQuery("#major").val();
+    var classid=jQuery("#class").val();
+    var course=jQuery("#course").val();
+    var grade=jQuery("#grade").val();
+    var final=jQuery("#final").val();
+    var url="__URL__/downloadGradeList";
+    if(searchkey!==''){
+        url=url+"/searchkey/"+searchkey;
+    }
+    if(category!==''){
+        url=url+"/category/"+category;
+    }
+    if(major!==''){
+        url=url+"/major/"+major;
+    }
+    if(classid!==''){
+        url=url+"/classid/"+classid;
+    }
+    if(course!==''){
+        url=url+"/course/"+course;
+    }
+    if(grade!==''){
+        url=url+"/grade/"+grade;
+    }
+    if(final!==''){
+        url=url+"/final/"+final;
+    }
+    window.location=url;
 }
 function searchkeydown(e){
 	var e = e || event;
@@ -119,25 +160,29 @@ function searchkeydown(e){
     <html:select first="所有专业" options="major_fortag" name="major" id="major" selected="major_current"/>&nbsp;
     <html:select first="所有班级" options="class_fortag" name="class" id="class" selected="class_current"/>&nbsp;
     <html:select first="所有课程" options="course_fortag" name="course" id="course" selected="course_current"/>&nbsp;
+    <html:select first="成绩" options="grade_fortag" name="grade" id="grade" selected="grade_current"/>&nbsp;
+    <html:select first="最终成绩" options="final_fortag" name="final" id="final" selected="final_current"/>&nbsp;
     <img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
 </div>
+<a href="javascript:download()" style="position: relative; top: 40px; left: 20px; font-size: 16px; color: rgb(104, 104, 104);">导出Excel</a>
 <!-- <div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 操作说明：开启可录成绩按钮用于任课老师录错成绩提交后申请修改。</div> -->
 <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
 <thead>
   <tr>
-  <th width="5" height="30" ><input type="checkbox" id="check"/></th>
-  <th>班级</th>
-  <th>专业</th>
+    <th width="5" height="30" ><input type="checkbox" id="check"/></th>
+    <th>班级</th>
+    <th>专业</th>
+    <th>姓名</th>
+    <th>学号</th>
+    <th>SCN号</th>
     <th>课程名称</th>
     <th>课程英文名</th>
     <th>考试名称</th>
     <th>学分</th>
-    <th>姓名</th>
-    <th>学号</th>
-    <th>学期</th>
-    <th>分数1</th>
-    <th>分数2</th>
+    <!-- <th>学期</th> -->
+    <th>考试成绩</th>
     <th>重修标志</th>
+    <th>最终成绩</th>
 	<!-- <th width="190">操作</th> -->
   </tr>
 </thead>
@@ -147,18 +192,19 @@ function searchkeydown(e){
     <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
     <td>{$my.classname}</td>
     <td>{$my.major}</td>
+    <td>{$my.stuname}</td>
+    <td>{$my.stunum}</td>
+    <td>{$my.scnid}</td>
     <td>{$my.coursename}</td>
 	<td>{$my.courseename}</td>
     <td>{$my.examname}</td>
     <td>{$my.credit}</td>
-	<td>{$my.stuname}</td>
-	<td>{$my.stunum}</td>
-	<td>{$my.term}</td>
+	<!-- <td>{$my.term}</td> -->
     <td>{$my.letter}</td>
-    <td>{$my.hundred}</td>
     <td><?php if ($my["isrepair"]) {
         echo '重修';
     } ?></td>
+    <td>{$my.hundred}</td>
 	<!-- <td><input type="button" value="审核成绩" onclick="k('{$my.id}');" />&nbsp;<input type="button"  value="开启可录成绩" onclick="k1('{$my.id}');"/></td> -->
   </tr>
   </volist>

@@ -146,36 +146,34 @@ function searchkeydown(e){
 		<option value="月">月</option>
 		<option value="期">期</option>
 	</select>
-	<label>总结日期：</label>
+	<!-- <label>总结日期：</label>
 	<input type="text" name="datefrom" id="datefrom" class="calendar" value="{$_GET['datefrom']}" />
 	<label>至</label>
-	<input type="text" name="dateto" id="dateto" class="calendar"  value="{$_GET['dateto']}"/>
+	<input type="text" name="dateto" id="dateto" class="calendar"  value="{$_GET['dateto']}"/> -->
 </div>
 <div class="search">输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
 <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
 <thead>
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
-  	<th>班级</th>
-  	<th>类型</th>
-	<th>起始日期</th>
-	<th>截止日期</th>
 	<th>标题</th>
+    <th>标号</th>
+    <th>内容</th>
+    <th>完成情况</th>
+    <th>备注</th>
 	<th>上传时间</th>
-	<th>操作</th>
   </tr>
 </thead>
 <tbody>
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
-  	<td>{$my.classname}</td>
-  	<td>{$my.type}</td>
-    <td>{$my.sbdate}</td>
-    <td>{$my.sedate}</td>
     <td>{$my.title}</td>
+    <td>{$my.number}</td>
+    <td>{$my.content}</td>
+    <td>{$my.finish}</td>
+    <td>{$my.remark}</td>
 	<td>{$my.date}</td>
-	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
 	</td>
   </tr>
   </volist>

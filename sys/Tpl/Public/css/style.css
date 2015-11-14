@@ -72,6 +72,9 @@ input[type="button"]:hover {
     color: #025098;
     margin-bottom: 40px;
 }
+.search select{
+    max-width: 200px;
+}
 
 .mytable,.alert_table{
     border-collapse:collapse;

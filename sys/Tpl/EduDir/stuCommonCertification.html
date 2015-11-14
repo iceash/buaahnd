@@ -26,35 +26,30 @@ function word(id){
  </table>
  <div id="tips" ><span><font color='red' style="margin-left:410px">{$tips}</font></span></div><br/>
  <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left;text-indent:2em;'>
-                                            <span style="margin-left:240px"><b>HND 在读证明</b></span>
+                                            <span style="margin-left:240px"><b>在读证明</b></span>
                                             <br/><br/>
         
-          <p style='margin-right:77px;margin-left:82px;'>兹证明{$stu[0][studentname]}同学，{$zsex}，生于{$year}年{$month}月{$day}日，于{$classinfo[0][year]}年9月进入南京大学大学外语部英国高等教育文凭（Higher National Diploma 简称HND）项目学习。</p>
-        <span style='margin-left:77px;'>（该项目引进自苏格兰学历管理委员会）。</span>
-        <br />
-        <p style='margin-right:77px;margin-left:82px;'>该学生目前为该项目{$major}专业{$current_grade}年级学生。</p>
+          <p style='margin-right:77px;margin-left:82px;'>兹证明{$stu[0][studentname]}同学，{$zsex}，{$year}年{$month}月{$day}日生，自{$classinfo[0][year]}年9月开始在北京航空航天大学创业管理培训学院学习“{$item}”课程，就读专业为“{$major}”。</p>
         <br />
 <span style="margin-left:82px">特此证明</span>
 </div>
 <br/><br/>
 <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
-<span style="margin-right:77px">南京大学 大学外语部</span><br/>
+<span style="margin-right:77px">北京航空航天大学创业管理培训学院</span><br/>
 <span style='margin-right:77px'>{$now|substr=0,4}年{$now|substr=5,2}月{$now|substr=8,2}日</span>
 </div><br/><br/>
 <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
 <span style='margin-left:82px;'>{$current_time}</span>
 </div><br/>
 <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
-<span style="margin-left:240px"><b>HND Student Status Certificate</b></span>
+<span style="margin-left:240px"><b>On-Studying Certificate</b></span>
 <br/><br/>
-<p style='margin-right:77px;margin-left:82px;'>This is to certify that student {$mystuename}, {$sex}, born on {$birthday}, was enrolled in Department of Applied Foreign Language Studies, Nanjing University in Sep.{$classinfo[0][year]}.</p>
+<p style='margin-right:77px;margin-left:82px;'>This is to certify that student {$mystuename}, {$sex}, born on {$birthday}, has been a student of {$iteme} in the specialty of {$majore} in the Entrepreneurship Management and Training School at Beihang University since Sep.{$classinfo[0][year]}.</p>
 
-<p style='margin-right:77px;margin-left:82px;'>The student above is now in the {$current_egrade} year of Higher National Diploma, which is ntroduced from Scottish Qualifications Authority (SQA, UK), with the major of {$majore}.</p>
-<span style='margin-right:77px;margin-left:82px;'>Hereby Certify.</span>
 </div><br/>
 <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
-<span style="margin-right:77px">Department of Applied Foreign Language Studies</span><br/>
-<span style="margin-right:77px">Nanjing University<span>
+<span style="margin-right:77px">Entrepreneurship Management and Training School</span><br/>
+<span style="margin-right:77px">Beihang University<span>
 </div>
  
  
