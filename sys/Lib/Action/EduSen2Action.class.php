@@ -667,6 +667,7 @@ class EduSen2Action extends CommonAction {
 
     public function insertPlus() {
         $dao = D("Enroll");
+        $map["student"] = $dao->where(array("id"=>$_POST["id"]))->getField("username");
         if ($dao -> create()) {
             $dao -> abroad = implode(',', $_POST['abroad']);
             $dao -> infosource = implode(',', $_POST['infosource']);
@@ -674,6 +675,9 @@ class EduSen2Action extends CommonAction {
             $dao -> sourcenet = implode(',', $_POST['sourcenet']);
             $checked = $dao->save();
             if ($checked>0) {
+                if (!empty($_POST["username"])) {
+                    M("classstudent")->where($map)->save(array("student"=>$_POST["username"]));
+                }
                 $this -> success('已成功保存');
             } else{
                 $this -> error('没有更新任何数据');
@@ -1972,7 +1976,7 @@ class EduSen2Action extends CommonAction {
             import("@.ORG.Page");
             $listRows = 20;
             $p = new Page($count, $listRows);
-            $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('number asc') -> select();
+            $my = $dao -> where($map) ->order("classid") -> limit($p -> firstRow . ',' . $p -> listRows) -> order('number asc') -> select();
             $page = $p -> show();
             $this -> assign("page", $page);
             $this -> assign('my', $my);
@@ -3685,22 +3689,22 @@ class EduSen2Action extends CommonAction {
                 continue;
             }
             $data_a[$i-3]['classid'] = $classid;
-            $data_a[$i-3]['name'] = strtr($sheetData[$i]['C'], $arr);
-            $data_a[$i-3]['ename'] = strtr($sheetData[$i]['D'], $arr);
-            $data_a[$i-3]['category2'] = strtr($sheetData[$i]['E'], $arr);
-            $data_a[$i-3]['credit'] = strtr($sheetData[$i]['F'], $arr);
-            $data_a[$i-3]['school'] = strtr($sheetData[$i]['G'], $arr);
-            $data_a[$i-3]['category1'] = strtr($sheetData[$i]['H'], $arr);
-            $data_a[$i-3]['coursetime'] = strtr($sheetData[$i]['I'], $arr);
-            $data_a[$i-3]['exammethod'] = strtr($sheetData[$i]['J'], $arr);
-            $data_a[$i-3]['category3'] = strtr($sheetData[$i]['K'], $arr);
-            $data_a[$i-3]['level'] = strtr($sheetData[$i]['L'], $arr);
-            $data_a[$i-3]['master'] = strtr($sheetData[$i]['M'], $arr);
-            $data_a[$i-3]['teachers'] = strtr($sheetData[$i]['N'], $arr);
-            $data_a[$i-3]['book'] = strtr($sheetData[$i]['O'], $arr);
-            $data_a[$i-3]['intro'] = strtr($sheetData[$i]['P'], $arr);
-            $data_a[$i-3]['eintro'] = strtr($sheetData[$i]['Q'], $arr);
-            $data_a[$i-3]['plus'] = strtr($sheetData[$i]['R'], $arr);
+            $data_a[$i-3]['name'] = trim(strtr($sheetData[$i]['C'], $arr));
+            $data_a[$i-3]['ename'] = trim(strtr($sheetData[$i]['D'], $arr));
+            $data_a[$i-3]['category2'] = trim(strtr($sheetData[$i]['E'], $arr));
+            $data_a[$i-3]['credit'] = trim(strtr($sheetData[$i]['F'], $arr));
+            $data_a[$i-3]['school'] = trim(strtr($sheetData[$i]['G'], $arr));
+            $data_a[$i-3]['category1'] = trim(strtr($sheetData[$i]['H'], $arr));
+            $data_a[$i-3]['coursetime'] = trim(strtr($sheetData[$i]['I'], $arr));
+            $data_a[$i-3]['exammethod'] = trim(strtr($sheetData[$i]['J'], $arr));
+            $data_a[$i-3]['category3'] = trim(strtr($sheetData[$i]['K'], $arr));
+            $data_a[$i-3]['level'] = trim(strtr($sheetData[$i]['L'], $arr));
+            $data_a[$i-3]['master'] = trim(strtr($sheetData[$i]['M'], $arr));
+            $data_a[$i-3]['teachers'] = trim(strtr($sheetData[$i]['N'], $arr));
+            $data_a[$i-3]['book'] = trim(strtr($sheetData[$i]['O'], $arr));
+            $data_a[$i-3]['intro'] = trim(strtr($sheetData[$i]['P'], $arr));
+            $data_a[$i-3]['eintro'] = trim(strtr($sheetData[$i]['Q'], $arr));
+            $data_a[$i-3]['plus'] = trim(strtr($sheetData[$i]['R'], $arr));
         }
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
@@ -4301,7 +4305,15 @@ class EduSen2Action extends CommonAction {
         $row = 0;//检查一共有多少考试列
         $i = 67;//从第C列开始检查第四行的考试
         while (strlen($sheetData[3][chr($i)]) != 0) {
-            if (!in_array(strtr($sheetData[3][chr($i)], $arr), $course)) {
+            $c = false;
+            $tmp = trim(strtr($sheetData[3][chr($i)], $arr));
+            for ($i=0; $i < count($course); $i++) { 
+                if (strcmp($tmp,trim($course[$i])) == 0) {
+                    $c = $course[$i];
+                    break;
+                }
+            }
+            if (!$c) {
                 $errors[] = chr($i)."3";
             }
             $i++;
@@ -4335,7 +4347,7 @@ class EduSen2Action extends CommonAction {
             for ($m = 1; $m <= $row; $m++) { 
                 $grade[$num]["stuname"] = $map["studentname"];
                 $grade[$num]["stunum"] =  $map["student"];
-                $grade[$num]["course"] = strtr($sheetData[3][chr(66+$m)], $arr);//课程名称
+                $grade[$num]["course"] = trim(strtr($sheetData[3][chr(66+$m)], $arr));//课程名称
                 $grade[$num]["examname"] = strtr($sheetData[3][chr(66+$m)], $arr);//考试名称
                 $grade[$num]["term"] = $term;
                 $grade[$num]["isrepair"] = $isrepair;
@@ -4593,6 +4605,7 @@ class EduSen2Action extends CommonAction {
         $line = 6;//从第7行开始写，每门课加1
         $row = 64;//从B列开始写，每学期加2
         $course = M("course");
+        $allscore = 0;$allcredit = 0;
         foreach ($willwrite as $termname => $vw) {
             $row = $row + 2;
             $p  ->setActiveSheetIndex(0)
@@ -4616,8 +4629,13 @@ class EduSen2Action extends CommonAction {
                     ->setCellValue("A".$line,$coursename)
                     ->setCellValue(chr($row).$line,$hundred)
                     ->setCellValue(chr($row+1).$line,$credit);
+                $allscore += $hundred * $credit;
+                $allcredit += $credit;
             }
         }
+        $gpa = round($hundred/$credit,2);
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue("A".($line+1),'GPA:'.$gpa);
         $styleThinBlackBorderOutline = array( 
             'borders' => array ( 
                 'allborders' => array ( 
@@ -4627,6 +4645,8 @@ class EduSen2Action extends CommonAction {
             ),
         );
         $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");

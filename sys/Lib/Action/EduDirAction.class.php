@@ -1920,6 +1920,7 @@ class EduDirAction extends CommonAction {
 
     public function insertPlus() {
         $dao = D("Enroll");
+        $map["student"] = $dao->where(array("id"=>$_POST["id"]))->getField("username");
         if ($dao -> create()) {
             $dao -> abroad = implode(',', $_POST['abroad']);
             $dao -> infosource = implode(',', $_POST['infosource']);
@@ -1927,6 +1928,9 @@ class EduDirAction extends CommonAction {
             $dao -> sourcenet = implode(',', $_POST['sourcenet']);
             $checked = $dao->save();
             if ($checked>0) {
+                if (!empty($_POST["username"])) {
+                    M("classstudent")->where($map)->save(array("student"=>$_POST["username"]));
+                }
                 $this -> success('已成功保存');
             } else{
                 $this -> error('没有更新任何数据');
