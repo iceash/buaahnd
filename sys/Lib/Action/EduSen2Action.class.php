@@ -724,6 +724,11 @@ class EduSen2Action extends CommonAction {
             $dtree_stu = $dao2->order('student asc')-> select();
             $this->assign('dtree_year',$dtree_year);
             $this -> assign('dtree_class', $dtree_class);
+            foreach ($dtree_stu as $k => $va) {
+                if (empty($va["student"]) || empty($va["scnid"]) || empty($va["sex"]) || empty($va["bankcard"]) || empty($va["onecard"]) || empty($va["mobile"])) {
+                    $dtree_stu[$k]["studentname"] .= '<span style="color:red;">*</span>';
+                }
+            }
             $this -> assign('dtree_stu', $dtree_stu);
             $this->display();
         }

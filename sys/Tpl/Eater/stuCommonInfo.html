@@ -74,6 +74,7 @@ function insert(){
 		success: function(data){
 			if (data.status==1){
 				alert(data.info);	
+                window.parent.frames.location.reload();
 			}else{
 				alert(data.info);
 			}
@@ -321,15 +322,15 @@ function getNationality(a){
       <input type="text" name="username" id="username" class="inputshort" value="{$my.username}"/></td>
   </tr>
   <tr>
-    <td class="ziduan">SCN号 </td>
+    <td class="ziduan"><span class="mustfill">*</span>SCN号 </td>
     <td><label for="textfield"></label>
       <input type="text" name="scnid" id="scnid" class="inputshort" value="{$my.scnid}"/></td>
   </tr>
-  <tr>
+  <!-- <tr>
     <td class="ziduan"><span class="mustfill">*</span>入学年份</td>
     <td><label for="textfield"></label>
       <input type="text" name="cyear" id="ctime" class="inputshort" value="{$my.ctime|substr=0,4}"/></td>
-  </tr>
+  </tr> -->
   <tr>
     <td class="ziduan"><span class="mustfill">*</span>性别 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
     <td> <label><input type="radio" name="sex" value="男" <eq name="my.sex" value="男">checked="checked"</eq> />男</label> &nbsp;
@@ -354,7 +355,7 @@ function getNationality(a){
       <input type="text" name="onecard" id="onecard" class="inputlong" value="{$my.onecard}"/></td>
   </tr>
   <tr>
-    <td  class="ziduan">身份证号码 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td  class="ziduan"><span class="mustfill">*</span>身份证号码 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
     <td><input type="text" name="idcard" id="idcard" class="inputlong" value="{$my.idcard}"/></td>
   </tr>
   <tr>

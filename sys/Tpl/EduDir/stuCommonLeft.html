@@ -48,7 +48,7 @@ function search(){
 	<volist name="dtree_stu" id="dtree_stu">
 		d.add('{$dtree_stu.student}-{$dtree_stu.studentname}','class{$dtree_stu.classid}','{$dtree_stu.student} {$dtree_stu.studentname}','__URL__/stuCommonScore/id/{$dtree_stu.student}');
 	</volist>
-		d.closeAll();
+		// d.closeAll();
 		d.config.target = "mainFrame";
 		document.write(d);
 		//-->
