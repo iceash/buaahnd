@@ -294,7 +294,7 @@ function getNationality(a){
 
 	<h2>招生信息查看及补录</h2>
 	<h2>学生姓名：{$my.truename}</h2>
-	<div class="m20">填写说明：内容填写完毕后，点击“数据校验”按钮，校验通过之后再点“确认提交”。<span class="mustfill">*</span>为必填项， <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/> 表示可用身份证阅读器便捷录入。</div>
+	<div class="m20">填写说明：内容填写完毕后，点击“数据校验”按钮，校验通过之后再点“确认提交”。<span class="mustfill">*</span>为必填项</div>
 	<div class="m20">　<span class="mustfill"></span>填表人 <input name="fill" type="text" class="inputshort" value="{$my.fill}"/></div>
 	<div><input type="button" value="数据校验" onclick="check(0);"/>&nbsp;<input type="button" value="确认提交"  onclick="check(1);"/>
 	</div>
@@ -312,7 +312,7 @@ function getNationality(a){
 	</td> -->
   </tr>
   <tr>
-    <td class="ziduan"><span class="mustfill">*</span>姓名 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td class="ziduan"><span class="mustfill">*</span>姓名 </td>
     <td><label for="textfield"></label>
       <input type="text" name="truename" id="truename" class="inputshort" value="{$my.truename}"/></td>
   </tr>
@@ -332,16 +332,16 @@ function getNationality(a){
       <input type="text" name="cyear" id="ctime" class="inputshort" value="{$my.ctime|substr=0,4}"/></td>
   </tr> -->
   <tr>
-    <td class="ziduan"><span class="mustfill">*</span>性别 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td class="ziduan"><span class="mustfill">*</span>性别 </td>
     <td> <label><input type="radio" name="sex" value="男" <eq name="my.sex" value="男">checked="checked"</eq> />男</label> &nbsp;
       <label><input type="radio" name="sex" value="女"  <eq name="my.sex" value="女">checked="checked"</eq> />女</label></td>
   </tr>
   <tr>
-    <td  class="ziduan">民族 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td  class="ziduan">民族 </td>
     <td><html:select options="nationality" name="nationality" id="nationality" first="请选择" selected="my['nationality']" /></td>
   </tr>
   <tr>
-    <td  class="ziduan">出生日期 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td  class="ziduan">出生日期 </td>
     <td><input type="text" name="birthday" id="birthday" class="inputshort calendar" value="{$my.birthday|toDate='Y-m-d'}"/></td>
   </tr>
   <tr>
@@ -355,11 +355,11 @@ function getNationality(a){
       <input type="text" name="onecard" id="onecard" class="inputlong" value="{$my.onecard}"/></td>
   </tr>
   <tr>
-    <td  class="ziduan"><span class="mustfill">*</span>身份证号码 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td  class="ziduan"><span class="mustfill">*</span>身份证号码 </td>
     <td><input type="text" name="idcard" id="idcard" class="inputlong" value="{$my.idcard}"/></td>
   </tr>
   <tr>
-    <td  class="ziduan">住址 <img src="../Public/images/info.gif" align="absmiddle" alt="可用身份证阅读器便捷录入"/></td>
+    <td  class="ziduan">住址 </td>
     <td><input type="text" name="address" id="address" class="inputlong" value="{$my.address}"/></td>
   </tr>
   

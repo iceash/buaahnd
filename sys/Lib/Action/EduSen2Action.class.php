@@ -611,28 +611,28 @@ class EduSen2Action extends CommonAction {
             $this -> error('Part1 学生姓名不能为空');
         }
         if (empty($_POST['username'])) {
-            $this -> error('Part1 学生学号不能为空');
+            // $this -> error('Part1 学生学号不能为空');
         }elseif(!isusername($_POST['username'])){
           $this -> error('Part1 学生学号校验失败');  
         }
         if (empty($_POST['cyear'])) {
-            $this -> error('Part1 入学年份不能为空');
+            // $this -> error('Part1 入学年份不能为空');
         }elseif (!isctime($_POST['cyear'])) {
             $this -> error('Part1 入学年份校验失败');
         }
         if (empty($_POST['sex'])) {
-            $this -> error('Part1 性别不能为空');
+            // $this -> error('Part1 性别不能为空');
         }elseif (!issex($_POST['sex'])) {
             $this -> error('Part1 学生性别校验失败');
         }
         if (empty($_POST['bankcard'])) {
-            $this->error("Part1 学生银行卡号不能为空");
+            // $this->error("Part1 学生银行卡号不能为空");
         }
         if (empty($_POST["onecard"])) {
-            $this->error("Part1 学生一卡通号不能为空");
+            // $this->error("Part1 学生一卡通号不能为空");
         }
         if (empty($_POST['mobile'])) {
-            $this -> error('Part1 学生手机号不能为空');
+            // $this -> error('Part1 学生手机号不能为空');
         } elseif (!ismobile($_POST['mobile'])) {
             $this -> error('Part1 学生手机号校验失败');
         }
@@ -647,6 +647,8 @@ class EduSen2Action extends CommonAction {
         if (!empty($_POST['idcard'])) {
             if (!validation_filter_id_card($_POST['idcard']))
                 $this -> error('Part1 身份证号码校验失败');
+        }else{
+            $this->error("Part1 身份证号码不能为空");
         }
         if (!empty($_POST['fmobile'])) {
             if (!ismobile($_POST['fmobile']))
