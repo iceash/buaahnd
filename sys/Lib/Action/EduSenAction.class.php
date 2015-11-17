@@ -4486,13 +4486,13 @@ class EduSenAction extends CommonAction {
             $i += 3;
             $row++;
         }
-        $cs = M("classstudent");
+        $cs = D("ClassstudentView");
         $num = 0;//用num来计数，表示将要写入数据库的数组的下标
         for($i = 5; $i <= $count; $i++){
             $b = false;
             //检查学生信息是否正确
-            $map["studentname"] = strtr($sheetData[$i]['A'], $arr);
-            $map["student"] = strtr($sheetData[$i]['B'], $arr);
+            $map["studentname|ename"] = strtr($sheetData[$i]['A'], $arr);
+            $map["student|scnid"] = strtr($sheetData[$i]['B'], $arr);
             if ($cs->where($map)->count() == 0) {
                 $errors[] = "A".$i;
                 $errors[] = "B".$i;
@@ -4503,8 +4503,8 @@ class EduSenAction extends CommonAction {
             for ($m = 1; $m <= $row*3; $m+=3) { 
                 $grade[$num]["course"] = $c;//课程名称
                 $grade[$num]["examname"] = strtr($sheetData[3][chr(66+$m)], $arr);//考试名称
-                $grade[$num]["stuname"] = $map["studentname"];
-                $grade[$num]["stunum"] =  $map["student"];
+                $grade[$num]["stuname"] = $map["studentname|ename"];
+                $grade[$num]["stunum"] =  $map["studentstudent|scnid"];
                 $grade[$num]["term"] = $term;
                 $grade[$num]["isrepair"] = $isrepair;
                 $b = false;
