@@ -276,8 +276,8 @@ class EduSen2Action extends CommonAction {
         // $menu['usualResultAdd']='导入往年成绩';
         // $menu['resultComplemented']='补全成绩信息';
         $menu['uploadProGrade']='导入专业成绩';
-        // $menu['usualGrade']='查看预科成绩';
-        // $menu['uploadPreGrade']='导入预科成绩';
+        $menu['usualGrade']='查看预科成绩';
+        $menu['uploadPreGrade']='导入预科成绩';
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function menuReward() {
@@ -1309,6 +1309,7 @@ class EduSen2Action extends CommonAction {
                 ->setCellValue("L".$i,$va["hundred"]);
             $i++;
         }
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -3451,7 +3452,8 @@ class EduSen2Action extends CommonAction {
                 ->setCellValueExplicit('G'.($i+3), $vs["idcard"],PHPExcel_Cell_DataType::TYPE_STRING);
 
         }
-          header("Pragma: public");
+          ob_end_clean();
+        header("Pragma: public");
           header("Expires: 0");
           header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
           header("Pragma: no-cache");
@@ -3769,6 +3771,7 @@ class EduSen2Action extends CommonAction {
         $excelurl = $php_path .'../../../..'.$titlepic;
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -4447,6 +4450,7 @@ class EduSen2Action extends CommonAction {
             $line += 7;
         }
         
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -4553,6 +4557,7 @@ class EduSen2Action extends CommonAction {
             ),
         );
         $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -4583,7 +4588,10 @@ class EduSen2Action extends CommonAction {
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', '学号：'.$stuinfo["student"].'        姓名：'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"]);//写上名字
+            ->setCellValue('A2', 'Name of Student（姓名）:'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"])
+            ->setCellValue("A3","Gender（性别）: ".$stuinfo["sex"])
+            ->setCellValue("A4","Date of Birth（生日）:".$stuinfo["birthday"])
+            ->setCellValue("A5","Major（专业）: ".$stuinfo["major"]);
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
@@ -4602,22 +4610,24 @@ class EduSen2Action extends CommonAction {
                 }
             }
         }
-        $line = 6;//从第7行开始写，每门课加1
-        $row = 64;//从B列开始写，每学期加2
+        $line = 6;//从第8行开始写，每门课加1
+        $row = 66;//从B列开始写，每学期加2
         $course = M("course");
         $allscore = 0;$allcredit = 0;
         foreach ($willwrite as $termname => $vw) {
-            $row = $row + 2;
+            $line++;
             $p  ->setActiveSheetIndex(0)
-                ->setCellValue(chr($row)."5",$termname)
-                ->mergeCells(chr($row)."5:".chr($row+1)."5")
+                ->setCellValue("A".$line,$termname)
                 ->setCellValue(chr($row)."6","Marks")
                 ->setCellValue(chr($row+1)."6","Credits");
             foreach ($vw as $coursename => $vs) {
-                $line++;
                 $map["classid"] = $stuinfo["classid"];
                 $map["name|ename"] = $coursename;
                 $credit = $course->where($map)->getField("credit");//获取学分
+                if (!$credit) {
+                    continue;
+                }
+                $line++;
                 if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
                     $hundred = 0;
                     $letter = "U";
@@ -4632,10 +4642,11 @@ class EduSen2Action extends CommonAction {
                 $allscore += $hundred * $credit;
                 $allcredit += $credit;
             }
+            $gpa = round($allscore/$allcredit,2);
+            $line++;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".($line),'GPA:'.$gpa);
         }
-        $gpa = round($hundred/$credit,2);
-        $p  ->setActiveSheetIndex(0)
-            ->setCellValue("A".($line+1),'GPA:'.$gpa);
         $styleThinBlackBorderOutline = array( 
             'borders' => array ( 
                 'allborders' => array ( 
@@ -4644,7 +4655,7 @@ class EduSen2Action extends CommonAction {
                 ), 
             ),
         );
-        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
         
         ob_end_clean();
         header("Pragma: public");

@@ -1271,6 +1271,7 @@ class EduDirAction extends CommonAction {
             $line += 7;
         }
         
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -1377,6 +1378,7 @@ class EduDirAction extends CommonAction {
             ),
         );
         $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -1463,6 +1465,7 @@ class EduDirAction extends CommonAction {
             ),
         );
         $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -3777,7 +3780,8 @@ class EduDirAction extends CommonAction {
                 ->setCellValueExplicit('B'.($i+3), $vs["student"],PHPExcel_Cell_DataType::TYPE_STRING);
 
         }
-          header("Pragma: public");
+          ob_end_clean();
+        header("Pragma: public");
           header("Expires: 0");
           header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
           header("Pragma: no-cache");

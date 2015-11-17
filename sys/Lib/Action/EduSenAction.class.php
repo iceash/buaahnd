@@ -1309,6 +1309,7 @@ class EduSenAction extends CommonAction {
                 ->setCellValue("L".$i,$va["hundred"]);
             $i++;
         }
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -3507,7 +3508,8 @@ class EduSenAction extends CommonAction {
                 ->setCellValueExplicit('G'.($i+3), $vs["idcard"],PHPExcel_Cell_DataType::TYPE_STRING);
 
         }
-          header("Pragma: public");
+          ob_end_clean();
+        header("Pragma: public");
           header("Expires: 0");
           header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
           header("Pragma: no-cache");
@@ -3827,6 +3829,7 @@ class EduSenAction extends CommonAction {
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $info["name"] = $info["classname"]."_".$info["term"].'课程表.xls';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
@@ -4804,10 +4807,13 @@ class EduSenAction extends CommonAction {
                 ->setCellValue(chr($row)."6","Marks")
                 ->setCellValue(chr($row+1)."6","Credits");
             foreach ($vw as $coursename => $vs) {
-                $line++;
                 $map["classid"] = $stuinfo["classid"];
                 $map["name|ename"] = $coursename;
                 $credit = $course->where($map)->getField("credit");//获取学分
+                if (!$credit) {
+                    continue;
+                }
+                $line++;
                 if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
                     $hundred = 0;
                     $letter = "U";
