@@ -1174,7 +1174,7 @@ class EduSen2Action extends CommonAction {
             // $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
             // $page = $p -> show();
             // $this -> assign("page", $page);
-            $my = $dao -> where($map)-> select();
+            $my = $dao -> where($map)->group("id")-> select();
             foreach ($my as $vmy) {
                 $willfinal[$vmy["coursename"]][] = $vmy["hundred"];
             }

@@ -3161,6 +3161,152 @@ class EaterAction extends CommonAction {
         $objWriter->save('php://output');
         exit; 
     }
+    public function menuReward() {
+        $menu['reward']='所有奖惩记录';
+        $menu['rewardAdd']='新建记录';
+        $this->assign('menu',$this ->autoMenu($menu));  
+    }
+    public function reward() {
+        if (isset($_GET['searchkey'])) {
+            $map['struename|susername|tusername|ttruename|house|room|cell|bed|content'] = array('like', '%' . $_GET['searchkey'] . '%');
+            $this -> assign('searchkey', $_GET['searchkey']);
+        } 
+        $map = array();
+        $dao = D('eaterreward');
+        $count = $dao -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows = 20;
+            $p = new Page($count, $listRows);
+            $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,susername asc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);
+        }
+        $this -> menuReward();
+        $this -> display();
+    }     
+    public function rewardEdit() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $dao = D('eaterreward');
+        $map['id'] = $id;
+        $my = $dao -> where($map) -> find();
+        if ($my) {
+            $this -> assign('my', $my);
+            $this -> menuReward();
+            $this -> display();
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    } 
+    public function rewardUpdate() {
+        $dao = D('eaterreward');
+        if ($dao -> create()) {
+            $checked = $dao -> save();
+            if ($checked > 0) {
+                $this -> success('已成功保存');
+            } else {
+                $this -> error('没有更新任何数据');
+            } 
+        } else {
+            $this -> error($dao->getError());
+        } 
+    } 
+    public function rewardAdd() {
+        /*$dao1 = D('Class');
+        $map1['isbiye']=0;
+        $dtree_class = $dao1->where($map1)->order('year desc,name asc')-> select();
+        $dtree_year=$dao1 ->where($map1)->field('year')-> group('year')->order('year desc')->select();
+        $dao2 = D('ClassstudentView');
+        $map2['isbiye']=0;
+        $dtree_stu = $dao2->where($map2)->order('student asc')-> select();*/
+        /*$dao1 = D("classstudent");
+        $dao2 = D("Eaterreward");
+        $dtree_house = $dao1->field("house")->group("house")->select();
+        $dtree_home = $dao1->field("house,home")->group("house,home")->select();
+        $dtree_cell = $dao1->field("home,cell")->group("house,home,cell")->select();
 
+        $this->assign('dtree_year',$dtree_year);
+        $this -> assign('dtree_class', $dtree_class);
+        $this -> assign('dtree_stu', $dtree_stu);*/
+        $this -> assign('ctime', date("Y-m-d H:i:s"));
+        $this -> menuReward();
+        $this -> display();
+    } 
+    public function rewardDel() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $map['id'] = array('in', $id);
+        $dao = D('eaterreward');
+        $count = $dao -> where($map) -> delete();
+        if ($count > 0) {
+            $this -> success('已成功删除');
+        } else {
+            $this -> error('该记录不存在');
+        } 
+    } 
+    public function rewardInsert() {
+        if(empty($_POST['content'])){
+            $this -> error('内容不能为空');
+        }
+        $map["house"] = $_POST["house"];
+        $map["room"] = $_POST["room"];
+        $map["cell"] = $_POST["cell"];
+        $map["bed"] = $_POST["bed"];
+        $stuinfo = M("classstudent")->where($map)->find();
+        if (!$stuinfo) {
+            $this->error("此位置无学生");
+        }
+        $dao = D('eaterreward');
+        $i=0;
+        $j=0;
+        // foreach($stu as $key=>$value){
+            // if(substr($value,0,2)=='GJ'){         
+                $i++;
+                if ($dao -> create()) { 
+                    $dao -> susername=$stuinfo["student"];
+                    $dao -> struename=$stuinfo["studentname"];
+                    $dao -> house = $stuinfo["house"];
+                    $dao -> room = $stuinfo["room"];
+                    $dao -> cell = $stuinfo["cell"];
+                    $dao -> bed = $stuinfo["bed"];
+                    $dao -> tusername=session('username');
+                    $dao -> ttruename=session('truename');
+                    $insertID = $dao -> add();
+                    if ($insertID) {
+                        $j++;
+                    } else {
+                        $this -> error('没有更新任何数据');
+                    } 
+                } else {
+                    $this -> error($dao->getError());
+                } 
+            // }
+        // }
+        if($i==$j){
+            $this -> success($stuinfo["studentname"].'的奖惩记录已记录');
+        }else{
+            $this -> error("新增记录失败");
+        }
+        
+    } 
+    public function menuBroken() {
+        $menu['broken']='所有奖惩记录';
+        $menu['brokenAdd']='新建记录';
+        $this->assign('menu',$this ->autoMenu($menu));  
+    }
+    public function broken(){
+        $this -> menuBroken();
+        $this->display();
+    }
+    public function brokenAdd(){
+        $this->menuBroken();
+        $this->display();
+    }
 }
 ?>

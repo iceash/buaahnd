@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/blue.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+	jQuery('#check').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+		if(this.checked==true){
+			jQuery('.mytable tbody tr').addClass('tr_selected');
+		}else{
+			jQuery('.mytable tbody tr').removeClass('tr_selected');
+		}
+	});
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要删除选择项吗？')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+});
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/rewardDel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			deleteTr();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function deleteTr() {
+	jQuery('input[name=key]:checked').each(function(){
+		jQuery(this).parent("td").parent("tr").remove();
+	});	
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+
+function k(key){
+	window.location="__URL__/rewardEdit/id/"+key;
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	var url="__URL__/reward";
+	if(searchkey!==''){
+		url=url+"/searchkey/"+searchkey;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+<div class="search">输入关键字：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/></div>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+  <th width="5" height="30"><input type="checkbox" id="check"/></th>
+ 	 <th width="150">学生</th>
+ 	 <th width="200">宿舍</th>
+	<th>内容</th>
+    <th width="150">发布者</th>
+	<th width="140">发布时间</th>
+	<th width="80">操作</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+  <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
+  <td>{$my.susername} [{$my.struename}]</td>
+  <td>{$my.house}-{$my.room}-{$my.cell}-{$my.bed}</td>
+    <td>{$my.content|nl2br}</td>
+    <td>{$my.tusername} [{$my.ttruename}]</td>
+	<td>{$my.ctime}</td>
+	<td><input type="button" value="详情" onclick="k('{$my.id}');" />
+	</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除"  />&nbsp;</div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

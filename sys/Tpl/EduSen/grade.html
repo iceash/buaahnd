@@ -156,7 +156,7 @@ function searchkeydown(e){
 <div class="main">
 <div class="search">
     学生信息：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;
-    <html:select first="所有学期" options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;
+    <html:select options="category_fortag" name="category" id="category" selected="category_current"/>&nbsp;
     <html:select first="所有专业" options="major_fortag" name="major" id="major" selected="major_current"/>&nbsp;
     <html:select first="所有班级" options="class_fortag" name="class" id="class" selected="class_current"/>&nbsp;
     <html:select first="所有课程" options="course_fortag" name="course" id="course" selected="course_current"/>&nbsp;
@@ -176,7 +176,7 @@ function searchkeydown(e){
     <th>学号</th>
     <th>SCN号</th>
     <th>课程名称</th>
-    <th>课程英文名</th>
+    <th>考试名称</th>
     <th>学分</th>
     <!-- <th>学期</th> -->
     <th>考试成绩</th>
@@ -195,7 +195,7 @@ function searchkeydown(e){
     <td>{$my.stunum}</td>
     <td>{$my.scnid}</td>
     <td>{$my.coursename}</td>
-	<td>{$my.courseename}</td>
+	<td>{$my.examname}</td>
     <td>{$my.credit}</td>
 	<!-- <td>{$my.term}</td> -->
     <td>{$my.letter}</td>

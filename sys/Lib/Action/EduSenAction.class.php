@@ -1112,9 +1112,22 @@ class EduSenAction extends CommonAction {
         $this -> display();
     } 
     public function grade() {
+        if (isset($_GET["p"])) {
+            $p = $_GET["p"];
+        }else{
+            $p = 1;
+        }
         $dao = D('ProgradeView');
         $map["item"] = "HND";
-        $this -> assign('category_fortag', $this->getTerm());//学期列表
+        $term = $dao->where($map)->group("term")->field("term")->select();
+        foreach ($term as $vc) {
+            $terms[$vc["term"]]=$vc["term"];
+            if (!$te) {
+                $te = $vc["term"];
+            }
+        }
+        $this->assign('category_fortag',$terms);
+        // $this -> assign('category_fortag', $this->getTerm());//学期列表
         $class = D('ProgradeView')->where($map)->group("classid")->field("classid,classname")->select();
         foreach ($class as $vc) {
             $classes[$vc["classid"]]=$vc["classname"];
@@ -1145,7 +1158,9 @@ class EduSenAction extends CommonAction {
         if (isset($_GET['category'])) {
             $map['term'] = $_GET['category'];
             $this -> assign('category_current', $_GET['category']);
-        } 
+        } else{
+            $map['term'] = $te;
+        }
         if (isset($_GET['course'])) {
             $map['course.name|course.ename'] = $_GET['course'];
             $this -> assign('course_current', $_GET['course']);
@@ -1168,44 +1183,56 @@ class EduSenAction extends CommonAction {
         //以上为检索条件
         $count = $dao -> where($map) -> count();
         if ($count > 0) {
-            // import("@.ORG.Page");
-            // $listRows = 20;
-            // $p = new Page($count, $listRows);
-            // $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
-            // $page = $p -> show();
-            // $this -> assign("page", $page);
-            $my = $dao -> where($map)-> select();
+            $my = $dao -> where($map)->group("id")-> select();
             foreach ($my as $vmy) {
-                $willfinal[$vmy["coursename"]][] = $vmy["hundred"];
+                $willfinal[$vmy["stunum"]][$vmy["coursename"]][] = $vmy["hundred"];
             }
-            foreach ($willfinal as $key => $va) {
-                $num = count($va);
-                $truefinal[$key] = 0;
-                for ($i=0; $i < $num; $i++) { 
-                    if ($va[$i] == 0) {
-                        $truefinal[$key] = 0;
-                        break;
+            foreach ($willfinal as $stunum => $a) {
+                foreach ($a as $key => $va) {
+                    $num = count($va);
+                    $truefinal[$stunum][$key] = 0;
+                    for ($i=0; $i < $num; $i++) { 
+                        if ($va[$i] == 0) {
+                            $truefinal[$stunum][$key] = 0;
+                            break;
+                        }
+                        $truefinal[$stunum][$key] += (int)$va[$i];
                     }
-                    $truefinal[$key] += $va[$i];
+                    $truefinal[$stunum][$key] = round($truefinal[$stunum][$key] / $num,2);
                 }
-                $truefinal[$key] = round($truefinal[$key] / $num);
             }
-            $tmp = count($my);
-            for ($i=0; $i < $tmp; $i++) { 
-                $my[$i]["hundred"] = $truefinal[$my[$i]["coursename"]];
+            $i = 0;
+            while($i < count($my)) { 
+                $my[$i]["hundred"] = $truefinal[$my[$i]["stunum"]][$my[$i]["coursename"]];
                 if (isset($_GET["final"])) {
                     if ((int)$truefinal[$my[$i]["coursename"]] < (int)$finalarr[$_GET["final"]][0] || (int)$truefinal[$my[$i]["coursename"]] > (int)$finalarr[$_GET["final"]][1]) {
-                        unset($my[$i]);continue;
+                        array_splice($my,$i,1);
+                        continue;
                     }
                 }
                 if (isset($_GET["grade"])) {
                     if ($my[$i]["letter"] != $_GET["grade"]) {
-                        unset($my[$i]);continue;
+                        array_splice($my,$i,1);
+                        continue;
                     }
                 }
+                $i++;
             }
-            $this -> assign('my', $my);
-        } 
+            $i = 0;
+            $listRows = 50;
+            while ($i < count($my)) {
+                if ($i>=((int)$p-1)*$listRows && $i<(int)$p*$listRows) {
+                    $newmy[] = $my[$i];
+                }//echo($i.$listRows."<br/>");
+                $i++;
+            }
+            $this -> assign('my', $newmy);
+        }
+            import("@.ORG.Page");
+            $p = new Page($i, $listRows);
+            // $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
         $this -> menuGrade();
         $this -> display();
     } 
@@ -3764,7 +3791,6 @@ class EduSenAction extends CommonAction {
             $data_a[$i-3]['eintro'] = trim(strtr($sheetData[$i]['Q'], $arr));
             $data_a[$i-3]['plus'] = trim(strtr($sheetData[$i]['R'], $arr));
         }
-        return;
         if (count($errors) > 0) {
             excelwarning($inputFileName,$errors);
         }
@@ -4401,6 +4427,7 @@ class EduSenAction extends CommonAction {
         $this->display();
     }
     public function ProGradeInsert(){
+        set_time_limit(120);
         //上传专业成绩
         $titlepic = $_POST['titlepic'];
         if (empty($titlepic)) {
@@ -4468,11 +4495,11 @@ class EduSenAction extends CommonAction {
             $courses[] = $vc["name"];
             $courses[] = $vc["ename"];
         }
-        $tmp = strtr($sheetData[2]["E"]);
+        $tmp = strtr($sheetData[2]["E"],$arr);
         $c = false;
         for ($i=0; $i < count($courses); $i++) { 
-            if (strcmp($tmp,trim($course[$i])) == 0) {
-                $c = $course[$i];
+            if (strcmp($tmp,trim($courses[$i])) == 0) {
+                $c = $courses[$i];
                 break;
             }
         }
@@ -4491,9 +4518,15 @@ class EduSenAction extends CommonAction {
         for($i = 5; $i <= $count; $i++){
             $b = false;
             //检查学生信息是否正确
-            $map["studentname|ename"] = strtr($sheetData[$i]['A'], $arr);
-            $map["student|scnid"] = strtr($sheetData[$i]['B'], $arr);
-            if ($cs->where($map)->count() == 0) {
+            // $map["studentname|ename"] = strtr($sheetData[$i]['A'], $arr);
+            // $map["student|scnid"] = strtr($sheetData[$i]['B'], $arr);
+            $map["studentname"] = strtr($sheetData[$i]['A'], $arr);
+            $map["ename"] = strtr($sheetData[$i]['A'], $arr);
+            $map["student"] = strtr($sheetData[$i]['B'], $arr);
+            $map["scnid"] = strtr($sheetData[$i]['B'], $arr);
+            $map["_logic"] = "or";
+            $info = $cs->where($map)->find();
+            if (!$info) {
                 $errors[] = "A".$i;
                 $errors[] = "B".$i;
                 continue;
@@ -4503,8 +4536,8 @@ class EduSenAction extends CommonAction {
             for ($m = 1; $m <= $row*3; $m+=3) { 
                 $grade[$num]["course"] = $c;//课程名称
                 $grade[$num]["examname"] = strtr($sheetData[3][chr(66+$m)], $arr);//考试名称
-                $grade[$num]["stuname"] = $map["studentname|ename"];
-                $grade[$num]["stunum"] =  $map["studentstudent|scnid"];
+                $grade[$num]["stuname"] = strtr($sheetData[$i]['A'], $arr);
+                $grade[$num]["stunum"] =  $info["student"];
                 $grade[$num]["term"] = $term;
                 $grade[$num]["isrepair"] = $isrepair;
                 $b = false;
@@ -4536,9 +4569,10 @@ class EduSenAction extends CommonAction {
                     }
                 }
                 if (!$b) {
-                    $errors[] = chr(66+$m).$i;
+                    /*$errors[] = chr(66+$m).$i;
                     $errors[] = chr(67+$m).$i;
-                    $errors[] = chr(68+$m).$i;
+                    $errors[] = chr(68+$m).$i;*/
+                    unset($grade[$num]);
                 }
                 $num++;
             }
