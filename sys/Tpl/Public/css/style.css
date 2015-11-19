@@ -2,7 +2,8 @@
 /* CSS Document */
 body {
     font-size:12px;
-    color:#737478;
+    /* color:#737478;*/
+	color: #222222;
     font-family:'Microsoft Yahei', Tahoma, Arial;
     background:#d5d8e9 url(../images/bg.png) repeat-x top;
     margin:0;
@@ -28,7 +29,7 @@ input[type="button"]:hover {
 .headTitle {
     width: 100%;
     /*min-width: 1150px;*/
-    height: 100px;
+    height: 120px;
     vertical-align: middle;
     background-color: #025098;
     margin:0 auto 20px auto;
@@ -36,7 +37,7 @@ input[type="button"]:hover {
     color:#ffffff;
 }
 .headTitle tr:nth-child(2){
-    position: relative;top: -30px;
+    /*position: relative;top: -30px;*/
 }
 
 .headTitle img {
@@ -83,6 +84,10 @@ input[type="button"]:hover {
     clear: both;
 }
 
+.mytable tr,.alert_table tr{
+    color: #222222;
+}
+
 .mytable tr:hover,.alert_table tr:hover{
     color: #ffffff;
     background-color: #015198;
@@ -106,7 +111,8 @@ input[type="button"]:hover {
 }
 
 .mytable td input[type="button"],.alert_table td input[type="button"]{
-    background-color: #8a8a8a;
+    /*background-color: #8a8a8a;*/
+	background-color: #5eb68c;
     height: 20px;
     border: 0;
     border-radius: 2px;

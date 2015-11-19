@@ -335,12 +335,12 @@ class EduSenAction extends CommonAction {
         $this -> display();
     } 
     public function stuCommonMenu($id) {
+        $menu['stuCommonInfo']='基本信息';
         $menu['stuCommonScore']=' 成绩单';
         $menu['stuCommonCertification']='在读证明';
         $menu['stuCommonAttend']='考勤记录';
         $menu['stuCommonReward']='奖惩记录';
         $menu['stuCommonProcess']='留学进程';
-        $menu['stuCommonInfo']='基本信息';
         $this->assign('menu',$this ->autoMenu($menu,$id));  
     }
     
@@ -3550,6 +3550,7 @@ class EduSenAction extends CommonAction {
           exit;
     }
     public function classStudentInsert() {
+        set_time_limit(120);
         $titlepic = $_POST['titlepic'];
         if (empty($titlepic)) {
             $this -> error('未上传文件');
@@ -3652,7 +3653,7 @@ class EduSenAction extends CommonAction {
             $data_a[$i-3]['ename'] = strtr($sheetData[$i]['F'], $arr);
             $search["idcard"] = strtr($sheetData[$i]['G'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
-            $search["truename"] = strtr($sheetData[$i]['E'], $arr);
+            // $search["truename"] = strtr($sheetData[$i]['E'], $arr);
             // $mbp["student"] = $data_a[$i-3]['student'];
             // $mbp["idcard"] = $search["idcard"];
             // $mbp["_logic"] = "or";
@@ -3664,6 +3665,7 @@ class EduSenAction extends CommonAction {
                 $errors[] = 'D'.$i;
             } else{
                 M("enroll")->where($search)->setField("username",$data_a[$i-3]['student']);
+                M("enroll")->where($search)->setField("truename",strtr($sheetData[$i]['E'], $arr));
             }
         }//for循环结束
         if (count($emptys) > 0) {
@@ -4702,8 +4704,16 @@ class EduSenAction extends CommonAction {
         }
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        if ($stuinfo["sex"] == "男") {
+            $stuinfo["sex"] = "male";
+        }elseif($stuinfo["sex"] == "女") {
+            $stuinfo["sex"] = "female";
+        }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', '学号：'.$stuinfo["student"].'        姓名：'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"]);//写上名字
+            ->setCellValue('A2', 'Name of Student:'.$stuinfo["ename"])
+            ->setCellValue("A3","Gender: ".$stuinfo["sex"])
+            ->setCellValue("A4","SCN:".$stuinfo["scnid"])
+            ->setCellValue("A5","College(Department）: Beihang  University  HND  Programme");
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
@@ -4722,16 +4732,18 @@ class EduSenAction extends CommonAction {
                 }
             }
         }
-        $line = 6;//从第7行开始写，每门课加1
+        $line = 7;//从第7行开始写，每门课加1
         $row = 64;//从B列开始写，每学期加2
+        $termnum = 1;
         $course = M("course");
         foreach ($willwrite as $termname => $vw) {
+            $termnum++;
             $row = $row + 2;
             $p  ->setActiveSheetIndex(0)
-                ->setCellValue(chr($row)."5",$termname)
-                ->mergeCells(chr($row)."5:".chr($row+1)."5")
-                ->setCellValue(chr($row)."6","Marks")
-                ->setCellValue(chr($row+1)."6","Credits");
+                ->setCellValue(chr($row)."6",$termnum."nd Year")
+                ->mergeCells(chr($row)."6:".chr($row+1)."6")
+                ->setCellValue(chr($row)."7","Marks")
+                ->setCellValue(chr($row+1)."7","Credits");
             foreach ($vw as $coursename => $vs) {
                 $line++;
                 $map["classid"] = $stuinfo["classid"];
@@ -4779,7 +4791,7 @@ class EduSenAction extends CommonAction {
                 ), 
             ),
         );
-        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
@@ -4810,8 +4822,16 @@ class EduSenAction extends CommonAction {
         }
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        if ($stuinfo["sex"] == "男") {
+            $stuinfo["sex"] = "male";
+        }elseif($stuinfo["sex"] == "女") {
+            $stuinfo["sex"] = "female";
+        }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', '学号：'.$stuinfo["student"].'        姓名：'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"]);//写上名字
+            ->setCellValue('A2', 'Name of Student:'.$stuinfo["ename"])
+            ->setCellValue("A3","Gender: ".$stuinfo["sex"])
+            ->setCellValue("A4","SCN:".$stuinfo["scnid"])
+            ->setCellValue("A5","College(Department）: Beihang  University  HND  Programme");
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
@@ -4832,14 +4852,16 @@ class EduSenAction extends CommonAction {
         }
         $line = 6;//从第7行开始写，每门课加1
         $row = 64;//从B列开始写，每学期加2
+        $termnum = 1;
         $course = M("course");
         foreach ($willwrite as $termname => $vw) {
+            $term++;
             $row = $row + 2;
             $p  ->setActiveSheetIndex(0)
-                ->setCellValue(chr($row)."5",$termname)
-                ->mergeCells(chr($row)."5:".chr($row+1)."5")
-                ->setCellValue(chr($row)."6","Marks")
-                ->setCellValue(chr($row+1)."6","Credits");
+                ->setCellValue(chr($row)."6",$termnum."nd Year")
+                ->mergeCells(chr($row)."6:".chr($row+1)."6")
+                ->setCellValue(chr($row)."7","Marks")
+                ->setCellValue(chr($row+1)."7","Credits");
             foreach ($vw as $coursename => $vs) {
                 $map["classid"] = $stuinfo["classid"];
                 $map["name|ename"] = $coursename;
@@ -4869,7 +4891,7 @@ class EduSenAction extends CommonAction {
                 ), 
             ),
         );
-        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");

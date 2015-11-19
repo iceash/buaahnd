@@ -335,12 +335,12 @@ class EduSen2Action extends CommonAction {
         $this -> display();
     } 
     public function stuCommonMenu($id) {
+        $menu['stuCommonInfo']='基本信息';
         $menu['stuCommonScore']=' 成绩单';
         $menu['stuCommonCertification']='在读证明';
         $menu['stuCommonAttend']='考勤记录';
         $menu['stuCommonReward']='奖惩记录';
         $menu['stuCommonProcess']='留学进程';
-        $menu['stuCommonInfo']='基本信息';
         $this->assign('menu',$this ->autoMenu($menu,$id));  
     }
     
@@ -3569,7 +3569,7 @@ class EduSen2Action extends CommonAction {
             $data_a[$i-3]['ename'] = strtr($sheetData[$i]['F'], $arr);
             $search["idcard"] = strtr($sheetData[$i]['G'], $arr);
             $data_a[$i-3]['idcard'] = $search["idcard"];
-            $search["truename"] = strtr($sheetData[$i]['E'], $arr);
+            // $search["truename"] = strtr($sheetData[$i]['E'], $arr);
             // $mbp["student"] = $data_a[$i-3]['student'];
             // $mbp["idcard"] = $search["idcard"];
             // $mbp["_logic"] = "or";
@@ -3581,6 +3581,7 @@ class EduSen2Action extends CommonAction {
                 $errors[] = 'D'.$i;
             } else{
                 M("enroll")->where($search)->setField("username",$data_a[$i-3]['student']);
+                M("enroll")->where($search)->setField("truename",strtr($sheetData[$i]['E'], $arr));
             }
         }//for循环结束
         if (count($emptys) > 0) {
@@ -4587,11 +4588,16 @@ class EduSen2Action extends CommonAction {
         }
         include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        if ($stuinfo["sex"] == "男") {
+            $stuinfo["sex"] = "male";
+        }elseif($stuinfo["sex"] == "女") {
+            $stuinfo["sex"] = "female";
+        }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'Name of Student（姓名）:'.$stuinfo["studentname"].'      专业：'.$stuinfo["major"])
-            ->setCellValue("A3","Gender（性别）: ".$stuinfo["sex"])
-            ->setCellValue("A4","Date of Birth（生日）:".$stuinfo["birthday"])
-            ->setCellValue("A5","Major（专业）: ".$stuinfo["major"]);
+            ->setCellValue('A2', 'Name of Student:'.$stuinfo["ename"])
+            ->setCellValue("A3","Gender: ".$stuinfo["sex"])
+            ->setCellValue("A4","Date of Birth:".$stuinfo["birthday"])
+            ->setCellValue("A5","Major: ".$stuinfo["majore"]);
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
