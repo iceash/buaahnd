@@ -34,7 +34,8 @@ input[type="button"]:hover {
     background-color: #025098;
     margin:0 auto 20px auto;
     font-size:14px;
-    color:#ffffff;
+    /*color:#ffffff;*/
+	color:#e3e3e3;
 }
 .headTitle tr:nth-child(2){
     /*position: relative;top: -30px;*/

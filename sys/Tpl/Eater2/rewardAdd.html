@@ -18,13 +18,13 @@ jQuery(function(){
 		jQuery('#stu').val(getStu());*/
 		jQuery.ajax({
 			type:'POST',
-			url:'__URL__/brokenInsert',
+			url:'__URL__/rewardInsert',
 			dataType:'json',
 			data:jQuery("#form1").serialize(),
 			success: function(data){
 				if (data.status==1){
 					alert(data.info);	
-					window.location='__URL__/broken';
+					window.location='__URL__/reward';
 				}else{
 					alert(data.info);
 				}
@@ -56,22 +56,26 @@ function getStu(){
 <div class="main">
 <form id="form1">
 <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
-   <tr>
-    <td class="t_item">学生姓名</td>
-    <td><input type="text" name="truename" /></td>
-  </tr>
-   <tr>
-    <td class="t_item">学生学号</td>
-    <td><input type="text" name="username" /></td>
-  </tr>
-   <tr>
-    <td class="t_item">金额</td>
-    <td><input type="text" name="money" /></td>
-  </tr>
   <tr>
-    <td class="t_item">详情</td>
+    <td class="t_item">内容</td>
     <td>
 	<textarea name="content" id="content_j" class="textareabig"></textarea></td>
+  </tr>
+   <tr>
+    <td class="t_item">楼号</td>
+    <td><input type="text" name="house" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">房号</td>
+    <td><input type="text" name="room" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">室号</td>
+    <td><input type="text" name="cell" /></td>
+  </tr>
+   <tr>
+    <td class="t_item">床号</td>
+    <td><input type="text" name="bed" /></td>
   </tr>
    <tr>
     <td class="t_item">发布时间</td>

@@ -37,7 +37,7 @@ jQuery(function(){
 	});
 });
 function doDelete(CheckboxValues){ 
-	jQuery.getJSON('__URL__/brokenDel/',{id:CheckboxValues},function(data){
+	jQuery.getJSON('__URL__/rewardDel/',{id:CheckboxValues},function(data){
 		if(data.status==1){
 			alert(data.info);
 			deleteTr();
@@ -60,11 +60,11 @@ function getSelectCheckboxValues(){
 }
 
 function k(key){
-	window.location="__URL__/brokenEdit/id/"+key;
+	window.location="__URL__/rewardEdit/id/"+key;
 }
 function mysearch(){
 	var searchkey=jQuery('#searchkey').val();
-	var url="__URL__/broken";
+	var url="__URL__/reward";
 	if(searchkey!==''){
 		url=url+"/searchkey/"+searchkey;
 	}
@@ -90,8 +90,8 @@ function searchkeydown(e){
   <tr>
   <th width="5" height="30"><input type="checkbox" id="check"/></th>
  	 <th width="150">学生</th>
- 	 <th width="200">金额</th>
-	<th>详情</th>
+ 	 <th width="200">宿舍</th>
+	<th>内容</th>
     <th width="150">发布者</th>
 	<th width="140">发布时间</th>
 	<th width="80">操作</th>
@@ -101,8 +101,8 @@ function searchkeydown(e){
   <volist name="my" id="my">
   <tr>
   <td class="td_forselect"><input type="checkbox" name="key" value="{$my.id}"  /></td>
-  <td>{$my.username} [{$my.truename}]</td>
-  <td>{$my.money}</td>
+  <td>{$my.susername} [{$my.struename}]</td>
+  <td>{$my.house}-{$my.room}-{$my.cell}-{$my.bed}</td>
     <td>{$my.content|nl2br}</td>
     <td>{$my.tusername} [{$my.ttruename}]</td>
 	<td>{$my.ctime}</td>
