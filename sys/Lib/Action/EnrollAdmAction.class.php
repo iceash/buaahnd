@@ -2494,6 +2494,7 @@ class EnrollAdmAction extends CommonAction {
     public function agentStuList(){
         if(isset($_GET['agent'])) {
             $map['agent'] = $_GET['agent'];
+            $this->assign("agent",$_GET["agent"]);
         }
 
         if(isset($_GET['searchkey']) && !empty($_GET['searchkey'])) {

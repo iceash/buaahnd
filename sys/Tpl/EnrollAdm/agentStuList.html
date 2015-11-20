@@ -90,7 +90,7 @@
                 url += "/enrollstatus/" + enrollstatus;
             }
 
-            window.location="__URL__/agentStuList" + url;
+            window.location="__URL__/agentStuList/agent/{$agent}" + url;
         }
         function downstulist(){
             var searchkey=document.getElementById('searchkey').value;
