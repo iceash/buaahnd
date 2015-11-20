@@ -1,11 +1,14 @@
+<tagLib name="html" />
 <include file="Index:pageheader"/>
 <div class="main">
     <table class="search" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td colspan="6" align="right">
+                <a href="javascript:downstulist();" style="float: left; font-size: 17px; color: rgb(74, 73, 73);">下载Excel表格</a>
                 <input type="text" name="searchkey" id="searchkey" style="width: 200px;" placeholder="关键字" onKeyDown="searchkeydown(event)"/>&nbsp;
                 录入时间：&nbsp;&nbsp;<input type="text" name="ctime_start" id="ctime_start" class="inputshort  calendar"/>-
                 <input type="text" name="ctime_end" id="ctime_end" class="inputshort  calendar"/>&nbsp;
+                <html:select first="录取情况" options="enrollstatus_fortag" name="enrollstatus" id="enrollstatus" selected="enrollstatus_current"/>&nbsp;
                 <img src="../Public/images/search.gif" align="absmiddle" onclick="search()" alt="搜索" style="cursor:pointer"/>
             </td>
         </tr>
@@ -19,7 +22,8 @@
             <th width="100">专业</th>
             <th width="150">身份证号</th>
             <th width="150">填写时间</th>
-            <th width="150">状态</th>
+            <th width="150">交费状态</th>
+            <th width="60">录取情况</th>
             <th width="100">操作</th>
         </tr>
         </thead>
@@ -33,6 +37,11 @@
                 <td>{$er.idcard}</a></td>
                 <td>{$er.ctime}</td>
                 <td>{$er.paystatus}</td>
+                <td><?php if ($er["enrollstatus"] == 0) {
+                    echo "未录取";
+                }else{
+                    echo "已录取";
+                } ?></td>
                 <td>
                     <input type="button" value="详情" onclick="showStudentList('{$er.idcard}');" />
                 </td>
@@ -64,6 +73,7 @@
             var searchkey=document.getElementById('searchkey').value;
             var ctime_start=document.getElementById('ctime_start').value;
             var ctime_end=document.getElementById('ctime_end').value;
+            var enrollstatus=document.getElementById("enrollstatus").value;
 
             var url = "";
 
@@ -76,8 +86,33 @@
             if (ctime_end != ""){
                 url += "/ctimeend/" + ctime_end;
             }
+            if (enrollstatus != ""){
+                url += "/enrollstatus/" + enrollstatus;
+            }
 
             window.location="__URL__/agentStuList" + url;
+        }
+        function downstulist(){
+            var searchkey=document.getElementById('searchkey').value;
+            var ctime_start=document.getElementById('ctime_start').value;
+            var ctime_end=document.getElementById('ctime_end').value;
+            var enrollstatus=document.getElementById("enrollstatus").value;
+            var url = "";
+
+            if (searchkey != ""){
+                url += "/searchkey/" + searchkey;
+            }
+            if (ctime_start != ""){
+                url += "/ctimestart/" + ctime_start;
+            }
+            if (ctime_end != ""){
+                url += "/searchkey/" + ctime_end;
+            }
+            if (enrollstatus != ""){
+                url += "/enrollstatus/" + enrollstatus;
+            }
+
+            window.location="__URL__/downStuList" + url;
         }
 
         function showStudentList(idcard) {

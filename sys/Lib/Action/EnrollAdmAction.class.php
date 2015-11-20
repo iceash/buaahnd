@@ -407,100 +407,6 @@ class EnrollAdmAction extends CommonAction {
 			$this -> error('未找到该学生或对该学生没有操作权限');
 		} 
 	} 
-	public function insertPlus() {
-		$dao = D("Enroll");
-		if ($dao -> create()) {
-			$dao -> abroad=implode(',', $_POST['abroad']);
-			$dao -> infosource = implode(',', $_POST['infosource']);
-			$dao -> sourcenewspaper = implode(',', $_POST['sourcenewspaper']);
-			$dao -> sourcenet = implode(',', $_POST['sourcenet']);
-            $checked = $dao->save(); 
-			if ($checked) {
-                $this -> success('已成功保存');
-			} else{
-                $this -> error('没有更新任何数据');
-            }
-		} else {
-			$this -> error($dao -> getError());
-		} 
-	} 
-	public function checkEnrollPlus() {
-		load("@.idcard");
-		load("@.check");
-		if (empty($_POST['truename'])) {
-			$this -> error('Part1 学生姓名不能为空');
-		} 
-		if (empty($_POST['sex'])) {
-			$this -> error('Part1 性别不能为空');
-		} elseif (!issex($_POST['sex'])) {
-            $this -> error('第'.$i.'行 性别校验失败');
-        }   
-//         if (empty($_POST['birthday'])) {
-// 			$this -> error('Part1 出生日期不能为空');
-// 		} 
-		if (empty($_POST['mobile'])) {
-			$this -> error('Part1 学生手机号不能为空');
-		} elseif ((ismobile($_POST['mobile'])||($_POST['mobile']=='00000000000'))==false) {
-			$this -> error('Part1 学生手机号校验失败');
-		} 
-        
-        //姓名和手机号都不能重复
-        $dao = D("Enroll");
-        $current = @date("Y-m-d",time());
-            $current_year = @date("Y",time());
-            $pyear = $current_year-1;
-            if($current > $current_year.'-10-31'){
-                $map['ctime'] = array('gt',$current_year.'-11-01 00:00:00');
-            } else{
-                $map['ctime'] = array('between',array($pyear.'-11-01 00:00:00',$year.'-10-31 23:59:59'));
-            } //只需交验当年的记录
-        if($_POST['mobile']!=='00000000000'){
-            $map['_query'] = 'mobile='.$_POST['mobile'].'&truename='.$_POST['truename'].'&_logic=or';
-            $map['id'] = array('neq',$_POST['id']);
-            $isHava = $dao -> where($map) -> select();
-            if ($isHava) {
-                $this -> error("库中已有相同姓名或手机号，无法录入! 姓名:" . $isHava[0]['truename'] . " 手机号:" . $isHava[0]['mobile'] . " 时间：" . $isHava[0]['ctime'] . " 填表人：" . $isHava[0]['fill']);
-            } 
-        }else{
-            $map['truename'] = $_POST['truename'];
-            $map['id'] = array('neq',$_POST['id']);
-            $isHava = $dao -> where($map) -> select();
-            if ($isHava) {
-                $this -> error("库中已有相同姓名，无法录入! 姓名:" . $isHava[0]['truename'] . " 时间：" . $isHava[0]['ctime'] . " 填表人：" . $isHava[0]['fill']);
-            } 
-        }
-        
-        if (!empty($_POST['qq'])) {
-            if (!is_numeric($_POST['qq'])){
-				$this -> error('Part1 学生QQ号码校验失败');
-            }
-		} 
-		if (!empty($_POST['email'])) {
-            if (!isemail($_POST['email'])){
-				$this -> error('Part1 学生Email校验失败');
-            }
-		} 
-		if (!empty($_POST['idcard'])) {
-			if (!validation_filter_id_card($_POST['idcard']))
-				$this -> error('Part1 身份证号码校验失败');
-		} 
-		if (!empty($_POST['fmobile'])) {
-			if (!ismobile($_POST['fmobile']))
-				$this -> error('Part2 父亲手机号码校验失败');
-		} 
-		if (!empty($_POST['mmobile'])) {
-			if (!ismobile($_POST['mmobile']))
-				$this -> error('Part2 母亲手机号码校验失败');
-		} 
-		if (!empty($_POST['omobile'])) {
-			if (!ismobile($_POST['omobile']))
-				$this -> error('Part2 其他联系人手机号码校验失败');
-		}
-        if (empty($_POST['schoolprovince'])||empty($_POST['schoolcity'])||empty($_POST['schoolname'])) {
-			$this -> error('Part3 毕业学校必填');
-		}
-		$this -> success('数据校验成功');
-	} 
 	public function city() {
 		$bigid = $_GET["province"];
 		if (isset($bigid)) {
@@ -2607,6 +2513,13 @@ class EnrollAdmAction extends CommonAction {
             $map['ctime'] = array('elt', $ctimeend);
             $this->assign('ctime_start',$ctimeend);
         }
+        $enrollstatus_fortag = array(0=>"未录取",1=>"已录取");
+        $this->assign("enrollstatus_fortag",$enrollstatus_fortag);
+        if(isset($_GET['enrollstatus'])) {
+            $enrollstatus = $_GET['enrollstatus'];
+            $map['enrollstatus'] = $enrollstatus;
+            $this->assign('enrollstatus_current',$enrollstatus);
+        }
 
         $Enroll = D("Enroll");
         $count = $Enroll -> where($map) -> count();
@@ -2642,6 +2555,13 @@ class EnrollAdmAction extends CommonAction {
             $map['ctime'] = array('elt', $ctimeend);
             $this->assign('ctime_start',$ctimeend);
         }
+        $enrollstatus_fortag = array(0=>"未录取",1=>"已录取");
+        $this->assign("enrollstatus_fortag",$enrollstatus_fortag);
+        if(isset($_GET['enrollstatus'])) {
+            $enrollstatus = $_GET['enrollstatus'];
+            $map['enrollstatus'] = $enrollstatus;
+            $this->assign('enrollstatus_current',$enrollstatus);
+        }
 
         $Enroll = D("Enroll");
         $count = $Enroll -> where($map) -> count();
@@ -2658,7 +2578,72 @@ class EnrollAdmAction extends CommonAction {
         $this->menuagent();
         $this->display();
     }
+    public function downStuList(){
+        if(isset($_GET['searchkey']) && !empty($_GET['searchkey'])) {
+            $searchkey = $_GET['searchkey'];
+            $map['agent|agentname|username|truename|mobile|idcard'] = array('like','%'.$searchkey.'%');
+            $this->assign('searchkey',$searchkey);
+        }
 
+        if(isset($_GET['ctimestart'])) {
+            $ctimestart = $_GET['ctimestart'];
+            $map['ctime'] = array('egt', $ctimestart);
+            $this->assign('ctime_start',$ctimestart);
+        }
+
+        if(isset($_GET['ctimeend'])) {
+            $ctimeend = $_GET['ctimeend'];
+            $map['ctime'] = array('elt', $ctimeend);
+            $this->assign('ctime_start',$ctimeend);
+        }
+        $enrollstatus_fortag = array(0=>"未录取",1=>"已录取");
+        $this->assign("enrollstatus_fortag",$enrollstatus_fortag);
+        if(isset($_GET['enrollstatus'])) {
+            $enrollstatus = $_GET['enrollstatus'];
+            $map['enrollstatus'] = $enrollstatus;
+            $this->assign('enrollstatus_current',$enrollstatus);
+        }
+
+        $Enroll = D("Enroll");
+        $my = $Enroll -> where($map) -> order('ctime desc') -> select();
+
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/stulist.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $i = 2;
+        foreach ($my as $va) {
+            if ($va["enrollstatus"] == 0) {
+                $va["enrollstatus"] = "未录取";
+            }else{
+                $va["enrollstatus"] = "已录取";
+            }
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$i,$va["truename"])
+                ->setCellValue("B".$i,$va["sex"])
+                ->setCellValue("C".$i,$va["projectname"])
+                ->setCellValue("D".$i,$va["majorname"])
+                ->setCellValueExplicit("E".$i,$va["idcard"],PHPExcel_Cell_DataType::TYPE_STRING)
+                ->setCellValue("F".$i,$va["ctime"])
+                ->setCellValue("G".$i,$va["paystatus"])
+                ->setCellValue("H".$i,$va["enrollstatus"])
+                ->setCellValue("I".$i,$va["agentname"]);
+            $i++;
+        }
+        ob_end_clean();
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename=学生列表.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
     public function setEnrollStatus() {
         $idcard=$_GET['idcard'];
         $status=$_GET['status'];
@@ -2703,6 +2688,420 @@ class EnrollAdmAction extends CommonAction {
         }else {
             $this->error('删除失败');
         }
+    }
+    public function stuCommon() {
+        $this -> display();
+    } 
+    public function stuCommonMenu($id) {
+        $menu['stuCommonInfo']='基本信息';
+        $menu['stuCommonScore']=' 成绩单';
+        $menu['stuCommonCertification']='在读证明';
+        $menu['stuCommonAttend']='考勤记录';
+        $menu['stuCommonReward']='奖惩记录';
+        $menu['stuCommonProcess']='留学进程';
+        $this->assign('menu',$this ->autoMenu($menu,$id));  
+    }
+    
+    public function stuCommonScore() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $Score = D("prograde");
+        $map['stunum']=$id;
+        // $map['isvisible']=1;
+        $term=$Score -> where($map) ->field('term')->group('term')->order('term asc')-> select();
+        $term_num=count($term);
+        // if($term_num>0){
+            foreach($term as $key=>$value){
+                $map['term']=$value['term'];
+                $my[$key]=$Score -> where($map) -> select();
+            }
+            $this->assign('id',$id);//这里的id指的是学号
+            $this->assign('my',$my);
+        // }
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function stuCommonCertification(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        $student=D('classstudent');
+        $enroll=D('enroll');
+        $class=D('class');
+        $map['student']=$id;
+        $map1['username']=$id;
+        $stu=$student->where($map)->select();
+
+        $mystuename = $stu[0][ename];
+        $mystuename_begin = ucfirst(strtolower($mystuename));
+        $len = strlen($mystuename);
+        $position = 0;
+        for($i=0;$i<$len;$i++){
+            if($mystuename[$i]!=$mystuename_begin[$i]){
+                $position = $i;
+                break;
+            }
+        }
+        $my_xing = substr($mystuename_begin,0,$position);
+        $my_ming = substr($mystuename_begin,$position);
+        $mystuename = $my_xing." ".ucfirst(strtolower($my_ming));
+
+        $map2[id]=$stu[0]['classid'];
+        $zsex='';
+        $year='';
+        $month='';
+        $day='';
+        $major='';
+        $sex='';
+        $birthday='';
+        $majore='';
+        $classinfo=$class->where($map2)->select();
+        $stuinfo=$enroll->where($map1)->select();
+        $current_grade=$this->getGrade(date('Y-m-d',time()),$classinfo[0][year]);
+        $current_egrade=$this->getEgrade(date('Y-m-d',time()),$classinfo[0][year]);
+        if($stuinfo[0][sex]==''){
+            $zsex='______'.'(性别)';$sex='______'.'(sex)';
+        }else{
+            $zsex=$stuinfo[0][sex];$sex=$this->getSex($stuinfo[0][sex]);
+        }
+        if($stuinfo[0][birthday] == '' || $stuinfo[0][birthday] == '0000-00-00 00:00:00'){
+            $year='____';$month='____';$day='____';$birthday='____________________';
+        }else{
+            $year=substr($stuinfo[0][birthday],0,4);
+            $month=substr($stuinfo[0][birthday],5,2);
+            $day=substr($stuinfo[0][birthday],8,2);
+            $birthday=date('M.j,Y',strtotime($stuinfo[0][birthday]));
+        }
+        if($classinfo[0][major] == ''){
+            $major='______________________________________';
+            $item = '_________________';
+            $iteme = '_________________';
+        }else{
+            $major=$classinfo[0][major];
+            $item = M("major")->where(array("major"=>$major))->find();
+            if ($item["item"] == "HND") {
+                $item = "英国高等教育文凭";
+                $iteme = "SQA HND programme";
+            }elseif ($item["item"] == "美国2+2") {
+                $item = "美国高等教育项目";
+                $iteme = "American Higher Education Project(AHEP)";
+            }
+        }
+        if($classinfo[0][majore] == ''){
+            $majore='_____________________________________';
+        }else{
+            $majore=$classinfo[0][majore];
+        }
+        $this->assign("item",$item);
+        $this->assign("iteme",$iteme);
+        $this->assign('zsex',$zsex);
+        $this->assign('year',$year);
+        $this->assign('month',$month);
+        $this->assign('day',$day);
+        $this->assign('major',$major);
+        $this->assign('sex',$sex);
+        $this->assign('majore',$majore);
+        $this->assign('current_grade',$current_grade);
+        $this->assign('now',date('Y-m-d',time()));
+        $this->assign('current_time',date('M.j,Y',time()));
+        $this->assign('birthday',$birthday);
+        $this->assign('current_egrade',$current_egrade);
+        $this->assign('stu',$stu);
+        $this->assign('mystuename',$mystuename);
+        $this->assign('stuinfo',$stuinfo);
+        $this->assign('classinfo',$classinfo);
+        $this->assign('id',$id);
+        $this->stuCommonMenu($id);
+        if($stuinfo[0][sex]==''||$stuinfo[0][birthday]=='0000-00-00 00:00:00'||$classinfo[0][major]==''||$classinfo[0][majore]==''){
+            $tips='下划线处信息不全，请下载后补全!';
+        }
+        $this->assign('tips',$tips);
+        $this -> display();
+    }
+    public function stuCommonAttend() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $Attend = D("Attend");
+        $map['susername']=$id;
+        $map1['susername']=$id;
+        $count = $Attend -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows=10;
+            $p = new Page($count, $listRows);
+            $my = $Attend -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
+         $rid=$Attend->where($map)->field('id')->order('ctime DESC') ->select();
+            $rid_num=count($rid);
+            $a=array();
+            if($rid_num>0){
+                foreach($rid as $key=>$value){
+                $map['id']=$value['id'];
+                $my[$key]=$Attend -> where($map)-> find();
+                        if(!in_array(substr($my[$key]['timezone'],0,strripos($my[$key]['timezone'], '第')),$a)){
+                         array_push($a,substr($my[$key]['timezone'],0,strripos($my[$key]['timezone'], '第')));
+                     }
+                }
+            }
+            $map1['timezone']=array('like',$a[0].'%');
+            $truant_num=$Attend->where($map1)->sum('truant');
+            $tvacate_num=$Attend->where($map1)->sum('tvacate');
+            $svacate_num=$Attend->where($map1)->sum('svacate');
+            $late_num=$Attend->where($map1)->sum('late');
+            $this->assign('term',$a[0]);
+            $this->assign('truant',$truant_num);
+            $this->assign('tvacate',$tvacate_num);
+            $this->assign('svacate',$svacate_num);
+            $this->assign('late',$late_num);
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function stuCommonReward() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $Reward = D("Reward");
+        $map['susername']=$id;
+        $count = $Reward -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows=10;
+            $p = new Page($count, $listRows);
+            $my = $Reward -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function stuCommonGetSystem($category,$name) {
+        $system = D("System");
+        $temp = explode(',', $system -> where("category='" . $category . "' and name='" . $name . "'") -> getField("content"));
+        $a = array();
+        foreach($temp as $key => $value) {
+            $a[$value] = $value;
+        } 
+        return $a;
+    } 
+    public function stuCommonGrade(){
+        $this->assign('id',$_GET['id']);
+        $this->assign('info',$this->students());
+        $this->display();
+    }
+     public function stuCommonClass(){
+        $this->assign('id',$_GET['id']);
+        $this->assign('class',$_GET['class']);
+        $this->assign('info',$this->students());
+        $this->display();
+    }
+    public function stuCommonInfo() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $area = D("Area");
+        $province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
+        $a = array();
+        foreach($province as $key => $value) {
+            $a[$value['region_name']] = $value['region_name'];
+        } 
+        $is_or_not = array('是' => '是', '否' => '否');
+        $education = $this -> stuCommonGetSystem("enroll","education");
+        $entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
+        $englishfull = $this -> stuCommonGetSystem("enroll","englishfull");
+        $mathfull = $this -> stuCommonGetSystem("enroll","mathfull");
+        $abroad = $this -> stuCommonGetSystem("enroll","abroad");
+        $coursewant = $this -> stuCommonGetSystem("enroll","coursewant");
+        $englishtrain = $this -> stuCommonGetSystem("enroll","englishtrain");
+        $sourcenewspaper = $this -> stuCommonGetSystem("enroll","sourcenewspaper");
+        $sourcenet = $this -> stuCommonGetSystem("enroll","sourcenet");
+        $nationality = $this -> stuCommonGetSystem("enroll","nationality");
+
+        $this -> assign('a', $a);
+        $this -> assign('is_or_not', $is_or_not);
+        $this -> assign('education', $education);
+        $this -> assign('entrancefull', $entrancefull);
+        $this -> assign('englishfull', $englishfull);
+        $this -> assign('mathfull', $mathfull);
+        $this -> assign('abroad', $abroad);
+        $this -> assign('coursewant', $coursewant);
+        $this -> assign('englishtrain', $englishtrain);
+        $this -> assign('sourcenewspaper', $sourcenewspaper);
+        $this -> assign('sourcenet', $sourcenet);
+        $this -> assign('nationality', $nationality);
+        
+        $Enroll = D('Enroll');
+        $map['username'] = $id;
+        $my = $Enroll -> where($map) -> find();
+        if ($my) {
+            $this -> assign('nativecity', $this -> getBrotherCity($my['nativecity']));
+            $this -> assign('fcity', $this -> getBrotherCity($my['fcity']));
+            $this -> assign('mcity', $this -> getBrotherCity($my['mcity']));
+            $this -> assign('ocity', $this -> getBrotherCity($my['ocity']));
+            $this -> assign('schoolcity', $this -> getBrotherCity($my['schoolcity']));
+            $this -> assign('abroad_selected', explode(',', $my['abroad']));
+            $this -> assign('newspaper_selected', explode(',', $my['sourcenewspaper']));
+            $this -> assign('net_selected', explode(',', $my['sourcenet']));
+            $this -> assign('infosource_selected', explode(',', $my['infosource']));
+            $this -> assign('try', $my['try']);
+        } 
+        $this -> assign('my', $my);
+        $mapJ['susername']=$id;
+        $list=M('judge')->where($mapJ)->select();
+        $this->assign('list',$list);
+        $this->stuCommonMenu($id);
+        $this -> display();
+    } 
+    public function checkEnrollPlus() {
+        load("@.idcard");
+        load("@.check");
+        if (empty($_POST['truename'])) {
+            $this -> error('Part1 学生姓名不能为空');
+        }
+        if (empty($_POST['username'])) {
+            // $this -> error('Part1 学生学号不能为空');
+        }elseif(!isusername($_POST['username'])){
+          $this -> error('Part1 学生学号校验失败');  
+        }
+        if (empty($_POST['cyear'])) {
+            // $this -> error('Part1 入学年份不能为空');
+        }elseif (!isctime($_POST['cyear'])) {
+            $this -> error('Part1 入学年份校验失败');
+        }
+        if (empty($_POST['sex'])) {
+            // $this -> error('Part1 性别不能为空');
+        }elseif (!issex($_POST['sex'])) {
+            $this -> error('Part1 学生性别校验失败');
+        }
+        if (empty($_POST['bankcard'])) {
+            // $this->error("Part1 学生银行卡号不能为空");
+        }
+        if (empty($_POST["onecard"])) {
+            // $this->error("Part1 学生一卡通号不能为空");
+        }
+        if (empty($_POST['mobile'])) {
+            // $this -> error('Part1 学生手机号不能为空');
+        } elseif (!ismobile($_POST['mobile'])) {
+            $this -> error('Part1 学生手机号校验失败');
+        }
+        if (!empty($_POST['qq'])) {
+            if (!is_numeric($_POST['qq']))
+                $this -> error('Part1 学生QQ号码校验失败');
+        }
+        if (!empty($_POST['email'])) {
+            if (!isemail($_POST['email']))
+                $this -> error('Part1 学生Email校验失败');
+        }
+        if (!empty($_POST['idcard'])) {
+            if (!validation_filter_id_card($_POST['idcard']))
+                $this -> error('Part1 身份证号码校验失败');
+        }else{
+            $this->error("Part1 身份证号码不能为空");
+        }
+        if (!empty($_POST['fmobile'])) {
+            if (!ismobile($_POST['fmobile']))
+                $this -> error('Part2 父亲手机号码校验失败');
+        }
+        if (!empty($_POST['mmobile'])) {
+            if (!ismobile($_POST['mmobile']))
+                $this -> error('Part2 母亲手机号码校验失败');
+        }
+        if (!empty($_POST['omobile'])) {
+            if (!ismobile($_POST['omobile']))
+                $this -> error('Part2 其他联系人手机号码校验失败');
+        }         
+        $this -> success('数据校验成功');
+    }    
+
+    public function insertPlus() {
+        $dao = D("Enroll");
+        $map["student"] = $dao->where(array("id"=>$_POST["id"]))->getField("username");
+        if ($dao -> create()) {
+            $dao -> abroad = implode(',', $_POST['abroad']);
+            $dao -> infosource = implode(',', $_POST['infosource']);
+            $dao -> sourcenewspaper = implode(',', $_POST['sourcenewspaper']);
+            $dao -> sourcenet = implode(',', $_POST['sourcenet']);
+            $checked = $dao->save();
+            if ($checked>0) {
+                if (!empty($_POST["username"])) {
+                    M("classstudent")->where($map)->save(array("student"=>$_POST["username"]));
+                }
+                $this -> success('已成功保存');
+            } else{
+                $this -> error('没有更新任何数据');
+            }
+        } else {
+            $this -> error($dao -> getError());
+        }
+    } 
+    public function stuCommonProcess(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $dao=D('Abroad');
+        $map['susername']=$id;
+        $my=$dao->where($map)->find();
+        $this->assign('my',$my);
+        $school=D('Abroadschool')->where("abroadid=".$my['id'])->select();
+        $this -> assign('school', $school);
+        $this->stuCommonMenu($id);
+        $this->display();
+
+    }
+    public function stuCommonLeft(){
+        $searchkey = $_GET['searchkey'];
+        if (isset($searchkey)) {
+            $dao2 = D('ClassstudentView');
+            $map2['studentname|ename|enamesimple']=array('like',"%$searchkey%");
+            //$stu = $dao2->where($map2)->order('student asc')-> select();
+            $stu = $dao2->query('SELECT u_classstudent.student, u_class.name, u_classstudent.studentname from u_classstudent, u_class where u_classstudent.classid=u_class.id and ( u_classstudent.enamesimple like "%'.$searchkey.'%" or u_classstudent.ename like "%'.$searchkey.'%" or  u_classstudent.studentname like "%'.$searchkey.'%" ) ORDER BY u_classstudent.student asc');
+            $count=count($stu);
+            $this -> assign('searchkey', $searchkey);
+            $this -> assign('stu', $stu);
+            $this -> assign('count', $count);
+            $this->display();
+        } else{
+            // $m["item"] = 'HND';//分项目的限制开始
+            // $major = M("major")->where($m)->select();
+            $major = M("major")->select();
+            foreach ($major as $vm) {
+                $majors[$vm["major"]]=$vm["major"];
+            }
+            $map_class["major"] = array("in",$majors);//分项目的限制结束
+            $grades = explode(",", $_SESSION["grade"]);
+            $map_class["year"] = array("in",$grades);
+            $dao_class = D('Class');
+            $map_class['isbiye']=0;
+            $dtree_class = $dao_class->where($map_class)->order('year desc,name asc')-> select();
+            $dtree_year=$dao_class ->where($map_class)->field('year')-> group('year')->order('year desc')->select();
+            $dao2 = D('ClassstudentView');
+            $dtree_stu = $dao2->order('student asc')-> select();
+            $this->assign('dtree_year',$dtree_year);
+            $this -> assign('dtree_class', $dtree_class);
+            foreach ($dtree_stu as $k => $va) {
+                if (empty($va["student"]) || empty($va["scnid"]) || empty($va["sex"]) || empty($va["bankcard"]) || empty($va["onecard"]) || empty($va["mobile"])) {
+                    $dtree_stu[$k]["studentname"] .= '<span style="color:red;">*</span>';
+                }
+            }
+            $this -> assign('dtree_stu', $dtree_stu);
+            $this->display();
+        }
+    }
+    public function stuCommonRight(){
+        $test=$_GET['id'];
+        $this -> assign('test', $test);
+        $this->display();
     }
 }
 
