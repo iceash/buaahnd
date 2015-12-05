@@ -83,6 +83,7 @@ input[type="button"]:hover {
     border-spacing:0;
     border-bottom:2px solid #015198;
     clear: both;
+	font-size: 12px;
 }
 
 .mytable tr,.alert_table tr{
@@ -131,4 +132,4 @@ input[type="button"]:hover {
 .page a:hover{height:20px;text-decoration:none;color:#737478;padding:5px;}
 
 .searcha{ margin:10px;}
-#form1 tr:hover{background-color: rgba(0,0,0,0);};
+#form1 tr:hover{background-color: rgba(0,0,0,0);}

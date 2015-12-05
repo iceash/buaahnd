@@ -8,7 +8,7 @@ $(document).ready(function(){
         //以新增形式出现新行
         $(this).parents(".item").find(".addfee").remove();
         $(this).parents(".item").find(".div_partner").remove();
-        $(this).parents(".item").find(".mytable tbody").append($("#div_addfee").html());
+        $(this).parents(".item").find(".alert_table tbody").append($("#div_addfee").html());
         $(this).parents(".item").find(".btn_update").hide();
         $(this).hide();
     });

@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title> 信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<style type="text/css">
+.btn_zone{ margin:20px 0}
+</style>
+</head>
+
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">学期：<u>{$term}</u> 旷课总次数：<u>{$truant}</u> 事假总次数：<u>{$tvacate}</u> 病假总次数：<u>{$svacate}</u> 迟到总次数：<u>{$late}</u></div></td>
+  <td><div class="page"></div></td></tr>
+ </table>
+	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="220">时间段</th>
+    <th>考勤情况</th>
+    <th width="60">旷课次数</th>
+    <th width="60">事假次数</th>
+    <th width="60">病假次数</th>
+    <th width="60">迟到次数</th>
+    <th width="130">登记时间</td>
+	<th width="130">登记人</td>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+    <td>{$my.timezone}</td>
+    <td>{$my.content}</td>
+    <td>{$my.truant}</td>
+    <td>{$my.tvacate}</td>
+    <td>{$my.svacate}</td>
+    <td>{$my.late}</td>
+    <td>{$my.ctime}</td>
+	<td>{$my.ttruename}</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

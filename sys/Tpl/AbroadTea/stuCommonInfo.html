@@ -1,0 +1,626 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title> 信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/enroll.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+
+});
+jQuery(function(){ 
+	jQuery('.calendar').calendar();
+	jQuery('#mycontent1').slideDown("slow");
+});
+function setTab(current){
+	for(i=1;i<8;i++){
+		 a=jQuery("#mycontent"+i);
+		if(i==current){
+			if(a.is(":visible")){
+				a.slideUp("fast");
+			}else{
+				a.slideDown("fast");
+			}
+		}else{
+			if(a.is(":visible")){
+				a.slideUp("fast");
+			}
+		}
+	}
+}
+function showlinkpeople(a){
+	var b = jQuery(a).next();
+	if(b.is(":visible")){
+		b.slideUp("fast");
+	}else{
+		b.slideDown("fast");
+	}
+}
+function check(issubmit){
+	jQuery('#message').remove();
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/checkEnrollPlus',
+		dataType:'json',
+		data:jQuery("#form1").serialize(),
+		success: function(data){
+			if (data.status==1){
+				if(issubmit==1){
+					insert();
+				}else{
+					jQuery('#tips').append('<div id="message" class="message_success"></div>');	
+					jQuery('#message').text(data.info);
+					jQuery('#message').fadeIn(500).delay(3000).fadeOut(500);
+				}
+			}else{
+				jQuery('#tips').append('<div id="message" class="message_error"></div>');	
+				jQuery('#message').text(data.info);
+				jQuery('#message').fadeIn(500).delay(3000).fadeOut(500);
+			}	
+		}
+	});
+}
+function insert(){
+	jQuery('#message').remove();
+	jQuery.ajax({
+		type:'POST',
+		url:'__URL__/insertPlus',
+		dataType:'json',
+		data:jQuery("#form1").serialize(),
+		success: function(data){
+			if (data.status==1){
+				alert(data.info);	
+                window.parent.frames.location.reload();
+			}else{
+				alert(data.info);
+			}
+		}
+	});
+}
+function getCity(a){ //入口参数为省份的select控件
+	 var provinceid=jQuery(a).val();
+      jQuery.getJSON('__URL__/city/',{province:provinceid},function(data){
+			 if(data.status==1){
+            var city = jQuery(a).next();
+            jQuery("option:gt(0)",city).remove(); 		
+            jQuery.each(data.data,function(index,array){
+                var option = "<option  value='"+array['region_name']+"'>"+array['region_name']+"</option>";
+                city.append(option);
+            });
+			
+			 }
+        });
+    }
+
+function getSex(a){
+	if(a=='1'){
+		return '男';
+	}else{
+		return '女';
+	}
+}
+function getBirthday(a){
+	if(a.length==8){
+		a_year=a.substr(0,4);
+		a_month=a.substr(4,2);
+		a_day=a.substr(6,2);
+		a=a_year+'-'+a_month+'-'+a_day;
+	}
+	return a;
+}
+function setNationality(a){
+	var count=$("#nationality").get(0).options.length;
+	for(var i=0;i<count;i++){
+		if($("#nationality").get(0).options[i].text == a)  {
+			$("#nationality").get(0).options[i].selected = true;          
+			break;  
+		}  
+	}
+}
+function getNationality(a){
+	Nationality='';
+	switch(a){
+		case '01':
+			Nationality='汉族';break; 
+		case '02':
+			Nationality='蒙古族';break; 
+		case '03':
+			Nationality='回族';break; 
+		case '04':
+			Nationality='藏族';break; 
+		case '05':
+			Nationality='维吾尔族';break; 
+		case '06':
+			Nationality='苗族';break; 
+		case '07':
+			Nationality='彝族';break; 
+		case '08':
+			Nationality='壮族';break; 
+		case '09':
+			Nationality='布依族';break; 
+		case '10':
+			Nationality='朝鲜族';break; 
+		case '11':
+			Nationality='满族';break; 
+		case '12':
+			Nationality='侗族';break; 
+		case '13':
+			Nationality='瑶族';break; 
+		case '14':
+			Nationality='白族';break; 
+		case '15':
+			Nationality='土家族';break; 
+		case '16':
+			Nationality='哈尼族';break; 
+		case '17':
+			Nationality='哈萨克族';break; 
+		case '18':
+			Nationality='傣族';break; 
+		case '19':
+			Nationality='黎族';break; 
+		case '20':
+			Nationality='傈僳族';break; 
+		case '21':
+			Nationality='佤族';break; 
+		case '22':
+			Nationality='畲族';break; 
+		case '23':
+			Nationality='高山族';break; 
+		case '24':
+			Nationality='拉祜族';break; 
+		case '25':
+			Nationality='水族';break; 
+		case '26':
+			Nationality='东乡族';break; 
+		case '27':
+			Nationality='纳西族';break; 
+		case '28':
+			Nationality='景颇族';break; 
+		case '29':
+			Nationality='柯尔克孜族';break; 
+		case '30':
+			Nationality='土族';break; 
+		case '31':
+			Nationality='达斡尔族';break; 
+		case '32':
+			Nationality='仫佬族';break; 
+		case '33':
+			Nationality='羌族';break; 
+		case '34':
+			Nationality='布朗族';break; 
+		case '35':
+			Nationality='撒拉族';break; 
+		case '36':
+			Nationality='毛南族';break; 
+		case '37':
+			Nationality='仡佬族';break; 
+		case '38':
+			Nationality='锡伯族';break; 
+		case '39':
+			Nationality='阿昌族';break; 
+		case '40':
+			Nationality='普米族';break; 
+		case '41':
+			Nationality='塔吉克族';break; 
+		case '42':
+			Nationality='怒族';break; 
+		case '43':
+			Nationality='乌孜别克族';break; 
+		case '44':
+			Nationality='俄罗斯族';break; 
+		case '45':
+			Nationality='鄂温克族';break; 
+		case '46':
+			Nationality='德昂族';break; 
+		case '47':
+			Nationality='保安族';break; 
+		case '48':
+			Nationality='裕固族';break; 
+		case '49':
+			Nationality='京族';break; 
+		case '50':
+			Nationality='塔塔尔族';break; 
+		case '51':
+			Nationality='独龙族';break; 
+		case '52':
+			Nationality='鄂伦春族';break; 
+		case '53':
+			Nationality='赫哲族';break; 
+		case '54':
+			Nationality='门巴族';break; 
+		case '55':
+			Nationality='珞巴族';break; 
+		case '56':
+			Nationality='基诺族';break; 
+	}
+	return Nationality;
+}
+</script> 
+<tagLib name="html" />
+</head>
+
+<body>
+<OBJECT classid="clsid:18EE8930-6993-4ADA-B8BB-02BA5820AC94" id="aaa" CODEBASE="driver/Termb.cab#version=1,0,0,1"  VIEWASTEXT width="0" height="0"></OBJECT>
+<script language="javascript">
+		function byidcard()
+		{
+		
+			i=0;
+			flag=0;
+			for(i=1;i<3;i++)
+			{
+					if(aaa.OpenComm(i)==1){flag=1;break;}
+				}
+			if(i==3){
+					if(aaa.OpenComm(1001)==1){
+						flag=1;
+							}else{
+								alert("打开端口失败");							
+								}
+				}
+			
+			if(flag==1){
+				if (aaa.Authen()==1)
+				{
+				if(aaa.ReadCardPath("",1)==1)
+				{
+					jQuery('#truename').val(aaa.sName);
+					jQuery('#birthday').val(getBirthday(aaa.sBornDate));						
+					jQuery('#idcard').val(aaa.sIDNo);		
+					jQuery('#address').val(aaa.sAddress);		
+					jQuery(":radio[name=sex][value="+getSex(aaa.sSex)+"]").attr("checked",true);
+					setNationality(getNationality(aaa.sNation));
+				}
+				else
+				{
+					alert("读卡错误！"+aaa.ReadCardPath("",1));
+				}
+				}
+				else{
+				alert("找卡错误,请重新放卡!");
+				}
+			}
+			aaa.EndComm();	
+		}
+</script>
+<include file="Index:pageheader"/>
+<div id="main"><form id="form1"> <input type="hidden" value="{$my.id}" name="id"/>
+<empty name="my"><span style="margin-left:270px"><font color="red">该生的基本信息不在招生档案中，请联系招生管理员导入数据！</font></span>
+<else/><div id="myleft">
+
+	<h2>招生信息查看及补录</h2>
+	<h2>学生姓名：{$my.truename}</h2>
+	<div class="m20">填写说明：内容填写完毕后，点击“数据校验”按钮，校验通过之后再点“确认提交”。<span class="mustfill">*</span>为必填项</div>
+	<div class="m20">　<span class="mustfill"></span>填表人 <input name="fill" type="text" class="inputshort" value="{$my.fill}"/></div>
+	<div><input type="button" value="数据校验" onclick="check(0);"/>&nbsp;<input type="button" value="确认提交"  onclick="check(1);"/>
+	</div>
+	<div id="tips" class="m20"></div>
+</div><!--end of myleft-->
+<div id="myright">
+
+<div class="mytitle"  onclick="setTab(1);"><h3>Part1 基本信息</h3></div>
+	<div class="mycontent" id="mycontent1" style="display:none">
+<table width="100%" border="0">
+ <tr>
+    <td></td>
+    <!-- <td><input type="button" name="auto" value="使用身份证阅读器便捷录入" onclick="byidcard();" />
+		
+	</td> -->
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>姓名 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="truename" id="truename" class="inputshort" value="{$my.truename}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>学号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="username" id="username" class="inputshort" value="{$my.username}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>SCN号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="scnid" id="scnid" class="inputshort" value="{$my.scnid}"/></td>
+  </tr>
+  <!-- <tr>
+    <td class="ziduan"><span class="mustfill">*</span>入学年份</td>
+    <td><label for="textfield"></label>
+      <input type="text" name="cyear" id="ctime" class="inputshort" value="{$my.ctime|substr=0,4}"/></td>
+  </tr> -->
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>性别 </td>
+    <td> <label><input type="radio" name="sex" value="男" <eq name="my.sex" value="男">checked="checked"</eq> />男</label> &nbsp;
+      <label><input type="radio" name="sex" value="女"  <eq name="my.sex" value="女">checked="checked"</eq> />女</label></td>
+  </tr>
+  <tr>
+    <td  class="ziduan">民族 </td>
+    <td><html:select options="nationality" name="nationality" id="nationality" first="请选择" selected="my['nationality']" /></td>
+  </tr>
+  <tr>
+    <td  class="ziduan">出生日期 </td>
+    <td><input type="text" name="birthday" id="birthday" class="inputshort calendar" value="{$my.birthday|toDate='Y-m-d'}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>银行卡号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="bankcard" id="bankcard" class="inputlong" value="{$my.bankcard}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan"><span class="mustfill">*</span>一卡通号 </td>
+    <td><label for="textfield"></label>
+      <input type="text" name="onecard" id="onecard" class="inputlong" value="{$my.onecard}"/></td>
+  </tr>
+  <tr>
+    <td  class="ziduan"><span class="mustfill">*</span>身份证号码 </td>
+    <td><input type="text" name="idcard" id="idcard" class="inputlong" value="{$my.idcard}"/></td>
+  </tr>
+  <tr>
+    <td  class="ziduan">住址 </td>
+    <td><input type="text" name="address" id="address" class="inputlong" value="{$my.address}"/></td>
+  </tr>
+  
+  <tr>
+    <td  class="ziduan">籍贯</td>
+    <td><html:select options="a" name="nativeprovince" first="请选择" change="getCity(this)" selected="my['nativeprovince']" />&nbsp;
+	<html:select options="nativecity" name="nativecity" first="请选择" selected="my['nativecity']" />
+</td>
+  </tr>
+   <tr>
+    <td class="ziduan"><span class="mustfill">*</span>手机号</td>
+	<td><input type="text" name="mobile" class="inputshort" value="{$my.mobile}" />  </td>
+  </tr>
+  <tr>
+    <td class="ziduan">QQ号</td>
+	<td> <input type="text" name="qq" class="inputshort" value="{$my.qq}"/></td>
+	</tr>
+<tr>
+	<td class="ziduan">Email</td>
+	<td> <input type="text" name="email" class="inputshort"  value="{$my.email}"/></td>
+  </tr>
+  <tr>
+	<td class="ziduan">备注</td>
+	<td> <textarea name="plus" class="textareasmall">{$my.plus}</textarea></td>
+  </tr>
+</table>
+	</div><!--end of mycontent-->
+	<div class="mytitle" onclick="setTab(2);"><h3>Part2 家长联系方式</h3></div>
+	<div class="mycontent" id="mycontent2" style="display:none">
+
+<h4 class="linkpeople">父亲信息</h4>
+ <table width="100%" border="0">
+  <tr>
+    <td class="ziduan">姓名</td>
+	<td> <input type="text" name="fname" class="inputshort" value="{$my.fname}"/>  </td>
+</tr>
+<tr>
+    <td class="ziduan">手机</td>
+	<td> <input type="text" name="fmobile" class="inputshort" value="{$my.fmobile}" /></td>
+</tr>
+<tr>
+	<td  class="ziduan">固话</td>
+	<td> <input type="text" name="fphone" class="inputshort" value="{$my.fphone}"/></td>
+  </tr>
+  <tr>
+    <td  class="ziduan">工作单位</td>
+	<td><html:select options="a" name="fprovince" first="请选择" change="getCity(this)" selected="my['fprovince']"/>&nbsp;
+	<html:select options="fcity" name="fcity" first="请选择" selected="my['fcity']"/>&nbsp;
+	<input type="text" name="funit" class="inputmid" value="{$my.funit}" />  </td>
+  </tr>
+  <tr>
+    <td class="ziduan">职务</td>
+	<td> <input type="text" name="fpost" class="inputshort"  value="{$my.fpost}"/>  </td>
+</tr>
+<tr>
+    <td class="ziduan">Email</td>
+	<td> <input type="text" name="femail"  class="inputshort" value="{$my.femail}"/>  </td>
+</tr>
+
+</table>
+<h4 class="linkpeople">母亲信息</h4>
+ <table width="100%" border="0">
+  <tr>
+    <td class="ziduan">姓名</td>
+	<td> <input type="text" name="mname" class="inputshort" value="{$my.mname}" />  </td>
+</tr>
+<tr>
+    <td class="ziduan">手机</td>
+	<td> <input type="text" name="mmobile" class="inputshort" value="{$my.mmobile}" /></td>
+</tr>
+<tr>
+	<td  class="ziduan">固话</td>
+	<td> <input type="text" name="mphone" class="inputshort" value="{$my.mphone}"/></td>
+  </tr>
+  <tr>
+    <td  class="ziduan">工作单位</td>
+	<td><html:select options="a" name="mprovince" first="请选择" change="getCity(this)" selected="my['mprovince']"/>&nbsp;
+	<html:select options="mcity" name="mcity" first="请选择" selected="my['mcity']"/>&nbsp;
+	<input type="text" name="munit" class="inputmid"  value="{$my.munit}"/>  </td>
+  </tr>
+  <tr>
+    <td class="ziduan">职务</td>
+	<td> <input type="text" name="mpost" class="inputshort" value="{$my.mpost}" />  </td>
+</tr>
+<tr>
+    <td class="ziduan">Email</td>
+	<td> <input type="text" name="memail"  class="inputshort" value="{$my.memail}"/>  </td>
+</tr>
+</table>
+<h4 class="linkpeople" onclick="showlinkpeople(this);">其他联系人(+)</h4>
+<div style="display:none">
+ <table width="100%" border="0">
+  <tr>
+    <td class="ziduan">姓名</td>
+	<td> <input type="text" name="oname" class="inputshort" value="{$my.oname}" />  </td>
+</tr>
+<tr>
+    <td class="ziduan">与学生关系</td>
+	<td> <input type="text" name="olink" class="inputshort"  value="{$my.olink}"/>  </td>
+</tr>
+<tr>
+    <td class="ziduan">手机</td>
+	<td> <input type="text" name="omobile" class="inputshort"  value="{$my.omobile}"/></td>
+</tr>
+<tr>
+	<td  class="ziduan">固话</td>
+	<td> <input type="text" name="ophone" class="inputshort"/  value="{$my.ophone}"></td>
+  </tr>
+  <tr>
+    <td  class="ziduan">工作单位</td>
+	<td><html:select options="a" name="oprovince" first="请选择" change="getCity(this)" selected="my['oprovince']"/>&nbsp;
+	<html:select options="ocity" name="ocity" first="请选择" selected="my['ocity']"/>&nbsp;
+	<input type="text" name="ounit" class="inputmid" value="{$my.ounit}" />  </td>
+  </tr>
+  <tr>
+    <td class="ziduan">职务</td>
+	<td> <input type="text" name="opost" class="inputshort" value="{$my.opost}" />  </td>
+</tr>
+<tr>
+    <td class="ziduan">Email</td>
+	<td> <input type="text" name="oemail"  class="inputshort" value="{$my.oemail}"/>  </td>
+</tr>
+</table></div><!--end of otherlink-->
+	</div><!--end of mycontent-->
+	<div class="mytitle" onclick="setTab(3);"><h3>Part3 教育情况</h3></div>
+	<div class="mycontent" id="mycontent3" style="display:none">
+<table width="100%" border="0">
+  <tr>
+    <td class="ziduan">受教育程度</td>
+    <td>
+     <html:select options="education" name="education" first="请选择" selected="my['education']"/></td>
+  </tr>
+  <tr>
+   	<td class="ziduan">毕业学校</td>
+    <td><html:select options="a" name="schoolprovince" first="请选择" change="getCity(this)" selected="my['schoolprovince']"/>&nbsp;
+	<html:select options="schoolcity" name="schoolcity" first="请选择" selected="my['schoolcity']"/>&nbsp;
+	<input type="text" name="schoolname" class="inputmid" value="{$my.schoolname}"/> </td>
+  </tr>
+  <tr>
+    <td class="ziduan">语言成绩</td>
+    <td>雅思 <input type="text" name="languagescore1" class="inputmini" value="{$my.languagescore1}"/>&nbsp;
+	托福 <input type="text" name="languagescore2" class="inputmini" value="{$my.languagescore2}"/>&nbsp;
+	PTE <input type="text" name="languagescore3" class="inputmini" value="{$my.languagescore3}"/>&nbsp;
+	</td>
+  </tr>
+  <tr>
+    <td class="ziduan">高考总分</td>
+    <td><input type="text" name="entrancescore" class="inputshort" value="{$my.entrancescore}"/>&nbsp;地区总分 <html:select options="entrancefull" name="entrancefull" first="请选择" selected="my['entrancefull']"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan">英语成绩</td>
+    <td><input type="text" name="englishscore" class="inputshort" value="{$my.englishscore}"/>&nbsp;英语单科总分 <html:select options="englishfull" name="englishfull" first="请选择"  selected="my['englishfull']"/></td>
+  </tr>
+   <tr>
+    <td class="ziduan">数学成绩</td>
+    <td><input type="text" name="mathscore" class="inputshort" value="{$my.mathscore}" />&nbsp;数学单科总分 <html:select options="mathfull" name="mathfull" first="请选择"  selected="my['mathfull']"/></td>
+  </tr>
+</table>
+	</div><!--end of mycontent-->
+	<div class="mytitle" onclick="setTab(4);" style="display: none;"><h3>Part4 留学意向和培训情况</h3></div>
+	<div class="mycontent" id="mycontent4" style="display:none">
+<table width="100%" border="0">
+   <tr>
+    <td class="ziduan">留学国家</td>
+    <td><html:checkbox checkboxes="abroad" name="abroad" checked="abroad_selected"/></td>
+  </tr>
+   <tr>
+    <td class="ziduan">课程选择</td>
+    <td><html:select options="coursewant" name="coursewant" first="请选择"  selected="my['coursewant']"/></td>
+  </tr>
+   <tr>
+    <td class="ziduan">测试成绩</td>
+    <td><input type="text" name="testscore" class="inputshort" value="{$my.testscore}"/></td>
+  </tr>
+   <tr>
+    <td class="ziduan">试读协议</td>
+    <td><html:radio radios="is_or_not" name="try" checked="try" />
+	</td>
+  </tr>
+  <tr>
+    <td class="ziduan">英语培训情况</td>
+    <td><html:select options="englishtrain" name="englishtrain" first="请选择" selected="my['englishtrain']"/></td>
+  </tr>
+ <tr>
+    <td class="ziduan">暑期培训成绩</td>
+    <td><input type="text" name="summertrainscore" class="inputshort" value="{$my.summertrainscore}"/></td>
+  </tr>
+</table>
+	</div><!--end of mycontent-->
+	<div class="mytitle" onclick="setTab(5);" style="display: none;"><h3>Part5 信息来源</h3></div>
+	<div class="mycontent" id="mycontent5" style="display:none">
+<table width="100%" border="0">
+   <tr>
+    <td class="ziduan">信息来源</td>
+    <td><label><input type="checkbox" name="infosource[]" value="报纸" <php>echo in_array('报纸',$infosource_selected)?'checked':'ttt';</php> />报纸</label>
+	（<html:checkbox checkboxes="sourcenewspaper" name="sourcenewspaper" checked="newspaper_selected" />）</td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="网络" <php>echo in_array('网络',$infosource_selected)?'checked':'ttt';</php>/>网络</label>
+	（<html:checkbox checkboxes="sourcenet" name="sourcenet" checked="net_selected" />）</td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="说明会" <php>echo in_array('说明会',$infosource_selected)?'checked':'ttt';</php>/>说明会</label></td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="宣传单" <php>echo in_array('宣传单',$infosource_selected)?'checked':'ttt';</php>/">宣传单</label></td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="熟人介绍" <php>echo in_array('熟人介绍',$infosource_selected)?'checked':'ttt';</php> />熟人介绍</label>&nbsp;<input type="text" name="sourcefriend" class="inputshort" value="{$my.sourcefriend}" /></td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="展会" <php>echo in_array('展会',$infosource_selected)?'checked':'ttt';</php>/>展会</label></td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="渠道" <php>echo in_array('渠道',$infosource_selected)?'checked':'ttt';</php> />渠道</label></td>
+  </tr>
+   <tr>
+    <td class="ziduan"></td>
+    <td><label><input type="checkbox" name="infosource[]" value="其它" <php>echo in_array('其它',$infosource_selected)?'checked':'ttt';</php> />其它</label></td>
+  </tr>
+</table>
+	</div><!--end of mycontent-->
+	<div class="mytitle" onclick="setTab(6);" style="display: none;"><h3>Part6 报名费和学费</h3></div>
+	<div class="mycontent" id="mycontent6" style="display:none">
+<table width="100%" border="0">
+   <tr>
+    <td class="ziduan">报名费发票号</td>
+    <td><input type="text" name="entryfeef" class="inputshort" value="{$my.entryfeef}"/> &nbsp;日期 <input type="text" name="entryfeefdate" class="inputshort calendar" value="{$my.entryfeefdate}" /></td>
+  </tr>
+  <tr>
+    <td class="ziduan">报名费收据号</td>
+    <td><input type="text" name="entryfees" class="inputshort" value="{$my.entryfees}"/> &nbsp;日期 <input type="text" name="entryfeesdate" class="inputshort calendar" value="{$my.entryfeesdate}"/></td>
+  </tr>
+  <tr>
+    <td class="ziduan">学费发票号</td>
+    <td><input type="text" name="tuitionfeef" class="inputshort" value="{$my.tuitionfeef}"/> &nbsp;日期 <input type="text" name="tuitionfeefdate" class="inputshort calendar" value="{$my.tuitionfeefdate}"/></td>
+  </tr>
+   <tr>
+    <td class="ziduan">学费收据号</td>
+    <td><input type="text" name="tuitionfees" class="inputshort"value="{$my.tuitionfees}" /> &nbsp;日期 <input type="text" name="tuitionfeesdate" class="inputshort calendar" value="{$my.tuitionfeesdate}"/></td>
+  </tr>
+</table>
+	</div><!--end of mycontent-->
+<div class="mytitle"  onclick="setTab(7);"><h3>Part4 老师评价</h3></div>
+	<div class="mycontent" id="mycontent7" style="display:none">
+<table width="100%" border="0" class="mytable">
+	<tr><th>评价内容</th><th>评价时间</th></tr>
+	<volist name="list" id="vo">
+		<tr><td>{$vo.content}</td><td>{$vo.jdate}</td></tr>
+	</volist>
+</table>
+	</div><!--end of mycontent-->
+
+</div><!--end of myright--></form>
+</empty>
+</div><!--end of main-->
+</body>
+</html>

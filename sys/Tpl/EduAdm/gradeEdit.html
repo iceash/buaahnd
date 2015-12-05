@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title" />
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" type="text/css" href="../Public/js/artDialog4.1.6/skins/default.css">
+<link rel="StyleSheet" href="../Public/js/dtree/dtree.css" type="text/css" />
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/artDialog4.1.6/jquery.artDialog.js"></script>
+<script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+    var chkAllName="ChkAll_"; 
+ $(document).click(function(e){
+  var tmpName=e.target.name?e.target.name:''; 
+  if(tmpName.indexOf(chkAllName) > -1){
+   var flag=e.target.checked;
+   var obj = document.getElementsByName(tmpName.replace(chkAllName,""));
+   $(obj).each(function() {
+    this.checked=flag;
+    if(flag==true){
+			$(this).parent('td').parent('tr').addClass('tr_selected');
+		}else{
+			$(this).parent('td').parent('tr').removeClass('tr_selected');
+		}
+   })
+   		
+  }
+ });
+	jQuery('#btn_pub').click(function(){
+		if (jQuery('input[name *=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要发布选择项吗？')){			
+			doPub(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_freeze').click(function(){
+		if (jQuery('input[name *=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要取消发布选择项吗？')){			
+			doFreeze(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_isb').click(function(){
+		if (window.confirm('确实要开启录补考成绩吗？')){	
+            var subjectid = $('#id').val();
+			window.location="__URL__/gradeIsb/subjectid/"+subjectid;
+		}
+	});
+	jQuery('#btn_isbnot').click(function(){
+		if (window.confirm('确实要取消录补考成绩吗？')){	
+            var subjectid = $('#id').val();
+			window.location="__URL__/gradeIsbnot/subjectid/"+subjectid;
+			
+		}
+	});
+	jQuery('#btn_pubb').click(function(){
+        var a=getSelectCheckboxValues();
+		if (jQuery('input[name ^=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		} 
+        jQuery('#bscore').load("__URL__/gradeFlagb/",{id:a});
+        art.dialog({
+        title:'审核补考成绩',
+        id: 'testID',
+        content:document.getElementById("bscore"),
+        ok: function () {
+        jQuery.ajax({
+        type:'POST',
+        url:'__URL__/gradePubb',
+        dataType:'json',
+        data:{id:getBscoreid(),score:getBscore("score"),blevelscore:getBscore("levelscore")},
+        success: function(data){
+            if(window.confirm('请确认是否继续此操作？继续此操作发布补考成绩后不可恢复。')){
+                if (data.status==1){
+                    alert(data.info);
+                    window.location.reload();
+                }else{
+                        alert(data.info);
+                    }
+                }
+            }
+            });
+                return false;
+            },
+            cancel: true //为true等价于function(){}
+        });	
+	});
+	jQuery('#btn_visiblenot').click(function(){
+		if (jQuery('input[name *=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要设置为对学生不可见吗？')){			
+			dovisiblenot(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_visible').click(function(){
+		if (jQuery('input[name *=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要设置为对学生可见吗？')){			
+			dovisible(getSelectCheckboxValues());
+		}
+	});
+
+});
+
+function dovisiblenot(CheckboxValues){ 
+	jQuery.getJSON('__URL__/dovisiblenot/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function dovisible(CheckboxValues){ 
+
+	jQuery.getJSON('__URL__/dovisible/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+
+
+function doIsbnot(CheckboxValues){ 
+	jQuery.getJSON('__URL__/gradeIsbnot/',{id:CheckboxValues,subjectid:$('#id').val(),teacher:$('#teacher').val(),coursenumber:$('#coursenumber').val(),term:$('#term').val()},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function doFreeze(CheckboxValues){ 
+	jQuery.getJSON('__URL__/gradeFreeze/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function doPub(CheckboxValues){ 
+	jQuery.getJSON('__URL__/gradePub/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function doPubb(CheckboxValues){ 
+	jQuery.getJSON('__URL__/gradePubb/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function deleteTr() {
+	jQuery('input[name *=key]:checked').each(function(){
+		jQuery(this).parent("td").parent("tr").remove();
+	});	
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name ^=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function getBscoreid(){
+	var str='';
+	jQuery('input[name =bscore_id]:hidden').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function getBscore(prefix){
+	var str='';
+	jQuery('input[name =bscore_id]:hidden').each(function(){
+        str+=($('input[name ='+prefix+$(this).val()+']:checked')?$('input[name ='+prefix+$(this).val()+']:checked').val():'')+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function setTab(name)
+  {
+    var res=document.getElementById(name);
+    if($(res).is(":visible"))
+    {
+        $(res).hide();
+    }
+    else
+    {
+        $(res).show();
+    }
+  }
+var change = function (chkArray, val) 
+{
+	for (var i = 0 ; i < chkArray.length ; i ++) //遍历指定组中的所有项
+	    chkArray[i].checked = val; //设置项为指定的值-是否选中
+}
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">课程：<u>{$result1.coursenumber} [{$result1.name}]</u> 任课教师：<u>{$result1.teacher} [{$result1.truename}]</u> 学期：<u>{$result1.term}</u> 学时：<u>{$result1.coursetime}</u> 学分：<u>{$result1.credit}</u><input type="hidden" id="day" value="{$my[0]['day']}" /><input type="hidden" id="subtime" value="{$my[0]['subtime']}" /><input type="hidden" id="id" value="{$result1.id}" /><input type="hidden" id="teacher" value="{$result1.teacher}" /><input type="hidden" id="term" value="{$result1.term}" /><input type="hidden" id="coursenumber" value="{$result1.coursenumber}" /></div></td>
+  <td><div class="page"></div></td></tr>
+ </table>
+ 
+<volist name="my" id="temp">
+    <div onclick="setTab('{$key}')" style="border-bottom:1px"><a href='javascript:;' style='font-size:12px;color:#003C74;'>{$temp[0].classname}</a></div>
+    <div id='{$key}' style='display:none;'>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+  <th width="5" height="30"><input type="checkbox" name="ChkAll_key{$key}"  /></th>
+   <th width="80">学生学号</th>
+	<th width="80">学生姓名</th>
+	<th width="85">最终成绩百分制</th>
+	<th width="85">最终成绩等级制</th>
+	<th width="65">提交时间</th>
+	<th width="85">补考成绩百分制</th>
+	<th width="85">补考成绩等级制</th>
+	<th width="65">提交时间</th>
+	<th>备注</th>
+ 	 <th width="40">已发布</th>
+	  <th width="40">录补考</th>
+	  <th width="40">不可见</th>
+  </tr>
+</thead>
+<tbody>
+ 
+   <volist name="temp" id="my">
+  <tr>
+  <td class="td_forselect"><input type="checkbox" name="key{$my.classid}" value="{$my.id}"  /></td>
+   <td width="80">{$my.susername}</td>
+	<td>{$my.struename}</td>
+	<td><notempty name="my.subtime"><lt name="my.score" value="60"><font color="#FF0000"></lt>{$my.score}<lt name="my.score" value="60"></font></lt></notempty></td>
+    <td><notempty name="my.subtime">{$my.levelscore}</notempty></td>
+		<td>{$my.subtime|toDate='Y-m-d'}</td>
+	<td><notempty name="my.bsubtime"><lt name="my.bscore" value="60"><font color="#FF0000"></lt>{$my.bscore}<lt name="my.bscore" value="60"></font></lt></notempty></td>
+    <td><notempty name="my.bsubtime">{$my.blevelscore}</notempty></td>
+		<td>{$my.bsubtime|toDate='Y-m-d'}</td>
+	
+	<td>{$my.plus}</td>
+ 	<td><eq name="my.ispublic" value="1"><img src="../Public/images/ok.gif" alt="已发布" /></eq></td>
+	<td><eq name="my.isb" value="1"><img src="../Public/images/ok.gif" alt="可录入补考成绩" /></eq></td>
+	<td><eq name="my.isvisible" value="0"><img src="../Public/images/ok.gif" alt="不可见" /></eq></td>
+ </tr>
+ </volist>
+ </tbody>
+ </table>
+ </div><br/>
+ </volist>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">
+  <input type="button" id="btn_pub" value="审核通过并发布成绩" />&nbsp;
+  <input type="button" id="btn_freeze" value="取消发布" />&nbsp;
+  <input type="button" id="btn_isb" value="开启可录补考成绩" />&nbsp;
+  <input type="button" id="btn_isbnot" value="取消可录补考成绩"/>&nbsp;
+  <input type="button" id="btn_pubb" value="发布补考成绩" />&nbsp;
+  <input type="button" id="btn_visiblenot" value="对学生不可见" />&nbsp;
+  <input type="button" id="btn_visible" value="对学生可见" />&nbsp;
+  </div></td>
+  <td><div class="page">{$num}条记录</div></td></tr>
+ </table>
+<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 操作说明：“对学生不可见”用于重修课程，则将之前的该门课程设置为对学生不可见。“发布补考成绩”用于确定最终成绩，弹出已勾选的可录补考的学生审核补考成绩操作界面。</div>
+<div class="helpzone" style="color: #990000;"><img src="../Public/images/info.gif" align="absmiddle" /> 操作说明：“开启可录补考成绩”和“取消可录补考成绩”是针对这一门课的，无需勾选。</div>
+</div><!--end of main-->
+<div id='bflag' style='display:none'></div>
+<div id='bscore' style='display:none'></div>
+</body>
+</html>

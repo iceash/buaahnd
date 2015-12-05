@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title> 信息系统</title>
+    <link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+    <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+    <script type="text/javascript">
+
+        function word(id){
+            var url="__URL__/downCertification";
+            url=url+"/id/"+id;
+            window.location=url;
+        }
+    </script>
+</head>
+
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+ <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生在读证明  <img src="../Public/team_margin/images/word.png" align="absmiddle"/><a href="javascript:word('{$id}');">[导出为word文档]</a></div></td>
+  <td>&nbsp;</td></tr>
+ </table>
+ <div id="tips" ><span><font color='red' style="margin-left:410px">{$tips}</font></span></div><br/>
+ <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left;text-indent:2em;'>
+                                            <span style="margin-left:240px"><b>在读证明</b></span>
+                                            <br/><br/>
+        
+          <p style='margin-right:77px;margin-left:82px;'>兹证明{$stu[0][studentname]}同学，{$zsex}，{$year}年{$month}月{$day}日生，自{$classinfo[0][year]}年9月开始在北京航空航天大学创业管理培训学院学习“{$item}”课程，就读专业为“{$major}”。</p>
+        <br />
+<span style="margin-left:82px">特此证明</span>
+</div>
+<br/><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
+<span style="margin-right:77px">北京航空航天大学创业管理培训学院</span><br/>
+<span style='margin-right:77px'>{$now|substr=0,4}年{$now|substr=5,2}月{$now|substr=8,2}日</span>
+</div><br/><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style='margin-left:82px;'>{$current_time}</span>
+</div><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style="margin-left:240px"><b>On-Studying Certificate</b></span>
+<br/><br/>
+<p style='margin-right:77px;margin-left:82px;'>This is to certify that student {$mystuename}, {$sex}, born on {$birthday}, has been a student of {$iteme} in the specialty of {$majore} in the Entrepreneurship Management and Training School at Beihang University since Sep.{$classinfo[0][year]}.</p>
+
+</div><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
+<span style="margin-right:77px">Entrepreneurship Management and Training School</span><br/>
+<span style="margin-right:77px">Beihang University<span>
+</div>
+ 
+ 
+</div><!--end of main-->
+</body>
+</html>

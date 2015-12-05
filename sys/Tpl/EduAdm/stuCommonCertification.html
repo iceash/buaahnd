@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+
+function word(id){
+	var url="__URL__/downCertification";
+		url=url+"/id/"+id;
+	window.location=url;
+}
+
+</script> 
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"  target="_parent"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+ <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生在读证明  <img src="../Public/team_margin/images/word.png" align="absmiddle"/><a href="javascript:word('{$id}');">[导出为word文档]</a></div></td>
+  <td>&nbsp;</td></tr>
+ </table>
+ <div id="tips"><span><font color='red'  style="margin-left:410px">{$tips}</font></span></div><br/>
+ <div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left;text-indent:2em;'>
+                                            <span style="margin-left:240px"><b>HND 在读证明</b></span>
+                                            <br/><br/>
+        
+          <p style='margin-right:77px;margin-left:82px;'>兹证明{$stu[0][studentname]}同学，{$zsex}，生于{$year}年{$month}月{$day}日，于{$classinfo[0][year]}年9月进入南京大学大学外语部英国高等教育文凭（Higher National Diploma 简称HND）项目学习。</p>
+        <span style='margin-left:77px;'>（该项目引进自苏格兰学历管理委员会）。</span>
+        <br />
+        <p style='margin-right:77px;margin-left:82px;'>该学生目前为该项目{$major}专业{$current_grade}年级学生。</p>
+        <br />
+<span style="margin-left:82px">特此证明</span>
+</div>
+<br/><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
+<span style="margin-right:77px">南京大学 大学外语部</span><br/>
+<span style='margin-right:77px'>{$now|substr=0,4}年{$now|substr=5,2}月{$now|substr=8,2}日</span>
+</div><br/><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style='margin-left:82px;'>{$current_time}</span>
+</div><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style="margin-left:240px"><b>HND Student Status Certificate</b></span>
+<br/><br/>
+<p style='margin-right:77px;margin-left:82px;'>This is to certify that student {$mystuename}, {$sex}, born on {$birthday}, was enrolled in Department of Applied Foreign Language Studies, Nanjing University in Sep.{$classinfo[0][year]}.</p>
+
+<p style='margin-right:77px;margin-left:82px;'>The student above is now in the {$current_egrade} year of Higher National Diploma, which is ntroduced from Scottish Qualifications Authority (SQA, UK), with the major of {$majore}.</p>
+<span style='margin-right:77px;margin-left:82px;'>Hereby Certify.</span>
+</div><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:right'>
+<span style="margin-right:77px">Department of Applied Foreign Language Studies</span><br/>
+<span style="margin-right:77px">Nanjing University<span>
+</div>
+ 
+ 
+</div><!--end of main-->
+</body>
+</html>

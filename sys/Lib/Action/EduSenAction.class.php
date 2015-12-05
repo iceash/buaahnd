@@ -3171,6 +3171,7 @@ class EduSenAction extends CommonAction {
         $day='';
         $major='';
         $sex='';
+        $msex='';
         $birthday='';
         $majore='';
         if($stuinfo[0][sex]==''){
@@ -3178,6 +3179,13 @@ class EduSenAction extends CommonAction {
         }else{
             $zsex=$stuinfo[0][sex];$sex=$this->getSex($stuinfo[0][sex]);
         }
+        if($sex=='male'){
+            $msex = 'Mr.';
+        }
+        if($sex=='female'){
+            $msex = 'Mrs.';
+        }
+
         if($stuinfo[0][birthday] == '' || $stuinfo[0][birthday] == '0000-00-00 00:00:00'){
             $year='____';$month='____';$day='____';$birthday='__________';
         }else{
@@ -3214,37 +3222,44 @@ class EduSenAction extends CommonAction {
         $ename=$stu[0][ename];
         include dirname(__FILE__).'/../../Lib/ORG/PHPWord.php';
         $PHPWord = new PHPWord();
-        $section = $PHPWord->createSection();
-        $zhongzhengwen = array('name'=>'Arial','size'=>'12');
-        $PHPWord->addFontStyle('rStyle', array('bold'=>true,'name'=>'Arial','size'=>'15'));
-        $PHPWord->addFontStyle('cStyle', array('name'=>'Arial','size'=>'12'));
-        $PHPWord->addFontStyle('aStyle', array('name'=>'Times New Roman','size'=>'12'));
+        $sectionStyle = array('orientation' => null,
+            'marginLeft' => 1800,
+            'marginRight' => 1800,
+            'marginTop' => 1440,
+            'marginBottom' => 1440);
+        $section = $PHPWord->createSection($sectionStyle);
+        $zhongzhengwen = array('name'=>'仿宋_GB2312','size'=>'12');
+        $PHPWord->addFontStyle('rStyle', array('bold'=>true,'name'=>'仿宋_GB2312','size'=>'15'));
+        $PHPWord->addFontStyle('cStyle', array('name'=>'仿宋_GB2312','size'=>'12'));
+        $PHPWord->addFontStyle('aStyle', array('name'=>'Arial','size'=>'12'));
         $PHPWord->addParagraphStyle('pStyle', array('align'=>'center', 'spaceAfter'=>100));
         $PHPWord->addParagraphStyle('lStyle', array('align'=>'left', 'spaceAfter'=>100));
         $PHPWord->addParagraphStyle('YStyle', array('align'=>'right', 'spaceAfter'=>100));
+
+        $section->addTextBreak(9);
+        $section->addText('在读证明', array('name'=>'仿宋_GB2312','size'=>'16'), 'pStyle');
         $section->addTextBreak(3);
-        $section->addText('在读证明', array('bold'=>true,'name'=>'Arial','size'=>'15'), 'pStyle');
-        $section->addTextBreak(2);
         $textrun = $section->createTextRun();
         $textrun->addText("　　"."兹证明",$zhongzhengwen);
-        $textrun->addText($name,array('bold'=>true,'name'=>'Arial','size'=>'12'));
+        $textrun->addText($name,array('name'=>'仿宋_GB2312','size'=>'12'));
         $textrun->addText("同学，".$zsex."，".$year."年".$month."月".$day."日生，自".$enrollyear."年9月开始在我校学习“".$item."”课程就读专业为“".$major."”。",$zhongzhengwen);
         $section->addTextBreak(1);
-        $section->addText('特此证明',$zhongzhengwen);
+        $section->addText('　　特此证明',$zhongzhengwen);
         $section->addTextBreak(2);
-        $section->addText('北京航空航天大学创业管理培训学院',$zhongzhengwen,'YStyle');
-        $section->addText($nowyear."年".$nowmonth."月".$nowday."日",$zhongzhengwen,'YStyle');
-        $section->addTextBreak(3);
-        $section->addText('On-Studying Certificate',array('bold'=>true,'name'=>'Times New Roman','size'=>'15'), 'pStyle');
-        $section->addText("$current_time",array('name'=>'Times New Roman','size'=>'12'),'YStyle');
-        $section->addTextBreak(3);
-        $textrun = $section->createTextRun();
-        $textrun->addText("This is to certify that student ",array('name'=>'Times New Roman','size'=>'12'));
-        $textrun->addText($mystuename,array('bold'=>true,'name'=>'Times New Roman','size'=>'12'));
-        $textrun->addText("," .$sex.", born on"." ".$birthday.", has been a student of ".$iteme." in the specialty of ".$majore." in the Entrepreneurship Management and Training School at our university since Sep".".".$enrollyear.".",array('name'=>'Times New Roman','size'=>'12'));
+        $section->addText('　　北京航空航天大学创业管理培训学院',$zhongzhengwen);
+        $section->addText('　　'.$nowyear."年".$nowmonth."月".$nowday."日",$zhongzhengwen);
+        $section->addTextBreak(5);
+        $section->addText('On-Studying Certificate',array('name'=>'Arial','size'=>'16'), 'pStyle');
         $section->addTextBreak(1);
-        $section->addText('Entrepreneurship Management and Training School',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
-        $section->addText('Beihang University',array('name'=>'Times New Roman','size'=>'12'), 'YStyle');
+        $section->addText("$current_time",array('name'=>'Arial','size'=>'12'),'YStyle');
+        $section->addTextBreak(2);
+        $textrun = $section->createTextRun();
+        $textrun->addText("This is to certify that student ",array('name'=>'Arial','size'=>'12'));
+        $textrun->addText($msex.$mystuename,array('name'=>'Arial','size'=>'12'));
+        $textrun->addText(" (Full Name of the student),"." born on"." ".$birthday.", has been a student of ".$iteme." in the specialty of ".$majore." in the Entrepreneurship Management and Training School at our university since Sep".".".$enrollyear.".",array('name'=>'Arial','size'=>'12'));
+        $section->addTextBreak(1);
+        $section->addText('Entrepreneurship Management and Training School',array('name'=>'Arial','size'=>'12'));
+        $section->addText('Beihang University',array('name'=>'Arial','size'=>'12'));
         $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
         $filename='HND'.''.'在读证明-'.$name;
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
@@ -4688,21 +4703,23 @@ class EduSenAction extends CommonAction {
         $objWriter->save('php://output');
         exit;
     }
+
     public function downProScoreA(){
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+
         //导出字母制成绩
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        // Vendor('PHPExcel'); 
+        // Vendor('PHPExcel');
         $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
-        $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
         $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
         if (!$stuinfo) {
             $this -> error('无此学生'.$id);
         }
-        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
         if ($stuinfo["sex"] == "男") {
             $stuinfo["sex"] = "male";
@@ -4783,23 +4800,26 @@ class EduSenAction extends CommonAction {
                     ->setCellValue(chr($row+1).$line,$credit);
             }
         }
-        $styleThinBlackBorderOutline = array( 
-            'borders' => array ( 
-                'allborders' => array ( 
-                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
-                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
-                ), 
+        $styleThinBlackBorderOutline = array(
+            'borders' => array (
+                'allborders' => array (
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色
+                ),
             ),
         );
         $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+
+        $filename=$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls';
+        $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
         header("Pragma: no-cache");
         header("Content-Type:application/octet-stream");
-        header('content-Type:application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls');//设置文件的名称
+        header('content-Type:application/vnd.ms-excel;charset=UTF-8');
+        header('Content-Disposition:attachment;filename='.$filename);//设置文件的名称
         header("Content-Transfer-Encoding:binary");
         $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
         $objWriter->save('php://output');

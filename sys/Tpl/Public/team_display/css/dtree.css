@@ -5,7 +5,7 @@
 |--------------------------------------------------*/
 body{font-family: 'Microsoft Yahei', Tahoma, Arial; margin:10px; font-size:12px;}
 td{font-size:12px; line-height:22px;}
-#searchkey{width:200px;color:#989B9C; padding:0 15px 0 0;background:#FFF}
+#searchkey{width:220px;color:#989B9C; padding:0 15px 0 0;background:#FFF}
 a.open:link,a.open:visited{ color:#990000; text-decoration:underline; font-size:12px;}
 a.open:hover{color:#C40000; text-decoration:underline; font-size:12px;}
 .dtree {

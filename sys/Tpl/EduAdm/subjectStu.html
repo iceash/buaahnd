@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>南京大学HND信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css"> 
+<link rel="stylesheet" href="../Public/js/kindeditor-4.1.1/themes/default/default.css" />
+<link rel="stylesheet" href="../Public/team_margin/css/jquery-ui-1.10.3.custom.min.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/dtree/dtree.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
+<script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script src="../Public/team_margin/js/jquery-ui-1.10.3.custom.min.js"></script>
+<!--[if IE 6]>
+<link rel="stylesheet" href="../Public/team_margin/css/tabbar.css">
+<![endif]-->
+<script>
+jQuery(window).load(function(){
+        if($.browser.msie){
+            if($.browser.version == '6.0'){
+                $('#myTab0 li').click(
+                    function(){
+                    nTabs(this,$(this).attr('id'));
+                });
+            }
+            else
+            $('#tabs').tabs();
+        }else{
+        $('#tabs').tabs();
+        }
+    });
+jQuery(function(){
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+        var chkAllName="ChkAll_";   /*“全选”复选框的name标记*/
+         $(document).click(function(e){  /*利用事件冒泡机制,只对上层对象进行事件监听*/
+          var tmpName=e.target.name?e.target.name:'';   /*冒泡点名*/
+          if(tmpName.indexOf(chkAllName)>-1){  /*如果具有全选框的名称标记,代表是全选框*/
+           var flag=e.target.checked;  /*取该全选框的状态*/
+          var obj = document.getElementsByName(tmpName.replace(chkAllName,""));
+           $(obj).each(function() {
+            this.checked=flag;
+            if(flag==true){
+                    $(this).parent('td').parent('tr').addClass('tr_selected');
+                }else{
+                    $(this).parent('td').parent('tr').removeClass('tr_selected');
+                }
+           })
+                
+          }
+         });
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name *=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要删除选择项吗？')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#form1').click(function(){
+		jQuery('#stu').val(getStu());
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/subjectStuInsert',
+			dataType:'json',
+			data:jQuery("#form1").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);	
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+    jQuery('#btn_save').click(function(){
+		jQuery.ajax({
+			type:'POST',
+			url:'__URL__/subjectStuBinsert',
+			dataType:'json',
+			data:jQuery("#form").serialize(),
+			success: function(data){
+				if (data.status==1){
+					alert(data.info);
+					window.location.reload();
+				}else{
+					alert(data.info);
+				}
+			}
+		});
+	});
+});
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/subjectStuDel/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			deleteTr();
+		}else{
+			alert(data.info);
+		}
+	});
+}
+function deleteTr() {
+	jQuery('input[name *=key]:checked').each(function(){
+		jQuery(this).parent("td").parent("tr").remove();
+	});	
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name *=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+
+function k(key){
+	window.location="__URL__/subjectStuAdd/id/"+key;
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	var category=jQuery('#category').val();
+	var url="__URL__/subject";
+	if(searchkey!==''){
+		url=url+"/searchkey/"+searchkey;
+	}
+	if(category!==''){
+		url=url+"/category/"+category;
+	}
+	window.location=url;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+function getStu(){
+			var ids = "";
+			var form = document.getElementById("testForm");
+			for (var i=0; i<form.elements.length; i++) {
+				var element = form.elements[i];
+				if (element.name == "id" && element.type=='checkbox'){
+					if( element.checked == true ){
+						ids = ids + element.value + ",";
+					}
+				}
+			}
+			ids=ids.substring(0, ids.length-1);
+			return ids;
+		}
+function setTab(name)
+  {
+    var res=document.getElementById(name);
+    if($(res).is(":visible"))
+    {
+        $(res).hide();
+    }
+    else
+    {
+        $(res).show();
+    }
+  }
+function nTabs(thisObj,Num){
+if(thisObj.className == "active")return;
+var tabObj = thisObj.parentNode.id;
+var tabList = document.getElementById(tabObj).getElementsByTagName("li");
+for(i=0; i <tabList.length; i++)
+{
+  if (i == Num)
+  {
+   thisObj.className = "active"; 
+      document.getElementById(tabObj+"_Content"+i).style.display = "block";
+  }else{
+   tabList[i].className = "normal"; 
+   document.getElementById(tabObj+"_Content"+i).style.display = "none";
+  }
+} 
+}
+var editor;
+			KindEditor.ready(function(K) {			
+				var uploadbutton = K.uploadbutton({
+					button : K('#uploadButton')[0],
+					fieldName : 'imgFile',
+					url : '__APP__/Upload/uploadForKindeditor?dir=file',
+					afterUpload : function(data) {
+						if (data.error === 0) {
+							var url = K.formatUrl(data.url, 'absolute');
+							K('#titlepic').val(url);
+						} else {
+							alert(data.message);
+						}
+					},
+					afterError : function(str) {
+						alert('自定义错误信息: ' + str);
+					}
+				});
+				uploadbutton.fileBox.change(function(e) {
+					uploadbutton.submit();
+				});
+			})
+</script>
+</head>
+
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+<div class="main">
+<input type='hidden' value="{$result1.coursenumber} [{$result1.name}]" id='course' />
+<input type='hidden' value="{$result1.teacher} [{$result1.truename}]" id='teacher' />
+<input type='hidden' value="{$result1.term}" id='term' />
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone">课程：<u>{$result1.coursenumber} [{$result1.name}]</u> 任课教师：<u>{$result1.teacher} [{$result1.truename}]</u> 学期：<u>{$result1.term}</u></div></td>
+  <td><div class="page"></div></td></tr>
+ </table>
+ <volist name="my" id="temp">
+    <div onclick="setTab('{$key}')" style="border-bottom:1px"><a href='javascript:;' style='font-size:12px;color:#003C74;'>{$temp[0].classname}</a></div>
+    <div id='{$key}' style='display:none;'>
+<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+  <th width="5" height="30"><input type="checkbox" name="ChkAll_key{$key}" /></th>
+   <th width="100">学号</th>
+	<th width="100">姓名</th>
+ 	 <th width="80">课程编号</th>
+	<th>课程名称</th>
+    <th width="100">任课教师</th>
+	 <th width="60">学时</th>
+	  <th width="60">学分</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="temp" id="my">
+  <tr>
+  <td class="td_forselect"><input type="checkbox" name="key{$my.classid}" value="{$my.id}"  /></td>
+   <td width="80">{$my.susername}</td>
+	<td>{$my.struename}</td>
+    <td>{$my.coursenumber}</td>
+	<td>{$my.coursename}</td>
+	<td>{$my.tusername} [{$my.ttruename}]</td>
+	<td>{$my.coursetime}</td>
+	<td>{$my.credit}</td>
+  </tr>
+  </volist>
+  </tbody>
+   </table>
+  </div><br/>
+</volist>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除"  />&nbsp;
+  </div></td>
+  <td><div class="page">{$num}条记录</div></td></tr>
+ </table>
+<div id="tabs">
+<ul id="myTab0">
+<li class='active' id='0'><a  href='#myTab0_Content0' class="selected"><span>手工新增学生</span></a></li>
+<li id='1' class='normal'><a  href="#myTab0_Content1"><span>批量新增学生</span></a></li>
+</ul>
+<div id="myTab0_Content0">
+	<p><a href="javascript: d.openAll();">全部展开</a> | <a href="javascript: d.closeAll();">全部关闭</a></p>
+	<script language="javascript">
+		d = new dTree('d','../Public/js/dtree/','testForm');
+		d.add('0','-1','所有班级');
+	<volist name="dtree_year" id="dtree_year">
+		d.add('year{$dtree_year.year}','0','{$dtree_year.year}级');
+	</volist>
+	<volist name="dtree_class" id="dtree_class">
+		d.add('class{$dtree_class.id}','year{$dtree_class.year}','{$dtree_class.name}');
+	</volist>
+	<volist name="dtree_stu" id="dtree_stu">
+		d.add('{$dtree_stu.student}-{$dtree_stu.studentname}','class{$dtree_stu.classid}','{$dtree_stu.student}{$dtree_stu.studentname}');
+	</volist>
+		d.closeAll();
+		document.write(d);
+	</script>
+<form id="form1">
+<input type="hidden" name="subjectid" value="{$result1.id}" />
+<input type="hidden" name="tusername" value="{$result1.teacher}" />
+<input type="hidden" name="ttruename" value="{$result1.truename}" />
+<input type="hidden" name="coursenumber" value="{$result1.coursenumber}" />
+<input type="hidden" name="coursename" value="{$result1.name}" />
+<input type="hidden" name="courseename" value="{$result1.ename}" />
+<input type="hidden" name="coursetime" value="{$result1.coursetime}" />
+<input type="hidden" name="credit" value="{$result1.credit}" />
+<input type="hidden" name="term" value="{$result1.term}" />
+<input type="hidden" name="stu" id="stu" value="" />
+	<input type="button" id="btn_add" value="新增学生"  />&nbsp;
+</form>
+</div><!--end of dtree-->
+<div id="myTab0_Content1" class="none">
+<form id="form">
+<table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+   <tr>
+    <td class="t_item_left">请下载excel表格，填写后上传并点击最下方的“提交”按钮：<br />
+
+
+ <a href="__URL__/downStu/course/{$result1.coursenumber}[{$result1.name}]/teacher/{$result1.teacher}[{$result1.truename}]/term/{$result1.term}" style="color:#990000;">下载学生名单</a>
+	</td>
+   </tr>
+    <tr>
+    <td height="100"><input type="text" name="titlepic" id="titlepic" class="inputlong" />&nbsp;<input type="button" id="uploadButton" value="上传" /></td>
+    </tr>
+    
+ </table>
+ <input type="hidden" name="subjectid" value="{$result1.id}" />
+<input type="hidden" name="tusername" value="{$result1.teacher}" />
+<input type="hidden" name="ttruename" value="{$result1.truename}" />
+<input type="hidden" name="coursenumber" value="{$result1.coursenumber}" />
+<input type="hidden" name="coursename" value="{$result1.name}" />
+<input type="hidden" name="courseename" value="{$result1.ename}" />
+<input type="hidden" name="coursetime" value="{$result1.coursetime}" />
+<input type="hidden" name="credit" value="{$result1.credit}" />
+<input type="hidden" name="term" value="{$result1.term}" />
+ </form>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="提交"  /></div></td>
+  <td></td></tr>
+ </table>
+</div>
+</div>
+</div>
+</div><!--end of main-->
+</body>
+</html>
