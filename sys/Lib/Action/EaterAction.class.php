@@ -154,6 +154,10 @@ class EaterAction extends CommonAction {
         $menu['distribute']='宿舍情况';
         $menu['distributeAdd']='分配宿舍';
         $menu['houseparent']='宿舍条例';
+        $menu['reward']='奖惩记录';
+        $menu['rewardAdd']='新建奖惩记录';
+        $menu['broken']='损坏记录';
+        $menu['brokenAdd']='新增损坏记录';
         $this->assign('menu',$this ->autoMenu($menu));  
     }
     public function distribute() {
@@ -1225,13 +1229,16 @@ class EaterAction extends CommonAction {
         $this->display();
     }
     public function stuCommonInfo() {
-        $id =$this->stuCommonIsOwnByTeacher();
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
         $area = D("Area");
         $province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
         $a = array();
         foreach($province as $key => $value) {
             $a[$value['region_name']] = $value['region_name'];
-        } 
+        }
         $is_or_not = array('是' => '是', '否' => '否');
         $education = $this -> stuCommonGetSystem("enroll","education");
         $entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
@@ -1256,11 +1263,10 @@ class EaterAction extends CommonAction {
         $this -> assign('sourcenewspaper', $sourcenewspaper);
         $this -> assign('sourcenet', $sourcenet);
         $this -> assign('nationality', $nationality);
-        
-        $Enroll = D('enroll');
+
+        $Enroll = D('Enroll');
         $map['username'] = $id;
         $my = $Enroll -> where($map) -> find();
-        
         if ($my) {
             $this -> assign('nativecity', $this -> getBrotherCity($my['nativecity']));
             $this -> assign('fcity', $this -> getBrotherCity($my['fcity']));
@@ -1272,15 +1278,23 @@ class EaterAction extends CommonAction {
             $this -> assign('net_selected', explode(',', $my['sourcenet']));
             $this -> assign('infosource_selected', explode(',', $my['infosource']));
             $this -> assign('try', $my['try']);
+            $this -> assign('paystatus',$my["paystatus"]);
         }
-        $this->assign('a',$a);
+        $mbp["stunum"] = $id;
+        $allpay = M("payment")->where($mbp)->select();
+        $this->assign('allpay',$allpay);
+        $allgrade = M("prograde")->where("stunum=$id")->select();
+        foreach ($allgrade as $va) {
+            $willgrade[$va["term"]][] = $va;
+        }
+        $this->assign("willgrade",$willgrade);
         $this -> assign('my', $my);
         $mapJ['susername']=$id;
         $list=M('judge')->where($mapJ)->select();
         $this->assign('list',$list);
         $this->stuCommonMenu($id);
         $this -> display();
-    } 
+    }
     public function city() {
         $bigid = $_GET["province"];
         if (isset($bigid)) {
@@ -3183,7 +3197,7 @@ class EaterAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('my', $my);
         }
-        $this -> menuReward();
+        $this -> menudistribute();
         $this -> display();
     }     
     public function rewardEdit() {
@@ -3196,7 +3210,7 @@ class EaterAction extends CommonAction {
         $my = $dao -> where($map) -> find();
         if ($my) {
             $this -> assign('my', $my);
-            $this -> menuReward();
+            $this -> menudistribute();
             $this -> display();
         } else {
             $this -> error('该记录不存在');
@@ -3233,7 +3247,7 @@ class EaterAction extends CommonAction {
         $this -> assign('dtree_class', $dtree_class);
         $this -> assign('dtree_stu', $dtree_stu);*/
         $this -> assign('ctime', date("Y-m-d H:i:s"));
-        $this -> menuReward();
+        $this -> menudistribute();
         $this -> display();
     } 
     public function rewardDel() {
@@ -3317,12 +3331,12 @@ class EaterAction extends CommonAction {
             $this -> assign("page", $page);
             $this -> assign('my', $my);
         }
-        $this -> menuBroken();
+        $this -> menudistribute();
         $this->display();
     }
     public function brokenAdd(){
         $this -> assign('ctime', date("Y-m-d H:i:s"));
-        $this->menuBroken();
+        $this->menudistribute();
         $this->display();
     }
     public function brokenInsert() {
@@ -3388,7 +3402,7 @@ class EaterAction extends CommonAction {
         $my = $dao -> where($map) -> find();
         if ($my) {
             $this -> assign('my', $my);
-            $this -> menuReward();
+            $this -> menudistribute();
             $this -> display();
         } else {
             $this -> error('该记录不存在');

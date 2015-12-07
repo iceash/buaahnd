@@ -519,105 +519,54 @@ function getNationality(a){
   </tr>
 </table>
 	</div><!--end of mycontent-->
-	<div class="mytitle" onclick="setTab(4);"><h3>Part4 留学意向和培训情况</h3></div>
-	<div class="mycontent" id="mycontent4" style="display:none">
-<table width="100%" border="0">
-   <tr>
-    <td class="ziduan">留学国家</td>
-    <td><html:checkbox checkboxes="abroad" name="abroad" checked="abroad_selected"/></td>
-  </tr>
-   <tr>
-    <td class="ziduan">课程选择</td>
-    <td><html:select options="coursewant" name="coursewant" first="请选择"  selected="my['coursewant']"/></td>
-  </tr>
-   <tr>
-    <td class="ziduan">测试成绩</td>
-    <td><input type="text" name="testscore" class="inputshort" value="{$my.testscore}"/></td>
-  </tr>
-   <tr>
-    <td class="ziduan">试读协议</td>
-    <td><html:radio radios="is_or_not" name="try" checked="try" />
-	</td>
-  </tr>
-  <tr>
-    <td class="ziduan">英语培训情况</td>
-    <td><html:select options="englishtrain" name="englishtrain" first="请选择" selected="my['englishtrain']"/></td>
-  </tr>
- <tr>
-    <td class="ziduan">暑期培训成绩</td>
-    <td><input type="text" name="summertrainscore" class="inputshort" value="{$my.summertrainscore}"/></td>
-  </tr>
-</table>
-	</div><!--end of mycontent-->
-	<div class="mytitle" onclick="setTab(5);"><h3>Part5 信息来源</h3></div>
-	<div class="mycontent" id="mycontent5" style="display:none">
-<table width="100%" border="0">
-   <tr>
-    <td class="ziduan">信息来源</td>
-    <td><label><input type="checkbox" name="infosource[]" value="报纸" <php>echo in_array('报纸',$infosource_selected)?'checked':'ttt';</php> />报纸</label>
-	（<html:checkbox checkboxes="sourcenewspaper" name="sourcenewspaper" checked="newspaper_selected" />）</td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="网络" <php>echo in_array('网络',$infosource_selected)?'checked':'ttt';</php>/>网络</label>
-	（<html:checkbox checkboxes="sourcenet" name="sourcenet" checked="net_selected" />）</td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="说明会" <php>echo in_array('说明会',$infosource_selected)?'checked':'ttt';</php>/>说明会</label></td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="宣传单" <php>echo in_array('宣传单',$infosource_selected)?'checked':'ttt';</php>/">宣传单</label></td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="熟人介绍" <php>echo in_array('熟人介绍',$infosource_selected)?'checked':'ttt';</php> />熟人介绍</label>&nbsp;<input type="text" name="sourcefriend" class="inputshort" value="{$my.sourcefriend}" /></td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="展会" <php>echo in_array('展会',$infosource_selected)?'checked':'ttt';</php>/>展会</label></td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="渠道" <php>echo in_array('渠道',$infosource_selected)?'checked':'ttt';</php> />渠道</label></td>
-  </tr>
-   <tr>
-    <td class="ziduan"></td>
-    <td><label><input type="checkbox" name="infosource[]" value="其它" <php>echo in_array('其它',$infosource_selected)?'checked':'ttt';</php> />其它</label></td>
-  </tr>
-</table>
-	</div><!--end of mycontent-->
-	<div class="mytitle" onclick="setTab(6);"><h3>Part6 报名费和学费</h3></div>
-	<div class="mycontent" id="mycontent6" style="display:none">
-<table width="100%" border="0">
-   <tr>
-    <td class="ziduan">报名费发票号</td>
-    <td><input type="text" name="entryfeef" class="inputshort" value="{$my.entryfeef}"/> &nbsp;日期 <input type="text" name="entryfeefdate" class="inputshort calendar" value="{$my.entryfeefdate}" /></td>
-  </tr>
-  <tr>
-    <td class="ziduan">报名费收据号</td>
-    <td><input type="text" name="entryfees" class="inputshort" value="{$my.entryfees}"/> &nbsp;日期 <input type="text" name="entryfeesdate" class="inputshort calendar" value="{$my.entryfeesdate}"/></td>
-  </tr>
-  <tr>
-    <td class="ziduan">学费发票号</td>
-    <td><input type="text" name="tuitionfeef" class="inputshort" value="{$my.tuitionfeef}"/> &nbsp;日期 <input type="text" name="tuitionfeefdate" class="inputshort calendar" value="{$my.tuitionfeefdate}"/></td>
-  </tr>
-   <tr>
-    <td class="ziduan">学费收据号</td>
-    <td><input type="text" name="tuitionfees" class="inputshort"value="{$my.tuitionfees}" /> &nbsp;日期 <input type="text" name="tuitionfeesdate" class="inputshort calendar" value="{$my.tuitionfeesdate}"/></td>
-  </tr>
-</table>
-	</div><!--end of mycontent-->
-<div class="mytitle"  onclick="setTab(7);"><h3>Part7 老师评价</h3></div>
-	<div class="mycontent" id="mycontent7" style="display:none">
-<table width="100%" border="0" class="mytable">
-	<tr><th>评价内容</th><th>评价时间</th></tr>
-	<volist name="list" id="vo">
-		<tr><td>{$vo.content}</td><td>{$vo.jdate}</td></tr>
-	</volist>
-</table>
-	</div><!--end of mycontent-->
+<div class="mytitle"  onclick="setTab(4);"><h3>Part4 老师评价</h3></div>
+<div class="mycontent" id="mycontent4" style="display:none">
+    <table width="100%" border="0" class="mytable">
+    	<tr><th>评价内容</th><th>评价时间</th></tr>
+    	<volist name="list" id="vo">
+    		<tr><td>{$vo.content}</td><td>{$vo.jdate}</td></tr>
+    	</volist>
+    </table>
+</div><!--end of mycontent-->
+<div class="mytitle"  onclick="setTab(5);"><h3>Part5 缴费情况</h3></div>
+<div class="mycontent" id="mycontent5" style="display:none">
+    <table width="100%" border="0" class="mytable">
+        <tr><th>费用名称</th><th>缴费情况</th></tr>
+        <tr><td>报名费</td><td>{$paystatus}</td></tr>
+        <volist name="allpay" id="onepay">
+            <tr><td>{$onepay.feename}</td><td><?php 
+                switch ($onepay["status"]) {
+                    case 0:
+                        echo "未交费";
+                        break;
+                    case 1:
+                        echo "已交部分费用";
+                        break;
+                    case 2:
+                        echo "已交齐";
+                        break;
+                    case 3:
+                        echo "退费";
+                        break;
+                }
+             ?></td></tr>
+        </volist>
+    </table>
+</div><!--end of mycontent-->
+<div class="mytitle"  onclick="setTab(6);"><h3>Part6 个人成绩</h3></div>
+<div class="mycontent" id="mycontent6" style="display:none">
+    <?php foreach ($willgrade as $term => $allgrade) {
+        ?>
+    <h1>{$term}</h1>
+    <table width="100%" border="0" class="mytable">
+        <tr><th>课程名称</th><th>考试名称</th><th>成绩</th></tr>
+        <volist name="allgrade" id="onegrade">
+            <tr><td>{$onegrade.course}</td><td>{$onegrade.examname}</td><td>{$onegrade.letter}</td></tr>
+        </volist>
+    </table>
+    <?php
+    } ?>
+</div><!--end of mycontent-->
 
 </div><!--end of myright--></form>
 </empty>

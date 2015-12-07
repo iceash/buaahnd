@@ -550,13 +550,13 @@ class EduSenAction extends CommonAction {
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
-        } 
+        }
         $area = D("Area");
         $province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
         $a = array();
         foreach($province as $key => $value) {
             $a[$value['region_name']] = $value['region_name'];
-        } 
+        }
         $is_or_not = array('是' => '是', '否' => '否');
         $education = $this -> stuCommonGetSystem("enroll","education");
         $entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
@@ -581,7 +581,7 @@ class EduSenAction extends CommonAction {
         $this -> assign('sourcenewspaper', $sourcenewspaper);
         $this -> assign('sourcenet', $sourcenet);
         $this -> assign('nationality', $nationality);
-        
+
         $Enroll = D('Enroll');
         $map['username'] = $id;
         $my = $Enroll -> where($map) -> find();
@@ -596,14 +596,23 @@ class EduSenAction extends CommonAction {
             $this -> assign('net_selected', explode(',', $my['sourcenet']));
             $this -> assign('infosource_selected', explode(',', $my['infosource']));
             $this -> assign('try', $my['try']);
-        } 
+            $this -> assign('paystatus',$my["paystatus"]);
+        }
+        $mbp["stunum"] = $id;
+        $allpay = M("payment")->where($mbp)->select();
+        $this->assign('allpay',$allpay);
+        $allgrade = M("prograde")->where("stunum=$id")->select();
+        foreach ($allgrade as $va) {
+            $willgrade[$va["term"]][] = $va;
+        }
+        $this->assign("willgrade",$willgrade);
         $this -> assign('my', $my);
         $mapJ['susername']=$id;
         $list=M('judge')->where($mapJ)->select();
         $this->assign('list',$list);
         $this->stuCommonMenu($id);
         $this -> display();
-    } 
+    }
     public function checkEnrollPlus() {
         load("@.idcard");
         load("@.check");
@@ -1118,9 +1127,11 @@ class EduSenAction extends CommonAction {
             $p = 1;
         }
         $dao = D('ProgradeView');
-        $map["item"] = "HND";
-        $term = $dao->where($map)->group("term")->field("term")->select();
-        foreach ($term as $vc) {
+        // $map["item"] = "HND";
+        
+        $tmp = $dao -> where($map) -> group("id") -> select();
+        // $term = $dao->where($map)->group("term")->field("term")->select();
+        foreach ($tmp as $vc) {
             $terms[$vc["term"]]=$vc["term"];
             if (!$te) {
                 $te = $vc["term"];
@@ -1128,19 +1139,19 @@ class EduSenAction extends CommonAction {
         }
         $this->assign('category_fortag',$terms);
         // $this -> assign('category_fortag', $this->getTerm());//学期列表
-        $class = D('ProgradeView')->where($map)->group("classid")->field("classid,classname")->select();
-        foreach ($class as $vc) {
+        // $class = D('ProgradeView')->where($map)->group("classid")->field("classid,classname")->select();
+        foreach ($tmp as $vc) {
             $classes[$vc["classid"]]=$vc["classname"];
         }
         $this->assign('class_fortag',$classes);//班级列表
-        $major = D('ProgradeView')->where($map)->group("major")->field("major")->select();
-        foreach ($major as $vm) {
+        // $major = D('ProgradeView')->where($map)->group("major")->field("major")->select();
+        foreach ($tmp as $vm) {
             $majors[$vm["major"]]=$vm["major"];
         }
         $this->assign('major_fortag',$majors);//专业列表
-        $course = D('ProgradeView')->where($map)->group("coursename")->field("coursename,courseename")->select();
-        foreach ($course as $va) {
-            $courses[$va["coursename"]]=$va["coursename"].$va["courseename"];
+        // $course = D('ProgradeView')->where($map)->group("coursename")->field("coursename,courseename")->select();
+        foreach ($tmp as $va) {
+            $courses[$va["courseename"]]=$va["courseename"];
         }
         $this->assign('course_fortag',$courses);//课程列表
         if (isset($_GET['searchkey'])) {
@@ -1171,7 +1182,7 @@ class EduSenAction extends CommonAction {
             // $map['letter'] = $_GET['grade'];
             $this -> assign('grade_current', $_GET['grade']);
         } 
-        $final = array(0=>"0-59",1=>"60-69",2=>"70-79",3=>"80-89",4=>"90-100");
+        /*$final = array(0=>"0-59",1=>"60-69",2=>"70-79",3=>"80-89",4=>"90-100");
         if (isset($_GET["final"])) {
             //最终成绩，待定
             for ($i=0; $i < count($final); $i++) { 
@@ -1179,10 +1190,9 @@ class EduSenAction extends CommonAction {
             }
             $this->assign("final_current",$_GET["final"]);
         }
-        $this->assign("final_fortag",$final);
+        $this->assign("final_fortag",$final);*/
         //以上为检索条件
-        $count = $dao -> where($map) -> count();
-        if ($count > 0) {
+        /*if ($count > 0) {
             $my = $dao -> where($map)->group("id")-> select();
             foreach ($my as $vmy) {
                 $willfinal[$vmy["stunum"]][$vmy["coursename"]][] = $vmy["hundred"];
@@ -1219,7 +1229,6 @@ class EduSenAction extends CommonAction {
                 $i++;
             }
             $i = 0;
-            $listRows = 50;
             while ($i < count($my)) {
                 if ($i>=((int)$p-1)*$listRows && $i<(int)$p*$listRows) {
                     $newmy[] = $my[$i];
@@ -1227,11 +1236,15 @@ class EduSenAction extends CommonAction {
                 $i++;
             }
             $this -> assign('my', $newmy);
-        }
+        }*/
+        $tmp = $dao -> where($map) -> group("id") -> select();
+        $count = count($tmp);
+            $listRows = 30;
             import("@.ORG.Page");
-            $p = new Page($i, $listRows);
-            // $my = $dao -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
+            $p = new Page($count, $listRows);
+            $my = $dao -> where($map) -> group("id") -> limit($p -> firstRow . ',' . $p -> listRows)-> select();
             $page = $p -> show();
+            $this->assign('my',$my);
             $this -> assign("page", $page);
         $this -> menuGrade();
         $this -> display();
@@ -1991,6 +2004,7 @@ class EduSenAction extends CommonAction {
             $condition["course.name"] = array('like', '%' . $_GET['searchkey'] . '%');
             $condition["course.ename"] = array('like', '%' . $_GET['searchkey'] . '%');
             $condition["course.category2"] = array('like', '%' . $_GET['searchkey'] . '%');
+            $condition["class.name"] = array('like', '%' . $_GET['searchkey'] . '%');
             $condition["_logic"] = "OR";
             $map["_complex"] = $condition;
             $this -> assign('searchkey', $_GET['searchkey']);
@@ -4444,7 +4458,7 @@ class EduSenAction extends CommonAction {
         $this->display();
     }
     public function ProGradeInsert(){
-        set_time_limit(120);
+        set_time_limit(500);
         //上传专业成绩
         $titlepic = $_POST['titlepic'];
         if (empty($titlepic)) {
@@ -4583,6 +4597,14 @@ class EduSenAction extends CommonAction {
                         $grade[$num]["letter"] = $the;
                         $grade[$num]["hundred"] = 0;
                         break;
+                    }else if (is_numeric($the)){
+                        $grade[$num]["hundred"] = $the;
+                        $b = true;
+                        if ($the >= 60) {
+                            $grade[$num]["letter"] = "P";
+                        }else{
+                            $grade[$num]["letter"] = "F";
+                        }
                     }
                 }
                 if (!$b) {
@@ -4727,10 +4749,7 @@ class EduSenAction extends CommonAction {
             $stuinfo["sex"] = "female";
         }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'Name of Student:'.$stuinfo["ename"])
-            ->setCellValue("A3","Gender: ".$stuinfo["sex"])
-            ->setCellValue("A4","SCN:".$stuinfo["scnid"])
-            ->setCellValue("A5","College(Department）: Beihang  University  HND  Programme");
+            ->setCellValue('A3',"SCN:".$stuinfo["scnid"]. '    Name of Student:'.$stuinfo["ename"]."    Gender: ".$stuinfo["sex"]."\nCollege(Department）: Beihang  University  HND  Programme");
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
@@ -4771,7 +4790,7 @@ class EduSenAction extends CommonAction {
                     $letter = "U";
                 }else{
                     $hundred = $vs["hundred"]/$vs["count"];
-                    if ($vs["standard"] == "letter") {
+                    if (strstr($coursename, "Graded Unit")) {
                         switch (true) {
                             case $hundred > 70:
                                 $letter = "A";
@@ -4809,6 +4828,19 @@ class EduSenAction extends CommonAction {
             ),
         );
         $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue("A".($line+2),'Note： 1. Year 2&Year 3,Unit Result of HND Course: P= Pass   F= Fail, U=Undertaken  ；2. Keys to Graded Unit:  A= 100%~70%         B=69%~60%       C=59%~50%          D（Fail）=  49% and below.')
+            ->setCellValue("A".($line+3),'Entrepreneurship Management ＆ Training School     Beihang University')
+            ->setCellValue("B".($line+4), date("Y-m-d" ,time()))
+            ->mergeCells( "A".($line+2).':E'.($line+2))
+            ->mergeCells( "A".($line+3).':E'.($line+3))
+            ->mergeCells( "B".($line+4).':E'.($line+4))
+            ->getRowDimension($line+2)->setRowHeight(32);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("B".($line+4))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getFont()->setName('Times New Roman');
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getFont()->setName('Times New Roman');
 
         $filename=$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls';
         $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
@@ -4848,10 +4880,7 @@ class EduSenAction extends CommonAction {
             $stuinfo["sex"] = "female";
         }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'Name of Student:'.$stuinfo["ename"])
-            ->setCellValue("A3","Gender: ".$stuinfo["sex"])
-            ->setCellValue("A4","SCN:".$stuinfo["scnid"])
-            ->setCellValue("A5","College(Department）: Beihang  University  HND  Programme");
+            ->setCellValue('A3',"SCN:".$stuinfo["scnid"]. '    Name of Student:'.$stuinfo["ename"]."    Gender: ".$stuinfo["sex"]."\nCollege(Department）: Beihang  University  HND  Programme");
         $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
@@ -4870,12 +4899,12 @@ class EduSenAction extends CommonAction {
                 }
             }
         }
-        $line = 6;//从第7行开始写，每门课加1
+        $line = 7;//从第7行开始写，每门课加1
         $row = 64;//从B列开始写，每学期加2
         $termnum = 1;
         $course = M("course");
         foreach ($willwrite as $termname => $vw) {
-            $term++;
+            $termnum++;
             $row = $row + 2;
             $p  ->setActiveSheetIndex(0)
                 ->setCellValue(chr($row)."6",$termnum."nd Year")
@@ -4895,7 +4924,7 @@ class EduSenAction extends CommonAction {
                     $letter = "U";
                 }else{
                     $hundred = $vs["hundred"]/$vs["count"];
-                    $hundred = round($hundred,2);
+                    $hundred = round($hundred,1);
                 }
                 $p  ->setActiveSheetIndex(0)
                     ->setCellValue("A".$line,$coursename)
@@ -4903,15 +4932,28 @@ class EduSenAction extends CommonAction {
                     ->setCellValue(chr($row+1).$line,$credit);
             }
         }
-        $styleThinBlackBorderOutline = array( 
-            'borders' => array ( 
-                'allborders' => array ( 
-                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
-                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
-                ), 
+        $styleThinBlackBorderOutline = array(
+            'borders' => array (
+                'allborders' => array (
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色
+                ),
             ),
         );
         $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue("A".($line+2),'Note： 1. Year 2&Year 3,Unit Result of HND Course: P= Pass   F= Fail, U=Undertaken  ；2. Keys to Graded Unit:  A= 100%~70%         B=69%~60%       C=59%~50%          D（Fail）=  49% and below.')
+            ->setCellValue("A".($line+3),'Entrepreneurship Management ＆ Training School     Beihang University')
+            ->setCellValue("B".($line+4), date("Y-m-d" ,time()))
+            ->mergeCells( "A".($line+2).':E'.($line+2))
+            ->mergeCells( "A".($line+3).':E'.($line+3))
+            ->mergeCells( "B".($line+4).':E'.($line+4))
+            ->getRowDimension($line+2)->setRowHeight(32);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("B".($line+4))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getFont()->setName('Times New Roman');
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getFont()->setName('Times New Roman');
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");

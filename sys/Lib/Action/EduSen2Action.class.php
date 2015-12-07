@@ -550,13 +550,13 @@ class EduSen2Action extends CommonAction {
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
-        } 
+        }
         $area = D("Area");
         $province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
         $a = array();
         foreach($province as $key => $value) {
             $a[$value['region_name']] = $value['region_name'];
-        } 
+        }
         $is_or_not = array('是' => '是', '否' => '否');
         $education = $this -> stuCommonGetSystem("enroll","education");
         $entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
@@ -581,7 +581,7 @@ class EduSen2Action extends CommonAction {
         $this -> assign('sourcenewspaper', $sourcenewspaper);
         $this -> assign('sourcenet', $sourcenet);
         $this -> assign('nationality', $nationality);
-        
+
         $Enroll = D('Enroll');
         $map['username'] = $id;
         $my = $Enroll -> where($map) -> find();
@@ -596,14 +596,23 @@ class EduSen2Action extends CommonAction {
             $this -> assign('net_selected', explode(',', $my['sourcenet']));
             $this -> assign('infosource_selected', explode(',', $my['infosource']));
             $this -> assign('try', $my['try']);
-        } 
+            $this -> assign('paystatus',$my["paystatus"]);
+        }
+        $mbp["stunum"] = $id;
+        $allpay = M("payment")->where($mbp)->select();
+        $this->assign('allpay',$allpay);
+        $allgrade = M("prograde")->where("stunum=$id")->select();
+        foreach ($allgrade as $va) {
+            $willgrade[$va["term"]][] = $va;
+        }
+        $this->assign("willgrade",$willgrade);
         $this -> assign('my', $my);
         $mapJ['susername']=$id;
         $list=M('judge')->where($mapJ)->select();
         $this->assign('list',$list);
         $this->stuCommonMenu($id);
         $this -> display();
-    } 
+    }
     public function checkEnrollPlus() {
         load("@.idcard");
         load("@.check");

@@ -1355,7 +1355,16 @@ class AbroadTeaAction extends CommonAction {
             $this -> assign('net_selected', explode(',', $my['sourcenet']));
             $this -> assign('infosource_selected', explode(',', $my['infosource']));
             $this -> assign('try', $my['try']);
+            $this -> assign('paystatus',$my["paystatus"]);
         }
+        $mbp["stunum"] = $id;
+        $allpay = M("payment")->where($mbp)->select();
+        $this->assign('allpay',$allpay);
+        $allgrade = M("prograde")->where("stunum=$id")->select();
+        foreach ($allgrade as $va) {
+            $willgrade[$va["term"]][] = $va;
+        }
+        $this->assign("willgrade",$willgrade);
         $this -> assign('my', $my);
         $mapJ['susername']=$id;
         $list=M('judge')->where($mapJ)->select();

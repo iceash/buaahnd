@@ -82,7 +82,6 @@ function mysearch(){
     var classid=jQuery("#class").val();
     var course=jQuery("#course").val();
     var grade=jQuery("#grade").val();
-    var final=jQuery("#final").val();
 	var url="__URL__/grade";
 	if(searchkey!==''){
 		url=url+"/searchkey/"+searchkey;
@@ -102,9 +101,6 @@ function mysearch(){
     if(grade!==''){
         url=url+"/grade/"+grade;
     }
-    if(final!==''){
-        url=url+"/final/"+final;
-    }
 	window.location=url;
 }
 
@@ -115,7 +111,6 @@ function download(){
     var classid=jQuery("#class").val();
     var course=jQuery("#course").val();
     var grade=jQuery("#grade").val();
-    var final=jQuery("#final").val();
     var url="__URL__/downloadGradeList";
     if(searchkey!==''){
         url=url+"/searchkey/"+searchkey;
@@ -134,9 +129,6 @@ function download(){
     }
     if(grade!==''){
         url=url+"/grade/"+grade;
-    }
-    if(final!==''){
-        url=url+"/final/"+final;
     }
     window.location=url;
 }
@@ -161,7 +153,7 @@ function searchkeydown(e){
     <html:select first="所有班级" options="class_fortag" name="class" id="class" selected="class_current"/>&nbsp;
     <html:select first="所有课程" options="course_fortag" name="course" id="course" selected="course_current"/>&nbsp;
     <html:select first="成绩" options="grade_fortag" name="grade" id="grade" selected="grade_current"/>&nbsp;
-    <html:select first="最终成绩" options="final_fortag" name="final" id="final" selected="final_current"/>&nbsp;
+    <!-- <html:select first="最终成绩" options="final_fortag" name="final" id="final" selected="final_current"/>&nbsp; -->
     <img src="../Public/images/search.gif" align="absmiddle" onclick="mysearch()" alt="搜索" style="cursor:pointer"/>
 </div>
 <a href="javascript:download()" style="position: relative; top: 40px; left: 20px; font-size: 16px; color: rgb(104, 104, 104);">导出Excel</a>
@@ -181,7 +173,7 @@ function searchkeydown(e){
     <!-- <th>学期</th> -->
     <th>考试成绩</th>
     <th>重修标志</th>
-    <th>最终成绩</th>
+    <!-- <th>最终成绩</th> -->
 	<!-- <th width="190">操作</th> -->
   </tr>
 </thead>
@@ -194,7 +186,7 @@ function searchkeydown(e){
     <td>{$my.stuname}</td>
     <td>{$my.stunum}</td>
     <td>{$my.scnid}</td>
-    <td>{$my.coursename}</td>
+    <td>{$my.courseename}</td>
 	<td>{$my.examname}</td>
     <td>{$my.credit}</td>
 	<!-- <td>{$my.term}</td> -->
@@ -202,7 +194,7 @@ function searchkeydown(e){
     <td><?php if ($my["isrepair"]) {
         echo '重修';
     } ?></td>
-    <td>{$my.hundred}</td>
+    <!-- <td>{$my.hundred}</td> -->
 	<!-- <td><input type="button" value="审核成绩" onclick="k('{$my.id}');" />&nbsp;<input type="button"  value="开启可录成绩" onclick="k1('{$my.id}');"/></td> -->
   </tr>
   </volist>
