@@ -41,6 +41,7 @@
 					<option value="">请选择班级</option>
 					<volist name="classList" id="co"><option value="{$co.name}">{$co.name}</option></volist>
 				</select>
+				<br/>
 				项目：
 				<select name="item" id="itemS">
 					<option value="">请选择项目</option>
@@ -74,7 +75,9 @@
 				姓名：<input type="text" name="name" value="{$_GET['name']}" />
 				学号：<input type="text" name="stunum" value="{$_GET['stunum']}" />
 				身份证号：<input type="text" name="idcard" value="{$_GET['idcard']}" />
-				<label style="float:right"><input type="submit" value="筛选">&nbsp;&nbsp;<a href="__URL__/view">显示全部</a></label>
+				<label style="float:right">
+					<input type="submit" value="筛选">&nbsp;&nbsp;<a href="__URL__/view">显示全部</a>
+				</label>
 			</div>
 			</form>
 			<table id="listTable" class="alert_table">

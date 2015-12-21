@@ -25,7 +25,7 @@ class FinTeaAction extends CommonAction{
     $menu['paylist']='收费退费登记';
     $menu['exceladd']='收费导入';
     $menu['view']='查看交费情况';
-    $menu['viewentry']='查看报名费情况';
+    // $menu['viewentry']='查看报名费情况';
     //$menu['viewre']='查看重修费情况';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
@@ -334,6 +334,7 @@ class FinTeaAction extends CommonAction{
           exit;
     }
     public function payInsert() {
+         ini_set("max_execution_time", "1800"); 
         $titlepic = $_POST['titlepic'];
         if (empty($titlepic)) {
             $this -> error('未上传文件');

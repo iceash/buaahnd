@@ -6,7 +6,6 @@
 <link rel="stylesheet" type="text/css" href="../Public/css/green.css">
 <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
 <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <style>
 	#submitZone{float: right;}
 	.page{text-align: center;}
@@ -19,13 +18,7 @@
 </head>
 <body>
 <tagLib name="html" />
-<table width="95%" border="0" align="center" cellspacing="10">
-  <tr>
-    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
-    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
-    </div></td>
-  </tr>
-</table>
+<include file="Index:pageheader"/>
 <div class="main">
 	<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 本页面只出现状态为“已审核”的本期交易记录数据
 	<div id="submitZone"><button id="btnSubmit">提交</button></div></div>
@@ -42,7 +35,7 @@
 			<form id="submitForm"><table>
 				<input type="hidden" id="dealId" name="id" />
 				<tr><td><span class="mustfill">*</span>校财务交费日期:</td><td><input type="text" name="submitdate" class="calendar" /></td></tr>
-				<tr><td>记账凭单号:</td><td><input type="text" name="Voucher" /></td></tr>
+				<tr><td><span class="mustfill">*</span>记账凭单号:</td><td><input type="text" name="Voucher" /></td></tr>
 				<tr><td>暂存号:</td><td><input type="text" name="tmpstorage" /></td></tr>
 				<tr><td>暂存索引:</td><td><input type="text" name="tmpindex" /></td></tr>
 				<tr><td><span class="mustfill">*</span>交款单金额:</td><td><input type="text" name="singlemoney" id="subMoney" /></td></tr>
@@ -52,6 +45,7 @@
 	</div>
 </div>
 </body>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
 <script>
 $(document).ready(function(){
 	$('.calendar').calendar();

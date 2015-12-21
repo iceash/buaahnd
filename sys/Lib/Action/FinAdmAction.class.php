@@ -632,8 +632,9 @@ class FinAdmAction extends CommonAction{
     $menu['verify']='审核交易';
     $menu['submit']='提交交易';
     $menu['audit']='查看交易';
+    $menu['invoice']='按单号查看';
     $menu['view']='查看交费情况';
-    $menu['viewentry']='查看报名费情况';
+    // $menu['viewentry']='查看报名费情况';
     //$menu['viewre']='查看重修费情况';
     $this->assign('menu',$this ->autoMenu($menu));  
     }
@@ -696,7 +697,9 @@ class FinAdmAction extends CommonAction{
         $this->display();
     }
     public function subGo(){
-        if(empty($_POST['submitdate'])||empty($_POST['singlemoney'])){$this->error('必填项不能为空');}
+        if(empty($_POST['submitdate']) || empty($_POST['singlemoney']) || empty($_POST["Voucher"])){
+            $this->error('必填项不能为空');
+        }
         if(!is_numeric($_POST['singlemoney'])){$this->error('金额必须是数字');}
         $deal=M('deal');
         $id=$_POST['id'];
@@ -713,7 +716,12 @@ class FinAdmAction extends CommonAction{
     public function audit(){
         $statistics=M('statistics');
         import("ORG.Util.Page");
-        if($_GET['item']){$mapA['item']=$_GET['item'];}
+        if($_GET['item']){
+            $mapA['item']=$_GET['item'];
+        }elseif ($_GET['items']) {
+            $mapA['item'] = array("in",$_GET["items"]);
+            $this->assign("items",$_GET["items"]);
+        }
         if($_GET['way']){$mapA['way']=$_GET['way'];}
         if($_GET['period']){$mapA['period']=$_GET['period'];}else{$mapA['period']='0';}
         if($_GET['check']){$mapA['check']=$_GET['check'];}else{$mapA['check']='已提交';}
@@ -728,6 +736,72 @@ class FinAdmAction extends CommonAction{
         if($_GET['datefrom']&&$_GET['dateto']){$mapA['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
         if($_GET['sbfrom']&&$_GET['sbto']){$mapA['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
         $count= $statistics->where($mapA)->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $statistics->where($mapA)->order('date desc,id desc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('list',$list);
+        $this->assign('page',$show);
+        $way=M('system')->where('name="paymode"')->getField('content');
+        $wayArr=explode(',',$way);
+        $project=M('system')->where('name="items"')->getField('content');
+        $projectArr=explode(',',$project);
+        $periodArr=M('period')->field('id')->select();
+        $this->assign('periodList',$periodArr);
+        $this->assign('way',$wayArr);
+        $this->assign('project',$projectArr);
+        $this->menupay();
+        $this->display();
+    }
+    public function invoice(){
+        $statistics=M('statistics');
+        import("ORG.Util.Page");
+        if($_GET['item']){
+            $mapA['item']=$_GET['item'];
+        }elseif ($_GET['items']) {
+            $mapA['item'] = array("in",$_GET["items"]);
+            $this->assign("items",$_GET["items"]);
+        }
+        if($_GET['way']){$mapA['way']=$_GET['way'];}
+        if($_GET['period']){$mapA['period']=$_GET['period'];}else{$mapA['period']='0';}
+        if($_GET['check']){$mapA['check']=$_GET['check'];}else{$mapA['check']='已提交';}
+        if($_GET['invoice']){$mapA['invoice']=$_GET['invoice'];}
+        if($_GET['operator']){$mapA['operator']=$_GET['operator'];}
+        if($_GET['name']){$mapA['name']=$_GET['name'];}
+        if($_GET['stunum']){$mapA['stunum']=$_GET['stunum'];}
+        if($_GET['idcard']){$mapA['idcard']=$_GET['idcard'];}
+        if($_GET['Voucher']){$mapA['Voucher']=$_GET['Voucher'];}
+        if($_GET['tmpstorage']){$mapA['tmpstorage']=$_GET['tmpstorage'];}
+        if($_GET['tmpindex']){$mapA['tmpindex']=$_GET['tmpindex'];}
+        if($_GET['datefrom']&&$_GET['dateto']){$mapA['date']=array(array('egt',$_GET['datefrom']),array('elt',$_GET['dateto']));}
+        if($_GET['sbfrom']&&$_GET['sbto']){$mapA['submitdate']=array(array('egt',$_GET['sbfrom']),array('elt',$_GET['sbto']));}
+        $count= $statistics->where($mapA)->group("Voucher")->count();
+        $Page= new Page($count,20);
+        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        $show= $Page->show();
+        $list = $statistics->where($mapA)->order('date desc,id desc')->group("Voucher")->limit($Page->firstRow.','.$Page->listRows)->select(); 
+        $this->assign('list',$list);
+        $this->assign('page',$show);
+        $way=M('system')->where('name="paymode"')->getField('content');
+        $wayArr=explode(',',$way);
+        $project=M('system')->where('name="items"')->getField('content');
+        $projectArr=explode(',',$project);
+        $periodArr=M('period')->field('id')->select();
+        $this->assign('periodList',$periodArr);
+        $this->assign('way',$wayArr);
+        $this->assign('project',$projectArr);
+        $this->menupay();
+        $this->display();
+    }
+    public function invoicedetail(){
+        $statistics=M('statistics');
+        if (!$_GET["Voucher"]) {
+            $this->error("无记账凭单号，无法查询");
+        }else{
+            $mapA["Voucher"] = $_GET["Voucher"];
+        }
+        $count= $statistics->where($mapA)->count();
+        import("ORG.Util.Page");
         $Page= new Page($count,20);
         $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
         $show= $Page->show();
@@ -779,18 +853,46 @@ class FinAdmAction extends CommonAction{
             $mapfe['item']=$_GET['item'];
             $mapfe['parent']=0;
             $feeList=M('fee')->where($mapfe)->select();
+        }elseif ($_GET['items']) {
+            $map['item'] = array("in",$_GET['items']);
+            $mapfe["item"] = array("in",$_GET['items']);
+            $mapfe['parent']=0;
+            $feeList=M('fee')->where($mapfe)->select();
+            $this->assign("items",$_GET["items"]);
         }
         if($_GET['fee']){$map['feename']=array('like','%'.$_GET['fee'].'%');}
         if($_GET['type']){$map['type']=$_GET['type'];}
-        if($_GET['status']){$map['status']=$_GET['status']-1;}
+        if($_GET['status']){
+            if ($_GET['status'] != 5) {
+                $map['status']=$_GET['status']-1;
+            }
+        }else{
+            $map['status'] = array("NEQ",0);
+        }
         if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
         if($_GET['name']){$map['name']=$_GET['name'];}
         if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
         if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
         import("ORG.Util.Page");
-        $count= $paymentV->where($map)->count();
+        $allpayment = $paymentV->where($map)->select();
+        $sumStandard = 0;//所有应交费用
+        $sumPaid = 0;//所有实交费用
+        $sumUnpaid = 0;//所有未交费用
+        foreach ($allpayment as $va) {
+            $sumStandard += $va["standard"];
+            $sumPaid += $va["paid"];
+            if ($va["status"] >= 2) {
+                $sumUnpaid += 0;//已交齐和退费特判
+            }else{
+                $sumUnpaid += ($va["standard"] - $va["paid"]);//交了部分和没交的
+            }
+        }
+        $this->assign("sumStandard",$sumStandard);
+        $this->assign("sumPaid",$sumPaid);
+        $this->assign("sumUnpaid",$sumUnpaid);
+        $count= count($allpayment);
         $Page= new Page($count,20);
-        $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        // $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
         $show= $Page->show();
         $list = $paymentV->where($map)->order('status')->limit($Page->firstRow.','.$Page->listRows)->select(); 
         $this->assign('page',$show);
@@ -828,6 +930,143 @@ class FinAdmAction extends CommonAction{
         $this->menupay();
         $this->display();
 
+    }
+    public function downloadView(){
+        //以下是抄上一个函数的
+        $paymentV=D('ClassstudentpaymentView');$class=M('class');$system=M('system');
+        if($_GET['major']){
+            $map['major']=$_GET['major'];
+            $mapcl['major']=$_GET['major'];
+            $classList=$class->where($mapcl)->Field('name')->select();
+        }
+        if($_GET['class']){$map['classname']=$_GET['class'];}
+        if($_GET['item']){
+            $map['item']=$_GET['item'];
+            $mapfe['item']=$_GET['item'];
+            $mapfe['parent']=0;
+            $feeList=M('fee')->where($mapfe)->select();
+        }elseif ($_GET['items']) {
+            $map['item'] = array("in",$_GET['items']);
+            $mapfe["item"] = array("in",$_GET['items']);
+            $mapfe['parent']=0;
+            $feeList=M('fee')->where($mapfe)->select();
+            // $this->assign("items",$_GET["items"]);
+        }
+        if($_GET['fee']){$map['feename']=array('like','%'.$_GET['fee'].'%');}
+        if($_GET['type']){$map['type']=$_GET['type'];}
+        if($_GET['status']){
+            if ($_GET['status'] != 5) {
+                $map['status']=$_GET['status']-1;
+            }
+        }else{
+            $map['status'] = array("NEQ",0);
+        }
+        if($_GET['period']){$map['period']=$_GET['period'];}else{$map['period']=0;}
+        if($_GET['name']){$map['name']=$_GET['name'];}
+        if($_GET['stunum']){$map['stunum']=$_GET['stunum'];}
+        if($_GET['idcard']){$map['idcard']=$_GET['idcard'];}
+        // import("ORG.Util.Page");
+        $list = $paymentV->where($map)->order("stunum")->select();
+        $sumStandard = 0;//所有应交费用
+        $sumPaid = 0;//所有实交费用
+        $sumUnpaid = 0;//所有未交费用
+        foreach ($list as $va) {
+            $sumStandard += $va["standard"];
+            $sumPaid += $va["paid"];
+            if ($va["status"] >= 2) {
+                $sumUnpaid += 0;//已交齐和退费特判
+            }else{
+                $sumUnpaid += ($va["standard"] - $va["paid"]);//交了部分和没交的
+            }
+        }
+        // $this->assign("sumStandard",$sumStandard);
+        // $this->assign("sumPaid",$sumPaid);
+        // $this->assign("sumUnpaid",$sumUnpaid);
+        // $count= count($allpayment);
+        // $Page= new Page($count,20);
+        // $Page->setConfig('theme','%first% %upPage% %linkPage% %downPage% %end%');
+        // $show= $Page->show();
+        // $list = $paymentV->where($map)->order('status')->select(); 
+        $this->assign('page',$show);
+        for ($i=0; $i <count($list);$i++) {
+            $status=$list[$i]['status'];
+            switch ($status) {
+                case '0':
+                    $statusname='未交费';
+                    $list[$i]["unpaid"] = $list[$i]["standard"] - $list[$i]["paid"];
+                    break;
+                case '1':
+                    $statusname='费用未交清';
+                    $list[$i]["unpaid"] = $list[$i]["standard"] - $list[$i]["paid"];
+                    break;
+                case '2':
+                    $statusname='已交齐费用';
+                    $list[$i]["unpaid"] = 0;
+                    break;
+                case '3':
+                    $statusname='退费';
+                    $list[$i]["unpaid"] = 0;
+                    break;
+            }
+            $list[$i]['statusname']=$statusname;
+         }
+         //以下为导出
+
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/viewlist.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue("E1","需交费用：".$sumStandard."元    实交费用：".$sumPaid."元    剩余费用:".$sumUnpaid."元");
+        $i = 3;
+        foreach ($list as $va) {
+            
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$i,$va["name"])
+                ->setCellValue("B".$i,$va["stunum"])
+                ->setCellValueExplicit("C".$i,$va["idcard"],PHPExcel_Cell_DataType::TYPE_STRING)
+                ->setCellValue("D".$i,$va["major"])
+                ->setCellValue("E".$i,$va["classname"])
+                ->setCellValue("F".$i,$va["item"])
+                ->setCellValue("G".$i,$va["feename"])
+                ->setCellValue("H".$i,$va["standard"])
+                ->setCellValue("I".$i,$va["paid"])
+                ->setCellValue("J".$i,$va["unpaid"])
+                ->setCellValue("K".$i,$va["statusname"]);
+            $i++;
+        }
+        ob_end_clean();
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename=交费情况列表.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function changestatus(){
+        $info["id"] = $_POST["id"];
+        $info["status"] = $_POST["status"];
+        if (!$info) {
+            $this->error("未选择");
+        }
+        if (!$info["status"]) {
+            $this->error("未选择状态");
+        }
+        if ($_POST["remark"]) {
+            $info["remark"] = $_POST["remark"];
+        }
+        $info["status"] -= 1;
+        if (M("payment")->where("id=".$info["id"])->save($info)) {
+            $this->success("更新成功");
+        }else{
+            $this->error("无更新");
+        }
     }
     public function viewentry(){
         $payment=M('payment');
@@ -979,7 +1218,6 @@ class FinAdmAction extends CommonAction{
         }
       }
       $Form  =  M('statistics');
-
       if(!$_GET['searchkey']){
       import("ORG.Util.Page");
       $count=  $Form ->where($where) ->count();
@@ -1199,283 +1437,285 @@ class FinAdmAction extends CommonAction{
       $lastperiod=$period->where('id='.$lastperiodid)->find();
       $periodid = $B->select();
       if($Period){
-      $tmppartners = M("period")->where('id='.$Period.'')->find();
-      $partner = explode(",", $tmppartners["partners"]);
-      $dato   =   $A->where('getorgive = 0 AND period = '.$Period)->select();
-      $dato2   =  $A->where('getorgive = 1 AND period = '.$Period)->select();
-      foreach ($dato as $mo => $va) {
-        $list=explode(',', $dato[$mo]["returns"]);
-        for ($aa=0; $aa <count($list) ; $aa++) { 
-            $dato[$mo]['part'.($aa+1).'']=$list[$aa];
-        }
-      };
-      foreach ($dato as $mo => $va) {
-        $dato[$mo]["give"] = doubleval($dato[$mo]["give"]);
-        $dato[$mo]["gets"] = doubleval($dato[$mo]["gets"]);
-        $dato[$mo]["realincome"] = $dato[$mo]["gets"] + $dato[$mo]["give"];
-      };
+          $tmppartners = M("period")->where('id='.$Period.'')->find();
+          $partner = explode(",", $tmppartners["partners"]);
+          $dato   =   $A->where('getorgive = 0 AND period = '.$Period)->select();
+          $dato2   =  $A->where('getorgive = 1 AND period = '.$Period)->select();
+          foreach ($dato as $mo => $va) {
+            $list=explode(',', $dato[$mo]["returns"]);
+            for ($aa=0; $aa <count($list) ; $aa++) { 
+                $dato[$mo]['part'.($aa+1).'']=$list[$aa];
+            }
+          };
+          foreach ($dato as $mo => $va) {
+            $dato[$mo]["give"] = doubleval($dato[$mo]["give"]);
+            $dato[$mo]["gets"] = doubleval($dato[$mo]["gets"]);
+            $dato[$mo]["realincome"] = $dato[$mo]["gets"] + $dato[$mo]["give"];
+          };
 
-      foreach ($dato2 as $mo => $va) {
-        $list=explode(',', $dato2[$mo]["returns"]);
-        for ($ab=0; $ab <count($list) ; $ab++) { 
-            $dato2[$mo]['part'.($ab+1).'']=$list[$ab];
+          foreach ($dato2 as $mo => $va) {
+            $list=explode(',', $dato2[$mo]["returns"]);
+            for ($ab=0; $ab <count($list) ; $ab++) { 
+                $dato2[$mo]['part'.($ab+1).'']=$list[$ab];
+            }
+          };
+          foreach ($dato2 as $mo => $va) {
+            $dato2[$mo]["give"] = doubleval($dato2[$mo]["give"]);
+            $dato2[$mo]["gets"] = doubleval($dato2[$mo]["gets"]);
+            $dato2[$mo]["realincome"] = $dato2[$mo]["gets"] + $dato2[$mo]["give"];
+            //dump($dato[$mo]);
+            
+          };
+          for ($ef=0; $ef <count($partner) ; $ef++) { 
+            $partarrr = explode(",",$lastperiod["partall"]);
+            $lastperiod2[$ef]=$partarrr[$ef];
         }
-      };
-      foreach ($dato2 as $mo => $va) {
-        $dato2[$mo]["give"] = doubleval($dato2[$mo]["give"]);
-        $dato2[$mo]["gets"] = doubleval($dato2[$mo]["gets"]);
-        $dato2[$mo]["realincome"] = $dato2[$mo]["gets"] + $dato2[$mo]["give"];
-        //dump($dato[$mo]);
-        
-      };
-      for ($ef=0; $ef <count($partner) ; $ef++) { 
-        $partarrr = explode(",",$lastperiod["partall"]);
-        $lastperiod2[$ef]=$partarrr[$ef];
-    }
-      $this->assign('partners',$partner);
-      $this->assign('partnernum',count($partner));
-      $this ->assign('lastperiod',$lastperiod);
-      $this ->assign('lastperiod2',$lastperiod2);
-      $this->data2 =  $dato2;
-      $this->periodid =$periodid;
-      $this->data =  $dato;
-    }
-    else{
-    $tmppartners = M("system")->where("name='partners'")->find();
-    $partner = explode(",", $tmppartners["content"]);  
-    $reback=M('reback');
-    $deal=M('deal');
-    $fee=M('fee');
-    $period =M('period');
-    $lastperiod=$period->order('id desc')->find();
-    for ($ee=0; $ee <count($partner) ; $ee++) { 
-        $partarrr = explode(",",$lastperiod["partall"]);
-        $lastperiod2[$ee]=$partarrr[$ee];
-    }  
-    $mapU['period']=0;
-    $mapU['haschildren']=0;
-    $data=$fee->where($mapU)->Field('id,name,parent')->select();
-    $datall=$fee->where('period=0')->select();
-    $data2=$data;
-    foreach ($datall as $dataarray ) {
-        $dataarr[$dataarray["id"]]=$dataarray;
-    }
+          $this->assign('partners',$partner);
+          $this->assign('partnernum',count($partner));
+          $this ->assign('lastperiod',$lastperiod);
+          $this ->assign('lastperiod2',$lastperiod2);
+          $this->data2 =  $dato2;
+          $this->periodid =$periodid;
+          $this->data =  $dato;
+    }else{
+      //本期开始
+      $tmppartners = M("system")->where("name='partners'")->find();
+      $partner = explode(",", $tmppartners["content"]);  
+      $reback=M('reback');
+      $deal=M('deal');
+      $fee=M('fee');
+      $period =M('period');
+      $lastperiod=$period->order('id desc')->find();
+      for ($ee=0; $ee <count($partner) ; $ee++) { 
+          $partarrr = explode(",",$lastperiod["partall"]);
+          $lastperiod2[$ee]=$partarrr[$ee];
+      }  
+      $mapU['period']=0;
+      $mapU['haschildren']=0;
+      $data=$fee->where($mapU)->Field('id,name,parent')->select();
+      $datall=$fee->where('period=0')->select();
+      $data2=$data;
+      foreach ($datall as $dataarray ) {
+          $dataarr[$dataarray["id"]]=$dataarray;
+      }
       $mapV1['period']=0;
       $mapV1['money']=array('gt',0);
       $mapV1['check']='已提交';
       $deals=$deal->where($mapV1)->select();
-    for ($i=0; $i < count($data); $i++) { 
-      $mapV['period']=0;
-      $mapV['money']=array('gt',0);
-      $mapV['feeid']=$data[$i]['parent'];
-      $mapV['check']='已提交';
-      $allPay=$deal->where($mapV)->field('money')->select();
-      $dealsdetail=$deal->where($mapV)->select();
-      if(!$allPay){
-      $mapVv['period']=0;
-      $mapVv['money']=array('gt',0);
-      $mapVv['feename']=$data[$i]['name'];
-      $mapVv['check']='已提交';
-      $allPay=$deal->where($mapVv)->field('money')->select();
-      $dealsdetail=$deal->where($mapVv)->select();
-      }
-      $paymentnum=count($dealsdetail);
-      $sum=0;
-      for ($j=0; $j < count($allPay); $j++) { 
-        $sum+=$allPay[$j]['money'];
-      }
-      $id=$data[$i]['parent'];
-
-      // dump($id);
-      if($dataarr[$id]['haschildren']==0){
-        for ($ja=0; $ja < count($allPay); $ja++) { 
-        $sumd[$i]+=$allPay[$ja]['money'];
+      for ($i=0; $i < count($data); $i++) { 
+        $mapV['period']=0;
+        $mapV['money']=array('gt',0);
+        $mapV['feeid']=$data[$i]['parent'];
+        $mapV['check']='已提交';
+        $allPay=$deal->where($mapV)->field('money')->select();
+        $dealsdetail=$deal->where($mapV)->select();
+        if(!$allPay){
+          $mapVv['period']=0;
+          $mapVv['money']=array('gt',0);
+          $mapVv['feename']=$data[$i]['name'];
+          $mapVv['check']='已提交';
+          $allPay=$deal->where($mapVv)->field('money')->select();
+          $dealsdetail=$deal->where($mapVv)->select();
         }
-        $data[$i]['gets']=$sumd[$i];
-      }
-     if($dataarr[$id]['haschildren']==1){
-        $son=$fee->where('parent='.$id)->select(); 
-        for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
-            if($deals1==0){
-                $pie[$i][0]=$son[0]['standard'];
-            }else{
-            $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
-        }}
-            for ($iii=0; $iii < $paymentnum; $iii++) { 
-                    for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
-                        if($allPay[$iii]['money']>$pie[$i][$iiii]){
-                            $fengenum[$i][$iii]=$iiii+1;
-                        }
-                        if($allPay[$iii]['money']<$pie[$i][0]){
-                            $fengenum[$i][$iii]=0;
-                        }}
-                   if($fengenum[$i][$iii]==0){
-                      $money[$id][$i][0]+=$allPay[$iii]['money'];
-                   }else{
-                   for ($ls=0; $ls <$fengenum[$i][$iii] ; $ls++) { 
-                       $money[$id][$i][$ls]+=$son[$ls]['standard'];
-                   }
-                     $piemax=count($pie[$i])-1;
-                     $money[$id][$i][$fengenum[$i][$iii]]+=$allPay[$iii]['money']-$pie[$i][$piemax];
-                 }
-                }   
-                // dump($money);
-               $whichid = $data[$i]['id']-$id-1;
-            $data[$i]['gets']=$money[$id][$i][$whichid];
-      }
-    
-      
-      $data[$i]['feename']=$data[$i]['name'];
-      $data0[$i]['gets']=$sum;
-      $data0[$i]['id']=$data[$i]['parent'];
-      $data[$i]['give']=0;
-      $othersum[$data[$i]["id"]]=$data[$i]['gets'];
-    }
-    
-    foreach ($data0 as $datasum ) {
-        $othersum[$datasum["id"]]=$datasum['gets'];
-    }
-    for ($a=0; $a < count($data); $a++) { 
-        for ($bb=0; $bb <count($partner) ; $bb++) { 
-            $mapP['feename']=$data[$a]['name'];
-            $mapP['partner']=$partner[$bb];        
-            $middle=$reback->where($mapP)->select();
-            $type = $middle[0]['type'];
-             switch ($type) {
-                case '0':
-                    $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
-                    break;
-                case '1':
-                    $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
-                    break;
-                case '2':
-                    $otherid =intval($middle[0]['otherid']);
-                    $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$othersum[$otherid]['gets']*0.01;
-                    break;
-                case '3':
+        $paymentnum=count($dealsdetail);
+        $sum=0;
+        for ($j=0; $j < count($allPay); $j++) { 
+          $sum+=$allPay[$j]['money'];
+        }
+        $id=$data[$i]['parent'];
 
-                        $reid = $bb + 1 ;
-                    break;
-                default:
-                   $data[$a]['part'.($bb+1).'']= 0;
-                   break;
-            }
+        // dump($id);
+        if($dataarr[$id]['haschildren']==0){
+          for ($ja=0; $ja < count($allPay); $ja++) { 
+            $sumd[$i]+=$allPay[$ja]['money'];
           }
-           for($partid=0;$partid<count($partner);$partid++){
+          $data[$i]['gets']=$sumd[$i];
+        }
+        if($dataarr[$id]['haschildren']==1){
+            $son=$fee->where('parent='.$id)->select(); 
+            for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
+              if($deals1==0){
+                  $pie[$i][0]=$son[0]['standard'];
+              }else{
+                $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
+              }
+            }
+            for ($iii=0; $iii < $paymentnum; $iii++) { 
+                for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
+                    if($allPay[$iii]['money']>$pie[$i][$iiii]){
+                        $fengenum[$i][$iii]=$iiii+1;
+                    }
+                    if($allPay[$iii]['money']<$pie[$i][0]){
+                        $fengenum[$i][$iii]=0;
+                    }}
+                if($fengenum[$i][$iii]==0){
+                  $money[$id][$i][0]+=$allPay[$iii]['money'];
+                }else{
+                  for ($ls=0; $ls <$fengenum[$i][$iii] ; $ls++) { 
+                      $money[$id][$i][$ls]+=$son[$ls]['standard'];
+                  }
+                  $piemax=count($pie[$i])-1;
+                  $money[$id][$i][$fengenum[$i][$iii]]+=$allPay[$iii]['money']-$pie[$i][$piemax];
+                }
+            }   
+                  // dump($money);
+              $whichid = $data[$i]['id']-$id-1;
+              $data[$i]['gets']=$money[$id][$i][$whichid];
+        }
+        $data[$i]['feename']=$data[$i]['name'];
+        $data0[$i]['gets']=$sum;
+        $data0[$i]['id']=$data[$i]['parent'];
+        $data[$i]['give']=0;
+        $othersum[$data[$i]["id"]]=$data[$i]['gets'];
+      }
+    
+      foreach ($data0 as $datasum ) {
+          $othersum[$datasum["id"]]=$datasum['gets'];
+      }
+      for ($a=0; $a < count($data); $a++) { 
+          for ($bb=0; $bb <count($partner) ; $bb++) { 
+              $mapP['feename']=$data[$a]['name'];
+              $mapP['partner']=$partner[$bb];        
+              $middle=$reback->where($mapP)->select();
+              $type = $middle[0]['type'];
+               switch ($type) {
+                  case '0':
+                      $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
+                      break;
+                  case '1':
+                      $tmpmap["feeid"] = $data[$a]["id"];
+                      $tmpmap["status"] = array("in","2,3");
+                      $thecount = M("payment")->where($tmpmap)->count();
+                      $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$thecount;
+                      break;
+                  case '2':
+                      $otherid =intval($middle[0]['otherid']);
+                      $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$othersum[$otherid]['gets']*0.01;
+                      break;
+                  case '3':
+
+                          $reid = $bb + 1 ;
+                      break;
+                  default:
+                     $data[$a]['part'.($bb+1).'']= 0;
+                     break;
+              }
+            }
+            for($partid=0;$partid<count($partner);$partid++){
                $sumthisitem[$a] +=$data[$a]['part'.($partid+1).''];
             }
             $data[$a]['part'.($reid).''] = $data[$a]['gets'] - $sumthisitem[$a];
-    }
+      }
     // dump($othersum);
-    foreach ($data as $mo => $va) {
-            $data[$mo]["give"] = doubleval($data[$mo]["give"]);
-            $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
-            $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
-    };
-    for ($i=0; $i < count($data2); $i++) { 
-      $mapV1['period']=0;
-      $mapV1['money']=array('lt',0);
-      $mapV1['feeid']=$data2[$i]['parent'];
-      $mapV1['check']='已提交';
-      $allPay=$deal->where($mapV1)->field('money')->select();
-      $dealsdetail2=$deal->where($mapV1)->select();
-      if(!$allPay){
-      $mapVv['period']=0;
-      $mapVv['money']=array('lt',0);
-      $mapVv['feename']=$data2[$i]['name'];
-      $mapVv['check']='已提交';
-      $allPay=$deal->where($mapVv)->field('money')->select();
-      $dealsdetail2=$deal->where($mapVv)->select();
-      }
-      $paymentnum2=count($dealsdetail2);
-      $sum=0;
-      for ($j=0; $j < count($allPay); $j++) { 
-        $sum+=$allPay[$j]['money'];
-      }
-      $id2=$data2[$i]['parent'];
-       if($dataarr[$id2]['haschildren']==0){
-        for ($ja=0; $ja < count($allPay); $ja++) { 
-        $sumd2[$i]+=$allPay[$ja]['money'];
+      foreach ($data as $mo => $va) {
+              $data[$mo]["give"] = doubleval($data[$mo]["give"]);
+              $data[$mo]["gets"] = doubleval($data[$mo]["gets"]);
+              $data[$mo]["realincome"] = $data[$mo]["gets"] + $data[$mo]["give"];
+      };
+      for ($i=0; $i < count($data2); $i++) { 
+        $mapV1['period']=0;
+        $mapV1['money']=array('lt',0);
+        $mapV1['feeid']=$data2[$i]['parent'];
+        $mapV1['check']='已提交';
+        $allPay=$deal->where($mapV1)->field('money')->select();
+        $dealsdetail2=$deal->where($mapV1)->select();
+        if(!$allPay){
+        $mapVv['period']=0;
+        $mapVv['money']=array('lt',0);
+        $mapVv['feename']=$data2[$i]['name'];
+        $mapVv['check']='已提交';
+        $allPay=$deal->where($mapVv)->field('money')->select();
+        $dealsdetail2=$deal->where($mapVv)->select();
         }
-        $data2[$i]['give']=$sumd2[$i];
+        $paymentnum2=count($dealsdetail2);
+        $sum=0;
+        for ($j=0; $j < count($allPay); $j++) { 
+          $sum+=$allPay[$j]['money'];
+        }
+        $id2=$data2[$i]['parent'];
+         if($dataarr[$id2]['haschildren']==0){
+          for ($ja=0; $ja < count($allPay); $ja++) { 
+          $sumd2[$i]+=$allPay[$ja]['money'];
+          }
+          $data2[$i]['give']=$sumd2[$i];
 
-      }
-           if($dataarr[$id2]['haschildren']==1){
-        $son=$fee->where('parent='.$id2)->select(); 
-        for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
-            if($deals1==0){
-                $pie[$i][0]=$son[0]['standard'];
-            }else{
-            $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
-        }}
-            for ($iii=0; $iii < $paymentnum2; $iii++) { 
-                    for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
-                        $pievalue=(-$pie[$i][$iiii]);
-                        $pievalue0=(-$pie[$i][0]);
-                        if($allPay[$iii]['money']<$pievalue){
-                            $fengenum[$i][$iii]=$iiii+1;
-                        }
-                        if($allPay[$iii]['money']<$pievalue0){
-                            $fengenum[$i][$iii]=0;
-                        }}
-                        
-                   if($fengenum[$i][$iii]==0){
-                      $money2[$id2][$i][0]+=$allPay[$iii]['money'];
+        }
+             if($dataarr[$id2]['haschildren']==1){
+          $son=$fee->where('parent='.$id2)->select(); 
+          for ($deals1=0; $deals1 <(count($son)-1) ; $deals1++) {
+              if($deals1==0){
+                  $pie[$i][0]=$son[0]['standard'];
+              }else{
+              $pie[$i][$deals1]=$pie[$i][$deals1-1]+$son[$deals1]['standard'];
+          }}
+              for ($iii=0; $iii < $paymentnum2; $iii++) { 
+                      for ($iiii=0; $iiii < count($pie[$i]); $iiii++){ 
+                          $pievalue=(-$pie[$i][$iiii]);
+                          $pievalue0=(-$pie[$i][0]);
+                          if($allPay[$iii]['money']<$pievalue){
+                              $fengenum[$i][$iii]=$iiii+1;
+                          }
+                          if($allPay[$iii]['money']<$pievalue0){
+                              $fengenum[$i][$iii]=0;
+                          }}
+                          
+                     if($fengenum[$i][$iii]==0){
+                        $money2[$id2][$i][0]+=$allPay[$iii]['money'];
 
-                   }else{
-                   for ($ls=0; $ls <$fengenum[$i][$iii] ; $ls++) { 
-                       $money2[$id2][$i][$ls]+=(-$son[$ls]['standard']);
-                       
+                     }else{
+                     for ($ls=0; $ls <$fengenum[$i][$iii] ; $ls++) { 
+                         $money2[$id2][$i][$ls]+=(-$son[$ls]['standard']);
+                         
+                     }
+                       $piemax=count($pie[$i])-1;
+                       $money2[$id2][$i][$fengenum[$i][$iii]]+=($allPay[$iii]['money']-$pie[$i][$piemax]);
                    }
-                     $piemax=count($pie[$i])-1;
-                     $money2[$id2][$i][$fengenum[$i][$iii]]+=($allPay[$iii]['money']-$pie[$i][$piemax]);
-                 }
-                }   
-                // dump($money2);
-            $whichid = $data2[$i]['id']-$id2-1;
-            $data2[$i]['give']=$money2[$id2][$i][$whichid];
-      }
+                  }   
+                  // dump($money2);
+              $whichid = $data2[$i]['id']-$id2-1;
+              $data2[$i]['give']=$money2[$id2][$i][$whichid];
+        }
 
-      $data2[$i]['feename']=$data2[$i]['name'];
-      $data02[$i]['give']=$sum;
-      $data02[$i]['id']=$data2[$i]['parent'];      
-      $data2[$i]['gets']=0;
-      $othersum[$data2[$i]["id"]]=$data2[$i]['give'];
-    }
-        foreach ($data02 as $datasum ) {
+        $data2[$i]['feename']=$data2[$i]['name'];
+        $data02[$i]['give']=$sum;
+        $data02[$i]['id']=$data2[$i]['parent'];      
+        $data2[$i]['gets']=0;
+        $othersum[$data2[$i]["id"]]=$data2[$i]['give'];
+      }
+      foreach ($data02 as $datasum ) {
         $othersum[$datasum["id"]]=$datasum['give'];
-    }
-    for ($a=0; $a < count($data2); $a++) { 
-        for ($bc=0; $bc <count($partner) ; $bc++) { 
-            $mapP['feename']=$data2[$a]['name'];
-            $mapP['partner']=$partner[$bc];        
-            $middle=$reback->where($mapP)->select();
-            $type = $middle[0]['type'];
-             switch ($type) {
-                  case '0':
-                    $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value']*0.01;
-                 break;
-                  case '1':
-                    $data2[$a]['part'.($bc+1).'']=0;
-                    break;
-                  case '2':
-                    $otherid =intval($middle[0]['otherid']);
-                    $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+      }
+      for ($a=0; $a < count($data2); $a++) { 
+          for ($bc=0; $bc <count($partner) ; $bc++) { 
+              $mapP['feename']=$data2[$a]['name'];
+              $mapP['partner']=$partner[$bc];        
+              $middle=$reback->where($mapP)->select();
+              $type = $middle[0]['type'];
+               switch ($type) {
+                    case '0':
+                      $data2[$a]['part'.($bc+1).'']=$data2[$a]['give']*$middle[0]['value']*0.01;
+                   break;
+                    case '1':
+                      $data2[$a]['part'.($bc+1).'']=0;
                       break;
-                  case '3':
-                      $reid = $bc + 1;
-                      break;
-                   default:
-                    $data2[$a]['part'.($bc+1).'']=0;
-                 break;
-            }
-          }    
-          for($partid=0;$partid<count($partner);$partid++){
-               $sumthisitem2[$a] +=$data2[$a]['part'.($partid+1).''];
-            }
-            $data2[$a]['part'.($reid).''] = $data2[$a]['give'] - $sumthisitem2[$a];    
-    }
-    foreach ($data2 as $mo => $va) {
+                    case '2':
+                      $otherid =intval($middle[0]['otherid']);
+                      $data2[$a]['part'.($bc+1).'']=$middle[0]['value']*$othersum[$otherid]['give']*0.01;
+                        break;
+                    case '3':
+                        $reid = $bc + 1;
+                        break;
+                     default:
+                      $data2[$a]['part'.($bc+1).'']=0;
+                   break;
+              }
+            }    
+            for($partid=0;$partid<count($partner);$partid++){
+                 $sumthisitem2[$a] +=$data2[$a]['part'.($partid+1).''];
+              }
+              $data2[$a]['part'.($reid).''] = $data2[$a]['give'] - $sumthisitem2[$a];    
+      }
+      foreach ($data2 as $mo => $va) {
         $data2[$mo]["give"] = doubleval($data2[$mo]["give"]);
         $data2[$mo]["gets"] = doubleval($data2[$mo]["gets"]);
         $data2[$mo]["realincome"] = $data2[$mo]["gets"] + $data2[$mo]["give"];
@@ -1488,7 +1728,7 @@ class FinAdmAction extends CommonAction{
       $this ->assign('data',$data);
       $this->assign('partners',$partner);
       $this->assign('partnernum',count($partner));
-    }
+    }//end else
       $this ->assign('choose',$Period);
       $this->periodid =$periodid;
       $this->menustat();
@@ -1608,7 +1848,10 @@ class FinAdmAction extends CommonAction{
                     $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
                     break;
                 case '1':
-                    $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
+                      $tmpmap["feeid"] = $data[$a]["id"];
+                      $tmpmap["status"] = array("in","2,3");
+                      $thecount = M("payment")->where($tmpmap)->count();
+                    $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$thecount;
                     break;
                 case '2':
                     $otherid =intval($middle[0]['otherid']);
@@ -1980,7 +2223,10 @@ class FinAdmAction extends CommonAction{
                     $data[$a]['part'.($bb+1).'']=$data[$a]['gets']*$middle[0]['value']*0.01;
                     break;
                 case '1':
-                    $data[$a]['part'.($bb+1).'']=$middle[0]['value'];
+                      $tmpmap["feeid"] = $data[$a]["id"];
+                      $tmpmap["status"] = array("in","2,3");
+                      $thecount = M("payment")->where($tmpmap)->count();
+                    $data[$a]['part'.($bb+1).'']=$middle[0]['value']*$thecount;
                     break;
                 case '2':
                     $otherid =intval($middle[0]['otherid']);

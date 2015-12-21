@@ -531,8 +531,7 @@ function getNationality(a){
 <div class="mytitle"  onclick="setTab(5);"><h3>Part5 缴费情况</h3></div>
 <div class="mycontent" id="mycontent5" style="display:none">
     <table width="100%" border="0" class="mytable">
-        <tr><th>费用名称</th><th>缴费情况</th></tr>
-        <tr><td>报名费</td><td>{$paystatus}</td></tr>
+        <tr><th>费用名称</th><th>缴费情况</th><th>备注</th></tr>
         <volist name="allpay" id="onepay">
             <tr><td>{$onepay.feename}</td><td><?php 
                 switch ($onepay["status"]) {
@@ -549,7 +548,9 @@ function getNationality(a){
                         echo "退费";
                         break;
                 }
-             ?></td></tr>
+             ?></td>
+             <td>{$onepay.remark}</td>
+         </tr>
         </volist>
     </table>
 </div><!--end of mycontent-->

@@ -36,10 +36,14 @@ class EduAdmAction extends CommonAction {
     }
     public function majorInsert(){
         $data["major"] = $_POST["major"];
+        $data["majore"] = $_POST["majore"];
         $data["item"] = $_POST["item"];
         $data["year"] = $_POST["year"];
         if ($data["major"] == '') {
             $this->ajaxReturn($_POST,"专业名未填写",0);
+        }
+        if ($data["majore"] == '') {
+            $this->ajaxReturn($_POST,"专业英文名名未填写",0);
         }
         if ($data["item"] == '') {
             $this->ajaxReturn($_POST,"项目名称未填写",0);
@@ -90,10 +94,14 @@ class EduAdmAction extends CommonAction {
             $this->ajaxReturn($_POST,"未选择专业",0);
         }
         $data["major"] = $_POST["major"];
+        $data["majore"] = $_POST["majore"];
         $data["item"] = $_POST["item"];
         $data["year"] = $_POST["year"];
         if ($data["major"] == '') {
             $this->ajaxReturn($_POST,"专业名未填写",0);
+        }
+        if ($data["majore"] == '') {
+            $this->ajaxReturn($_POST,"专业英文名未填写",0);
         }
         if ($data["item"] == '') {
             $this->ajaxReturn($_POST,"项目名称未填写",0);

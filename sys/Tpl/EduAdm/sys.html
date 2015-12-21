@@ -44,14 +44,16 @@ function delmajor(id){
   <tr>
     <th>项目名称</th>
     <th>专业名称</th>
-	<th>年份</td>
+    <th>专业英文名</th>
+  	<th>年份</td>
     <th>操作</th>
   </tr>
   <volist name="majors" id="vm">
   <tr id="tr_{$vm.id}">
     <td>{$vm.item}</td>
     <td>{$vm.major}</td>
-	<td>{$vm.year}</td>
+    <td>{$vm.majore}</td>
+  	<td>{$vm.year}</td>
     <td>
         <a href="__URL__/majorEdit/id/{$vm.id}"><input type="button" value="编辑" class="editmajor"/></a>
         <input type="button" value="删除" class="delmajor" onclick="delmajor('{$vm.id}')" />

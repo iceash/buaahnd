@@ -701,24 +701,30 @@ class EaterAction extends CommonAction {
         exit;
     }
     public function downProScoreA(){
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+
         //导出字母制成绩
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        // Vendor('PHPExcel'); 
+        // Vendor('PHPExcel');
         $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
-        $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
         $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
         if (!$stuinfo) {
             $this -> error('无此学生'.$id);
         }
-        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        if ($stuinfo["sex"] == "男") {
+            $stuinfo["sex"] = "male";
+        }elseif($stuinfo["sex"] == "女") {
+            $stuinfo["sex"] = "female";
+        }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
-        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+            ->setCellValue('A3',"SCN：".$stuinfo["scnid"]. '        Name：'.$stuinfo["ename"]."      Major：".$stuinfo["majore"]."\nCollege(Department）: Beihang  University  HND  Programme");
+        $scores = M("prograde")->order("term,courseid")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
                 continue;
@@ -736,27 +742,46 @@ class EaterAction extends CommonAction {
                 }
             }
         }
-        $line = 6;//从第7行开始写，每门课加1
+        $line = 8;//从第8行开始写，每门课加1
         $row = 64;//从B列开始写，每学期加2
+        $termnum = 1;
         $course = M("course");
-        foreach ($willwrite as $termname => $vw) {
-            $row = $row + 2;
+        $termyear = 0;
             $p  ->setActiveSheetIndex(0)
-                ->setCellValue(chr($row)."5",$termname)
-                ->mergeCells(chr($row)."5:".chr($row+1)."5")
-                ->setCellValue(chr($row)."6","Marks")
-                ->setCellValue(chr($row+1)."6","Credits");
+                ->setCellValue("B6","2nd Year")
+                ->setCellValue("D6","3rd Year")
+                ->mergeCells("B6:C6")
+                ->mergeCells("B7:E7")
+                ->setCellValue("B7","HND Course")
+                ->setCellValue("B8","Marks")
+                ->setCellValue("C8","Credits")
+                ->mergeCells("D6:E6")
+                ->setCellValue("D8","Marks")
+                ->setCellValue("E8","Credits");
+        $hascourse = '';
+        foreach ($willwrite as $termname => $vw) {
+            $tmpyear = substr($termname, 0,9);
+            if ($termyear != $tmpyear) {
+                $termnum++;
+                $row = $row + 2;
+                $termyear = $tmpyear;
+            }
             foreach ($vw as $coursename => $vs) {
                 $line++;
                 $map["classid"] = $stuinfo["classid"];
                 $map["name|ename"] = $coursename;
+                if ($hascourse == '') {
+                    $hascourse .= $coursename;
+                }else{
+                    $hascourse .=",$coursename";
+                }
                 $credit = $course->where($map)->getField("credit");//获取学分
                 if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
                     $hundred = 0;
-                    $letter = "U";
+                    $letter = " ";
                 }else{
                     $hundred = $vs["hundred"]/$vs["count"];
-                    if ($vs["standard"] == "letter") {
+                    if (strstr($coursename, "Graded Unit")) {
                         switch (true) {
                             case $hundred > 70:
                                 $letter = "A";
@@ -768,14 +793,14 @@ class EaterAction extends CommonAction {
                                 $letter = "C";
                                 break;
                             case $hundred > 1:
-                                $letter = "D";
+                                $letter = " ";
                                 break;
                         }
                     }else{
                         if ($hundred >= 60) {
                             $letter = "P";
                         }else{
-                            $letter = "F";
+                            $letter = " ";
                         }
                     }
                 }
@@ -785,23 +810,48 @@ class EaterAction extends CommonAction {
                     ->setCellValue(chr($row+1).$line,$credit);
             }
         }
-        $styleThinBlackBorderOutline = array( 
-            'borders' => array ( 
-                'allborders' => array ( 
-                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
-                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
-                ), 
+        $condition["classid"] = $stuinfo["classid"];
+        $condition["ename"] = array("not in",$hascourse);
+        $lastcourse = $course->where($condition)->order("id")->select();
+        foreach ($lastcourse as $key => $va) {
+            $line++;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$line,$va["ename"])
+                ->setCellValue("E".$line,$va["credit"]);
+        }
+        $styleThinBlackBorderOutline = array(
+            'borders' => array (
+                'allborders' => array (
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色
+                ),
             ),
         );
-        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p->getActiveSheet()->getStyle('A6:'.'E'.$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue("A".($line+2),'Note： 1. Year 2&Year 3,Unit Result of HND Course: P= Pass   F= Fail, U=Undertaken  ；2. Keys to Graded Unit:  A= 100%~70%         B=69%~60%       C=59%~50%          D（Fail）=  49% and below.')
+            ->setCellValue("A".($line+3),'Entrepreneurship Management ＆ Training School     Beihang University')
+            ->setCellValue("B".($line+4), date("Y-m-d" ,time()))
+            ->mergeCells( "A".($line+2).':E'.($line+2))
+            ->mergeCells( "A".($line+3).':E'.($line+3))
+            ->mergeCells( "B".($line+4).':E'.($line+4))
+            ->getRowDimension($line+2)->setRowHeight(32);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("B".($line+4))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getFont()->setName('Times New Roman');
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getFont()->setName('Times New Roman');
+
+        $filename=$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls';
+        $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
         header("Pragma: no-cache");
         header("Content-Type:application/octet-stream");
-        header('content-Type:application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls');//设置文件的名称
+        header('content-Type:application/vnd.ms-excel;charset=UTF-8');
+        header('Content-Disposition:attachment;filename='.$filename);//设置文件的名称
         header("Content-Transfer-Encoding:binary");
         $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
         $objWriter->save('php://output');
@@ -809,24 +859,30 @@ class EaterAction extends CommonAction {
     }
 
     public function downProScoreB(){
-        //导出百分制成绩
+        $php_path = dirname(__FILE__) . '/';
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+
+        //导出字母制成绩
         $id = $_GET['id'];
         if (!isset($id)) {
             $this -> error('参数缺失');
         }
-        // Vendor('PHPExcel'); 
+        // Vendor('PHPExcel');
         $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
-        $php_path = dirname(__FILE__) . '/';
         $excelurl = $php_path .'../../../..'.$titlepic;
         $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
         if (!$stuinfo) {
             $this -> error('无此学生'.$id);
         }
-        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
         $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        if ($stuinfo["sex"] == "男") {
+            $stuinfo["sex"] = "male";
+        }elseif($stuinfo["sex"] == "女") {
+            $stuinfo["sex"] = "female";
+        }
         $p  ->setActiveSheetIndex(0)
-            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
-        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+            ->setCellValue('A3',"SCN：".$stuinfo["scnid"]. '        Name：'.$stuinfo["ename"]."      Major：".$stuinfo["majore"]."\nCollege(Department）: Beihang  University  HND  Programme");
+        $scores = M("prograde")->order("term,courseid")->where(array("stunum"=>$id))->select();//选出所有考试的分数
         foreach ($scores as $vs) {//对数据进行初步处理
             if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
                 continue;
@@ -844,27 +900,49 @@ class EaterAction extends CommonAction {
                 }
             }
         }
-        $line = 6;//从第7行开始写，每门课加1
+        $line = 8;//从第8行开始写，每门课加1
         $row = 64;//从B列开始写，每学期加2
+        $termnum = 1;
         $course = M("course");
-        foreach ($willwrite as $termname => $vw) {
-            $row = $row + 2;
+        $termyear = 0;
             $p  ->setActiveSheetIndex(0)
-                ->setCellValue(chr($row)."5",$termname)
-                ->mergeCells(chr($row)."5:".chr($row+1)."5")
-                ->setCellValue(chr($row)."6","Marks")
-                ->setCellValue(chr($row+1)."6","Credits");
+                ->setCellValue("B6","2nd Year")
+                ->setCellValue("D6","3rd Year")
+                ->mergeCells("B6:C6")
+                ->mergeCells("B7:E7")
+                ->setCellValue("B7","HND Course")
+                ->setCellValue("B8","Marks")
+                ->setCellValue("C8","Credits")
+                ->mergeCells("D6:E6")
+                ->setCellValue("D8","Marks")
+                ->setCellValue("E8","Credits");
+        $hascourse = '';
+        foreach ($willwrite as $termname => $vw) {
+            $tmpyear = substr($termname, 0,9);
+            if ($termyear != $tmpyear) {
+                $termnum++;
+                $row = $row + 2;
+                $termyear = $tmpyear;
+            }
             foreach ($vw as $coursename => $vs) {
                 $line++;
                 $map["classid"] = $stuinfo["classid"];
                 $map["name|ename"] = $coursename;
+                if ($hascourse == '') {
+                    $hascourse .= $coursename;
+                }else{
+                    $hascourse .=",$coursename";
+                }
                 $credit = $course->where($map)->getField("credit");//获取学分
                 if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
                     $hundred = 0;
                     $letter = "U";
                 }else{
                     $hundred = $vs["hundred"]/$vs["count"];
-                    $hundred = round($hundred,2);
+                    $hundred = round($hundred,1);
+                }
+                if ($hundred < 60) {
+                    $hundred = "";
                 }
                 $p  ->setActiveSheetIndex(0)
                     ->setCellValue("A".$line,$coursename)
@@ -872,23 +950,48 @@ class EaterAction extends CommonAction {
                     ->setCellValue(chr($row+1).$line,$credit);
             }
         }
-        $styleThinBlackBorderOutline = array( 
-            'borders' => array ( 
-                'allborders' => array ( 
-                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
-                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
-                ), 
+        $condition["classid"] = $stuinfo["classid"];
+        $condition["ename"] = array("not in",$hascourse);
+        $lastcourse = $course->where($condition)->order("id")->select();
+        foreach ($lastcourse as $key => $va) {
+            $line++;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$line,$va["ename"])
+                ->setCellValue("E".$line,$va["credit"]);
+        }
+        $styleThinBlackBorderOutline = array(
+            'borders' => array (
+                'allborders' => array (
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色
+                ),
             ),
         );
-        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p->getActiveSheet()->getStyle('A6:'.'E'.$line)->applyFromArray($styleThinBlackBorderOutline);
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue("A".($line+2),'Note： 1. Year 2&Year 3,Unit Result of HND Course: P= Pass   F= Fail, U=Undertaken  ；2. Keys to Graded Unit:  A= 100%~70%         B=69%~60%       C=59%~50%          D（Fail）=  49% and below.')
+            ->setCellValue("A".($line+3),'Entrepreneurship Management ＆ Training School     Beihang University')
+            ->setCellValue("B".($line+4), date("Y-m-d" ,time()))
+            ->mergeCells( "A".($line+2).':E'.($line+2))
+            ->mergeCells( "A".($line+3).':E'.($line+3))
+            ->mergeCells( "B".($line+4).':E'.($line+4))
+            ->getRowDimension($line+2)->setRowHeight(32);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("B".($line+4))->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $p  ->getActiveSheet()->getStyle("A".($line+2))->getFont()->setName('Times New Roman');
+        $p  ->getActiveSheet()->getStyle("A".($line+3))->getFont()->setName('Times New Roman');
+
+        $filename=$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（百分制）.xls';
+        $filename=mb_convert_encoding($filename, "GB2312", "UTF-8");
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
         header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
         header("Pragma: no-cache");
         header("Content-Type:application/octet-stream");
-        header('content-Type:application/vnd.ms-excel;charset=utf-8');
-        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（百分制）.xls');//设置文件的名称
+        header('content-Type:application/vnd.ms-excel;charset=UTF-8');
+        header('Content-Disposition:attachment;filename='.$filename);//设置文件的名称
         header("Content-Transfer-Encoding:binary");
         $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
         $objWriter->save('php://output');
@@ -1427,7 +1530,7 @@ class EaterAction extends CommonAction {
             $dtree_class = $dao_class->where($map_class)->order('year desc,name asc')-> select();
             $dtree_year=$dao_class ->where($map_class)->field('year')-> group('year')->order('year desc')->select();
             $dao2 = D('ClassstudentView');
-            $dtree_stu = $dao2->order('student asc')-> select();
+            $dtree_stu = $dao2->group("id")->order('student asc')-> select();
             $this->assign('dtree_year',$dtree_year);
             $this -> assign('dtree_class', $dtree_class);
             foreach ($dtree_stu as $k => $va) {

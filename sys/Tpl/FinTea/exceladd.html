@@ -9,24 +9,35 @@
 <script type="text/javascript" src="../Public/js/kindeditor-4.1.1/kindeditor-min.js"></script>
 <script type="text/javascript" src="../Public/js/kindeditor-4.1.1/lang/zh_CN.js"></script>
 <script type="text/javascript"> 
+var b = true;
 jQuery(window).load(function(){
 });
 jQuery(function(){ 
 	jQuery('#btn_save').click(function(){
+		if (!b) {alert("正在上传中，请耐心等候");return;};
+        $("#warning").attr("href","#");
+        $("#warning").text("信息正在上传中，由于逻辑较为复杂可能等待时间较久，请耐心等候回应");
+        $("#warning").show();
+        b = false;
 		jQuery.ajax({
 			type:'POST',
 			url:'__URL__/payInsert',
 			dataType:'json',
 			data:jQuery("#form1").serialize(),
 			success: function(data){
-				if (data.status==1){
-					alert(data.info);
-					window.location="__URL__/view";
-				}else{
-					alert(data.info);
-					$("#warning").attr("href",data.data);
+				b = true;
+                if (data.status==1){
+                    alert(data.info);
+                    $("#warning").hide();
+                }else if(data.status==0){
+                    alert(data.info);
+                    $("#warning").attr("href",data.data);
+        $("#warning").text("点击下载错误文件");
                     $("#warning").show();
-				}
+                }else{
+                    alert("服务器发生错误");
+                    console.log(data);
+                }
 			}
 		});
 	});
