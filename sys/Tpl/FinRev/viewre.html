@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<style type="text/css">
+#listTable{width: 100%;}
+.filter{line-height: 30px;}
+</style>
+</head>
+<body>
+<tagLib name="html" />
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="__URL__" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right"><div id="nav">{$menu}</div></td>
+  </tr>
+</table>
+	<div class="main">		
+		<div id="list">
+			<form method="get" action="__URL__/viewentry">
+			<div class="filter">
+				交费状态：
+				<select name="status" id="statusS">
+					<option value="">请选择</option>
+					<option value="1">未交费</option>
+					<option value="2">费用未交清</option>
+					<option value="3">已交齐费用</option>
+					<option value="4">退费</option>
+				</select>
+				期数：
+				<select name="period" id="periodS">
+					<option value="0">当前期</option>
+					<volist name="periodList" id="peo"><option value="{$peo.id}">{$peo.id}</option></volist>
+				</select>
+				姓名：<input type="text" name="name" value="{$_GET['name']}" />
+				身份证号：<input type="text" name="idcard" value="{$_GET['idcard']}" />
+				<label style="float:right"><input type="submit" value="筛选">&nbsp;&nbsp;<a href="__URL__/viewentry">显示全部</a></label>
+			</div>
+			</form>
+			<table id="listTable" class="mytable">
+				<tr><th>姓名</th><th>身份证号</th><th>收费项</th><th>收费标准</th><th>实交费用</th><th>交费状态</th></tr>
+				<volist name="list" id="vo">
+					<tr><td>{$vo.name}</td><td>{$vo.idcard}</td><td>{$vo.feename}</td><td>{$vo.standard}</td><td>{$vo.paid}</td><td>{$vo.statusname}</td></tr>
+				</volist>
+			</table>
+		<div class="page">{$page}</div>
+		</div>
+	</div>
+</body>
+<script>
+	$(document).ready(function(){
+		$('#statusS').val("{$_GET['status']}");
+		$('#periodS').val("{$_GET['period']}");
+	});
+</script>
+</html>

@@ -1,0 +1,50 @@
+<include file="Index:pageheader"/>
+    <link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<div class="main">
+    <div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 参数值之间以英文的逗号隔开，切记不可用中文的逗号</div>
+    <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
+        <tr>
+            <th>调用名称</th>
+            <th>说明</th>
+            <th>参数值</td>
+            <th>操作</th>
+        </tr>
+        <volist name="my" id="my">
+            <tr>
+                <td>{$my.name}</td>
+                <td>{$my.explain}</td>
+                <td><input type="text" value="{$my.content}" class="inputlong" id="content{$my.id}"/>
+                </td>
+                <td><input type="button" value="保存" onclick="saveSys('{$my.id}')"/></td>
+            </tr>
+        </volist>
+    </table>
+
+
+</div><!--end of main-->
+    <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+    <script type="text/javascript">
+        jQuery(window).load(function(){
+        });
+        jQuery(function(){
+        });
+
+        function saveSys(id){
+            jQuery.ajax({
+                type:'POST',
+                url:'__URL__/saveSys',
+                dataType:'json',
+                data:{id:id,content:jQuery('#content'+id).val()},
+                success: function(data){
+                    if (data.status==1){
+                        alert(data.info);
+                    }else{
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+
+    </script></body>
+</html>

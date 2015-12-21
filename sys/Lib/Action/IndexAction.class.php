@@ -225,6 +225,7 @@ class IndexAction extends Action {
         $a['EnrollTea']='招生教师';
         $a['EnrollAdm']='招生管理员';
         $a['FinAdm']='财务管理员';
+        $a['FinRev']='财务审核员';
         $a['FinTea']='财务人员';
         // $a['EduTea']='任课教师';
         // $a['TeaAdm']='教师管理员';

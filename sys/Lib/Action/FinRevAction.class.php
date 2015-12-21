@@ -1,5 +1,5 @@
 <?php
-class FinAdmAction extends CommonAction{
+class FinRevAction extends CommonAction{
     public function index() {
         $User = D('User');
         $map['username'] = session('username');
@@ -2534,118 +2534,6 @@ class FinAdmAction extends CommonAction{
     header("Content-Transfer-Encoding:binary");
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
     $objWriter->save('php://output');
-    exit;
-    }
-
-    public function getRoleName($aaa){
-        $roles=explode(',',$aaa);
-        $all_role=R('Index/getRole');
-        $my_role_name=array();
-        foreach($roles as $key=>$value){
-            $my_role_name[]=$all_role[$value];
-        }
-        $bbb=implode(',',$my_role_name);
-        return $bbb;
-    }
-    public function menuright() {
-    $menu['right']='分配权限首页';
-    $this->assign('menu',$this ->autoMenu($menu));  
-    }
-    public function getRole(){
-        $a=array();
-        $a['Zero']='零权限';
-        $a['FinAdm']='财务管理员';
-        $a['FinRev']='财务审核员';
-        $a['FinTea']='财务人员';
-        return $a;
-    }
-    public function right() {
-        if(isset($_GET['searchkey'])) {
-            $searchkey = $_GET['searchkey'];
-            $map['username|truename'] =array('like','%'.$searchkey.'%');
-            $this->assign('searchkey',$searchkey);
-        }
-        if(isset($_GET['role'])) {
-            $searchkey = $_GET['role'];
-            $map['role'] =array('like','%'.$searchkey.'%');
-            $this->assign('myrole',$searchkey);
-        }else{
-            $map['role'] = array('not in','EduStu,EduPar');
-        }
-        $User = D("User");
-        $count = $User -> where($map) -> count();
-        $role=$this->getRole();//R('Index/getRole');
-        $this->assign('role',$role);
-        if ($count > 0) {
-            import("@.ORG.Page");
-            $listRows=D('System')->where("category='office' and name='listrow'")->getField("content");
-            $p = new Page($count, $listRows);
-            $my = $User -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc') -> select();
-            foreach($my as $key=>$value){
-                $my[$key]['roleName']=$this->getRoleName($value['role']);
-                $my[$key]['gradeName']=$value['grade'];
-            }
-            $page = $p -> show();
-            $this -> assign("page", $page);
-            $this -> assign('my', $my);
-        }
-        $this -> menuright();
-        $this -> display();
-    }
-    public function rightSet() {
-        if(!isset($_GET['username'])) {
-            $this->error('参数缺失');
-        }
-        $dao=D('user');
-        $map['username']=$_GET['username'];
-        $map['role'] = array('not in','EduStu,EduPar');
-        $my=$dao->where($map)->find();
-        if($my){
-            $roles = $this->getRole();//R('Index/getRole');
-            unset($roles["Zero"]);
-            $this ->assign('my',$my);
-            $this->assign('role',$roles);//角色权限
-            $this->assign('role_hava',explode(',',$my['role']));
-            $year = date("Y");//年份权限
-            for ($i = $year-5; $i <= $year+5; $i++) { 
-                $grade[$i] = $i;
-            }
-            $this->assign('grade',$grade);
-            $this->assign('grade_hava',explode(',',$my['grade']));
-            $this -> menuright();
-            $this -> display();
-        }
-    }
-    public function rightUpdate() {
-        if (empty($_POST['role'])) {
-            $this -> error('必填项不能为空');
-        }
-        $dao = D('user');
-        $map["username"] = session('username');
-        $roles = M("user")->where($map)->getfield("role");
-        $roles = explode(',', $roles);
-        $arr = array("FinTea","FinAdm","FinRev");
-        for ($i=0; $i < count($roles); $i++) { 
-            if (!in_array($roles[$i], $arr)) {
-                $otherrole[] = $roles[$i];
-            }
-        }
-        $postrole = implode(',', $_POST['role']);
-        $role = implode(',', $otherrole).','.$postrole;
-
-        if ($dao -> create()) {
-            $dao ->role = $role;//implode(',', $_POST['role']);
-            $dao ->grade = implode(',', $_POST['grade']);
-            $checked = $dao -> save();
-            if ($checked > 0) {
-
-                $this -> success('已成功保存');
-            } else {
-                $this -> error('没有更新任何数据');
-            }
-        } else {
-            $this -> error('插入数据出错');
-        }
-    }
+    exit;}
 
 }

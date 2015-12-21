@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+</head>
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<style>
+	.page{text-align: center;}
+	.main{width: 1240px;}
+	.filter{margin-bottom: 10px;line-height: 30px;}
+	.mytable th{background-size:cover;}
+	.inputSS{width: 40px}
+	.inputS{width: 60px}
+	.inputM{width: 90px}
+	.editline{display: none;}
+</style>
+<div class="main">
+	<form action="__URL__/audit" method="get">
+	<div class="filter">
+		<label>项目：</label>
+		<select name="item" id="itemS">
+			<option value="">请选择项目</option>
+			<!-- <option value="报名">报名</option> -->
+			<option value="重修">重修</option>
+			<volist name="project" id="po">
+			<option value="{$po}">{$po}</option>
+			</volist>
+		</select>
+			<br/>
+		项目（多选）:
+		<label>重修<input type="checkbox" name="items[]" value="重修" <if condition="in_array('重修',$items)">checked="checked"</if>/>&nbsp;&nbsp;&nbsp;&nbsp; </label>
+		<volist name="project" id="po">
+			<label>{$po}<input type="checkbox" name="items[]" value="{$po}" <if condition="in_array($po,$items)">checked="checked"</if>>&nbsp;&nbsp;&nbsp;&nbsp; </label>
+		</volist>
+			<br/>
+		<label>姓名：</label><input type="text" name="name"  value="{$_GET['name']}"/>
+		<label>学号：</label><input type="text" name="stunum"  value="{$_GET['stunum']}"/>
+		<label>身份证号：</label><input type="text" name="idcard"  value="{$_GET['idcard']}"/>
+			<br/>
+		<label>交易方式：</label>
+		<select name="way" id="wayS">
+			<option value="">请选择</option>
+			<volist name="way" id="wo">
+			<option value="{$wo}">{$wo}</option>
+			</volist>
+		</select>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 
+		<label>发票号：</label><input type="text" name="invoice"  value="{$_GET['invoice']}"/>	
+		<label>交费人员：</label><input type="text" name="operator"  value="{$_GET['operator']}"/>	
+			<br />
+		<label>记账凭单号：</label><input type="text" name="Voucher"  value="{$_GET['Voucher']}"/>
+		<label>暂存号：</label><input type="text" name="tmpstorage"  value="{$_GET['tmpstorage']}"/>
+		<label>暂存索引：</label><input type="text" name="tmpindex"  value="{$_GET['tmpindex']}"/>
+		<label>审核状态：</label>
+		<select name="check" id="checkS">
+			<option value="已提交">已提交</option>
+			<option value="已审核">已审核</option>
+			<option value="审核中">审核中</option>
+		</select>
+		<label>期数：</label>
+		<select name="period" id="periodS">
+			<option value="0">当前期</option>
+			<volist name="periodList" id="vop">
+			<option value="{$vop.id}">第{$vop.id}期</option>
+			</volist>
+		</select>
+			<br/>
+		<label>交易日期：</label>
+		<input type="text" name="datefrom" id="datefrom" class="calendar inputM" value="{$_GET['datefrom']}" />
+		<label>至</label>
+		<input type="text" name="dateto" id="dateto" class="calendar inputM"  value="{$_GET['dateto']}"/>
+		<label>校财务交费日期：</label>
+		<input type="text" name="sbfrom" id="sbfrom" class="calendar inputM"  value="{$_GET['sbfrom']}"/>
+		<label>至</label>
+		<input type="text" name="sbto" id="sbto" class="calendar inputM"  value="{$_GET['sbto']}"/><br />
+		<label style="float:right"><input type="submit" value="筛选">&nbsp;&nbsp;<a href="__URL__/audit">显示全部</a></label>
+	</div>						
+	</form>
+	<table class="mytable" width="100%" id="bigTable">
+		<tr><th>姓名</th><th>收费项</th><th>所属项目</th><th>交易方式</th><th>交易金额</th><th>发票号</th><th>操作人员</th><th>交易时间</th><th>校财务<br />交费日期</th><th>记账凭单号</th><th>暂存号</th><th>暂存索引</th><th>交款单金额</th><th>状态</th><th>操作</th></tr>
+		<volist name="list" id="vo">	
+			<tr class="line" id="line{$vo.id}"><td>{$vo.name}</td><td>{$vo.feename}</td><td>{$vo.item}</td><td>{$vo.way}</td><td>{$vo.money}</td><td>{$vo.invoice}</td><td>{$vo.operator}</td><td>{$vo.date}</td><td>{$vo.submitdate}</td><td>{$vo.Voucher}</td><td>{$vo.tmpstorage}</td><td>{$vo.tmpindex}</td><td>{$vo.singlemoney}</td><td>{$vo.check}</td><td><input type="hidden" value="{$vo.id}" /><a href="javascript:void(0);" class="edit">修改</a></td></tr>
+			<tr class="editline" id="editline{$vo.id}">
+			<td>{$vo.name}</td>
+			<td>{$vo.feename}</td>
+			<td>{$vo.item}</td>
+			<input type="hidden" id="feename" value="{$vo.feename}">
+			<input type="hidden" id="idcard" value="{$vo.idcard}" />
+			<td>
+				<select id="way">
+					<option value="">请选择</option>
+					<volist name="way" id="wo">
+					<if condition="$wo eq $vo['way']">
+					<option value="{$wo}" selected="selected">{$wo}</option>
+					<else />
+					<option value="{$wo}">{$wo}</option>
+					</if>
+					</volist>
+				</select>
+			</td>
+			<td><input type="text" id="money" value="{$vo.money}" class="inputS" /></td>
+			<td><input type="text" id="invoice" value="{$vo.invoice}" class="inputM" /></td>
+			<td><input type="text" id="operator" value="{$vo.operator}" class="inputSS" /></td>
+			<td><input type="text" id="date" value="{$vo.date}" class="calendar inputM"/></td>
+			<td><input type="text" id="submitdate" value="{$vo.submitdate}" class="calendar inputM"/></td>
+			<td><input type="text" id="Voucher" value="{$vo.Voucher}" class="inputM"/></td>
+			<td><input type="text" id="tmpstorage" value="{$vo.tmpstorage}" class="inputM"/></td>
+			<td><input type="text" id="tmpindex" value="{$vo.tmpindex}" class="inputS"/></td>
+			<td><input type="text" id="singlemoney" value="{$vo.singlemoney}" class="inputS" /></td>
+			<td>{$vo.check}</td>
+			<td><input type="hidden" value="{$vo.id}" /><a href="javascript:void(0);" class="ok">确定</a> 
+				<br /><a href="javascript:void(0);" class="no">取消</a></td></tr>
+		</volist>
+	</table>
+	<div class="page">{$page}</div>
+</div>
+</body>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script>
+	$(document).ready(function(){
+		$('.calendar').calendar();
+		$('#itemS').val("{$_GET['item']}");
+		$('#wayS').val("{$_GET['way']}");
+		$('#periodS').val("{$_GET['period']}");
+		$('#checkS').val("{$_GET['check']}");
+		  function a(){
+		    $('#datefrom').calendar({maxDate:'#dateto',onSetDate:function(){
+		      b(this.getDate('date'));
+		    }});
+		  }
+		  function b(){
+		    $('#dateto').calendar({minDate:'#datefrom',onSetDate:function(){
+		      a(this.getDate('date'));
+		    }});
+		  }
+		  a();b();
+		  function aa(){
+		    $('#sbfrom').calendar({maxDate:'#sbto',onSetDate:function(){
+		      bb(this.getDate('date'));
+		    }});
+		  }
+		  function bb(){
+		    $('#sbto').calendar({minDate:'#sbfrom',onSetDate:function(){
+		      aa(this.getDate('date'));
+		    }});
+		  }
+		  aa();bb();
+		var lock=1;
+		$('.edit').click(function(){
+			if(lock==1){
+				lock=0;
+				var id=$(this).siblings('input').val();
+				$(this).parent().parent().hide();
+				$('#editline'+id).show();
+			}
+		
+		});
+		$('.no').click(function(){
+			var id=$(this).siblings('input').val();
+			$(this).parent().parent().hide();
+			$('#line'+id).show();
+			lock=1;
+		})
+		var lockok=1;
+		$('.ok').click(function(){
+			if (lockok==1) {
+				lockok=0;
+				var id=$(this).siblings('input').val();
+				var idcard=$('#idcard').val();
+				var feename=$('#feename').val();
+				var way=$('#way').val();
+				var money=$('#money').val();
+				var invoice=$('#invoice').val();
+				var operator=$('#operator').val();
+				var date=$('#date').val();
+				var submitdate=$('#submitdate').val();
+				var Voucher=$('#Voucher').val();
+				var tmpstorage=$('#tmpstorage').val();
+				var tmpindex=$('#tmpindex').val();
+				var singlemoney=$('#singlemoney').val();
+				$.post('__URL__/change',{id:id,idcard:idcard,feename:feename,way:way,money:money,invoice:invoice,operator:operator,date:date,submitdate:submitdate,Voucher:Voucher,tmpstorage:tmpstorage,tmpindex:tmpindex,singlemoney:singlemoney},function(a){
+					var data=eval('(' + a + ')');
+					alert(data.info);lockok=1;lock=1;
+				 	if(data.status==1){location.reload();}
+				});
+			}
+
+		});
+
+
+
+	});
+</script>
+</html>

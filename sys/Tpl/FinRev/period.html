@@ -1,0 +1,266 @@
+<include file="Index:pageheader"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/tongji.css">
+<div class="main">
+
+<div>
+  <div align="center" class="STYLE2">学院收入及分配情况表</div>
+</div>
+<div>
+  <div align="center" class="STYLE3">（{$data[0]['startdate']}——{$data[0]['enddate']}止）</div><br>
+  <br>
+</div>
+<div>
+  <?php
+       echo "<select id='choose'><option value ='0'>当前期</option>";
+          foreach($periodid as $num =>$va){
+            
+            
+            echo "<option value ='".$va["id"]."'>".$va["id"]."</option>";
+          
+          
+      };echo "</select>";
+       ?>
+  <input type="button" value="选择" onclick="choose()">
+
+ <br> <br>
+</div>
+	<table width="100%" border="0" class="mytable3" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+    <th width="130px" rowspan="2">年度</th>
+    <th colspan="4">收&nbsp;&nbsp;入</th>
+    <th colspan="{$partnernum}">拨&nbsp;&nbsp;款</th>
+    </tr>
+  <tr>
+    <th width="" height="67">项目</th>
+    <th width="">收入</th>
+	<th width="">退费</th>
+	<th><p>实际收入</p>	  </th>
+  <volist  name="partners" id="vo">
+	<th width="">{$vo}</th>
+
+  </volist>
+  </tr>
+</thead>
+<tbody>
+        <tr>
+          <td><div align="center" class="STYLE1">上年度期末余额</div></td>
+          <td>&nbsp;</td>
+          <td style='text-align:right'>{$lastperiod['getall']}</td>
+          <td style='text-align:right'>{$lastperiod['giveall']}</td>
+          <td style='text-align:right'>{$lastperiod['realincomeall']}</td>
+          <volist name="lastperiod2" id="vo">
+          <td style='text-align:right'>{$vo}</td>
+          </volist>
+        </tr>
+        
+
+       <?php
+       
+          foreach($data as $num =>$va){
+            echo "<tr>";
+            if($num==0){
+              echo "<td style='text-align:center' rowspan='".count($data)."'>本年度收入和分配</td>";
+            };
+            if (strstr($va["feename"], "|")) {
+              $tmp = explode("|",$va["feename"]);
+              $va["feename"] = $tmp[0]."——第".$tmp[1]."部分";
+            }
+            echo "<td style='text-align:center'>".$va["feename"]."</td>
+                  <td style='text-align:right'>".$va["gets"]."</td>
+                  <td style='text-align:right'>".$va["give"]."</td>
+                  <td style='text-align:right'>".$va["gets"]."</td>";
+            for ($ss=0; $ss < $partnernum ; $ss++) { 
+              echo "<td style='text-align:right'>".$va['part'.($ss+1).'']."</td>";
+            }
+          
+          echo "</tr>";
+      };
+       ?>
+       <?php
+       echo "</tr>";
+          echo"<td><div align='center' class='STYLE1'>本年度小计</div></td>";
+          echo"<td></td>";
+          
+          foreach($data as $num =>$va){
+            $gets[] = $va['gets'];
+          }
+            echo"<td style='text-align:right'>".array_sum($gets)."</td>";
+          //echo "<td>array_sum($data["give"])</td>";
+          
+          foreach($data as $num =>$va){
+            $give[] = $va['give'];
+          }
+            echo"<td style='text-align:right'>".array_sum($give)."</td>";
+          foreach($data as $num =>$va){
+            $realincome[] = $va['realincome'];
+          }
+            echo"<td style='text-align:right'>".array_sum($realincome)."</td>";
+          foreach($data as $num =>$va){
+            for ($ii=0; $ii < $partnernum ; $ii++) { 
+             $part[$ii][] = $va['part'.($ii+1).''];
+            }
+          }
+          for ($iii=0; $iii <$partnernum ; $iii++) { 
+            echo"<td style='text-align:right'>".array_sum($part[$iii])."</td>";
+          }
+      echo "</tr>";
+      ?>
+       <?php
+          foreach($data2 as $num =>$vb){
+            echo "<tr>";
+            if($num==0){
+              echo "<td style='text-align:center' rowspan='".count($data2)."'>本年度分配后退费</td>";
+            };
+            if (strstr($vb["feename"], "|")) {
+              $tmp = explode("|",$vb["feename"]);
+              $vb["feename"] = $tmp[0]."——第".$tmp[1]."部分";
+            }
+            echo "<td style='text-align:center'>".$vb["feename"]."</td>
+                  <td style='text-align:right'>".$vb["gets"]."</td>
+                  <td style='text-align:right'>".$vb["give"]."</td>
+                  <td style='text-align:right'>".$vb["realincome"]."</td>";
+             for ($ss=0; $ss < $partnernum ; $ss++) { 
+              echo "<td style='text-align:right'>".$vb['part'.($ss+1).'']."</td>";
+            }
+
+          
+          echo "</tr>";
+      };
+       ?>
+       <?php
+       echo "</tr>";
+          echo"<td><div align='center' class='STYLE1'>本年度分配后退费小计</div></td>";
+          echo"<td></td>";
+          foreach($data2 as $num2 =>$vb){
+            $gets1[] = $vb['gets'];
+          }
+            echo"<td style='text-align:right'>".array_sum($gets1)."</td>";
+          //echo "<td>array_sum($data["give"])</td>";
+          
+          foreach($data2 as $num2 =>$vb){
+            $give1[] = $vb['give'];
+            // dump($give);
+          }
+            echo"<td style='text-align:right'>".array_sum($give1)."</td>";
+          foreach($data2 as $num2 =>$vb){
+            $realincome1[] = $vb['realincome'];
+          }
+            echo"<td style='text-align:right'>".array_sum($realincome1)."</td>";
+          foreach($data2 as $num2 =>$vb){
+            for ($iia=0; $iia < $partnernum ; $iia++) { 
+             $part2[$iia][] = $vb['part'.($iia+1).''];
+            }
+          }
+          for ($iiia=0; $iiia <$partnernum ; $iiia++) { 
+            echo"<td style='text-align:right'>".array_sum($part2[$iiia])."</td>";
+          }
+      echo "</tr>";
+      ?>
+        <tr >
+          <td rowspan="3"><div align="center"><strong>本年度拨款和支出</strong></div></td>
+          <td><div align="center">HND</div></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        <?php 
+          for ($sssq=0; $sssq <$partnernum ; $sssq++) { 
+            echo "<td>&nbsp;</td>";
+          }?>
+        </tr>
+        <tr >
+          <td><div align="center">2+2</div></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        <?php 
+          for ($sssq=0; $sssq <$partnernum ; $sssq++) { 
+            echo "<td>&nbsp;</td>";
+          }?>
+        </tr>
+        <tr >
+          <td><div align="center">其他</div></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        <?php 
+          for ($sssq=0; $sssq <$partnernum ; $sssq++) { 
+            echo "<td>&nbsp;</td>";
+          }
+        ?>
+        </tr>
+        <?php
+       echo "</tr>";
+          echo"<td><div align='center' class='STYLE1'>本年度期末余额</div></td>";
+          echo"<td></td>";
+          
+          foreach($data2 as $num =>$va){
+            $gets[] = $va['gets'];
+          }
+            echo"<td style='text-align:right'>".array_sum($gets)."</td>";
+          //echo "<td>array_sum($data["give"])</td>";
+          
+          foreach($data2 as $num =>$va){
+            $give[] = $va['give'];
+          }
+            echo"<td style='text-align:right'>".array_sum($give)."</td>";
+          foreach($data2 as $num =>$va){
+            $realincome[] = $va['realincome'];
+          }
+            echo"<td style='text-align:right'>".array_sum($realincome)."</td>";
+          foreach($data2 as $num =>$va){
+            for ($ii=0; $ii < $partnernum ; $ii++) { 
+             $part[$ii][] = $va['part'.($ii+1).''];
+            }
+          }
+          for ($iii=0; $iii <$partnernum ; $iii++) { 
+            echo"<td style='text-align:right'>".array_sum($part[$iii])."</td>";
+          }
+      echo "</tr>";
+      ?>
+</tbody>
+</table>
+
+<div class="search"  style="text-align: left"><a id="excel" style="margin:3px;float:right;" href="./download" >导出EXCEL文件</a><img style="  width: 20px;height: 20px;float:right;" src="../Public/images/excel.png"> <br><br></div>
+ <div style="width:96%;" ><br /><br /><input  id="end" style="width:134px;  left: 48%; position: absolute;" type="button" value="结算并结束本期"   onclick=""/></div>
+ <br /> <br /> <br />
+
+</div><!--end of main-->
+</body>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#choose').val('{$choose}');
+    var geturl = window.location.search;
+    $('#excel').attr('href','./downloadperiod'+geturl); 
+    var period = $('#choose').val();
+    if(period!=0){
+      $('#end').css('display','none');
+    }
+   $('#end').click(function(){
+    var r=confirm("确定结算并结束本期并开始新的一期吗？")
+  if (r==true)
+    {
+    $.ajax({
+      type:'POST',
+      url:"__URL__/endperiod",
+      dataType:'JSON',
+      success:function(back){
+        if(back.status == 1){
+          alert(back.info);
+          location.reload();
+        }else{
+          alert(back.info);
+        }
+      }
+
+
+    })
+    }
+
+   })
+  });
+  function choose(){
+  window.location="__URL__/period?period="+$('#choose').val()
+}
+</script>
+</html>

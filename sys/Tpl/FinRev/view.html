@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/style.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<style type="text/css">
+#listTable{width: 100%;}
+.filter{line-height: 30px;}
+	#submitZone{float: right;}
+	.page{text-align: center;}
+	.box{position: fixed;text-align: center;width:100%;height: 100%;display: none;z-index: 2;top: 0;}
+	#submitBox{width: 300px;height: 140px;position:fixed;top: 0;bottom: 0;left: 0;right: 0;margin: auto;background: #f3f4f5;border:1px solid #B2B2B2;}
+	.BoxTitle{padding: 5px 20px;margin-bottom: 10px;font-size: 15px;font-weight: bold;background: url(../Public/images/table_th.gif);text-align: left;border-bottom:1px solid #B2B2B2;}
+	#submitBox table{width: 100%;}
+	#submitBox button{margin: 10px 20px;}
+</style>
+</head>
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+	<div class="main">		
+		<div id="list">
+			<form method="get" action="__URL__/view" id="viewform">
+			<div class="filter">
+				专业：
+				<select name="major" id="majorS">
+					<option value="">请选择专业</option>
+					<volist name="major" id="mo"><option value="{$mo.major}">{$mo.major}</option></volist>
+				</select>
+				班级：
+				<select name="class" id="classS">
+					<option value="">请选择班级</option>
+					<volist name="classList" id="co"><option value="{$co.name}">{$co.name}</option></volist>
+				</select>
+				<br/>
+				项目：
+				<select name="item" id="itemS">
+					<option value="">请选择项目</option>
+					<option value="重修">重修</option>
+					<volist name="project" id="po"><option value="{$po}">{$po}</option></volist>
+				</select>
+				收费项：
+				<select name="fee" id="feeS">
+					<option value="">请选择收费项</option>
+					<volist name="feeList" id="fo"><option value="{$fo.name}">{$fo.name}</option></volist>
+				</select>
+				收费类别：
+				<select name="type" id="typeS">
+					<option value="">请选择收费类别</option>
+					<volist name="type" id="to"><option value="{$to}">{$to}</option></volist>
+				</select>
+				交费状态：
+				<select name="status" id="statusS">
+					<option value="">请选择</option>
+					<option value="1">未交费</option>
+					<option value="2">费用未交清</option>
+					<option value="3">已交齐费用</option>
+					<option value="4">退费</option>
+					<option value="5">全部</option>
+				</select>
+				期数：
+				<select name="period" id="periodS">
+					<option value="0">当前期</option>
+					<volist name="periodList" id="peo"><option value="{$peo.id}">{$peo.id}</option></volist>
+				</select>
+				<br />
+				项目（多选）:
+				<label>重修<input type="checkbox" name="items[]" value="重修" <if condition="in_array('重修',$items)">checked="checked"</if>/>&nbsp;&nbsp;&nbsp;&nbsp; </label>
+				<volist name="project" id="po">
+					<label>{$po}<input type="checkbox" name="items[]" value="{$po}" <if condition="in_array($po,$items)">checked="checked"</if>>&nbsp;&nbsp;&nbsp;&nbsp; </label>
+				</volist>
+				<br/>
+				姓名：<input type="text" name="name" value="{$_GET['name']}" />
+				学号：<input type="text" name="stunum" value="{$_GET['stunum']}" />
+				身份证号：<input type="text" name="idcard" value="{$_GET['idcard']}" />
+				<label style="float:right">
+				<a href="javascript:download()" style="margin-right:10px; font-size: 16px; color: rgb(104, 104, 104);">导出Excel(当前筛选条件)</a>
+					<input type="submit" value="筛选">&nbsp;&nbsp;<a href="__URL__/view">显示全部</a>
+				</label>
+			</div>
+			</form>
+			<table id="listTable" class="mytable">
+				<tr>
+					<th>姓名</th><th>学号</th><th>身份证号</th><th>专业</th><th>班级</th></th><th>项目</th><th>收费项</th><th>收费标准</th><th>实交费用</th><th>未交费用</th><th>交费状态</th><th>备注</th>
+				</tr>
+				<volist name="list" id="vo">
+					<tr>
+						<td>{$vo.name}</td><td>{$vo.stunum}</td><td>{$vo.idcard}</td><td>{$vo.major}</td><td>{$vo.classname}</td><td>{$vo.item}</td><td>{$vo.feename}</td><td>{$vo.standard}</td><td>{$vo.paid}</td><td><?php 
+							if ($vo["statusname"] == "退费" || $vo["statusname"] == "已交齐费用") {
+								echo "0";
+							}else{
+								$unpaid = $vo["standard"] - $vo["paid"];
+								echo($unpaid);
+							}
+					 ?></td><td><a href="javascript:boxshow({$vo.id})">{$vo.statusname}</a></td>
+					 <td id="{$vo.id}-remark" style="cursor: pointer;" title="{$vo.remark}">
+					 	<div   style="width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{$vo.remark}</div>
+					 </td>
+					</tr>
+				</volist>
+			</table>
+		<div style="margin-top: 10px; margin-bottom: -15px;">当前筛选条件下&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;需交费用：{$sumStandard}元&nbsp;&nbsp;&nbsp;&nbsp;实交费用：{$sumPaid}元&nbsp;&nbsp;&nbsp;&nbsp;剩余费用:{$sumUnpaid}元</div>
+		<div class="page">{$page}</div>
+		</div>
+	<div class="box">
+		<div id="submitBox">
+			<div class="BoxTitle">修改交费状态</div>
+			<form id="submitForm"><table>
+				<input type="hidden" id="paymentId" name="id" />
+				<tr>
+					<td>交费状态:</td>
+					<td>
+						<select name="status" id="changeStatus">
+							<option value="">请选择</option>
+							<option value="1">未交费</option>
+							<option value="2">费用未交清</option>
+							<option value="3">已交齐费用</option>
+							<option value="4">退费</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>备注：</td>
+					<td><input type="text" id="changeRemark" name="remark" /></td>
+				</tr>
+			</table></form>
+			<button id="submitPass">提交</button><button id="cancel">取消</button>
+		</div>
+	</div>
+	</div>
+</body>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script>
+	function boxshow(id){
+		if (!id) {
+			alert("错误，未选择");
+			return;
+		};
+		$(".box").show();
+		var remark = $("#"+id+"-remark").attr("title");
+		$("#changeRemark").val(remark);
+		$("#paymentId").val(id);
+	}
+	function download(){
+		var submitData=$('#viewform').serialize();
+		var url = "__URL__/downloadView?" + submitData;
+		window.location = url;
+	}
+	$(document).ready(function(){
+		$('#majorS').val("{$_GET['major']}");
+		$('#itemS').val("{$_GET['item']}");
+		$('#classS').val("{$_GET['class']}");
+		$('#feeS').val("{$_GET['fee']}");
+		$('#statusS').val("{$_GET['status']}");
+		$('#periodS').val("{$_GET['period']}");
+		$('#typeS').val("{$_GET['type']}");
+		$('#majorS').change(function(){
+			var major=$('#majorS').val();
+			lock=1;
+			if (lock) {
+				lock=0;
+				$.post('__URL__/getClass',{major:major},function(a){
+					var data=eval('(' + a + ')');
+					lock=1;
+					var classhtml="<option value=''>请选择班级</option>";
+					for(i in data.data){
+						classhtml=classhtml+"<option value='"+data.data[i]['name']+"'>"+data.data[i]['name']+"</option>";
+					};
+					$('#classS').html(classhtml);
+				});
+			};
+		});
+		$('#itemS').change(function(){
+			var item=$('#itemS').val();
+			lock=1;
+			if (lock) {
+				lock=0;
+				$.post('__URL__/getFee',{item:item},function(a){
+					var data=eval('(' + a + ')');
+					lock=1;
+					var feehtml="<option value=''>请选择收费项</option>";
+					for(i in data.data){
+						feehtml=feehtml+"<option value='"+data.data[i]['name']+"'>"+data.data[i]['name']+"</option>";
+					};
+					$('#feeS').html(feehtml);
+				});
+			};
+		});
+
+		$('.calendar').calendar();
+		var box=$('.box');
+    	$('#cancel').click(function(){
+			box.hide();
+		});
+    	$("#submitPass").click(function(){
+    		if ($("#changeStatus").val() == "") {
+    			alert("请选择交费状态");
+    			return;
+    		};
+    		var submitData=$('#submitForm').serialize();
+    		$.post("__URL__/changestatus",submitData,function(a){
+    			var data=eval('(' + a + ')');
+    			alert(data.info);
+    			if (data.status == 1) {
+    				location.reload();
+    			};
+    		});
+    	});
+
+	});
+</script>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title> 信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sand.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/bound.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+</head>
+
+<body>
+<table width="95%" border="0" align="center" cellspacing="10">
+  <tr>
+    <td width="20%" align="left"><a href="javascript:top.location.href='__URL__'" title="返回控制中心"><img src="../Public/images/logo.png"/></a></td>
+    <td width="80%" align="right">
+        <div id="nav">
+            <a href="javascript:top.location.href='__URL__/intercalate'">收费项信息设置</a> | 
+            <a href="javascript:top.location.href='__URL__/apply'">报名费设置</a>  |
+            <a href="javascript:top.location.href='__URL__/rebuilt'">重修费设置</a>  |
+            <a href="javascript:top.location.href='__URL__/bound'" class="on">专业收费项设置</a>
+        </div>
+    </td>
+  </tr>
+</table>
+<div class="main">
+    <!-- <div class="search">
+        <label>年份：
+            <select name="year" id="year">
+            </select>
+        </label>
+    </div> -->
+    <form id='form1'>
+        <input type='hidden' value='{$class}' id='classname' />
+        <table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+            <tr><td style="border-bottom:0px solid #B2B2B2">&nbsp;&nbsp;<input type="checkbox" id="check" value="<?php echo($feeid); ?>"/>&nbsp;<label>选择全部未分班学生</label></td></tr>
+                <tr>
+                        <?php foreach ($all as $num => $va) { ?>
+                    <td style="border-bottom:0px solid #B2B2B2">
+                        <div style="float:left;">
+                            <label style="vertical-align:middle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input style="vertical-align:middle" type="checkbox" class="classcheck" name="key" value='{$va.idcard}' <?php
+        if ($va["bound"]) {
+            echo 'bound="true" checked="true"';
+        }else{
+            echo 'bound="false"';
+        }?> />{$va.truename}[{$va.idcard}]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        </div>
+
+                    </td>
+                        <?php 
+                        if (($num+1) % 3 == 0) {
+                            echo "</tr><tr>";
+                        }
+                    }
+                         ?>
+                </tr>
+        </table>
+    </form>
+
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tbody>
+            <tr><td><div class="btn_zone"><input type="button" value="确定" id="submit"></div></td></tr>
+        </tbody>
+    </table>
+    <div id="foreach"></div>
+</div><!--end of main-->
+<script type="text/javascript">
+    $(document).ready(function(){
+    //年份初始化
+    var d = new Date();
+    var theyaer = d.getFullYear();
+    for (var i = theyaer - 10; i < theyaer + 11; i++) {
+        $("#year").append('<option value="'+i+'">'+i+'年</option>');
+    };
+    $("#year").find("option[value='<?php echo($theyear) ?>']").attr("selected",true);
+    //是否全选初始化
+    $(".mytable").find("tr").each(function(){
+        isallcheck($(this));
+    });
+
+    $(document).on("change","#year",function(){
+        var url = window.location.href;
+        var year = $(this).val();
+        window.location.href = url + "/year/" + year ;
+
+    });
+    $(document).on("click","#check",function(){
+        $(".majorcheck,.classcheck").attr("checked",this.checked);
+    });
+    $(document).on("click",".majorcheck",function(){
+        $(this).parents("td").find(".classcheck").attr("checked",this.checked);
+    });
+    $(document).on("click","#submit",function(){
+        var addlist = [], dellist = [];
+        var feeid = $("#check").attr("value");
+        $(".classcheck").each(function(){
+            var name = $(this).attr("value");
+            var bound = $(this).attr("bound");
+            var checked = $(this).attr("checked");
+            if (bound == "false" && checked) {
+                addlist.push(name);
+            }else if (bound == "true" && !checked){
+                dellist.push(name);
+            };
+        });
+        $.ajax({
+            type:'POST',
+            url:"__URL__/applySave",
+            dataType:"JSON",
+            data:{"addlist":addlist,"dellist":dellist,"feeid":feeid},
+            success:function(back){
+                if (back.status == 1) {
+                    alert(back.info);
+                    location.reload();
+                }else{
+                    alert(back.info);
+                };
+            },
+        });
+    });
+    
+    /*$(document).on("click","",function(){
+        
+    });*/
+    $(document).on("click",".classcheck",function(){
+        var tr = $(this).parents("tr");
+        isallcheck(tr);
+    });
+    function isallcheck(tr){
+        var allchecked = true;
+        tr.find(".classcheck").each(function(){
+            if (this.checked != true) {
+                allchecked = false;
+                return false;
+            };
+        });
+        tr.find(".majorcheck").attr("checked",allchecked);
+    }
+
+});
+</script>
+</body>
+</html>

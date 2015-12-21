@@ -1,0 +1,41 @@
+<include file="Index:pageheader"/>
+<div class="main">
+    <div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 填写好“学生姓名”之后，点击旁边的“智能匹配”，并选上正确的匹配结果。</div>
+    <form id="form1"><input type="hidden" value="" name="susername" id="susername"/>
+        <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="t_item"><span class="mustfill">*</span>收费类别</td>
+                <td><empty name="paytype"><else /><html:select  options="paytype" name="paytype" selected="select_paytype"/></empty></td>
+            </tr>
+            <tr>
+                <td class="t_item"><span class="mustfill">*</span>收费项目</td>
+                <td><input type="text" name="projectname" id="projectname" class="inputmid"/></td>
+            </tr>
+            <tr>
+                <td class="t_item"><span class="mustfill">*</span>收费标准</td>
+                <td><input type="text" name="paymoney" id="paymoney" class="inputmid"/>元</td>
+            </tr>
+            <tr>
+                <td class="t_item">开始日期</td>
+                <td><input type="text" name="startdate" id="startdate" class="inputshort calendar" /></td>
+            </tr>
+            <tr>
+                <td class="t_item">结束日期</td>
+                <td><input type="text" name="enddate" id="enddate" class="inputshort calendar" /></td>
+            </tr>
+        </table>
+    </form>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+            <td></td></tr>
+    </table>
+</div><!--end of main-->
+    <script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+    <script type="text/javascript">
+        jQuery(window).load(function(){
+        });
+        jQuery(function() {
+            jQuery('.calendar').calendar();
+        });
+    </script></body>
+</html>

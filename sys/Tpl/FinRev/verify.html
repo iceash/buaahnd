@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<style>
+	.page{text-align: center;}
+	.box{position: fixed;text-align: center;width:100%;height: 100%;display: none;z-index: 2;top: 0;}
+	#editBox{width: 300px;height: 265px;position:fixed;top: 0;bottom: 0;left: 0;right: 0;margin: auto;background: #f3f4f5;border:1px solid #B2B2B2;}
+	.BoxTitle{padding: 5px 20px;margin-bottom: 10px;font-size: 15px;font-weight: bold;background: url(../Public/images/table_th.gif);text-align: left;border-bottom:1px solid #B2B2B2;}
+	#editBox table{width: 100%;}
+	#editBox table td{text-align: left;padding-left: 30px;}
+	#editBox button{margin: 10px 20px;}
+</style>
+</head>
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+	<div class="helpzone"><img src="../Public/images/info.gif" align="absmiddle" /> 本页面只出现状态为“审核中”的本期交易记录数据</div>
+	<table class="mytable" width="100%">
+		<tr><th>姓名</th><th>学号</th><th>身份证号</th><th>收费项</th><th>交易方式</th><th>交易金额</th><th>发票号</th><th>操作人员</th><th>交易时间</th><th>操作</th></tr>
+		<volist name="list" id="vo">
+			<tr><td>{$vo.name}</td><td>{$vo.stunum}</td><td>{$vo.idcard}</td><td>{$vo.feename}</td><td>{$vo.way}</td><td>{$vo.money}</td><td>{$vo.invoice}</td><td>{$vo.operator}</td><td>{$vo.date}</td><td><input type="hidden" class="dealid" name="dealid" value="{$vo.id}" /><button class="edit">修改</button><button class="pass">通过审核</button></td></tr>
+		</volist>
+	</table>
+	<div class="page">{$page}</div>
+	<div class="box">
+		<div id="editBox">
+			<div class="BoxTitle">修改交易记录</div>
+			<form id="boxForm"><table></table></form>
+			<button id="editPass">通过审核</button><button id="cancel">取消</button>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript" src="../Public/js/lhgcalendar.min.js"></script>
+<script>
+	$(document).ready(function(){
+
+	var box=$('.box');
+	var boxTable=box.find('table');
+	var pakageToBox = [];
+		$('.edit').click(function(){
+			var dealid=$(this).siblings('.dealid').val();
+			var i=0;
+			var tds=$(this).parent().siblings('td');
+			tds.each(function(){
+				pakageToBox[i]=$(this).text();i++;
+			});
+		tableHtml="<tr><td>学生姓名：</td><td>"+pakageToBox[0]+"</td></tr><tr><td>收费项目：</td><td>"+pakageToBox[3]+"</td></tr><tr><td>交易方式：</td><td><select name='way' id='wayInput'><volist name='way' id='wo'><option value='{$wo}'>{$wo}</option></volist></select></td></tr><tr><td>交易金额：</td><td><input type='text' name='money' value='"+pakageToBox[5]+"'/></td></tr><tr><td>发票号码：</td><td><input type='text' name='invoice' value='"+pakageToBox[6]+"'/></td></tr><tr><td>操作人员：</td><td><input type='text' name='operator' value='"+pakageToBox[7]+"'/></td></tr><tr><td>交易时间：</td><td><input type='text' name='date' value='"+pakageToBox[8]+"' class='calendar'/></td></tr><input type='hidden' name='id' value='"+dealid+"'/>";
+		boxTable.html(tableHtml);
+		$('.calendar').calendar();
+		$('#wayInput').val(pakageToBox[4]);		
+		box.show();
+		});
+		$('#cancel').click(function(){
+			box.hide();
+			boxTable.html("");
+		});
+		var lock1=1;		
+		$('.pass').click(function(){
+			if (lock1) {
+				lock1=0;
+				var dealid=$(this).siblings('.dealid').val();
+				$.post('__URL__/pass',{id:dealid},function(a) {
+					var data=eval('(' + a + ')');
+					alert(data.info);lock1=1;
+					if(data.status==1){location.reload();
+					};
+				});
+			};
+		});
+		var lock2=1;
+		$('#editPass').click(function(){
+			if (lock2) {
+				lock2=0;
+				var editData=$('#boxForm').serialize();
+				$.post('__URL__/passEdit',editData,function(a) {
+					var data=eval('(' + a + ')');
+					alert(data.info);lock1=1;
+					if(data.status==1){location.reload();
+					};
+				});
+			};
+		});
+
+
+
+
+
+	});
+</script>
+</html>

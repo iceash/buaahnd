@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <include file="Index:title"/>
+    <link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+    <link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+    <script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        jQuery(window).load(function(){
+
+        });
+        jQuery(function(){
+            jQuery('#btn_save').click(function(){
+                jQuery.ajax({
+                    type:'POST',
+                    url:'__URL__/rightUpdate',
+                    dataType:'json',
+                    data:jQuery("#form1").serialize(),
+                    success: function(data){
+                        if (data.status==1){
+                            alert(data.info);
+                        }else{
+                            alert(data.info);
+                        }
+                    }
+                });
+            });
+
+        });
+
+    </script>
+</head>
+
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+    <form id="form1"><input type="hidden" name="id" value="{$my.id}"/>
+        <table width="100%" border="0" class="utable" cellpadding="0" cellspacing="0">
+            <tr>
+                <td class="t_item">帐号</td>
+                <td>{$my.username} {$my.truename} </td>
+            </tr>
+            <!-- <tr>
+                <td class="t_item">年级</td>
+                <td><html:checkbox checkboxes="grade" name="grade" checked="grade_hava"/></td>
+            </tr> -->
+            <tr>
+                <td class="t_item">权限</td>
+                <td><html:checkbox checkboxes="role" name="role" checked="role_hava" separator="br" /></td>
+                <!-- <td>
+                    <label><input type="checkbox" name="role[]" value="EnrollTea">招生教师</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="EnrollAdm">招生管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="FinAdm" disabled>财务管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="FinTea" disabled>财务人员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="EduTea" disabled>任课教师</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="TeaAdm" disabled>教师管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="EduDir" disabled>班主任</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="EduAdm" disabled>教务管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="TrainTea" disabled>培训教师</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="TrainAdm" disabled>培训管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="AbroadTea" disabled>留学教师</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="AbroadAdm" disabled>留学管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="ExamTea" disabled>题库管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="SourceTea" disabled>资源管理员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="Office">办公室人员</label>&nbsp;&nbsp;<BR />
+                    <label><input type="checkbox" name="role[]" value="SysAdm" disabled>系统管理员</label>&nbsp;&nbsp;<BR />
+                </td> -->
+            </tr>
+
+        </table>
+    </form>
+    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+        <tr><td><div class="btn_zone"><input type="button" id="btn_save" value="保存"  /></div></td>
+            <td></td></tr>
+    </table>
+</div><!--end of main-->
+</body>
+</html>
