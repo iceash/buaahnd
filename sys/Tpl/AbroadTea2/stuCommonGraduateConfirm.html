@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title> 信息系统</title>
+<link rel="stylesheet" type="text/css" href="../Public/css/sky.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script> 
+<script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
+<script type="text/javascript"> 
+
+function word(){
+	var url="__URL__/downStuGraduateConfirm";
+		var name = '{$stuname}';
+		window.location=url+'?name='+name;
+}
+</script> 
+</head>
+
+<body>
+<include file="Index:pageheader"/>
+<div class="main">
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
+ <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生毕业证明  <img src="../Public/team_margin/images/word.png" align="absmiddle"/><a href="javascript:word();">[导出为word文档]</a></div></td>
+  <td>&nbsp;</td></tr>
+ </table>
+
+
+ <div id="tips" ><span><font color='red' style="margin-left:410px">{$tips}</font></span></div><br/>
+<br/><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style="margin-left:240px"><b>GRADUATION CERTIFICATE</b></span>
+<br/><br/>
+<div style='text-align:right'>
+<span style='margin-right:77px;margin-left:82px;'>{$current_time}</span>
+</div><br/>
+<p style='margin-right:77px;margin-left:82px;'>This is to certify that student {$data[0]['ensex']} {$data[0]['ename']} (Full Name of the student),  born on {$data[0]['birthday']}, has been a student of SQA HND programme at our university since September {$data[0]['year']}.{$data[0]['ensex']} {$data[0]['ename']} has completed all the units in HND Courses of {$data[0]['majore']} successfully. The HND Diploma from Scottish Qualifications Authority (SQA) is expected to be issued to {$data[0]['sexname']} in June {$data[0]['graduteyear']}.</p>
+
+
+</div><br/>
+<div style='width:600px;padding:0px;margin:0 auto;position:relative;text-align:left'>
+<span style="margin-right:77px;margin-left:82px;">Entrepreneurship Management and Training School</span><br/>
+<span style="margin-right:77px;margin-left:82px;">Beihang University<span>
+</div>
+ 
+ 
+</div><!--end of main-->
+</body>
+</html>

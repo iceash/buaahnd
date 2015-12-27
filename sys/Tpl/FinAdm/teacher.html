@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<include file="Index:title"/>
+<link rel="stylesheet" type="text/css" href="../Public/css/green.css">
+<link rel="stylesheet" type="text/css" href="../Public/css/jj.css">
+<script type="text/javascript" src="../Public/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"> 
+jQuery(window).load(function(){
+});
+jQuery(function(){ 
+	$('tr:has(:checked)').addClass('tr_selected');
+	$('.td_forselect').click(function(){
+		if ($(this).parent().hasClass('tr_selected')) {
+			$(this).parent().removeClass('tr_selected').find(':checkbox').attr('checked',false);
+		}else{
+			$(this).parent().addClass('tr_selected').find(':checkbox').attr('checked',true);
+		}
+	});
+	jQuery('#check').click(function(){
+		jQuery('[name=key]:checkbox').attr('checked',this.checked);
+		if(this.checked==true){
+			jQuery('.mytable tbody tr').addClass('tr_selected');
+		}else{
+			jQuery('.mytable tbody tr').removeClass('tr_selected');
+		}
+	});
+	jQuery('#btn_del').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要删除选择项吗？')){			
+			doDelete(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_permit0').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要冻结所选帐号吗？')){			
+			doPermit0(getSelectCheckboxValues());
+		}
+	});
+	jQuery('#btn_permit1').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要恢复所选帐号吗？')){			
+			doPermit1(getSelectCheckboxValues());
+		}
+	});
+    jQuery('#btn_resetPwd').click(function(){
+		if (jQuery('input[name=key]:checked').length==0){
+			alert('请选择操作项！');
+			return false;
+		}
+		if (window.confirm('确实要重置所选帐号密码吗？')){			
+			resetPwd(getSelectCheckboxValues());
+		}
+	});
+});
+function doDelete(CheckboxValues){ 
+	jQuery.getJSON('__URL__/delTeacher/',{id:CheckboxValues},function(data){
+		if(data.status==1){
+			alert(data.info);
+			deleteTr();
+		}	
+	});
+}
+function doPermit0(CheckboxValues){ 
+	jQuery.getJSON('__URL__/doPermit/',{studentid:CheckboxValues,ispermit:0},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}	
+	});
+}
+function doPermit1(CheckboxValues){ 
+	jQuery.getJSON('__URL__/doPermit/',{studentid:CheckboxValues,ispermit:1},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}	
+	});
+}
+function resetPwd(CheckboxValues){ 
+	jQuery.getJSON('__URL__/resetPwd/',{studentid:CheckboxValues,role:1},function(data){
+		if(data.status==1){
+			alert(data.info);
+			window.location.reload();
+		}else{
+        alert(data.info);
+        }	
+	});
+}
+function deleteTr() {
+	jQuery('input[name=key]:checked').each(function(){
+		jQuery(this).parent("td").parent("tr").remove();
+	});	
+}
+function getSelectCheckboxValues(){
+	var str='';
+	jQuery('input[name=key]:checked').each(function(){
+		str+=$(this).val()+',';
+	});
+	return str.substring(0, str.length-1);
+}
+function mysearch(){
+	var searchkey=jQuery('#searchkey').val();
+	window.location="__URL__/teacher/searchkey/"+searchkey;
+}
+function searchkeydown(e){
+	var e = e || event;
+	if (e.keyCode==13){
+		mysearch();
+	}
+}
+
+</script> 
+</head>
+
+<body>
+<tagLib name="html" />
+<include file="Index:pageheader"/>
+<div class="main">
+<div class="search">输入帐号或真实姓名：<input type="text" value="{$searchkey}" id="searchkey" onkeydown="searchkeydown(event)"/>&nbsp;<input type="button" value="搜索"   onclick="mysearch()"/>&nbsp;<html:select first="所有类型" options="role" name="role" selected="myrole" change="location.href='__URL__/teacher/role/'+this.options[this.selectedIndex].value;"/></div>
+	<table width="100%" border="0" class="mytable" cellpadding="0" cellspacing="0">
+<thead>
+  <tr>
+   <th width="5" height="30"><input type="checkbox" id="check"/></th>
+    <th width="100">帐号</th>
+    <th width="100">真实姓名</th>
+    <th width="60">登录次数</th>
+	<th width="60">帐号状态</th>
+	<th>帐号类型</th>
+	<th width="80">创建日期</th>
+  </tr>
+</thead>
+<tbody>
+  <volist name="my" id="my">
+  <tr>
+  	<td class="td_forselect"><input type="checkbox" name="key" value="{$my.username}"  /></td>
+    <td>{$my.username}</td>
+    <td>{$my.truename}</td>
+    <td>{$my.logincount}</td>
+	<td><empty name="my.ispermit"><img src="../Public/images/lock.gif" alt="冻结"/><else />正常</empty></td>
+	<td>{$my.roleName}</td>
+	<td>{$my.ctime|toDate='Y-m-d'}</td>
+  </tr>
+  </volist>
+ <tbody>
+ </table>
+ <table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr><td><div class="btn_zone"><input type="button" id="btn_del" value="删除帐号"  />&nbsp;<input type="button" id="btn_permit0" value="冻结帐号"/>&nbsp;<input type="button" id="btn_permit1" value="恢复帐号" /><input type="button" id="btn_resetPwd" value="重置为默认密码" /></div></td>
+  <td><div class="page">{$page}</div></td></tr>
+ </table>
+
+</div><!--end of main-->
+</body>
+</html>

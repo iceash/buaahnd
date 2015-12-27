@@ -1089,6 +1089,771 @@ class AbroadTea2Action extends CommonAction {
         $objWriter->save('php://output');
         exit;
     }
+    public function stuCommon() {
+        $this -> display();
+    } 
+    public function stuCommonMenu($id) {
+        $menu['stuCommonInfo']='基本信息';
+        $menu['stuCommonScore']=' 成绩单';
+        $menu['stuCommonCertification']='在读证明';
+        $menu['stuCommonAttend']='考勤记录';
+        $menu['stuCommonReward']='奖惩记录';
+        $menu['stuCommonProcess']='留学进程';
+        $this->assign('menu',$this ->autoMenu($menu,$id));  
+    }
+    
+    public function stuCommonScore() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $Score = D("prograde");
+        $map['stunum']=$id;
+        // $map['isvisible']=1;
+        $term=$Score -> where($map) ->field('term')->group('term')->order('term asc')-> select();
+        $term_num=count($term);
+        // if($term_num>0){
+            foreach($term as $key=>$value){
+                $map['term']=$value['term'];
+                $my[$key]=$Score -> where($map) -> select();
+            }
+            $this->assign('id',$id);//这里的id指的是学号
+            $this->assign('my',$my);
+        // }
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function stuCommonCertification(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        $student=D('classstudent');
+        $enroll=D('enroll');
+        $class=D('class');
+        $map['student']=$id;
+        $map1['username']=$id;
+        $stu=$student->where($map)->select();
+
+        $mystuename = $stu[0][ename];
+        $mystuename_begin = ucfirst(strtolower($mystuename));
+        $len = strlen($mystuename);
+        $position = 0;
+        for($i=0;$i<$len;$i++){
+            if($mystuename[$i]!=$mystuename_begin[$i]){
+                $position = $i;
+                break;
+            }
+        }
+        $my_xing = substr($mystuename_begin,0,$position);
+        $my_ming = substr($mystuename_begin,$position);
+        $mystuename = $my_xing." ".ucfirst(strtolower($my_ming));
+
+        $map2[id]=$stu[0]['classid'];
+        $zsex='';
+        $year='';
+        $month='';
+        $day='';
+        $major='';
+        $sex='';
+        $birthday='';
+        $majore='';
+        $classinfo=$class->where($map2)->select();
+        $stuinfo=$enroll->where($map1)->select();
+        $current_grade=$this->getGrade(date('Y-m-d',time()),$classinfo[0][year]);
+        $current_egrade=$this->getEgrade(date('Y-m-d',time()),$classinfo[0][year]);
+        if($stuinfo[0][sex]==''){
+            $zsex='______'.'(性别)';$sex='______'.'(sex)';
+        }else{
+            $zsex=$stuinfo[0][sex];$sex=$this->getSex($stuinfo[0][sex]);
+        }
+        if($stuinfo[0][birthday] == '' || $stuinfo[0][birthday] == '0000-00-00 00:00:00'){
+            $year='____';$month='____';$day='____';$birthday='____________________';
+        }else{
+            $year=substr($stuinfo[0][birthday],0,4);
+            $month=substr($stuinfo[0][birthday],5,2);
+            $day=substr($stuinfo[0][birthday],8,2);
+            $birthday=date('M.j,Y',strtotime($stuinfo[0][birthday]));
+        }
+        if($classinfo[0][major] == ''){
+            $major='______________________________________';
+            $item = '_________________';
+            $iteme = '_________________';
+        }else{
+            $major=$classinfo[0][major];
+            $item = M("major")->where(array("major"=>$major))->find();
+            if ($item["item"] == "HND") {
+                $item = "英国高等教育文凭";
+                $iteme = "SQA HND programme";
+            }elseif ($item["item"] == "美国2+2") {
+                $item = "美国高等教育项目";
+                $iteme = "American Higher Education Project(AHEP)";
+            }
+        }
+        if($classinfo[0][majore] == ''){
+            $majore='_____________________________________';
+        }else{
+            $majore=$classinfo[0][majore];
+        }
+        $this->assign("item",$item);
+        $this->assign("iteme",$iteme);
+        $this->assign('zsex',$zsex);
+        $this->assign('year',$year);
+        $this->assign('month',$month);
+        $this->assign('day',$day);
+        $this->assign('major',$major);
+        $this->assign('sex',$sex);
+        $this->assign('majore',$majore);
+        $this->assign('current_grade',$current_grade);
+        $this->assign('now',date('Y-m-d',time()));
+        $this->assign('current_time',date('M.j,Y',time()));
+        $this->assign('birthday',$birthday);
+        $this->assign('current_egrade',$current_egrade);
+        $this->assign('stu',$stu);
+        $this->assign('mystuename',$mystuename);
+        $this->assign('stuinfo',$stuinfo);
+        $this->assign('classinfo',$classinfo);
+        $this->assign('id',$id);
+        $this->stuCommonMenu($id);
+        if($stuinfo[0][sex]==''||$stuinfo[0][birthday]=='0000-00-00 00:00:00'||$classinfo[0][major]==''||$classinfo[0][majore]==''){
+            $tips='下划线处信息不全，请下载后补全!';
+        }
+        $this->assign('tips',$tips);
+        $this -> display();
+    }
+    public function stuCommonAttend() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $Attend = D("Attend");
+        $map['susername']=$id;
+        $map1['susername']=$id;
+        $count = $Attend -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows=10;
+            $p = new Page($count, $listRows);
+            $my = $Attend -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
+         $rid=$Attend->where($map)->field('id')->order('ctime DESC') ->select();
+            $rid_num=count($rid);
+            $a=array();
+            if($rid_num>0){
+                foreach($rid as $key=>$value){
+                $map['id']=$value['id'];
+                $my[$key]=$Attend -> where($map)-> find();
+                        if(!in_array(substr($my[$key]['timezone'],0,strripos($my[$key]['timezone'], '第')),$a)){
+                         array_push($a,substr($my[$key]['timezone'],0,strripos($my[$key]['timezone'], '第')));
+                     }
+                }
+            }
+            $map1['timezone']=array('like',$a[0].'%');
+            $truant_num=$Attend->where($map1)->sum('truant');
+            $tvacate_num=$Attend->where($map1)->sum('tvacate');
+            $svacate_num=$Attend->where($map1)->sum('svacate');
+            $late_num=$Attend->where($map1)->sum('late');
+            $this->assign('term',$a[0]);
+            $this->assign('truant',$truant_num);
+            $this->assign('tvacate',$tvacate_num);
+            $this->assign('svacate',$svacate_num);
+            $this->assign('late',$late_num);
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function stuCommonReward() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $Reward = D("Reward");
+        $map['susername']=$id;
+        $count = $Reward -> where($map) -> count();
+        if ($count > 0) {
+            import("@.ORG.Page");
+            $listRows=10;
+            $p = new Page($count, $listRows);
+            $my = $Reward -> where($map) -> limit($p -> firstRow . ',' . $p -> listRows) -> order('ctime desc,id desc') -> select();
+            $page = $p -> show();
+            $this -> assign("page", $page);
+            $this -> assign('my', $my);         
+        } 
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function stuCommonGetSystem($category,$name) {
+        $system = D("System");
+        $temp = explode(',', $system -> where("category='" . $category . "' and name='" . $name . "'") -> getField("content"));
+        $a = array();
+        foreach($temp as $key => $value) {
+            $a[$value] = $value;
+        } 
+        return $a;
+    } 
+    public function stuCommonGrade(){
+        $this->assign('id',$_GET['id']);
+        $this->assign('info',$this->students());
+        $this->display();
+    }
+     public function stuCommonClass(){
+        $this->assign('id',$_GET['id']);
+        $this->assign('class',$_GET['class']);
+        $this->assign('info',$this->students());
+        $this->display();
+    }
+    public function stuCommonInfo() {
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        $area = D("Area");
+        $province = $area -> where("parent_id = 1") -> Field("region_name") -> select();
+        $a = array();
+        foreach($province as $key => $value) {
+            $a[$value['region_name']] = $value['region_name'];
+        }
+        $is_or_not = array('是' => '是', '否' => '否');
+        $education = $this -> stuCommonGetSystem("enroll","education");
+        $entrancefull = $this -> stuCommonGetSystem("enroll","entrancefull");
+        $englishfull = $this -> stuCommonGetSystem("enroll","englishfull");
+        $mathfull = $this -> stuCommonGetSystem("enroll","mathfull");
+        $abroad = $this -> stuCommonGetSystem("enroll","abroad");
+        $coursewant = $this -> stuCommonGetSystem("enroll","coursewant");
+        $englishtrain = $this -> stuCommonGetSystem("enroll","englishtrain");
+        $sourcenewspaper = $this -> stuCommonGetSystem("enroll","sourcenewspaper");
+        $sourcenet = $this -> stuCommonGetSystem("enroll","sourcenet");
+        $nationality = $this -> stuCommonGetSystem("enroll","nationality");
+
+        $this -> assign('a', $a);
+        $this -> assign('is_or_not', $is_or_not);
+        $this -> assign('education', $education);
+        $this -> assign('entrancefull', $entrancefull);
+        $this -> assign('englishfull', $englishfull);
+        $this -> assign('mathfull', $mathfull);
+        $this -> assign('abroad', $abroad);
+        $this -> assign('coursewant', $coursewant);
+        $this -> assign('englishtrain', $englishtrain);
+        $this -> assign('sourcenewspaper', $sourcenewspaper);
+        $this -> assign('sourcenet', $sourcenet);
+        $this -> assign('nationality', $nationality);
+
+        $Enroll = D('Enroll');
+        $map['username'] = $id;
+        $my = $Enroll -> where($map) -> find();
+        if ($my) {
+            $this -> assign('nativecity', $this -> getBrotherCity($my['nativecity']));
+            $this -> assign('fcity', $this -> getBrotherCity($my['fcity']));
+            $this -> assign('mcity', $this -> getBrotherCity($my['mcity']));
+            $this -> assign('ocity', $this -> getBrotherCity($my['ocity']));
+            $this -> assign('schoolcity', $this -> getBrotherCity($my['schoolcity']));
+            $this -> assign('abroad_selected', explode(',', $my['abroad']));
+            $this -> assign('newspaper_selected', explode(',', $my['sourcenewspaper']));
+            $this -> assign('net_selected', explode(',', $my['sourcenet']));
+            $this -> assign('infosource_selected', explode(',', $my['infosource']));
+            $this -> assign('try', $my['try']);
+            $this -> assign('paystatus',$my["paystatus"]);
+        }
+        $mbp["stunum"] = $id;
+        $allpay = M("payment")->where($mbp)->select();
+        $this->assign('allpay',$allpay);
+        $allgrade = M("prograde")->where("stunum=$id")->select();
+        foreach ($allgrade as $va) {
+            $willgrade[$va["term"]][] = $va;
+        }
+        $this->assign("willgrade",$willgrade);
+        $this -> assign('my', $my);
+        $mapJ['susername']=$id;
+        $list=M('judge')->where($mapJ)->select();
+        $this->assign('list',$list);
+        $this->stuCommonMenu($id);
+        $this -> display();
+    }
+    public function checkEnrollPlus() {
+        load("@.idcard");
+        load("@.check");
+        if (empty($_POST['truename'])) {
+            $this -> error('Part1 学生姓名不能为空');
+        }
+        if (empty($_POST['username'])) {
+            // $this -> error('Part1 学生学号不能为空');
+        }elseif(!isusername($_POST['username'])){
+          $this -> error('Part1 学生学号校验失败');  
+        }
+        if (empty($_POST['cyear'])) {
+            // $this -> error('Part1 入学年份不能为空');
+        }elseif (!isctime($_POST['cyear'])) {
+            $this -> error('Part1 入学年份校验失败');
+        }
+        if (empty($_POST['sex'])) {
+            // $this -> error('Part1 性别不能为空');
+        }elseif (!issex($_POST['sex'])) {
+            $this -> error('Part1 学生性别校验失败');
+        }
+        if (empty($_POST['bankcard'])) {
+            // $this->error("Part1 学生银行卡号不能为空");
+        }
+        if (empty($_POST["onecard"])) {
+            // $this->error("Part1 学生一卡通号不能为空");
+        }
+        if (empty($_POST['mobile'])) {
+            // $this -> error('Part1 学生手机号不能为空');
+        } elseif (!ismobile($_POST['mobile'])) {
+            $this -> error('Part1 学生手机号校验失败');
+        }
+        if (!empty($_POST['qq'])) {
+            if (!is_numeric($_POST['qq']))
+                $this -> error('Part1 学生QQ号码校验失败');
+        }
+        if (!empty($_POST['email'])) {
+            if (!isemail($_POST['email']))
+                $this -> error('Part1 学生Email校验失败');
+        }
+        if (!empty($_POST['idcard'])) {
+            if (!validation_filter_id_card($_POST['idcard']))
+                $this -> error('Part1 身份证号码校验失败');
+        }else{
+            $this->error("Part1 身份证号码不能为空");
+        }
+        if (!empty($_POST['fmobile'])) {
+            if (!ismobile($_POST['fmobile']))
+                $this -> error('Part2 父亲手机号码校验失败');
+        }
+        if (!empty($_POST['mmobile'])) {
+            if (!ismobile($_POST['mmobile']))
+                $this -> error('Part2 母亲手机号码校验失败');
+        }
+        if (!empty($_POST['omobile'])) {
+            if (!ismobile($_POST['omobile']))
+                $this -> error('Part2 其他联系人手机号码校验失败');
+        }         
+        $this -> success('数据校验成功');
+    }    
+
+    public function insertPlus() {
+        $dao = D("Enroll");
+        $map["student"] = $dao->where(array("id"=>$_POST["id"]))->getField("username");
+        if ($dao -> create()) {
+            $dao -> abroad = implode(',', $_POST['abroad']);
+            $dao -> infosource = implode(',', $_POST['infosource']);
+            $dao -> sourcenewspaper = implode(',', $_POST['sourcenewspaper']);
+            $dao -> sourcenet = implode(',', $_POST['sourcenet']);
+            $checked = $dao->save();
+            if ($checked>0) {
+                if (!empty($_POST["username"])) {
+                    M("classstudent")->where($map)->save(array("student"=>$_POST["username"]));
+                }
+                $this -> success('已成功保存');
+            } else{
+                $this -> error('没有更新任何数据');
+            }
+        } else {
+            $this -> error($dao -> getError());
+        }
+    } 
+    public function stuCommonProcess(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        } 
+        $dao=D('Abroad');
+        $map['susername']=$id;
+        $my=$dao->where($map)->find();
+        $this->assign('my',$my);
+        $school=D('Abroadschool')->where("abroadid=".$my['id'])->select();
+        $this -> assign('school', $school);
+        $this->stuCommonMenu($id);
+        $this->display();
+
+    }
+    public function stuCommonLeft(){
+        $searchkey = $_GET['searchkey'];
+        if (isset($searchkey)) {
+            $dao2 = D('ClassstudentView');
+            $map2['studentname|ename|enamesimple']=array('like',"%$searchkey%");
+            //$stu = $dao2->where($map2)->order('student asc')-> select();
+            $stu = $dao2->query('SELECT u_classstudent.student, u_class.name, u_classstudent.studentname from u_classstudent, u_class where u_classstudent.classid=u_class.id and ( u_classstudent.enamesimple like "%'.$searchkey.'%" or u_classstudent.ename like "%'.$searchkey.'%" or  u_classstudent.studentname like "%'.$searchkey.'%" ) ORDER BY u_classstudent.student asc');
+            $count=count($stu);
+            $this -> assign('searchkey', $searchkey);
+            $this -> assign('stu', $stu);
+            $this -> assign('count', $count);
+            $this->display();
+        } else{
+            $m["item"] = '美国2+2';//分项目的限制开始
+            $major = M("major")->where($m)->select();
+            foreach ($major as $vm) {
+                $majors[$vm["major"]]=$vm["major"];
+            }
+            $map_class["major"] = array("in",$majors);//分项目的限制结束
+            $grades = explode(",", $_SESSION["grade"]);
+            $map_class["year"] = array("in",$grades);
+            $dao_class = D('Class');
+            $map_class['isbiye']=0;
+            $dtree_class = $dao_class->where($map_class)->order('year desc,name asc')-> select();
+            $dtree_year=$dao_class ->where($map_class)->field('year')-> group('year')->order('year desc')->select();
+            $dao2 = D('ClassstudentView');
+            $dtree_stu = $dao2->order('student asc')-> select();
+            $this->assign('dtree_year',$dtree_year);
+            $this -> assign('dtree_class', $dtree_class);
+            foreach ($dtree_stu as $k => $va) {
+                if (empty($va["student"]) || empty($va["scnid"]) || empty($va["sex"]) || empty($va["bankcard"]) || empty($va["onecard"]) || empty($va["mobile"])) {
+                    $dtree_stu[$k]["studentname"] .= '<span style="color:red;">*</span>';
+                }
+            }
+            $this -> assign('dtree_stu', $dtree_stu);
+            $this->display();
+        }
+    }
+    public function stuCommonRight(){
+        $test=$_GET['id'];
+        $this -> assign('test', $test);
+        $this->display();
+    }
+    public function students(){
+        $a = array('name'=>'姓名','ename'=>'ename','birthday'=>'出生日期','sex'=>'性别','gender'=>'Gender','address'=>'家庭住址','HomeAddress'=>'HomeAddress','postaladdress'=>'通信地址','CorrespondenceAddress'=>'CorrespondenceAddress','phone'=>'固定电话','mobile'=>'手机','email'=>'Email1','Email2'=>'Email2','MSN'=>'MSN','qq'=>'OICQ','nativeprovince'=>'省份','Province'=>'Province','nativecity'=>'城市','City'=>'City','idcardpassport'=>'身份证护照号码','project'=>'就读国内项目名称','HNDCenter'=>'HNDCenter','year'=>'入学时间','grade'=>'所属年级','entrancescore'=>'高考成绩总分','englishscore'=>'英语单科成绩','entrancefull'=>'高考分数标准','major'=>'HND专业','drop'=>'是否退学','repeat'=>'是否留级','SCN'=>'SCN号','listeningscore'=>'听力得分','readingscore'=>'阅读得分','writingscore'=>'写作得分','speakingscore'=>'口语得分','testscore'=>'进入专业课英语成绩总分','score1'=>'最优有效雅思成绩','score1id'=>'雅思考试号','plus'=>'其他','HNDtime'=>'获得HND证书时间','quit'=>'是否留学','country'=>'留学国家','Country'=>'Country','school'=>'国外院校名称','ForeignUniversityApplied'=>'ForeignUniversityApplied','fmajor'=>'留学所学专业','together'=>'出国所经过中介名称','employ'=>'是否就业','enterprise'=>'就业企业名称','workaddress'=>'就业企业所在省市','enterprisenature'=>'就业企业性质','individualorientationandspecialty'=>'个人情况介绍及特长','professionalcertificate'=>'所获得职业资格证书','xuben'=>'续本','xubensch'=>'续本国内院校名称','degreesch'=>'将获得哪所院校颁发学位','xubenmajor'=>'续本专业');
+        return $a;
+    }
+    public function getBrotherCity($cityname) {
+        $Area = D("Area");
+        $map['region_name']=$cityname;
+        $map['region_type']=2;
+        $parent = $Area ->field('parent_id')-> where($map) -> find();
+        $map_a['parent_id']=$parent['parent_id'];
+        $brother = $Area-> where($map_a) -> select();
+        $a = array();
+        foreach($brother as $key => $value) {
+            $a[$value['region_name']] = $value['region_name'];
+        }
+        return $a;
+    }
+    public function downPreScore(){
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        // Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/prescore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('B3', $stuinfo["studentname"]) 
+            ->setCellValue('B4', $stuinfo["ename"]) ;//写上学生姓名
+        $scores = M("pregrade")->where(array("stunum"=>$id))->select();
+        $styleArray = array(  
+            'borders' => array(  
+                'allborders' => array(  
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,//细边框  
+                    'color' => array('argb' => '000'),  
+                ),  
+            ),  
+        );  
+        $line = 6;
+        for ($i=0; $i < count($scores); $i++) { 
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue('A'.$line, $scores[$i]["examname"]) 
+                ->setCellValue('A'.($line+1), ' 听 力 :') 
+                ->setCellValue('B'.($line+1), $scores[$i]["listening"]."分")
+                ->setCellValue('A'.($line+2), ' Listening:') 
+                ->setCellValue('B'.($line+2), $scores[$i]["listening"])
+                ->setCellValue('A'.($line+3), ' 口 语 :') 
+                ->setCellValue('B'.($line+3), $scores[$i]["speaking"]."分")
+                ->setCellValue('A'.($line+4), 'Speaking:') 
+                ->setCellValue('B'.($line+4), $scores[$i]["speaking"])
+                ->setCellValue('D'.($line+1), ' 阅 读 :') 
+                ->setCellValue('E'.($line+1), $scores[$i]["reading"]."分") 
+                ->setCellValue('D'.($line+2), 'Reading:') 
+                ->setCellValue('E'.($line+2), $scores[$i]["reading"]) 
+                ->setCellValue('D'.($line+3), ' 总 分 :') 
+                ->setCellValue('E'.($line+3), $scores[$i]["total"]."分") 
+                ->setCellValue('D'.($line+4), 'Total:') 
+                ->setCellValue('E'.($line+4), $scores[$i]["total"]) 
+                ->setCellValue('G'.($line+1), ' 写 作 :') 
+                ->setCellValue('H'.($line+1), $scores[$i]["writing"]."分") 
+                ->setCellValue('G'.($line+2), 'Writing:')
+                ->setCellValue('H'.($line+2), $scores[$i]["writing"])
+                ->setCellValue('A'.($line+5), 'Remark:Listening 9,Reading 9,Writing 9,Speaking 9,Total 9')
+                ->getStyle('A'.($line+5).':I'.($line+5))->applyFromArray($styleArray);
+            $p  ->getActiveSheet()->mergeCells( 'A'.$line.':I'.$line);
+            $p  ->getActiveSheet()->mergeCells( 'A'.($line+5).':I'.($line+5));
+            $p  ->getActiveSheet()->getStyle('A'.$line)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+            for ($j=1; $j <= 4; $j++) { 
+                $p  ->getActiveSheet()->getStyle('A'.($line+$j).':C'.($line+$j))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->getStyle('D'.($line+$j).':F'.($line+$j))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->getStyle('G'.($line+$j).':I'.($line+$j))->applyFromArray($styleArray);
+                $p  ->getActiveSheet()->mergeCells( 'B'.($line+$j).':C'.($line+$j));
+                $p  ->getActiveSheet()->mergeCells( 'E'.($line+$j).':F'.($line+$j));
+                $p  ->getActiveSheet()->mergeCells( 'H'.($line+$j).':I'.($line+$j));
+            }
+            $line += 7;
+        }
+        
+        ob_end_clean();
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-预科成绩单.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function downProScoreA(){
+        //导出字母制成绩
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        // Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'SCN：'.$stuinfo["student"].'        Name：'.$stuinfo["ename"].'      Major：'.$stuinfo["majore"]);//写上名字
+        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+        foreach ($scores as $vs) {//对数据进行初步处理
+            if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
+                continue;
+            }
+            $willwrite[$vs["term"]][$vs["course"]]["count"]++;
+            $willwrite[$vs["term"]][$vs["course"]]["hundred"] += $vs["hundred"];
+            if ($vs["letter"] == "U" || $vs["hundred"] == 0) {//接下来判断这是重修或是导入时输入字母还是数字
+                $willwrite[$vs["term"]][$vs["course"]]["isrepair"] = "repair";
+                $willwrite[$vs["term"]][$vs["course"]]["hundred"] = 0;
+            }else{
+                if ($vs["letter"] == "P" || $vs["letter"] == "F") {
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "hundred";
+                }else{
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "letter";
+                }
+            }
+        }
+        $line = 6;//从第7行开始写，每门课加1
+        $row = 64;//从B列开始写，每学期加2
+        $course = M("course");
+        foreach ($willwrite as $termname => $vw) {
+            $row = $row + 2;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue(chr($row)."5",$termname)
+                ->mergeCells(chr($row)."5:".chr($row+1)."5")
+                ->setCellValue(chr($row)."6","Marks")
+                ->setCellValue(chr($row+1)."6","Credits");
+            foreach ($vw as $coursename => $vs) {
+                $line++;
+                $map["classid"] = $stuinfo["classid"];
+                $map["name|ename"] = $coursename;
+                $credit = $course->where($map)->getField("credit");//获取学分
+                if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
+                    $hundred = 0;
+                    $letter = "U";
+                }else{
+                    $hundred = $vs["hundred"]/$vs["count"];
+                    if ($vs["standard"] == "letter") {
+                        switch (true) {
+                            case $hundred > 70:
+                                $letter = "A";
+                                break;
+                            case $hundred >60:
+                                $letter = "B";
+                                break;
+                            case $hundred > 50:
+                                $letter = "C";
+                                break;
+                            case $hundred > 1:
+                                $letter = "D";
+                                break;
+                        }
+                    }else{
+                        if ($hundred >= 60) {
+                            $letter = "P";
+                        }else{
+                            $letter = "F";
+                        }
+                    }
+                }
+                $p  ->setActiveSheetIndex(0)
+                    ->setCellValue("A".$line,$coursename)
+                    ->setCellValue(chr($row).$line,$letter)
+                    ->setCellValue(chr($row+1).$line,$credit);
+            }
+        }
+        $styleThinBlackBorderOutline = array( 
+            'borders' => array ( 
+                'allborders' => array ( 
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
+                ), 
+            ),
+        );
+        $p->getActiveSheet()->getStyle('A5:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        ob_end_clean();
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单（字母制）.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function downProScoreB(){
+        //导出百分制成绩
+        $id = $_GET['id'];
+        if (!isset($id)) {
+            $this -> error('参数缺失');
+        }
+        // Vendor('PHPExcel'); 
+        $titlepic = '/buaahnd/sys/Tpl/Public/download/proscore.xls';
+        $php_path = dirname(__FILE__) . '/';
+        $excelurl = $php_path .'../../../..'.$titlepic;
+        $stuinfo = D("ClassstudentView")->where(array("student"=>$id))->find();
+        if (!$stuinfo) {
+            $this -> error('无此学生'.$id);
+        }
+        include $php_path .'../../Lib/ORG/PHPExcel.class.php';
+        $p = PHPExcel_IOFactory::load($excelurl);//载入Excel
+        if ($stuinfo["sex"] == "男") {
+            $stuinfo["sex"] = "male";
+        }elseif($stuinfo["sex"] == "女") {
+            $stuinfo["sex"] = "female";
+        }
+        $p  ->setActiveSheetIndex(0)
+            ->setCellValue('A2', 'Name of Student:'.$stuinfo["ename"])
+            ->setCellValue("A3","Gender: ".$stuinfo["sex"])
+            ->setCellValue("A4","Date of Birth:".$stuinfo["birthday"])
+            ->setCellValue("A5","Major: ".$stuinfo["majore"]);
+        $scores = M("prograde")->where(array("stunum"=>$id))->select();//选出所有考试的分数
+        foreach ($scores as $vs) {//对数据进行初步处理
+            if ($willwrite[$vs["term"]][$vs["course"]]["isrepair"] == "repair") {
+                continue;
+            }
+            $willwrite[$vs["term"]][$vs["course"]]["count"]++;
+            $willwrite[$vs["term"]][$vs["course"]]["hundred"] += $vs["hundred"];
+            if ($vs["letter"] == "U" || $vs["hundred"] == 0) {//接下来判断这是重修或是导入时输入字母还是数字
+                $willwrite[$vs["term"]][$vs["course"]]["isrepair"] = "repair";
+                $willwrite[$vs["term"]][$vs["course"]]["hundred"] = 0;
+            }else{
+                if ($vs["letter"] == "P" || $vs["letter"] == "F") {
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "hundred";
+                }else{
+                    $willwrite[$vs["term"]][$vs["course"]]["standard"] = "letter";
+                }
+            }
+        }
+        $line = 6;//从第8行开始写，每门课加1
+        $row = 66;//从B列开始写，每学期加2
+        $course = M("course");
+        $allscore = 0;$allcredit = 0;
+        foreach ($willwrite as $termname => $vw) {
+            $line++;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".$line,$termname)
+                ->setCellValue(chr($row)."6","Marks")
+                ->setCellValue(chr($row+1)."6","Credits");
+            foreach ($vw as $coursename => $vs) {
+                $map["classid"] = $stuinfo["classid"];
+                $map["name|ename"] = $coursename;
+                $credit = $course->where($map)->getField("credit");//获取学分
+                if (!$credit) {
+                    continue;
+                }
+                $line++;
+                if ($vs["hundred"] == 0) {//这里开始处理转化为字母的问题
+                    $hundred = 0;
+                    $letter = "U";
+                }else{
+                    $hundred = $vs["hundred"]/$vs["count"];
+                    $hundred = round($hundred,2);
+                }
+                $p  ->setActiveSheetIndex(0)
+                    ->setCellValue("A".$line,$coursename)
+                    ->setCellValue(chr($row).$line,$hundred)
+                    ->setCellValue(chr($row+1).$line,$credit);
+                $allscore += $hundred * $credit;
+                $allcredit += $credit;
+            }
+            $gpa = round($allscore/$allcredit,2);
+            $line++;
+            $p  ->setActiveSheetIndex(0)
+                ->setCellValue("A".($line),'GPA:'.$gpa);
+        }
+        $styleThinBlackBorderOutline = array( 
+            'borders' => array ( 
+                'allborders' => array ( 
+                    'style' => PHPExcel_Style_Border::BORDER_THIN, //设置border样式 
+                    'color' => array ('argb' => 'FF000000'), //设置border颜色 
+                ), 
+            ),
+        );
+        $p->getActiveSheet()->getStyle('A6:'.chr($row+1).$line)->applyFromArray($styleThinBlackBorderOutline);
+        
+        ob_end_clean();
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control:must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: no-cache");
+        header("Content-Type:application/octet-stream");
+        header('content-Type:application/vnd.ms-excel;charset=utf-8');
+        header('Content-Disposition:attachment;filename='.$stuinfo["student"].'-'.$stuinfo["studentname"].'-专业课成绩单.xls');//设置文件的名称
+        header("Content-Transfer-Encoding:binary");
+        $objWriter = PHPExcel_IOFactory::createWriter($p, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function getGrade($now,$enrollyear){
+        $grade=array('一','二','三','四');
+        $a='';
+        if((intval(substr($now,0,4))-intval($enrollyear)) == 0){
+            $a=$grade[0];
+        }elseif((intval(substr($now,5,2)) < 9)){
+            $a=$grade[((intval(substr($now,0,4))-intval($enrollyear))-1)];
+        }else{
+            $a=$grade[(intval(substr($now,0,4))-intval($enrollyear))];    
+        }
+        return $a;
+    }
+    public function getSex($stusex){
+        $allsex=array('male','female');
+        $sex='';
+        if($stusex == '男'){
+            $sex=$allsex[0];
+        }elseif($stusex == '女'){
+            $sex=$allsex[1];
+        }
+        return $sex;
+    }
+    public function getEgrade($now,$enrollyear){
+        $egrade=array('First','Second','Third','Fourth');
+        $b='';
+        if((intval(substr($now,0,4))-intval($enrollyear)) == 0){
+            $b=$egrade[0];
+        }elseif((intval(substr($now,5,2)) < 9)){
+            $b=$egrade[((intval(substr($now,0,4))-intval($enrollyear))-1)];
+        }else{
+            $b=$egrade[(intval(substr($now,0,4))-intval($enrollyear))];    
+        }
+        return $b;
+    }
 } 
 
 ?>
