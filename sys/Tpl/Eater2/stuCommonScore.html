@@ -9,12 +9,12 @@
 <script type="text/javascript" src="../Public/team_margin/js/pngFix.js"></script>
 <script type="text/javascript"> 
 function excel(id){
-  var term=jQuery('#term').val();
-  var url="__URL__/downScore";
-  if(term!==''){
-    url=url+"/id/"+id+"/term/"+term;
-  }
-  window.location=url;
+	var term=jQuery('#term').val();
+	var url="__URL__/downScore";
+	if(term!==''){
+		url=url+"/id/"+id+"/term/"+term;
+	}
+	window.location=url;
 }
 function preexcel(id){
   var url="__URL__/downPreScore";
@@ -41,40 +41,37 @@ function proexcelB(id){
 <include file="Index:pageheader"/>
 <div class="main">
  <table width="100%" border="0" cellpadding="0" cellspacing="0" id="myTable2">
-  <tr><td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有预科成绩  <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:preexcel('{$id}');">[导出为xls文件]</a></div></td>
-  <td>&nbsp;</td></tr>
+  
   <tr>
-    <td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有专业课成绩(字母制)  <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:proexcelA('{$id}');">[导出为xls文件]</a></div></td>
-    <td>&nbsp;</td>
-    <td colspan="2"><div class="btn_zone"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有专业课成绩(百分制)  <img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:proexcelB('{$id}');">[导出为xls文件]</a></div></td>
+    <td colspan="5"><div class="btn_zone" style="text-align:left"><img src="../Public/images/info.gif" align="absmiddle" /> 将学生所有专业课成绩<img src="../Public/images/xls.gif" align="absmiddle"/><a href="javascript:proexcelB('{$id}');">[导出为xls文件]</a></div></td>
     <td>&nbsp;</td>
   </tr>
  </table>
 <!-- <table width="100%" border="0" class="alert_table" cellpadding="0" cellspacing="0">
 <volist name="my" id="temp">
 
-  <tr>  
+  <tr> 	
     <th width="16%">{$temp['0'].term}</th>
-  <th width="5%" >课时</th>
-  <th width="5%" >学分</th>
+	<th width="5%" >课时</th>
+	<th width="5%" >学分</th>
     <th width="14%" >最终成绩百分制</th>
     <th width="14%" >最终成绩等级制</th>
     <th width="14%" >补考成绩百分制</th>
     <th width="14%" >补考成绩等级制</th>
     <th width="9%" >备注</th>
-  <th width="9%">任课教师</th>
+	<th width="9%">任课教师</th>
   </tr>
-   <volist name="temp" id="my">
+ 	 <volist name="temp" id="my">
   <tr>
     <td>{$my.coursename}</td>
-  <td>{$my.coursetime}</td>
-  <td>{$my.credit}</td>
-  <td><eq name="my.ispublic" value="1">{$my.score}</eq></td>
-  <td><eq name="my.ispublic" value="1">{$my.levelscore}</eq></td>
+	<td>{$my.coursetime}</td>
+	<td>{$my.credit}</td>
+	<td><eq name="my.ispublic" value="1">{$my.score}</eq></td>
+	<td><eq name="my.ispublic" value="1">{$my.levelscore}</eq></td>
     <td><eq name="my.ispublic" value="1">{$my.bscore}</eq></td>
     <td><eq name="my.ispublic" value="1">{$my.blevelscore}</eq></td>
     <td><eq name="my.ispublic" value="1">{$my.plus}</td>
-   <td>{$my.ttruename}</td>
+	 <td>{$my.ttruename}</td>
   </tr>
   </volist>
 
